@@ -1,12 +1,15 @@
 import { useState } from "react";
 import Sidebar from "./Sidebar";
 
-const Navbar = () => {
+const Navbar = (props) => {
   const [isDropdownOpen, setIsDropdown] = useState(false);
-
+  const [sidebarOpen,setSidebarOpen] = useState(false)
   const openDropdown = () => {
     setIsDropdown(!isDropdownOpen);
   };
+  const handleSidebar = () =>{
+    props.setSidebarOpen(sidebarOpen)
+  }
   return (
     <div>
       <nav className="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
@@ -23,6 +26,10 @@ const Navbar = () => {
             className="navbar-toggler navbar-toggler align-self-center"
             type="button"
             data-toggle="minimize"
+            onClick={()=>{
+              setSidebarOpen(!sidebarOpen);
+              handleSidebar();
+            }}
             
           >
             <span className="icon-menu"></span>

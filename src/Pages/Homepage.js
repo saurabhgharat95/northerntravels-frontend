@@ -1,7 +1,9 @@
+import { useState } from "react";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 
 const Homepage = () => {
+  const [isSidebarOpen,setSidebarOpen] = useState(true)
   const getTodaysDate = () => {
     var currentDate = new Date();
 
@@ -33,11 +35,12 @@ const Homepage = () => {
     var formattedDate = day + " " + monthName + ", " + year;
     return formattedDate;
   };
+  
   return (
     <div class="container-scroller">
-      <Navbar></Navbar>
+      <Navbar setSidebarOpen={setSidebarOpen}></Navbar>
       <div class="container-fluid page-body-wrapper">
-        <Sidebar></Sidebar>
+        <Sidebar isSidebarOpen={isSidebarOpen}></Sidebar>
         <div class="main-panel">
           <div class="content-wrapper">
             <div class="row">

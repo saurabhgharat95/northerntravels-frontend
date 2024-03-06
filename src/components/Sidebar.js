@@ -1,10 +1,11 @@
-const Sidebar = () => {
+const Sidebar = (props) => {
+  console.log(props.isSidebarOpen)
   return (
     <div>
       <nav
         className="sidebar sidebar-offcanvas"
         id="sidebar"
-        
+        style={{width:props.isSidebarOpen?"260px":"86px"}}
       >
         <ul className="nav">
           <li className="nav-item">
@@ -66,10 +67,18 @@ const Sidebar = () => {
             </a>
             <div className="collapse" id="ui-basic">
               <ul className="nav flex-column sub-menu">
-                <li className="nav-item"> <a className="nav-link" href="pages/ui-features/buttons.html">Agents / Users</a></li>
-                <li className="nav-item"> <a className="nav-link" href="pages/ui-features/dropdowns.html">Drivers</a></li>
+                <li className="nav-item"> <a className="nav-link" href="/countries">Countries</a></li>
+                <li className="nav-item"> <a className="nav-link" href="pages/ui-features/dropdowns.html">State / Location</a></li>
+                <li className="nav-item"> <a className="nav-link" href="pages/ui-features/typography.html">Start / End point </a></li>
                 <li className="nav-item"> <a className="nav-link" href="pages/ui-features/typography.html">Destinations</a></li>
-                <li className="nav-item"> <a className="nav-link" href="pages/ui-features/typography.html">Destinations</a></li>
+                <li className="nav-item"> <a className="nav-link" href="pages/ui-features/typography.html">Hotel Type</a></li>
+                <li className="nav-item"> <a className="nav-link" href="pages/ui-features/typography.html">Halting Destinations</a></li>
+                <li className="nav-item"> <a className="nav-link" href="pages/ui-features/typography.html">Hotels</a></li>
+                <li className="nav-item"> <a className="nav-link" href="pages/ui-features/typography.html">Car</a></li>
+                <li className="nav-item"> <a className="nav-link" href="pages/ui-features/typography.html">Transportation</a></li>
+                <li className="nav-item"> <a className="nav-link" href="pages/ui-features/typography.html">Pickup / Drop point</a></li>
+                <li className="nav-item"> <a className="nav-link" href="pages/ui-features/typography.html">Meal Type</a></li>
+                <li className="nav-item"> <a className="nav-link" href="pages/ui-features/typography.html">Room Type</a></li>
               </ul>
             </div>
           </li>

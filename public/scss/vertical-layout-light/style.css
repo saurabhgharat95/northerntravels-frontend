@@ -113,6 +113,7 @@
 -------------------------------------------------------------------*/
 /*-------------------------------------------------------------------*/
 /* === Import Bootstrap functions and variables === */
+/* sass-lint:disable no-non-null-assertion */
 /*-------------------------------------------------------------------*/
 /* === Import template variables === */
 /*-------------------------------------------------------------------*/
@@ -8365,6 +8366,7 @@
  * Copyright 2011-2021 Twitter, Inc.
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
  */
+/* sass-lint:disable no-non-null-assertion */
 :root {
   --blue: #5E50F9;
   --indigo: #6610f2;
@@ -8383,14 +8385,14 @@
   --gray-lighter: #e8eff4;
   --gray-lightest: #e6e9ed;
   --black: #000000;
-  --primary: #2656ab;
-  --secondary: #f5ac36;
-  --success: #57B657;
-  --info: #248AFD;
-  --warning: #FFC100;
-  --danger: #FF4747;
-  --light: #f8f9fa;
-  --dark: #282f3a;
+  ---primary: #2656ab;
+  ---secondary: #f5ac36;
+  ---success: #57B657;
+  ---info: #248AFD;
+  ---warning: #FFC100;
+  ---danger: #FF4747;
+  ---light: #f8f9fa;
+  ---dark: #282f3a;
   --breakpoint-xs: 0;
   --breakpoint-sm: 576px;
   --breakpoint-md: 768px;
@@ -8420,7 +8422,7 @@ article, aside, figcaption, figure, footer, header, hgroup, main, nav, section {
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  font-size: 1rem;
+  font-size: calc($fs / $rfs-rem-value)rem;
   font-weight: 400;
   line-height: 1.5;
   color: #1F1F1F;
@@ -8668,7 +8670,7 @@ legend {
   max-width: 100%;
   padding: 0;
   margin-bottom: 0.5rem;
-  font-size: 1.5rem;
+  font-size: calc($fs / $rfs-rem-value)rem;
   line-height: inherit;
   color: inherit;
   white-space: normal;
@@ -8722,54 +8724,54 @@ h1, h2, h3, h4, h5, h6,
 }
 
 h1, .h1 {
-  font-size: 2.5rem;
+  font-size: calc($fs / $rfs-rem-value)rem;
 }
 
 h2, .h2 {
-  font-size: 2rem;
+  font-size: calc($fs / $rfs-rem-value)rem;
 }
 
 h3, .h3 {
-  font-size: 1.75rem;
+  font-size: calc($fs / $rfs-rem-value)rem;
 }
 
 h4, .h4 {
-  font-size: 1.5rem;
+  font-size: calc($fs / $rfs-rem-value)rem;
 }
 
 h5, .h5 {
-  font-size: 1.25rem;
+  font-size: calc($fs / $rfs-rem-value)rem;
 }
 
 h6, .h6 {
-  font-size: 1rem;
+  font-size: calc($fs / $rfs-rem-value)rem;
 }
 
 .lead {
-  font-size: 1.25rem;
+  font-size: calc($fs / $rfs-rem-value)rem;
   font-weight: 300;
 }
 
 .display-1 {
-  font-size: 6rem;
+  font-size: calc($fs / $rfs-rem-value)rem;
   font-weight: 300;
   line-height: 1.2;
 }
 
 .display-2 {
-  font-size: 5.5rem;
+  font-size: calc($fs / $rfs-rem-value)rem;
   font-weight: 300;
   line-height: 1.2;
 }
 
 .display-3 {
-  font-size: 4.5rem;
+  font-size: calc($fs / $rfs-rem-value)rem;
   font-weight: 300;
   line-height: 1.2;
 }
 
 .display-4 {
-  font-size: 3.5rem;
+  font-size: calc($fs / $rfs-rem-value)rem;
   font-weight: 300;
   line-height: 1.2;
 }
@@ -8817,7 +8819,7 @@ mark,
 
 .blockquote {
   margin-bottom: 1rem;
-  font-size: 1.25rem;
+  font-size: calc($fs / $rfs-rem-value)rem;
 }
 
 .blockquote-footer {
@@ -8829,6 +8831,7 @@ mark,
   content: "— ";
 }
 
+/* sass-lint:disable no-non-null-assertion */
 .img-fluid {
   max-width: 100%;
   height: auto;
@@ -8848,7 +8851,7 @@ mark,
 }
 
 .figure-img {
-  margin-bottom: 0.5rem;
+  margin-bottom: calc($spacer / 2);
   line-height: 1;
 }
 
@@ -8902,8 +8905,8 @@ pre code {
 .container-md,
 .container-sm {
   width: 100%;
-  padding-right: 15px;
-  padding-left: 15px;
+  padding-right: calc($gutter / 2);
+  padding-left: calc($gutter / 2);
   margin-right: auto;
   margin-left: auto;
 }
@@ -8931,8 +8934,8 @@ pre code {
 .row {
   display: flex;
   flex-wrap: wrap;
-  margin-right: -15px;
-  margin-left: -15px;
+  margin-right: calc(-30px / 2);
+  margin-left: calc(-30px / 2);
 }
 
 .no-gutters {
@@ -8953,8 +8956,8 @@ pre code {
 .col-auto, .col-12, .col-11, .col-10, .col-9, .col-8, .col-7, .col-6, .col-5, .col-4, .col-3, .col-2, .col-1 {
   position: relative;
   width: 100%;
-  padding-right: 15px;
-  padding-left: 15px;
+  padding-right: calc( $gutter / 2);
+  padding-left: calc( $gutter / 2);
 }
 
 .col {
@@ -8964,33 +8967,33 @@ pre code {
 }
 
 .row-cols-1 > * {
-  flex: 0 0 100%;
-  max-width: 100%;
+  flex: calc(100% / $count);
+  max-width: calc(100% / $count);
 }
 
 .row-cols-2 > * {
-  flex: 0 0 50%;
-  max-width: 50%;
+  flex: calc(100% / $count);
+  max-width: calc(100% / $count);
 }
 
 .row-cols-3 > * {
-  flex: 0 0 33.3333333333%;
-  max-width: 33.3333333333%;
+  flex: calc(100% / $count);
+  max-width: calc(100% / $count);
 }
 
 .row-cols-4 > * {
-  flex: 0 0 25%;
-  max-width: 25%;
+  flex: calc(100% / $count);
+  max-width: calc(100% / $count);
 }
 
 .row-cols-5 > * {
-  flex: 0 0 20%;
-  max-width: 20%;
+  flex: calc(100% / $count);
+  max-width: calc(100% / $count);
 }
 
 .row-cols-6 > * {
-  flex: 0 0 16.6666666667%;
-  max-width: 16.6666666667%;
+  flex: calc(100% / $count);
+  max-width: calc(100% / $count);
 }
 
 .col-auto {
@@ -9000,63 +9003,63 @@ pre code {
 }
 
 .col-1 {
-  flex: 0 0 8.3333333333%;
-  max-width: 8.3333333333%;
+  flex: 0 0 calc(percentage($size / $columns));
+  max-width: calc(percentage($size / $columns));
 }
 
 .col-2 {
-  flex: 0 0 16.6666666667%;
-  max-width: 16.6666666667%;
+  flex: 0 0 calc(percentage($size / $columns));
+  max-width: calc(percentage($size / $columns));
 }
 
 .col-3 {
-  flex: 0 0 25%;
-  max-width: 25%;
+  flex: 0 0 calc(percentage($size / $columns));
+  max-width: calc(percentage($size / $columns));
 }
 
 .col-4 {
-  flex: 0 0 33.3333333333%;
-  max-width: 33.3333333333%;
+  flex: 0 0 calc(percentage($size / $columns));
+  max-width: calc(percentage($size / $columns));
 }
 
 .col-5 {
-  flex: 0 0 41.6666666667%;
-  max-width: 41.6666666667%;
+  flex: 0 0 calc(percentage($size / $columns));
+  max-width: calc(percentage($size / $columns));
 }
 
 .col-6, .lightGallery .image-tile {
-  flex: 0 0 50%;
-  max-width: 50%;
+  flex: 0 0 calc(percentage($size / $columns));
+  max-width: calc(percentage($size / $columns));
 }
 
 .col-7 {
-  flex: 0 0 58.3333333333%;
-  max-width: 58.3333333333%;
+  flex: 0 0 calc(percentage($size / $columns));
+  max-width: calc(percentage($size / $columns));
 }
 
 .col-8 {
-  flex: 0 0 66.6666666667%;
-  max-width: 66.6666666667%;
+  flex: 0 0 calc(percentage($size / $columns));
+  max-width: calc(percentage($size / $columns));
 }
 
 .col-9 {
-  flex: 0 0 75%;
-  max-width: 75%;
+  flex: 0 0 calc(percentage($size / $columns));
+  max-width: calc(percentage($size / $columns));
 }
 
 .col-10 {
-  flex: 0 0 83.3333333333%;
-  max-width: 83.3333333333%;
+  flex: 0 0 calc(percentage($size / $columns));
+  max-width: calc(percentage($size / $columns));
 }
 
 .col-11 {
-  flex: 0 0 91.6666666667%;
-  max-width: 91.6666666667%;
+  flex: 0 0 calc(percentage($size / $columns));
+  max-width: calc(percentage($size / $columns));
 }
 
 .col-12 {
-  flex: 0 0 100%;
-  max-width: 100%;
+  flex: 0 0 calc(percentage($size / $columns));
+  max-width: calc(percentage($size / $columns));
 }
 
 .order-first {
@@ -9171,33 +9174,33 @@ pre code {
   }
 
   .row-cols-sm-1 > * {
-    flex: 0 0 100%;
-    max-width: 100%;
+    flex: calc(100% / $count);
+    max-width: calc(100% / $count);
   }
 
   .row-cols-sm-2 > * {
-    flex: 0 0 50%;
-    max-width: 50%;
+    flex: calc(100% / $count);
+    max-width: calc(100% / $count);
   }
 
   .row-cols-sm-3 > * {
-    flex: 0 0 33.3333333333%;
-    max-width: 33.3333333333%;
+    flex: calc(100% / $count);
+    max-width: calc(100% / $count);
   }
 
   .row-cols-sm-4 > * {
-    flex: 0 0 25%;
-    max-width: 25%;
+    flex: calc(100% / $count);
+    max-width: calc(100% / $count);
   }
 
   .row-cols-sm-5 > * {
-    flex: 0 0 20%;
-    max-width: 20%;
+    flex: calc(100% / $count);
+    max-width: calc(100% / $count);
   }
 
   .row-cols-sm-6 > * {
-    flex: 0 0 16.6666666667%;
-    max-width: 16.6666666667%;
+    flex: calc(100% / $count);
+    max-width: calc(100% / $count);
   }
 
   .col-sm-auto {
@@ -9207,63 +9210,63 @@ pre code {
   }
 
   .col-sm-1 {
-    flex: 0 0 8.3333333333%;
-    max-width: 8.3333333333%;
+    flex: 0 0 calc(percentage($size / $columns));
+    max-width: calc(percentage($size / $columns));
   }
 
   .col-sm-2 {
-    flex: 0 0 16.6666666667%;
-    max-width: 16.6666666667%;
+    flex: 0 0 calc(percentage($size / $columns));
+    max-width: calc(percentage($size / $columns));
   }
 
   .col-sm-3 {
-    flex: 0 0 25%;
-    max-width: 25%;
+    flex: 0 0 calc(percentage($size / $columns));
+    max-width: calc(percentage($size / $columns));
   }
 
   .col-sm-4 {
-    flex: 0 0 33.3333333333%;
-    max-width: 33.3333333333%;
+    flex: 0 0 calc(percentage($size / $columns));
+    max-width: calc(percentage($size / $columns));
   }
 
   .col-sm-5 {
-    flex: 0 0 41.6666666667%;
-    max-width: 41.6666666667%;
+    flex: 0 0 calc(percentage($size / $columns));
+    max-width: calc(percentage($size / $columns));
   }
 
   .col-sm-6 {
-    flex: 0 0 50%;
-    max-width: 50%;
+    flex: 0 0 calc(percentage($size / $columns));
+    max-width: calc(percentage($size / $columns));
   }
 
   .col-sm-7 {
-    flex: 0 0 58.3333333333%;
-    max-width: 58.3333333333%;
+    flex: 0 0 calc(percentage($size / $columns));
+    max-width: calc(percentage($size / $columns));
   }
 
   .col-sm-8 {
-    flex: 0 0 66.6666666667%;
-    max-width: 66.6666666667%;
+    flex: 0 0 calc(percentage($size / $columns));
+    max-width: calc(percentage($size / $columns));
   }
 
   .col-sm-9 {
-    flex: 0 0 75%;
-    max-width: 75%;
+    flex: 0 0 calc(percentage($size / $columns));
+    max-width: calc(percentage($size / $columns));
   }
 
   .col-sm-10 {
-    flex: 0 0 83.3333333333%;
-    max-width: 83.3333333333%;
+    flex: 0 0 calc(percentage($size / $columns));
+    max-width: calc(percentage($size / $columns));
   }
 
   .col-sm-11 {
-    flex: 0 0 91.6666666667%;
-    max-width: 91.6666666667%;
+    flex: 0 0 calc(percentage($size / $columns));
+    max-width: calc(percentage($size / $columns));
   }
 
   .col-sm-12 {
-    flex: 0 0 100%;
-    max-width: 100%;
+    flex: 0 0 calc(percentage($size / $columns));
+    max-width: calc(percentage($size / $columns));
   }
 
   .order-sm-first {
@@ -9382,33 +9385,33 @@ pre code {
   }
 
   .row-cols-md-1 > * {
-    flex: 0 0 100%;
-    max-width: 100%;
+    flex: calc(100% / $count);
+    max-width: calc(100% / $count);
   }
 
   .row-cols-md-2 > * {
-    flex: 0 0 50%;
-    max-width: 50%;
+    flex: calc(100% / $count);
+    max-width: calc(100% / $count);
   }
 
   .row-cols-md-3 > * {
-    flex: 0 0 33.3333333333%;
-    max-width: 33.3333333333%;
+    flex: calc(100% / $count);
+    max-width: calc(100% / $count);
   }
 
   .row-cols-md-4 > * {
-    flex: 0 0 25%;
-    max-width: 25%;
+    flex: calc(100% / $count);
+    max-width: calc(100% / $count);
   }
 
   .row-cols-md-5 > * {
-    flex: 0 0 20%;
-    max-width: 20%;
+    flex: calc(100% / $count);
+    max-width: calc(100% / $count);
   }
 
   .row-cols-md-6 > * {
-    flex: 0 0 16.6666666667%;
-    max-width: 16.6666666667%;
+    flex: calc(100% / $count);
+    max-width: calc(100% / $count);
   }
 
   .col-md-auto {
@@ -9418,63 +9421,63 @@ pre code {
   }
 
   .col-md-1 {
-    flex: 0 0 8.3333333333%;
-    max-width: 8.3333333333%;
+    flex: 0 0 calc(percentage($size / $columns));
+    max-width: calc(percentage($size / $columns));
   }
 
   .col-md-2 {
-    flex: 0 0 16.6666666667%;
-    max-width: 16.6666666667%;
+    flex: 0 0 calc(percentage($size / $columns));
+    max-width: calc(percentage($size / $columns));
   }
 
   .col-md-3, .lightGallery .image-tile {
-    flex: 0 0 25%;
-    max-width: 25%;
+    flex: 0 0 calc(percentage($size / $columns));
+    max-width: calc(percentage($size / $columns));
   }
 
   .col-md-4, .lightGallery .image-tile {
-    flex: 0 0 33.3333333333%;
-    max-width: 33.3333333333%;
+    flex: 0 0 calc(percentage($size / $columns));
+    max-width: calc(percentage($size / $columns));
   }
 
   .col-md-5 {
-    flex: 0 0 41.6666666667%;
-    max-width: 41.6666666667%;
+    flex: 0 0 calc(percentage($size / $columns));
+    max-width: calc(percentage($size / $columns));
   }
 
   .col-md-6 {
-    flex: 0 0 50%;
-    max-width: 50%;
+    flex: 0 0 calc(percentage($size / $columns));
+    max-width: calc(percentage($size / $columns));
   }
 
   .col-md-7 {
-    flex: 0 0 58.3333333333%;
-    max-width: 58.3333333333%;
+    flex: 0 0 calc(percentage($size / $columns));
+    max-width: calc(percentage($size / $columns));
   }
 
   .col-md-8 {
-    flex: 0 0 66.6666666667%;
-    max-width: 66.6666666667%;
+    flex: 0 0 calc(percentage($size / $columns));
+    max-width: calc(percentage($size / $columns));
   }
 
   .col-md-9 {
-    flex: 0 0 75%;
-    max-width: 75%;
+    flex: 0 0 calc(percentage($size / $columns));
+    max-width: calc(percentage($size / $columns));
   }
 
   .col-md-10 {
-    flex: 0 0 83.3333333333%;
-    max-width: 83.3333333333%;
+    flex: 0 0 calc(percentage($size / $columns));
+    max-width: calc(percentage($size / $columns));
   }
 
   .col-md-11 {
-    flex: 0 0 91.6666666667%;
-    max-width: 91.6666666667%;
+    flex: 0 0 calc(percentage($size / $columns));
+    max-width: calc(percentage($size / $columns));
   }
 
   .col-md-12 {
-    flex: 0 0 100%;
-    max-width: 100%;
+    flex: 0 0 calc(percentage($size / $columns));
+    max-width: calc(percentage($size / $columns));
   }
 
   .order-md-first {
@@ -9593,33 +9596,33 @@ pre code {
   }
 
   .row-cols-lg-1 > * {
-    flex: 0 0 100%;
-    max-width: 100%;
+    flex: calc(100% / $count);
+    max-width: calc(100% / $count);
   }
 
   .row-cols-lg-2 > * {
-    flex: 0 0 50%;
-    max-width: 50%;
+    flex: calc(100% / $count);
+    max-width: calc(100% / $count);
   }
 
   .row-cols-lg-3 > * {
-    flex: 0 0 33.3333333333%;
-    max-width: 33.3333333333%;
+    flex: calc(100% / $count);
+    max-width: calc(100% / $count);
   }
 
   .row-cols-lg-4 > * {
-    flex: 0 0 25%;
-    max-width: 25%;
+    flex: calc(100% / $count);
+    max-width: calc(100% / $count);
   }
 
   .row-cols-lg-5 > * {
-    flex: 0 0 20%;
-    max-width: 20%;
+    flex: calc(100% / $count);
+    max-width: calc(100% / $count);
   }
 
   .row-cols-lg-6 > * {
-    flex: 0 0 16.6666666667%;
-    max-width: 16.6666666667%;
+    flex: calc(100% / $count);
+    max-width: calc(100% / $count);
   }
 
   .col-lg-auto {
@@ -9629,63 +9632,63 @@ pre code {
   }
 
   .col-lg-1 {
-    flex: 0 0 8.3333333333%;
-    max-width: 8.3333333333%;
+    flex: 0 0 calc(percentage($size / $columns));
+    max-width: calc(percentage($size / $columns));
   }
 
   .col-lg-2 {
-    flex: 0 0 16.6666666667%;
-    max-width: 16.6666666667%;
+    flex: 0 0 calc(percentage($size / $columns));
+    max-width: calc(percentage($size / $columns));
   }
 
   .col-lg-3, .lightGallery .image-tile {
-    flex: 0 0 25%;
-    max-width: 25%;
+    flex: 0 0 calc(percentage($size / $columns));
+    max-width: calc(percentage($size / $columns));
   }
 
   .col-lg-4 {
-    flex: 0 0 33.3333333333%;
-    max-width: 33.3333333333%;
+    flex: 0 0 calc(percentage($size / $columns));
+    max-width: calc(percentage($size / $columns));
   }
 
   .col-lg-5 {
-    flex: 0 0 41.6666666667%;
-    max-width: 41.6666666667%;
+    flex: 0 0 calc(percentage($size / $columns));
+    max-width: calc(percentage($size / $columns));
   }
 
   .col-lg-6 {
-    flex: 0 0 50%;
-    max-width: 50%;
+    flex: 0 0 calc(percentage($size / $columns));
+    max-width: calc(percentage($size / $columns));
   }
 
   .col-lg-7 {
-    flex: 0 0 58.3333333333%;
-    max-width: 58.3333333333%;
+    flex: 0 0 calc(percentage($size / $columns));
+    max-width: calc(percentage($size / $columns));
   }
 
   .col-lg-8 {
-    flex: 0 0 66.6666666667%;
-    max-width: 66.6666666667%;
+    flex: 0 0 calc(percentage($size / $columns));
+    max-width: calc(percentage($size / $columns));
   }
 
   .col-lg-9 {
-    flex: 0 0 75%;
-    max-width: 75%;
+    flex: 0 0 calc(percentage($size / $columns));
+    max-width: calc(percentage($size / $columns));
   }
 
   .col-lg-10 {
-    flex: 0 0 83.3333333333%;
-    max-width: 83.3333333333%;
+    flex: 0 0 calc(percentage($size / $columns));
+    max-width: calc(percentage($size / $columns));
   }
 
   .col-lg-11 {
-    flex: 0 0 91.6666666667%;
-    max-width: 91.6666666667%;
+    flex: 0 0 calc(percentage($size / $columns));
+    max-width: calc(percentage($size / $columns));
   }
 
   .col-lg-12 {
-    flex: 0 0 100%;
-    max-width: 100%;
+    flex: 0 0 calc(percentage($size / $columns));
+    max-width: calc(percentage($size / $columns));
   }
 
   .order-lg-first {
@@ -9804,33 +9807,33 @@ pre code {
   }
 
   .row-cols-xl-1 > * {
-    flex: 0 0 100%;
-    max-width: 100%;
+    flex: calc(100% / $count);
+    max-width: calc(100% / $count);
   }
 
   .row-cols-xl-2 > * {
-    flex: 0 0 50%;
-    max-width: 50%;
+    flex: calc(100% / $count);
+    max-width: calc(100% / $count);
   }
 
   .row-cols-xl-3 > * {
-    flex: 0 0 33.3333333333%;
-    max-width: 33.3333333333%;
+    flex: calc(100% / $count);
+    max-width: calc(100% / $count);
   }
 
   .row-cols-xl-4 > * {
-    flex: 0 0 25%;
-    max-width: 25%;
+    flex: calc(100% / $count);
+    max-width: calc(100% / $count);
   }
 
   .row-cols-xl-5 > * {
-    flex: 0 0 20%;
-    max-width: 20%;
+    flex: calc(100% / $count);
+    max-width: calc(100% / $count);
   }
 
   .row-cols-xl-6 > * {
-    flex: 0 0 16.6666666667%;
-    max-width: 16.6666666667%;
+    flex: calc(100% / $count);
+    max-width: calc(100% / $count);
   }
 
   .col-xl-auto {
@@ -9840,63 +9843,63 @@ pre code {
   }
 
   .col-xl-1 {
-    flex: 0 0 8.3333333333%;
-    max-width: 8.3333333333%;
+    flex: 0 0 calc(percentage($size / $columns));
+    max-width: calc(percentage($size / $columns));
   }
 
   .col-xl-2 {
-    flex: 0 0 16.6666666667%;
-    max-width: 16.6666666667%;
+    flex: 0 0 calc(percentage($size / $columns));
+    max-width: calc(percentage($size / $columns));
   }
 
   .col-xl-3, .lightGallery .image-tile {
-    flex: 0 0 25%;
-    max-width: 25%;
+    flex: 0 0 calc(percentage($size / $columns));
+    max-width: calc(percentage($size / $columns));
   }
 
   .col-xl-4 {
-    flex: 0 0 33.3333333333%;
-    max-width: 33.3333333333%;
+    flex: 0 0 calc(percentage($size / $columns));
+    max-width: calc(percentage($size / $columns));
   }
 
   .col-xl-5 {
-    flex: 0 0 41.6666666667%;
-    max-width: 41.6666666667%;
+    flex: 0 0 calc(percentage($size / $columns));
+    max-width: calc(percentage($size / $columns));
   }
 
   .col-xl-6 {
-    flex: 0 0 50%;
-    max-width: 50%;
+    flex: 0 0 calc(percentage($size / $columns));
+    max-width: calc(percentage($size / $columns));
   }
 
   .col-xl-7 {
-    flex: 0 0 58.3333333333%;
-    max-width: 58.3333333333%;
+    flex: 0 0 calc(percentage($size / $columns));
+    max-width: calc(percentage($size / $columns));
   }
 
   .col-xl-8 {
-    flex: 0 0 66.6666666667%;
-    max-width: 66.6666666667%;
+    flex: 0 0 calc(percentage($size / $columns));
+    max-width: calc(percentage($size / $columns));
   }
 
   .col-xl-9 {
-    flex: 0 0 75%;
-    max-width: 75%;
+    flex: 0 0 calc(percentage($size / $columns));
+    max-width: calc(percentage($size / $columns));
   }
 
   .col-xl-10 {
-    flex: 0 0 83.3333333333%;
-    max-width: 83.3333333333%;
+    flex: 0 0 calc(percentage($size / $columns));
+    max-width: calc(percentage($size / $columns));
   }
 
   .col-xl-11 {
-    flex: 0 0 91.6666666667%;
-    max-width: 91.6666666667%;
+    flex: 0 0 calc(percentage($size / $columns));
+    max-width: calc(percentage($size / $columns));
   }
 
   .col-xl-12 {
-    flex: 0 0 100%;
-    max-width: 100%;
+    flex: 0 0 calc(percentage($size / $columns));
+    max-width: calc(percentage($size / $columns));
   }
 
   .order-xl-first {
@@ -10327,7 +10330,7 @@ pre code {
   width: 100%;
   height: 2.875rem;
   padding: 0.875rem 1.375rem;
-  font-size: 0.875rem;
+  font-size: calc($fs / $rfs-rem-value)rem;
   font-weight: 400;
   line-height: 1;
   color: #495057;
@@ -10445,14 +10448,14 @@ select.tt-hint:focus::-ms-value, .select2-container--default .select2-selection-
 .col-form-label-lg {
   padding-top: calc(0.94rem + 1px);
   padding-bottom: calc(0.94rem + 1px);
-  font-size: 1.25rem;
+  font-size: calc($fs / $rfs-rem-value)rem;
   line-height: 1.5;
 }
 
 .col-form-label-sm {
   padding-top: calc(0.5rem + 1px);
   padding-bottom: calc(0.5rem + 1px);
-  font-size: 0.875rem;
+  font-size: calc($fs / $rfs-rem-value)rem;
   line-height: 1.5;
 }
 
@@ -10461,7 +10464,7 @@ select.tt-hint:focus::-ms-value, .select2-container--default .select2-selection-
   width: 100%;
   padding: 0.875rem 0;
   margin-bottom: 0;
-  font-size: 0.875rem;
+  font-size: calc($fs / $rfs-rem-value)rem;
   line-height: 1;
   color: #212529;
   background-color: transparent;
@@ -10476,7 +10479,7 @@ select.tt-hint:focus::-ms-value, .select2-container--default .select2-selection-
 .form-control-sm {
   height: 2.575rem;
   padding: 0.5rem 0.81rem;
-  font-size: 0.875rem;
+  font-size: calc($fs / $rfs-rem-value)rem;
   line-height: 1.5;
   border-radius: 0.2rem;
 }
@@ -10484,7 +10487,7 @@ select.tt-hint:focus::-ms-value, .select2-container--default .select2-selection-
 .form-control-lg {
   height: 3.175rem;
   padding: 0.94rem 1.94rem;
-  font-size: 1.25rem;
+  font-size: calc($fs / $rfs-rem-value)rem;
   line-height: 1.5;
   border-radius: 0.3rem;
 }
@@ -10517,13 +10520,13 @@ textarea.tt-hint, .select2-container--default .select2-selection--single textare
 .form-row {
   display: flex;
   flex-wrap: wrap;
-  margin-right: -5px;
-  margin-left: -5px;
+  margin-right: calc(-10px / 2);
+  margin-left: calc(-10px / 2);
 }
 .form-row > .col,
 .form-row > [class*=col-] {
-  padding-right: 5px;
-  padding-left: 5px;
+  padding-right: calc(-10px / 2);
+  padding-left: calc(-10px / 2);
 }
 
 .form-check {
@@ -10575,7 +10578,7 @@ textarea.tt-hint, .select2-container--default .select2-selection--single textare
   max-width: 100%;
   padding: 0.25rem 0.5rem;
   margin-top: 0.1rem;
-  font-size: 0.875rem;
+  font-size: calc($fs / $rfs-rem-value)rem;
   line-height: 1.5;
   color: #fff;
   background-color: rgba(40, 167, 69, 0.9);
@@ -10689,7 +10692,7 @@ textarea.is-valid.tt-hint, .select2-container--default .select2-selection--singl
   max-width: 100%;
   padding: 0.25rem 0.5rem;
   margin-top: 0.1rem;
-  font-size: 0.875rem;
+  font-size: calc($fs / $rfs-rem-value)rem;
   line-height: 1.5;
   color: #fff;
   background-color: rgba(220, 53, 69, 0.9);
@@ -10857,7 +10860,7 @@ textarea.is-invalid.tt-hint, .select2-container--default .select2-selection--sin
   background-color: transparent;
   border: 1px solid transparent;
   padding: 0.875rem 1.5rem;
-  font-size: 0.875rem;
+  font-size: calc($fs / $rfs-rem-value)rem;
   line-height: 1;
   border-radius: 0.1875rem;
   transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
@@ -11351,14 +11354,14 @@ fieldset:disabled .ajax-upload-dragdrop a.ajax-file-upload,
 
 .btn-lg, .btn-group-lg > .btn, .wizard > .actions .btn-group-lg > a, .swal2-modal .swal2-buttonswrapper .btn-group-lg > .swal2-styled, .ajax-upload-dragdrop .btn-group-lg > .ajax-file-upload, .fc .btn-group-lg > button {
   padding: 1rem 3rem;
-  font-size: 0.875rem;
+  font-size: calc($fs / $rfs-rem-value)rem;
   line-height: 1.5;
   border-radius: 0.1875rem;
 }
 
 .btn-sm, .fc button, .btn-group-sm > .btn, .wizard > .actions .btn-group-sm > a, .swal2-modal .swal2-buttonswrapper .btn-group-sm > .swal2-styled, .ajax-upload-dragdrop .btn-group-sm > .ajax-file-upload, .fc .btn-group-sm > button {
   padding: 0.5rem 0.81rem;
-  font-size: 0.812rem;
+  font-size: calc($fs / $rfs-rem-value)rem;
   line-height: 1.5;
   border-radius: 0.1875rem;
 }
@@ -11439,7 +11442,7 @@ input[type=button].btn-block {
   min-width: 10rem;
   padding: 0.5rem 0;
   margin: 0.125rem 0 0;
-  font-size: 1rem;
+  font-size: calc($fs / $rfs-rem-value)rem;
   color: #212529;
   text-align: left;
   list-style: none;
@@ -11627,7 +11630,7 @@ input[type=button].btn-block {
   display: block;
   padding: 0.5rem 1.5rem;
   margin-bottom: 0;
-  font-size: 0.875rem;
+  font-size: calc($fs / $rfs-rem-value)rem;
   color: #1F1F1F;
   white-space: nowrap;
 }
@@ -12450,7 +12453,7 @@ input[type=button].btn-block {
   align-items: center;
   padding: 0.875rem 1.375rem;
   margin-bottom: 0;
-  font-size: 0.875rem;
+  font-size: calc($fs / $rfs-rem-value)rem;
   font-weight: 400;
   line-height: 1;
   color: #495057;
@@ -12491,7 +12494,7 @@ input[type=button].btn-block {
 .ajax-upload-dragdrop .input-group-lg > .input-group-append > .ajax-file-upload,
 .fc .input-group-lg > .input-group-append > button {
   padding: 0.94rem 1.94rem;
-  font-size: 1.25rem;
+  font-size: calc($fs / $rfs-rem-value)rem;
   line-height: 1.5;
   border-radius: 0.3rem;
 }
@@ -12522,7 +12525,7 @@ input[type=button].btn-block {
 .ajax-upload-dragdrop .input-group-sm > .input-group-append > .ajax-file-upload,
 .fc .input-group-sm > .input-group-append > button {
   padding: 0.5rem 0.81rem;
-  font-size: 0.875rem;
+  font-size: calc($fs / $rfs-rem-value)rem;
   line-height: 1.5;
   border-radius: 0.2rem;
 }
@@ -12745,7 +12748,7 @@ input[type=button].btn-block {
   width: 100%;
   height: calc(1.5em + 0.75rem + 2px);
   padding: 0.375rem 1.75rem 0.375rem 0.75rem;
-  font-size: 1rem;
+  font-size: calc($fs / $rfs-rem-value)rem;
   font-weight: 400;
   line-height: 1.5;
   color: #495057;
@@ -12786,7 +12789,7 @@ input[type=button].btn-block {
   padding-top: 0.25rem;
   padding-bottom: 0.25rem;
   padding-left: 0.5rem;
-  font-size: 0.875rem;
+  font-size: calc($fs / $rfs-rem-value)rem;
 }
 
 .custom-select-lg {
@@ -12794,7 +12797,7 @@ input[type=button].btn-block {
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
   padding-left: 1rem;
-  font-size: 1.25rem;
+  font-size: calc($fs / $rfs-rem-value)rem;
 }
 
 .custom-file {
@@ -13103,10 +13106,10 @@ input[type=button].btn-block {
 }
 .navbar-brand {
   display: inline-block;
-  padding-top: 0.3125rem;
-  padding-bottom: 0.3125rem;
+  padding-top: calc(($nav-link-height - $navbar-brand-height) / 2 );
+  padding-bottom: calc(($nav-link-height - $navbar-brand-height) / 2 );
   margin-right: 1rem;
-  font-size: 1.25rem;
+  font-size: calc($fs / $rfs-rem-value)rem;
   line-height: inherit;
   white-space: nowrap;
 }
@@ -13144,7 +13147,7 @@ input[type=button].btn-block {
 
 .navbar-toggler {
   padding: 0.25rem 0.75rem;
-  font-size: 1.25rem;
+  font-size: calc($fs / $rfs-rem-value)rem;
   line-height: 1;
   background-color: transparent;
   border: 1px solid transparent;
@@ -13587,25 +13590,25 @@ input[type=button].btn-block {
 }
 
 .card-deck .card {
-  margin-bottom: 15px;
+  margin-bottom: calc($grid-gutter-width / 2);
 }
 @media (min-width: 576px) {
   .card-deck {
     display: flex;
     flex-flow: row wrap;
-    margin-right: -15px;
-    margin-left: -15px;
+    margin-right: -calc($grid-gutter-width / 2);
+    margin-left: -calc($grid-gutter-width / 2);
   }
   .card-deck .card {
     flex: 1 0 0%;
-    margin-right: 15px;
+    margin-right: calc($grid-gutter-width / 2);
     margin-bottom: 0;
-    margin-left: 15px;
+    margin-left: calc($grid-gutter-width / 2);
   }
 }
 
 .card-group > .card {
-  margin-bottom: 15px;
+  margin-bottom: calc($grid-gutter-width / 2);
 }
 @media (min-width: 576px) {
   .card-group {
@@ -13687,7 +13690,7 @@ input[type=button].btn-block {
   flex-wrap: wrap;
   padding: 0.56rem 1.13rem;
   margin-bottom: 1rem;
-  font-size: 0.875rem;
+  font-size: calc($fs / $rfs-rem-value)rem;
   list-style: none;
   background-color: transparent;
   border-radius: 0.25rem;
@@ -13788,7 +13791,7 @@ input[type=button].btn-block {
 .pagination-lg .jsgrid .jsgrid-pager .jsgrid-pager-page a,
 .jsgrid .jsgrid-pager .jsgrid-pager-page .pagination-lg a {
   padding: 0.75rem 1.5rem;
-  font-size: 1.25rem;
+  font-size: calc($fs / $rfs-rem-value)rem;
   line-height: 1.5;
 }
 .pagination-lg .page-item:first-child .page-link, .pagination-lg .page-item:first-child .jsgrid .jsgrid-pager .jsgrid-pager-nav-button a, .jsgrid .jsgrid-pager .jsgrid-pager-nav-button .pagination-lg .page-item:first-child a,
@@ -13816,7 +13819,7 @@ input[type=button].btn-block {
 .pagination-sm .jsgrid .jsgrid-pager .jsgrid-pager-page a,
 .jsgrid .jsgrid-pager .jsgrid-pager-page .pagination-sm a {
   padding: 0.25rem 0.5rem;
-  font-size: 0.875rem;
+  font-size: calc($fs / $rfs-rem-value)rem;
   line-height: 1.5;
 }
 .pagination-sm .page-item:first-child .page-link, .pagination-sm .page-item:first-child .jsgrid .jsgrid-pager .jsgrid-pager-nav-button a, .jsgrid .jsgrid-pager .jsgrid-pager-nav-button .pagination-sm .page-item:first-child a,
@@ -14135,7 +14138,7 @@ a.badge-dark:focus, a.badge-dark.focus {
   height: 1rem;
   overflow: hidden;
   line-height: 0;
-  font-size: 0.75rem;
+  font-size: calc($fs / $rfs-rem-value)rem;
   background-color: #e9ecef;
   border-radius: 0.25rem;
 }
@@ -14481,7 +14484,7 @@ a.badge-dark:focus, a.badge-dark.focus {
 
 .close {
   float: right;
-  font-size: 1.5rem;
+  font-size: calc($fs / $rfs-rem-value)rem;
   font-weight: 700;
   line-height: 1;
   color: #000;
@@ -14509,7 +14512,7 @@ a.close.disabled {
 .toast {
   flex-basis: 350px;
   max-width: 350px;
-  font-size: 0.875rem;
+  font-size: calc($fs / $rfs-rem-value)rem;
   background-color: rgba(255, 255, 255, 0.85);
   background-clip: padding-box;
   border: 1px solid rgba(0, 0, 0, 0.1);
@@ -14759,7 +14762,7 @@ a.close.disabled {
   word-spacing: normal;
   white-space: normal;
   line-break: auto;
-  font-size: 0.75rem;
+  font-size: calc($fs / $rfs-rem-value)rem;
   word-wrap: break-word;
   opacity: 0;
 }
@@ -14861,7 +14864,7 @@ a.close.disabled {
   word-spacing: normal;
   white-space: normal;
   line-break: auto;
-  font-size: 0.875rem;
+  font-size: calc($fs / $rfs-rem-value)rem;
   word-wrap: break-word;
   background-color: #fff;
   background-clip: padding-box;
@@ -14970,7 +14973,7 @@ a.close.disabled {
 .popover-header {
   padding: 0.5rem 0.75rem;
   margin-bottom: 0;
-  font-size: 1rem;
+  font-size: calc($fs / $rfs-rem-value)rem;
   background-color: #f7f7f7;
   border-bottom: 1px solid #ebebeb;
   border-top-left-radius: calc(0.3rem - 1px);
