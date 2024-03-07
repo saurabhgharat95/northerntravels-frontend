@@ -2,9 +2,9 @@ import { useState } from "react";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import Footer from "../components/Footer";
-const CountryMaster = () => {
-  const [isSidebarOpen, setSidebarOpen] = useState(true);
 
+const StateMaster = () => {
+  const [isSidebarOpen, setSidebarOpen] = useState(true);
   return (
     <div class="container-scroller">
       <Navbar setSidebarOpen={setSidebarOpen}></Navbar>
@@ -14,14 +14,14 @@ const CountryMaster = () => {
           <div class="content-wrapper">
             <div class="card">
               <div class="card-body">
-                <h4 class="card-title">Countries Master</h4>
+                <h4 class="card-title">State / Location Master </h4>
                 <div class="float-right">
                   <button
                     className="btn btn-primary btn-sm"
                     data-bs-toggle="modal"
                     data-bs-target="#countryModal"
                   >
-                    Add Country
+                    Add State / Location
                   </button>
                 </div>
                 <br></br>
@@ -102,6 +102,17 @@ const CountryMaster = () => {
                                     aria-label="Purchased On: activate to sort column ascending"
                                     style={{ width: "171.375px" }}
                                   >
+                                    State / Location
+                                  </th>
+                                  <th
+                                    class="sorting"
+                                    tabindex="0"
+                                    aria-controls="order-listing"
+                                    rowspan="1"
+                                    colspan="1"
+                                    aria-label="Purchased On: activate to sort column ascending"
+                                    style={{ width: "171.375px" }}
+                                  >
                                     Country
                                   </th>
                                   <th
@@ -131,6 +142,7 @@ const CountryMaster = () => {
                               <tbody>
                                 <tr class="odd">
                                   <td class="sorting_1">1</td>
+                                  <td>Maharashtra</td>
                                   <td>India</td>
                                   <td>
                                     <label class="badge badge-success">
@@ -151,7 +163,9 @@ const CountryMaster = () => {
                                 </tr>
                                 <tr class="odd">
                                   <td class="sorting_1">2</td>
-                                  <td>UAE</td>
+                                  <td>Jammu & Kashmir </td>
+
+                                  <td>India</td>
                                   <td>
                                     <label class="badge badge-success">
                                       Active
@@ -171,7 +185,9 @@ const CountryMaster = () => {
                                 </tr>
                                 <tr class="odd">
                                   <td class="sorting_1">3</td>
-                                  <td>China</td>
+                                  <td>Andaman & Nicobar Islands</td>
+
+                                  <td>India</td>
                                   <td>
                                     <label class="badge badge-danger">
                                       Inactive
@@ -191,7 +207,9 @@ const CountryMaster = () => {
                                 </tr>
                                 <tr class="odd">
                                   <td class="sorting_1">4</td>
-                                  <td>England</td>
+                                  <td>Himachal Pradesh</td>
+
+                                  <td>India</td>
                                   <td>
                                     <label class="badge badge-success">
                                       Active
@@ -230,7 +248,7 @@ const CountryMaster = () => {
                                       class="modal-title"
                                       id="exampleModalLabel"
                                     >
-                                      Add Country
+                                      Add State / Location
                                     </h5>
                                     <button
                                       type="button"
@@ -243,13 +261,37 @@ const CountryMaster = () => {
                                   </div>
                                   <div class="modal-body">
                                     <div class="form-group">
-                                      <label>Country Name</label>
+                                      <label>State / Location Name</label>
                                       <input
                                         type="text"
                                         class="form-control form-control-sm"
-                                        placeholder="Enter Country Name"
-                                        aria-label="Username"
+                                        placeholder="Enter State / Location Name"
                                       />
+                                    </div>
+                                    <div class="form-group">
+                                      <label>Country</label>
+                                      <select
+                                        class="js-example-basic-single w-100 select2-hidden-accessible"
+                                        data-select2-id="1"
+                                        tabindex="-1"
+                                        aria-hidden="true"
+                                      >
+                                        <option value="in" data-select2-id="3">
+                                          India
+                                        </option>
+                                        <option
+                                          value="uae"
+                                          data-select2-id="16"
+                                        >
+                                          UAE
+                                        </option>
+                                        <option
+                                          value="eng"
+                                          data-select2-id="18"
+                                        >
+                                          England
+                                        </option>
+                                      </select>
                                     </div>
                                   </div>
                                   <div class="modal-footer">
@@ -350,4 +392,4 @@ const CountryMaster = () => {
   );
 };
 
-export default CountryMaster;
+export default StateMaster;

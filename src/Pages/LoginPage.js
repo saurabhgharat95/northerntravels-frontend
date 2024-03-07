@@ -9,8 +9,8 @@ const LoginPage = () => {
     { name: "Confirm Voucher", value: "4" },
   ];
   const onSubmit = (e) => {
-    e.preventDefault()
-    window.location.href = process.env.PUBLIC_URL+"/";
+    e.preventDefault();
+    window.location.href = process.env.PUBLIC_URL + "/";
   };
   return (
     <div className="container-scroller">

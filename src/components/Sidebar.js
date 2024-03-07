@@ -9,7 +9,7 @@ const Sidebar = (props) => {
       >
         <ul className="nav">
           <li className="nav-item">
-            <a className="nav-link" href="index.html">
+            <a className="nav-link" href="/">
               <i className="menu-icon">
                 <ion-icon name="home-outline"></ion-icon>
               </i>
@@ -68,17 +68,17 @@ const Sidebar = (props) => {
             <div className="collapse" id="ui-basic">
               <ul className="nav flex-column sub-menu">
                 <li className="nav-item"> <a className="nav-link" href="/countries">Countries</a></li>
-                <li className="nav-item"> <a className="nav-link" href="pages/ui-features/dropdowns.html">State / Location</a></li>
-                <li className="nav-item"> <a className="nav-link" href="pages/ui-features/typography.html">Start / End point </a></li>
-                <li className="nav-item"> <a className="nav-link" href="pages/ui-features/typography.html">Destinations</a></li>
-                <li className="nav-item"> <a className="nav-link" href="pages/ui-features/typography.html">Hotel Type</a></li>
-                <li className="nav-item"> <a className="nav-link" href="pages/ui-features/typography.html">Halting Destinations</a></li>
-                <li className="nav-item"> <a className="nav-link" href="pages/ui-features/typography.html">Hotels</a></li>
-                <li className="nav-item"> <a className="nav-link" href="pages/ui-features/typography.html">Car</a></li>
-                <li className="nav-item"> <a className="nav-link" href="pages/ui-features/typography.html">Transportation</a></li>
-                <li className="nav-item"> <a className="nav-link" href="pages/ui-features/typography.html">Pickup / Drop point</a></li>
-                <li className="nav-item"> <a className="nav-link" href="pages/ui-features/typography.html">Meal Type</a></li>
-                <li className="nav-item"> <a className="nav-link" href="pages/ui-features/typography.html">Room Type</a></li>
+                <li className="nav-item"> <a className="nav-link" href="/states">State / Location</a></li>
+                <li className="nav-item"> <a className="nav-link" href="/start-end-pts">Start / End point </a></li>
+                <li className="nav-item"> <a className="nav-link" href="/destinations">Destinations</a></li>
+                <li className="nav-item"> <a className="nav-link" href="/hotel-type">Hotel Type</a></li>
+                <li className="nav-item"> <a className="nav-link" href="/halting-dest">Halting Destinations</a></li>
+                <li className="nav-item"> <a className="nav-link" href="/hotels">Hotels</a></li>
+                <li className="nav-item"> <a className="nav-link" href="/cars">Car</a></li>
+                <li className="nav-item"> <a className="nav-link" href="/transportations">Transportation</a></li>
+                <li className="nav-item"> <a className="nav-link" href="/pickup-drop-pts">Pickup / Drop point</a></li>
+                <li className="nav-item"> <a className="nav-link" href="/meal-types">Meal Type</a></li>
+                <li className="nav-item"> <a className="nav-link" href="/room-types">Room Type</a></li>
               </ul>
             </div>
           </li>

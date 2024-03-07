@@ -3,7 +3,7 @@ import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 
 const Homepage = () => {
-  const [isSidebarOpen,setSidebarOpen] = useState(true)
+  const [isSidebarOpen, setSidebarOpen] = useState(true);
   const getTodaysDate = () => {
     var currentDate = new Date();
 
@@ -35,7 +35,7 @@ const Homepage = () => {
     var formattedDate = day + " " + monthName + ", " + year;
     return formattedDate;
   };
-  
+
   return (
     <div class="container-scroller">
       <Navbar setSidebarOpen={setSidebarOpen}></Navbar>

@@ -2,7 +2,8 @@ import { useState } from "react";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import Footer from "../components/Footer";
-const CountryMaster = () => {
+
+const HotelTypeMaster = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
 
   return (
@@ -14,14 +15,14 @@ const CountryMaster = () => {
           <div class="content-wrapper">
             <div class="card">
               <div class="card-body">
-                <h4 class="card-title">Countries Master</h4>
+                <h4 class="card-title">Hotel Type Master </h4>
                 <div class="float-right">
                   <button
                     className="btn btn-primary btn-sm"
                     data-bs-toggle="modal"
                     data-bs-target="#countryModal"
                   >
-                    Add Country
+                    Add Hotel Type
                   </button>
                 </div>
                 <br></br>
@@ -102,8 +103,9 @@ const CountryMaster = () => {
                                     aria-label="Purchased On: activate to sort column ascending"
                                     style={{ width: "171.375px" }}
                                   >
-                                    Country
+                                    Hotel Type
                                   </th>
+
                                   <th
                                     class="sorting"
                                     tabindex="0"
@@ -131,7 +133,8 @@ const CountryMaster = () => {
                               <tbody>
                                 <tr class="odd">
                                   <td class="sorting_1">1</td>
-                                  <td>India</td>
+                                  <td>1 Star</td>
+
                                   <td>
                                     <label class="badge badge-success">
                                       Active
@@ -151,7 +154,8 @@ const CountryMaster = () => {
                                 </tr>
                                 <tr class="odd">
                                   <td class="sorting_1">2</td>
-                                  <td>UAE</td>
+                                  <td>2 Star</td>
+
                                   <td>
                                     <label class="badge badge-success">
                                       Active
@@ -171,7 +175,8 @@ const CountryMaster = () => {
                                 </tr>
                                 <tr class="odd">
                                   <td class="sorting_1">3</td>
-                                  <td>China</td>
+                                  <td>3 Star</td>
+
                                   <td>
                                     <label class="badge badge-danger">
                                       Inactive
@@ -191,7 +196,29 @@ const CountryMaster = () => {
                                 </tr>
                                 <tr class="odd">
                                   <td class="sorting_1">4</td>
-                                  <td>England</td>
+                                  <td>4 Star</td>
+
+                                  <td>
+                                    <label class="badge badge-success">
+                                      Active
+                                    </label>
+                                  </td>
+                                  <td>
+                                    <ion-icon
+                                      name="trash-outline"
+                                      color="danger"
+                                      style={{ marginRight: "10px" }}
+                                    ></ion-icon>
+                                    <ion-icon
+                                      name="create-outline"
+                                      color="primary"
+                                    ></ion-icon>
+                                  </td>
+                                </tr>
+                                <tr class="odd">
+                                  <td class="sorting_1">4</td>
+                                  <td>5 Star</td>
+
                                   <td>
                                     <label class="badge badge-success">
                                       Active
@@ -230,7 +257,7 @@ const CountryMaster = () => {
                                       class="modal-title"
                                       id="exampleModalLabel"
                                     >
-                                      Add Country
+                                      Add Hotel Type
                                     </h5>
                                     <button
                                       type="button"
@@ -243,12 +270,11 @@ const CountryMaster = () => {
                                   </div>
                                   <div class="modal-body">
                                     <div class="form-group">
-                                      <label>Country Name</label>
+                                      <label>Hotel Type </label>
                                       <input
                                         type="text"
                                         class="form-control form-control-sm"
-                                        placeholder="Enter Country Name"
-                                        aria-label="Username"
+                                        placeholder="Enter Hotel Type "
                                       />
                                     </div>
                                   </div>
@@ -350,4 +376,4 @@ const CountryMaster = () => {
   );
 };
 
-export default CountryMaster;
+export default HotelTypeMaster;

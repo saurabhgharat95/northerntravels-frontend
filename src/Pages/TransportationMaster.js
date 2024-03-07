@@ -2,7 +2,7 @@ import { useState } from "react";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import Footer from "../components/Footer";
-const CountryMaster = () => {
+const TransportationMaster = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
 
   return (
@@ -14,14 +14,14 @@ const CountryMaster = () => {
           <div class="content-wrapper">
             <div class="card">
               <div class="card-body">
-                <h4 class="card-title">Countries Master</h4>
+                <h4 class="card-title">Transportation Master </h4>
                 <div class="float-right">
                   <button
                     className="btn btn-primary btn-sm"
                     data-bs-toggle="modal"
                     data-bs-target="#countryModal"
                   >
-                    Add Country
+                    Add Transportation
                   </button>
                 </div>
                 <br></br>
@@ -102,8 +102,75 @@ const CountryMaster = () => {
                                     aria-label="Purchased On: activate to sort column ascending"
                                     style={{ width: "171.375px" }}
                                   >
+                                    Car Name
+                                  </th>
+                                  <th
+                                    class="sorting"
+                                    tabindex="0"
+                                    aria-controls="order-listing"
+                                    rowspan="1"
+                                    colspan="1"
+                                    aria-label="Purchased On: activate to sort column ascending"
+                                    style={{ width: "171.375px" }}
+                                  >
+                                    Pickup Point
+                                  </th>
+                                  <th
+                                    class="sorting"
+                                    tabindex="0"
+                                    aria-controls="order-listing"
+                                    rowspan="1"
+                                    colspan="1"
+                                    aria-label="Purchased On: activate to sort column ascending"
+                                    style={{ width: "171.375px" }}
+                                  >
+                                    Drop Point
+                                  </th>
+                                  <th
+                                    class="sorting"
+                                    tabindex="0"
+                                    aria-controls="order-listing"
+                                    rowspan="1"
+                                    colspan="1"
+                                    aria-label="Purchased On: activate to sort column ascending"
+                                    style={{ width: "171.375px" }}
+                                  >
+                                    On Season Costing
+                                  </th>
+                                  <th
+                                    class="sorting"
+                                    tabindex="0"
+                                    aria-controls="order-listing"
+                                    rowspan="1"
+                                    colspan="1"
+                                    aria-label="Purchased On: activate to sort column ascending"
+                                    style={{ width: "171.375px" }}
+                                  >
+                                    Off Season Costing
+                                  </th>
+                                  <th
+                                    class="sorting"
+                                    tabindex="0"
+                                    aria-controls="order-listing"
+                                    rowspan="1"
+                                    colspan="1"
+                                    aria-label="Purchased On: activate to sort column ascending"
+                                    style={{ width: "171.375px" }}
+                                  >
+                                    State / Location
+                                  </th>
+                                  <th
+                                    class="sorting"
+                                    tabindex="0"
+                                    aria-controls="order-listing"
+                                    rowspan="1"
+                                    colspan="1"
+                                    aria-label="Purchased On: activate to sort column ascending"
+                                    style={{ width: "171.375px" }}
+                                  >
                                     Country
                                   </th>
+
                                   <th
                                     class="sorting"
                                     tabindex="0"
@@ -131,7 +198,14 @@ const CountryMaster = () => {
                               <tbody>
                                 <tr class="odd">
                                   <td class="sorting_1">1</td>
+                                  <td>Etios</td>
+                                  <td>Arrival Srinagar Airport</td>
+                                  <td>Gulmarg Overnight Stay</td>
+                                  <td>2500</td>
+                                  <td>2200</td>
+                                  <td>Jammu & Kashmir</td>
                                   <td>India</td>
+
                                   <td>
                                     <label class="badge badge-success">
                                       Active
@@ -150,8 +224,17 @@ const CountryMaster = () => {
                                   </td>
                                 </tr>
                                 <tr class="odd">
-                                  <td class="sorting_1">2</td>
-                                  <td>UAE</td>
+                                  <td class="sorting_1">1</td>
+                                  <td>Swift Dzire</td>
+                                  <td>Neil To Port Blair Stay</td>
+                                  <td>
+                                    Port Blair Local Sightseeing Stay Port Blair
+                                  </td>
+                                  <td>2500</td>
+                                  <td>2500</td>
+                                  <td>Andaman</td>
+                                  <td>India</td>
+
                                   <td>
                                     <label class="badge badge-success">
                                       Active
@@ -170,28 +253,15 @@ const CountryMaster = () => {
                                   </td>
                                 </tr>
                                 <tr class="odd">
-                                  <td class="sorting_1">3</td>
-                                  <td>China</td>
-                                  <td>
-                                    <label class="badge badge-danger">
-                                      Inactive
-                                    </label>
-                                  </td>
-                                  <td>
-                                    <ion-icon
-                                      name="trash-outline"
-                                      color="danger"
-                                      style={{ marginRight: "10px" }}
-                                    ></ion-icon>
-                                    <ion-icon
-                                      name="create-outline"
-                                      color="primary"
-                                    ></ion-icon>
-                                  </td>
-                                </tr>
-                                <tr class="odd">
-                                  <td class="sorting_1">4</td>
-                                  <td>England</td>
+                                  <td class="sorting_1">1</td>
+                                  <td>Etios</td>
+                                  <td>Port Blair</td>
+                                  <td>Port Blair Airport Departure</td>
+                                  <td>300</td>
+                                  <td>300</td>
+                                  <td>Andaman</td>
+                                  <td>India</td>
+
                                   <td>
                                     <label class="badge badge-success">
                                       Active
@@ -230,7 +300,7 @@ const CountryMaster = () => {
                                       class="modal-title"
                                       id="exampleModalLabel"
                                     >
-                                      Add Country
+                                      Add Transportation
                                     </h5>
                                     <button
                                       type="button"
@@ -243,13 +313,145 @@ const CountryMaster = () => {
                                   </div>
                                   <div class="modal-body">
                                     <div class="form-group">
-                                      <label>Country Name</label>
+                                      <label>Car</label>
+                                      <select
+                                        class="js-example-basic-single w-100 select2-hidden-accessible"
+                                        data-select2-id="1"
+                                        tabindex="-1"
+                                        aria-hidden="true"
+                                      >
+                                        <option value="in" data-select2-id="3">
+                                          Etios
+                                        </option>
+                                        <option value="in" data-select2-id="3">
+                                          4 star
+                                        </option>
+                                        <option value="in" data-select2-id="3">
+                                          3 star
+                                        </option>
+                                        <option value="in" data-select2-id="3">
+                                          2 star
+                                        </option>
+                                        <option value="in" data-select2-id="3">
+                                          1 star
+                                        </option>
+                                      </select>
+                                    </div>
+                                    <div class="form-group">
+                                      <label>Pickup Point</label>
+                                      <select
+                                        class="js-example-basic-single w-100 select2-hidden-accessible"
+                                        data-select2-id="1"
+                                        tabindex="-1"
+                                        aria-hidden="true"
+                                      >
+                                        <option value="in" data-select2-id="3">
+                                          Srinagar Airport
+                                        </option>
+                                        <option value="in" data-select2-id="3">
+                                          4 star
+                                        </option>
+                                        <option value="in" data-select2-id="3">
+                                          3 star
+                                        </option>
+                                        <option value="in" data-select2-id="3">
+                                          2 star
+                                        </option>
+                                        <option value="in" data-select2-id="3">
+                                          1 star
+                                        </option>
+                                      </select>
+                                    </div>
+                                    <div class="form-group">
+                                      <label>Drop Point</label>
+                                      <select
+                                        class="js-example-basic-single w-100 select2-hidden-accessible"
+                                        data-select2-id="1"
+                                        tabindex="-1"
+                                        aria-hidden="true"
+                                      >
+                                        <option value="in" data-select2-id="3">
+                                          Srinagar Airport
+                                        </option>
+                                        <option value="in" data-select2-id="3">
+                                          4 star
+                                        </option>
+                                        <option value="in" data-select2-id="3">
+                                          3 star
+                                        </option>
+                                        <option value="in" data-select2-id="3">
+                                          2 star
+                                        </option>
+                                        <option value="in" data-select2-id="3">
+                                          1 star
+                                        </option>
+                                      </select>
+                                    </div>
+                                    <div class="form-group">
+                                      <label>On Season Costing</label>
                                       <input
                                         type="text"
                                         class="form-control form-control-sm"
-                                        placeholder="Enter Country Name"
-                                        aria-label="Username"
+                                        placeholder="Enter On Season Costing"
                                       />
+                                    </div>
+                                    <div class="form-group">
+                                      <label>Off Season Costing</label>
+                                      <input
+                                        type="text"
+                                        class="form-control form-control-sm"
+                                        placeholder="Enter Off Season Costing"
+                                      />
+                                    </div>
+                                    <div class="form-group">
+                                      <label>State</label>
+                                      <select
+                                        class="js-example-basic-single w-100 select2-hidden-accessible"
+                                        data-select2-id="1"
+                                        tabindex="-1"
+                                        aria-hidden="true"
+                                      >
+                                        <option value="in" data-select2-id="3">
+                                          Jammu & Kashmir
+                                        </option>
+                                        <option value="in" data-select2-id="3">
+                                          4 star
+                                        </option>
+                                        <option value="in" data-select2-id="3">
+                                          3 star
+                                        </option>
+                                        <option value="in" data-select2-id="3">
+                                          2 star
+                                        </option>
+                                        <option value="in" data-select2-id="3">
+                                          1 star
+                                        </option>
+                                      </select>
+                                    </div>
+                                    <div class="form-group">
+                                      <label>Country</label>
+                                      <select
+                                        class="js-example-basic-single w-100 select2-hidden-accessible"
+                                        data-select2-id="1"
+                                        tabindex="-1"
+                                        aria-hidden="true"
+                                      >
+                                        <option value="in" data-select2-id="3">
+                                          India
+                                        </option>
+                                        <option value="in" data-select2-id="3">
+                                          4 star
+                                        </option>
+                                        <option value="in" data-select2-id="3">
+                                          3 star
+                                        </option>
+                                        <option value="in" data-select2-id="3">
+                                          2 star
+                                        </option>
+                                        <option value="in" data-select2-id="3">
+                                          1 star
+                                        </option>
+                                      </select>
                                     </div>
                                   </div>
                                   <div class="modal-footer">
@@ -350,4 +552,4 @@ const CountryMaster = () => {
   );
 };
 
-export default CountryMaster;
+export default TransportationMaster;

@@ -2,7 +2,7 @@ import { useState } from "react";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import Footer from "../components/Footer";
-const CountryMaster = () => {
+const HotelMaster = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
 
   return (
@@ -14,14 +14,14 @@ const CountryMaster = () => {
           <div class="content-wrapper">
             <div class="card">
               <div class="card-body">
-                <h4 class="card-title">Countries Master</h4>
+                <h4 class="card-title">Hotel Master </h4>
                 <div class="float-right">
                   <button
                     className="btn btn-primary btn-sm"
                     data-bs-toggle="modal"
                     data-bs-target="#countryModal"
                   >
-                    Add Country
+                    Add Hotel
                   </button>
                 </div>
                 <br></br>
@@ -102,6 +102,50 @@ const CountryMaster = () => {
                                     aria-label="Purchased On: activate to sort column ascending"
                                     style={{ width: "171.375px" }}
                                   >
+                                    Hotel Name
+                                  </th>
+                                  <th
+                                    class="sorting"
+                                    tabindex="0"
+                                    aria-controls="order-listing"
+                                    rowspan="1"
+                                    colspan="1"
+                                    aria-label="Purchased On: activate to sort column ascending"
+                                    style={{ width: "171.375px" }}
+                                  >
+                                    Hotel Type
+                                  </th>
+                                  <th
+                                    class="sorting"
+                                    tabindex="0"
+                                    aria-controls="order-listing"
+                                    rowspan="1"
+                                    colspan="1"
+                                    aria-label="Purchased On: activate to sort column ascending"
+                                    style={{ width: "171.375px" }}
+                                  >
+                                    Halting Destination
+                                  </th>
+                                  <th
+                                    class="sorting"
+                                    tabindex="0"
+                                    aria-controls="order-listing"
+                                    rowspan="1"
+                                    colspan="1"
+                                    aria-label="Purchased On: activate to sort column ascending"
+                                    style={{ width: "171.375px" }}
+                                  >
+                                    State / Location
+                                  </th>
+                                  <th
+                                    class="sorting"
+                                    tabindex="0"
+                                    aria-controls="order-listing"
+                                    rowspan="1"
+                                    colspan="1"
+                                    aria-label="Purchased On: activate to sort column ascending"
+                                    style={{ width: "171.375px" }}
+                                  >
                                     Country
                                   </th>
                                   <th
@@ -131,7 +175,11 @@ const CountryMaster = () => {
                               <tbody>
                                 <tr class="odd">
                                   <td class="sorting_1">1</td>
-                                  <td>India</td>
+                                  <td>Budshah Residency</td>
+                                  <td>3 Star</td>
+                                  <td>Srinagar</td>
+                                  <td>Jammu & Kashmir </td>
+                                  <td>India </td>
                                   <td>
                                     <label class="badge badge-success">
                                       Active
@@ -151,7 +199,11 @@ const CountryMaster = () => {
                                 </tr>
                                 <tr class="odd">
                                   <td class="sorting_1">2</td>
-                                  <td>UAE</td>
+                                  <td>Hotel Mama Palace</td>
+                                  <td>4 Star</td>
+                                  <td>Gulmarg</td>
+                                  <td>Jammu & Kashmir </td>
+                                  <td>India </td>
                                   <td>
                                     <label class="badge badge-success">
                                       Active
@@ -171,27 +223,11 @@ const CountryMaster = () => {
                                 </tr>
                                 <tr class="odd">
                                   <td class="sorting_1">3</td>
-                                  <td>China</td>
-                                  <td>
-                                    <label class="badge badge-danger">
-                                      Inactive
-                                    </label>
-                                  </td>
-                                  <td>
-                                    <ion-icon
-                                      name="trash-outline"
-                                      color="danger"
-                                      style={{ marginRight: "10px" }}
-                                    ></ion-icon>
-                                    <ion-icon
-                                      name="create-outline"
-                                      color="primary"
-                                    ></ion-icon>
-                                  </td>
-                                </tr>
-                                <tr class="odd">
-                                  <td class="sorting_1">4</td>
-                                  <td>England</td>
+                                  <td>Lakes Crown Houseboat</td>
+                                  <td>3 Star</td>
+                                  <td>Srinagar</td>
+                                  <td>Jammu & Kashmir </td>
+                                  <td>India </td>
                                   <td>
                                     <label class="badge badge-success">
                                       Active
@@ -230,7 +266,7 @@ const CountryMaster = () => {
                                       class="modal-title"
                                       id="exampleModalLabel"
                                     >
-                                      Add Country
+                                      Add Hotel
                                     </h5>
                                     <button
                                       type="button"
@@ -243,13 +279,112 @@ const CountryMaster = () => {
                                   </div>
                                   <div class="modal-body">
                                     <div class="form-group">
-                                      <label>Country Name</label>
+                                      <label>Hotel Name</label>
                                       <input
                                         type="text"
                                         class="form-control form-control-sm"
-                                        placeholder="Enter Country Name"
-                                        aria-label="Username"
+                                        placeholder="Enter Hotel Name"
                                       />
+                                    </div>
+                                    <div class="form-group">
+                                      <label>Hotel Type</label>
+                                      <select
+                                        class="js-example-basic-single w-100 select2-hidden-accessible"
+                                        data-select2-id="1"
+                                        tabindex="-1"
+                                        aria-hidden="true"
+                                      >
+                                        <option value="in" data-select2-id="3">
+                                          5 star
+                                        </option>
+                                        <option value="in" data-select2-id="3">
+                                          4 star
+                                        </option>
+                                        <option value="in" data-select2-id="3">
+                                          3 star
+                                        </option>
+                                        <option value="in" data-select2-id="3">
+                                          2 star
+                                        </option>
+                                        <option value="in" data-select2-id="3">
+                                          1 star
+                                        </option>
+                                      </select>
+                                    </div>
+                                    <div class="form-group">
+                                      <label>Halting Destination</label>
+                                      <select
+                                        class="js-example-basic-single w-100 select2-hidden-accessible"
+                                        data-select2-id="1"
+                                        tabindex="-1"
+                                        aria-hidden="true"
+                                      >
+                                        <option value="in" data-select2-id="3">
+                                          Srinagar
+                                        </option>
+                                        <option value="in" data-select2-id="3">
+                                          Gulmarg
+                                        </option>
+                                        <option value="in" data-select2-id="3">
+                                          Sonmarg
+                                        </option>
+                                        <option value="in" data-select2-id="3">
+                                          Havelock
+                                        </option>
+                                        <option value="in" data-select2-id="3">
+                                          Pahalgam
+                                        </option>
+                                      </select>
+                                    </div>
+                                    <div class="form-group">
+                                      <label>State / Location</label>
+                                      <select
+                                        class="js-example-basic-single w-100 select2-hidden-accessible"
+                                        data-select2-id="1"
+                                        tabindex="-1"
+                                        aria-hidden="true"
+                                      >
+                                        <option value="in" data-select2-id="3">
+                                          Maharashtra
+                                        </option>
+                                        <option
+                                          value="uae"
+                                          data-select2-id="16"
+                                        >
+                                          Jammu & Kashmir
+                                        </option>
+                                        <option
+                                          value="eng"
+                                          data-select2-id="18"
+                                        >
+                                          Himachal Pradesh
+                                        </option>
+                                      </select>
+                                    </div>
+                                    <div class="form-group">
+                                      <label>Country</label>
+                                      <select
+                                        class="js-example-basic-single w-100 select2-hidden-accessible"
+                                        data-select2-id="1"
+                                        tabindex="-1"
+                                        aria-hidden="true"
+                                      >
+                                        <option value="in" data-select2-id="3">
+                                          India
+                                        </option>
+                                        <option
+                                          value="uae"
+                                          data-select2-id="16"
+                                        >
+                                          UAE
+                                        </option>
+                                        <option
+                                          value="eng"
+                                          data-select2-id="18"
+                                        >
+                                          England
+                                        </option>
+                                      </select>
                                     </div>
                                   </div>
                                   <div class="modal-footer">
@@ -350,4 +485,4 @@ const CountryMaster = () => {
   );
 };
 
-export default CountryMaster;
+export default HotelMaster;
