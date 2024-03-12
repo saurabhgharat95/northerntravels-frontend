@@ -1,21 +1,19 @@
 import { useState } from "react";
-import Navbar from "../components/Navbar";
-import Sidebar from "../components/Sidebar";
-import Footer from "../components/Footer";
+import { Footer, Navbar, Sidebar } from "../components/CommonImport";
 
 const StateMaster = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
   return (
-    <div class="container-scroller">
+    <div className="container-scroller">
       <Navbar setSidebarOpen={setSidebarOpen}></Navbar>
-      <div class="container-fluid page-body-wrapper">
+      <div className="container-fluid page-body-wrapper">
         <Sidebar isSidebarOpen={isSidebarOpen}></Sidebar>
-        <div class="main-panel">
-          <div class="content-wrapper">
-            <div class="card">
-              <div class="card-body">
-                <h4 class="card-title">State / Location Master </h4>
-                <div class="float-right">
+        <div className="main-panel">
+          <div className="content-wrapper">
+            <div className="card">
+              <div className="card-body">
+                <h4 className="card-title">State / Location Master </h4>
+                <div className="float-right">
                   <button
                     className="btn btn-primary btn-sm"
                     data-bs-toggle="modal"
@@ -27,17 +25,17 @@ const StateMaster = () => {
                 <br></br>
                 <br></br>
                 <br></br>
-                <div class="row">
-                  <div class="col-12">
-                    <div class="table-responsive">
+                <div className="row">
+                  <div className="col-12">
+                    <div className="table-responsive">
                       <div
                         id="order-listing_wrapper"
-                        class="dataTables_wrapper dt-bootstrap5 no-footer"
+                        className="dataTables_wrapper dt-bootstrap5 no-footer"
                       >
-                        <div class="row">
-                          <div class="col-sm-12 col-md-6">
+                        <div className="row">
+                          <div className="col-sm-12 col-md-6">
                             <div
-                              class="dataTables_length"
+                              className="dataTables_length"
                               id="order-listing_length"
                             >
                               <label>
@@ -45,7 +43,7 @@ const StateMaster = () => {
                                 <select
                                   name="order-listing_length"
                                   aria-controls="order-listing"
-                                  class="form-select form-select-sm"
+                                  className="form-select form-select-sm"
                                 >
                                   <option value="5">5</option>
                                   <option value="10">10</option>
@@ -56,15 +54,15 @@ const StateMaster = () => {
                               </label>
                             </div>
                           </div>
-                          <div class="col-sm-12 col-md-6">
+                          <div className="col-sm-12 col-md-6">
                             <div
                               id="order-listing_filter"
-                              class="dataTables_filter"
+                              className="dataTables_filter"
                             >
                               <label>
                                 <input
                                   type="search"
-                                  class="form-control"
+                                  className="form-control"
                                   placeholder="Search"
                                   aria-controls="order-listing"
                                 />
@@ -72,17 +70,17 @@ const StateMaster = () => {
                             </div>
                           </div>
                         </div>
-                        <div class="row dt-row">
-                          <div class="col-sm-12">
+                        <div className="row dt-row">
+                          <div className="col-sm-12">
                             <table
                               id="order-listing"
-                              class="table dataTable no-footer"
+                              className="table dataTable no-footer"
                               aria-describedby="order-listing_info"
                             >
                               <thead>
                                 <tr>
                                   <th
-                                    class="sorting sorting_asc"
+                                    className="sorting sorting_asc"
                                     tabindex="0"
                                     aria-controls="order-listing"
                                     rowspan="1"
@@ -94,7 +92,7 @@ const StateMaster = () => {
                                     Sr. No.
                                   </th>
                                   <th
-                                    class="sorting"
+                                    className="sorting"
                                     tabindex="0"
                                     aria-controls="order-listing"
                                     rowspan="1"
@@ -105,7 +103,7 @@ const StateMaster = () => {
                                     State / Location
                                   </th>
                                   <th
-                                    class="sorting"
+                                    className="sorting"
                                     tabindex="0"
                                     aria-controls="order-listing"
                                     rowspan="1"
@@ -116,7 +114,7 @@ const StateMaster = () => {
                                     Country
                                   </th>
                                   <th
-                                    class="sorting"
+                                    className="sorting"
                                     tabindex="0"
                                     aria-controls="order-listing"
                                     rowspan="1"
@@ -127,7 +125,7 @@ const StateMaster = () => {
                                     Status
                                   </th>
                                   <th
-                                    class="sorting"
+                                    className="sorting"
                                     tabindex="0"
                                     aria-controls="order-listing"
                                     rowspan="1"
@@ -140,12 +138,12 @@ const StateMaster = () => {
                                 </tr>
                               </thead>
                               <tbody>
-                                <tr class="odd">
-                                  <td class="sorting_1">1</td>
+                                <tr className="odd">
+                                  <td className="sorting_1">1</td>
                                   <td>Maharashtra</td>
                                   <td>India</td>
                                   <td>
-                                    <label class="badge badge-success">
+                                    <label className="badge badge-success">
                                       Active
                                     </label>
                                   </td>
@@ -161,13 +159,13 @@ const StateMaster = () => {
                                     ></ion-icon>
                                   </td>
                                 </tr>
-                                <tr class="odd">
-                                  <td class="sorting_1">2</td>
+                                <tr className="odd">
+                                  <td className="sorting_1">2</td>
                                   <td>Jammu & Kashmir </td>
 
                                   <td>India</td>
                                   <td>
-                                    <label class="badge badge-success">
+                                    <label className="badge badge-success">
                                       Active
                                     </label>
                                   </td>
@@ -183,13 +181,13 @@ const StateMaster = () => {
                                     ></ion-icon>
                                   </td>
                                 </tr>
-                                <tr class="odd">
-                                  <td class="sorting_1">3</td>
+                                <tr className="odd">
+                                  <td className="sorting_1">3</td>
                                   <td>Andaman & Nicobar Islands</td>
 
                                   <td>India</td>
                                   <td>
-                                    <label class="badge badge-danger">
+                                    <label className="badge badge-danger">
                                       Inactive
                                     </label>
                                   </td>
@@ -205,13 +203,13 @@ const StateMaster = () => {
                                     ></ion-icon>
                                   </td>
                                 </tr>
-                                <tr class="odd">
-                                  <td class="sorting_1">4</td>
+                                <tr className="odd">
+                                  <td className="sorting_1">4</td>
                                   <td>Himachal Pradesh</td>
 
                                   <td>India</td>
                                   <td>
-                                    <label class="badge badge-success">
+                                    <label className="badge badge-success">
                                       Active
                                     </label>
                                   </td>
@@ -231,7 +229,7 @@ const StateMaster = () => {
                             </table>
 
                             <div
-                              class="modal fade"
+                              className="modal fade"
                               id="countryModal"
                               tabindex="-1"
                               aria-labelledby="exampleModalLabel"
@@ -239,39 +237,39 @@ const StateMaster = () => {
                               aria-hidden="true"
                             >
                               <div
-                                class="modal-dialog modal-md"
+                                className="modal-dialog modal-md"
                                 role="document"
                               >
-                                <div class="modal-content">
-                                  <div class="modal-header">
+                                <div className="modal-content">
+                                  <div className="modal-header">
                                     <h5
-                                      class="modal-title"
+                                      className="modal-title"
                                       id="exampleModalLabel"
                                     >
                                       Add State / Location
                                     </h5>
                                     <button
                                       type="button"
-                                      class="close"
+                                      className="close"
                                       data-bs-dismiss="modal"
                                       aria-label="Close"
                                     >
                                       <span aria-hidden="true">×</span>
                                     </button>
                                   </div>
-                                  <div class="modal-body">
-                                    <div class="form-group">
+                                  <div className="modal-body">
+                                    <div className="form-group">
                                       <label>State / Location Name</label>
                                       <input
                                         type="text"
-                                        class="form-control form-control-sm"
+                                        className="form-control form-control-sm"
                                         placeholder="Enter State / Location Name"
                                       />
                                     </div>
-                                    <div class="form-group">
+                                    <div className="form-group">
                                       <label>Country</label>
                                       <select
-                                        class="js-example-basic-single w-100 select2-hidden-accessible"
+                                        className="js-example-basic-single w-100 select2-hidden-accessible"
                                         data-select2-id="1"
                                         tabindex="-1"
                                         aria-hidden="true"
@@ -294,16 +292,16 @@ const StateMaster = () => {
                                       </select>
                                     </div>
                                   </div>
-                                  <div class="modal-footer">
+                                  <div className="modal-footer">
                                     <button
                                       type="button"
-                                      class="btn btn-success"
+                                      className="btn btn-success"
                                     >
                                       Submit
                                     </button>
                                     <button
                                       type="button"
-                                      class="btn btn-light"
+                                      className="btn btn-light"
                                       data-bs-dismiss="modal"
                                     >
                                       Cancel
@@ -314,10 +312,10 @@ const StateMaster = () => {
                             </div>
                           </div>
                         </div>
-                        <div class="row">
-                          <div class="col-sm-12 col-md-5">
+                        <div className="row">
+                          <div className="col-sm-12 col-md-5">
                             <div
-                              class="dataTables_info"
+                              className="dataTables_info"
                               id="order-listing_info"
                               role="status"
                               aria-live="polite"
@@ -325,14 +323,14 @@ const StateMaster = () => {
                               Showing 1 to 10 of 10 entries
                             </div>
                           </div>
-                          <div class="col-sm-12 col-md-7">
+                          <div className="col-sm-12 col-md-7">
                             <div
-                              class="dataTables_paginate paging_simple_numbers"
+                              className="dataTables_paginate paging_simple_numbers"
                               id="order-listing_paginate"
                             >
-                              <ul class="pagination">
+                              <ul className="pagination">
                                 <li
-                                  class="paginate_button page-item previous disabled"
+                                  className="paginate_button page-item previous disabled"
                                   id="order-listing_previous"
                                 >
                                   <a
@@ -341,12 +339,12 @@ const StateMaster = () => {
                                     role="link"
                                     data-dt-idx="previous"
                                     tabindex="-1"
-                                    class="page-link"
+                                    className="page-link"
                                   >
                                     Previous
                                   </a>
                                 </li>
-                                <li class="paginate_button page-item active">
+                                <li className="paginate_button page-item active">
                                   <a
                                     href="https://demo.bootstrapdash.com/skydash/themes/vertical-default-light/pages/tables/data-table.html#"
                                     aria-controls="order-listing"
@@ -354,13 +352,13 @@ const StateMaster = () => {
                                     aria-current="page"
                                     data-dt-idx="0"
                                     tabindex="0"
-                                    class="page-link"
+                                    className="page-link"
                                   >
                                     1
                                   </a>
                                 </li>
                                 <li
-                                  class="paginate_button page-item next disabled"
+                                  className="paginate_button page-item next disabled"
                                   id="order-listing_next"
                                 >
                                   <a
@@ -369,7 +367,7 @@ const StateMaster = () => {
                                     role="link"
                                     data-dt-idx="next"
                                     tabindex="-1"
-                                    class="page-link"
+                                    className="page-link"
                                   >
                                     Next
                                   </a>

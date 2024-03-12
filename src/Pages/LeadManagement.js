@@ -1,8 +1,15 @@
-import { useState } from "react";
+import { useState,useRef } from "react";
 import { Footer, Navbar, Sidebar } from "../components/CommonImport";
-const HaltingDestinationMaster = () => {
+import {SlideDown} from 'react-slidedown'
+import 'react-slidedown/lib/slidedown.css'
+const LeadManagement = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
-
+  const [isFormOpen, setFormOpen] = useState(false);
+  const todaysDate = new Date().toISOString().split("T")[0]
+  const openForm = () => {
+    setFormOpen(!isFormOpen)
+   
+  }
   return (
     <div className="container-scroller">
       <Navbar setSidebarOpen={setSidebarOpen}></Navbar>
@@ -12,17 +19,115 @@ const HaltingDestinationMaster = () => {
           <div className="content-wrapper">
             <div className="card">
               <div className="card-body">
-                <h4 className="card-title">Halting Destination Master </h4>
+                <h4 className="card-title">Lead Management </h4>
                 <div className="float-right">
                   <button
                     className="btn btn-primary btn-sm"
-                    data-bs-toggle="modal"
-                    data-bs-target="#countryModal"
+                    onClick={()=>openForm()}
                   >
-                    Add Halting Destination
+                    Add Lead
                   </button>
                 </div>
                 <br></br>
+                <br></br>
+                <br></br>
+                {isFormOpen && 
+                 <SlideDown className={'my-dropdown-slidedown'}>
+                <div  className={`form-div show-box ${isFormOpen ? 'visible' : 'hidden'}`}>
+                <div class="card">
+                <div class="card-body">
+                 
+                  <form class="form-sample">
+                    
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group row">
+                          <label class="col-sm-3 col-form-label">Lead Date</label>
+                          <div class="col-sm-9">
+                            <input type="date" class="form-control" min={todaysDate} value={todaysDate}/>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group row">
+                          <label class="col-sm-3 col-form-label">Customer Name</label>
+                          <div class="col-sm-9">
+                            <input type="text" class="form-control"/>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                 
+                 
+                   
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group row">
+                          <label class="col-sm-3 col-form-label">Contact No</label>
+                          <div class="col-sm-9">
+                            <input type="number" class="form-control"/>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group row">
+                          <label class="col-sm-3 col-form-label">Email</label>
+                          <div class="col-sm-9">
+                            <input type="text" class="form-control"/>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group row">
+                          <label class="col-sm-3 col-form-label">Location / Address</label>
+                          <div class="col-sm-9">
+                            <input type="text" class="form-control"/>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group row">
+                          <label class="col-sm-3 col-form-label">Lead Status</label>
+                          <div class="col-sm-9">
+                            <select class="form-control">
+                              <option>Hot</option>
+                              <option>Warm</option>
+                              <option>Cold</option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group row">
+                          <label class="col-sm-3 col-form-label">Details</label>
+                          <div class="col-sm-9">
+                            <textarea type="text" class="form-control" />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+                  <div className="text-center">
+                    <button type="button" className="btn btn-success mr-2">
+                      Submit
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-light"
+                      data-bs-dismiss="modal"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+                </SlideDown>
+                }
                 <br></br>
                 <br></br>
                 <div className="row">
@@ -100,29 +205,7 @@ const HaltingDestinationMaster = () => {
                                     aria-label="Purchased On: activate to sort column ascending"
                                     style={{ width: "171.375px" }}
                                   >
-                                    Halting Destination
-                                  </th>
-                                  <th
-                                    className="sorting"
-                                    tabindex="0"
-                                    aria-controls="order-listing"
-                                    rowspan="1"
-                                    colspan="1"
-                                    aria-label="Purchased On: activate to sort column ascending"
-                                    style={{ width: "171.375px" }}
-                                  >
-                                    State / Location
-                                  </th>
-                                  <th
-                                    className="sorting"
-                                    tabindex="0"
-                                    aria-controls="order-listing"
-                                    rowspan="1"
-                                    colspan="1"
-                                    aria-label="Purchased On: activate to sort column ascending"
-                                    style={{ width: "171.375px" }}
-                                  >
-                                    Country
+                                    Lead Date
                                   </th>
                                   <th
                                     className="sorting"
@@ -132,6 +215,28 @@ const HaltingDestinationMaster = () => {
                                     colspan="1"
                                     aria-label="Customer: activate to sort column ascending"
                                     style={{ width: "127.391px" }}
+                                  >
+                                    Customer Name
+                                  </th>
+                                  <th
+                                    className="sorting"
+                                    tabindex="0"
+                                    aria-controls="order-listing"
+                                    rowspan="1"
+                                    colspan="1"
+                                    aria-label="Ship to: activate to sort column ascending"
+                                    style={{ width: "116.672px" }}
+                                  >
+                                    Contact No.
+                                  </th>
+                                  <th
+                                    className="sorting"
+                                    tabindex="0"
+                                    aria-controls="order-listing"
+                                    rowspan="1"
+                                    colspan="1"
+                                    aria-label="Ship to: activate to sort column ascending"
+                                    style={{ width: "116.672px" }}
                                   >
                                     Status
                                   </th>
@@ -151,92 +256,82 @@ const HaltingDestinationMaster = () => {
                               <tbody>
                                 <tr className="odd">
                                   <td className="sorting_1">1</td>
-                                  <td>Mumbai Airport</td>
-                                  <td>Maharashtra</td>
-                                  <td>India</td>
-                                  <td>
-                                    <label className="badge badge-success">
-                                      Active
-                                    </label>
-                                  </td>
+                                  <td>01-03-2024</td>
+                                  <td>John Doe</td>
+                                  <td>9920254462</td>
+                                  <td>Hot</td>
                                   <td>
                                     <ion-icon
-                                      name="trash-outline"
-                                      color="danger"
+                                      name="eye-outline"
+                                      color="secondary"
                                       style={{ marginRight: "10px" }}
+                                      title="View Details"
                                     ></ion-icon>
                                     <ion-icon
                                       name="create-outline"
                                       color="primary"
+                                      style={{ marginRight: "10px" }}
+                                      title="Edit"
+                                    ></ion-icon>
+                                    <ion-icon
+                                      name="checkbox-outline"
+                                      color="success"
+                                      style={{ marginRight: "10px" }}
+                                      title="Change Status"
                                     ></ion-icon>
                                   </td>
                                 </tr>
                                 <tr className="odd">
-                                  <td className="sorting_1">2</td>
-                                  <td>Srinagar Airport</td>
-                                  <td>Jammu & Kashmir </td>
-                                  <td>India</td>
-                                  <td>
-                                    <label className="badge badge-success">
-                                      Active
-                                    </label>
-                                  </td>
+                                  <td className="sorting_1">1</td>
+                                  <td>02-03-2024</td>
+                                  <td>Jane Price</td>
+                                  <td>9887776676</td>
+                                  <td>Cold</td>
                                   <td>
                                     <ion-icon
-                                      name="trash-outline"
-                                      color="danger"
+                                      name="eye-outline"
+                                      color="secondary"
                                       style={{ marginRight: "10px" }}
+                                      title="View Details"
                                     ></ion-icon>
                                     <ion-icon
                                       name="create-outline"
                                       color="primary"
+                                      style={{ marginRight: "10px" }}
+                                      title="Edit"
+                                    ></ion-icon>
+                                    <ion-icon
+                                      name="checkbox-outline"
+                                      color="success"
+                                      style={{ marginRight: "10px" }}
+                                      title="Change Status"
                                     ></ion-icon>
                                   </td>
                                 </tr>
                                 <tr className="odd">
-                                  <td className="sorting_1">3</td>
-                                  <td>Port Blair Airport</td>
-                                  <td>Andaman & Nicobar Islands</td>
-
-                                  <td>India</td>
-                                  <td>
-                                    <label className="badge badge-danger">
-                                      Inactive
-                                    </label>
-                                  </td>
+                                  <td className="sorting_1">1</td>
+                                  <td>01-03-2024</td>
+                                  <td>Mark Millett</td>
+                                  <td>8787667677</td>
+                                  <td>Warm</td>
                                   <td>
                                     <ion-icon
-                                      name="trash-outline"
-                                      color="danger"
+                                      name="eye-outline"
+                                      color="secondary"
                                       style={{ marginRight: "10px" }}
+                                      title="View Details"
                                     ></ion-icon>
                                     <ion-icon
                                       name="create-outline"
                                       color="primary"
-                                    ></ion-icon>
-                                  </td>
-                                </tr>
-                                <tr className="odd">
-                                  <td className="sorting_1">4</td>
-                                  <td>Shimla Airport</td>
-
-                                  <td>Himachal Pradesh</td>
-
-                                  <td>India</td>
-                                  <td>
-                                    <label className="badge badge-success">
-                                      Active
-                                    </label>
-                                  </td>
-                                  <td>
-                                    <ion-icon
-                                      name="trash-outline"
-                                      color="danger"
                                       style={{ marginRight: "10px" }}
+                                      title="Edit"
                                     ></ion-icon>
                                     <ion-icon
-                                      name="create-outline"
-                                      color="primary"
+                                      name="checkbox-outline"
+                                      color="success"
+                                      style={{ marginRight: "10px" }}
+                                      title="Change Status"
                                     ></ion-icon>
                                   </td>
                                 </tr>
@@ -261,7 +356,7 @@ const HaltingDestinationMaster = () => {
                                       className="modal-title"
                                       id="exampleModalLabel"
                                     >
-                                      Add Halting Destination
+                                      Add Country
                                     </h5>
                                     <button
                                       type="button"
@@ -274,62 +369,13 @@ const HaltingDestinationMaster = () => {
                                   </div>
                                   <div className="modal-body">
                                     <div className="form-group">
-                                      <label>Halting Destination</label>
+                                      <label>Country Name</label>
                                       <input
                                         type="text"
                                         className="form-control form-control-sm"
-                                        placeholder="Enter Halting Destination"
+                                        placeholder="Enter Country Name"
+                                        aria-label="Username"
                                       />
-                                    </div>
-                                    <div className="form-group">
-                                      <label>State / Location</label>
-                                      <select
-                                        className="js-example-basic-single w-100 select2-hidden-accessible"
-                                        data-select2-id="1"
-                                        tabindex="-1"
-                                        aria-hidden="true"
-                                      >
-                                        <option value="in" data-select2-id="3">
-                                          Maharashtra
-                                        </option>
-                                        <option
-                                          value="uae"
-                                          data-select2-id="16"
-                                        >
-                                          Jammu & Kashmir
-                                        </option>
-                                        <option
-                                          value="eng"
-                                          data-select2-id="18"
-                                        >
-                                          Himachal Pradesh
-                                        </option>
-                                      </select>
-                                    </div>
-                                    <div className="form-group">
-                                      <label>Country</label>
-                                      <select
-                                        className="js-example-basic-single w-100 select2-hidden-accessible"
-                                        data-select2-id="1"
-                                        tabindex="-1"
-                                        aria-hidden="true"
-                                      >
-                                        <option value="in" data-select2-id="3">
-                                          India
-                                        </option>
-                                        <option
-                                          value="uae"
-                                          data-select2-id="16"
-                                        >
-                                          UAE
-                                        </option>
-                                        <option
-                                          value="eng"
-                                          data-select2-id="18"
-                                        >
-                                          England
-                                        </option>
-                                      </select>
                                     </div>
                                   </div>
                                   <div className="modal-footer">
@@ -429,5 +475,4 @@ const HaltingDestinationMaster = () => {
     </div>
   );
 };
-
-export default HaltingDestinationMaster;
+export default LeadManagement;

@@ -37,50 +37,50 @@ const Homepage = () => {
   };
 
   return (
-    <div class="container-scroller">
+    <div className="container-scroller">
       <Navbar setSidebarOpen={setSidebarOpen}></Navbar>
-      <div class="container-fluid page-body-wrapper">
+      <div className="container-fluid page-body-wrapper">
         <Sidebar isSidebarOpen={isSidebarOpen}></Sidebar>
-        <div class="main-panel">
-          <div class="content-wrapper">
-            <div class="row">
-              <div class="col-md-12 grid-margin">
-                <div class="row">
-                  <div class="col-12 col-xl-8 mb-4 mb-xl-0">
-                    <h3 class="font-weight-bold">Welcome Admin</h3>
-                    <h6 class="font-weight-normal mb-0">
+        <div className="main-panel">
+          <div className="content-wrapper">
+            <div className="row">
+              <div className="col-md-12 grid-margin">
+                <div className="row">
+                  <div className="col-12 col-xl-8 mb-4 mb-xl-0">
+                    <h3 className="font-weight-bold">Welcome Admin</h3>
+                    <h6 className="font-weight-normal mb-0">
                       All systems are running smoothly! You have{" "}
-                      <span class="text-primary">3 unread alerts!</span>
+                      <span className="text-primary">3 unread alerts!</span>
                     </h6>
                   </div>
-                  <div class="col-12 col-xl-4">
-                    <div class="justify-content-end d-flex">
-                      <div class="dropdown flex-md-grow-1 flex-xl-grow-0">
+                  <div className="col-12 col-xl-4">
+                    <div className="justify-content-end d-flex">
+                      <div className="dropdown flex-md-grow-1 flex-xl-grow-0">
                         <button
-                          class="btn btn-sm btn-light bg-white dropdown-toggle"
+                          className="btn btn-sm btn-light bg-white dropdown-toggle"
                           type="button"
                           id="dropdownMenuDate2"
                           data-toggle="dropdown"
                           aria-haspopup="true"
                           aria-expanded="true"
                         >
-                          <i class="mdi mdi-calendar"></i> Today (
+                          <i className="mdi mdi-calendar"></i> Today (
                           {getTodaysDate()})
                         </button>
                         <div
-                          class="dropdown-menu dropdown-menu-right"
+                          className="dropdown-menu dropdown-menu-right"
                           aria-labelledby="dropdownMenuDate2"
                         >
-                          <a class="dropdown-item" href="#">
+                          <a className="dropdown-item" href="#">
                             January - March
                           </a>
-                          <a class="dropdown-item" href="#">
+                          <a className="dropdown-item" href="#">
                             March - June
                           </a>
-                          <a class="dropdown-item" href="#">
+                          <a className="dropdown-item" href="#">
                             June - August
                           </a>
-                          <a class="dropdown-item" href="#">
+                          <a className="dropdown-item" href="#">
                             August - November
                           </a>
                         </div>
@@ -90,60 +90,60 @@ const Homepage = () => {
                 </div>
               </div>
             </div>
-            <div class="row">
-              <div class="col-md-6 grid-margin stretch-card">
-                <div class="card tale-bg">
-                  <div class="card-people mt-auto">
+            <div className="row">
+              <div className="col-md-6 grid-margin stretch-card">
+                <div className="card tale-bg">
+                  <div className="card-people mt-auto">
                     <img src="images/dashboard/people.svg" alt="people" />
-                    <div class="weather-info">
-                      <div class="d-flex">
+                    <div className="weather-info">
+                      <div className="d-flex">
                         <div>
-                          <h2 class="mb-0 font-weight-normal">
-                            <i class="icon-sun mr-2"></i>31<sup>C</sup>
+                          <h2 className="mb-0 font-weight-normal">
+                            <i className="icon-sun mr-2"></i>31<sup>C</sup>
                           </h2>
                         </div>
-                        <div class="ml-2">
-                          <h4 class="location font-weight-normal">Mumbai</h4>
-                          <h6 class="font-weight-normal">India</h6>
+                        <div className="ml-2">
+                          <h4 className="location font-weight-normal">Mumbai</h4>
+                          <h6 className="font-weight-normal">India</h6>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-              <div class="col-md-6 grid-margin transparent">
-                <div class="row">
-                  <div class="col-md-6 mb-4 stretch-card transparent">
-                    <div class="card card-tale">
-                      <div class="card-body">
-                        <p class="mb-4">Quotations</p>
-                        <p class="fs-30 mb-2">4006</p>
+              <div className="col-md-6 grid-margin transparent">
+                <div className="row">
+                  <div className="col-md-6 mb-4 stretch-card transparent">
+                    <div className="card card-tale">
+                      <div className="card-body">
+                        <p className="mb-4">Quotations</p>
+                        <p className="fs-30 mb-2">4006</p>
                       </div>
                     </div>
                   </div>
-                  <div class="col-md-6 mb-4 stretch-card transparent">
-                    <div class="card card-dark-blue">
-                      <div class="card-body">
-                        <p class="mb-4">Customers</p>
-                        <p class="fs-30 mb-2">61344</p>
+                  <div className="col-md-6 mb-4 stretch-card transparent">
+                    <div className="card card-dark-blue">
+                      <div className="card-body">
+                        <p className="mb-4">Customers</p>
+                        <p className="fs-30 mb-2">61344</p>
                       </div>
                     </div>
                   </div>
                 </div>
-                <div class="row">
-                  <div class="col-md-6 mb-4 mb-lg-0 stretch-card transparent">
-                    <div class="card card-light-blue">
-                      <div class="card-body">
-                        <p class="mb-4">Vouchers</p>
-                        <p class="fs-30 mb-2">34040</p>
+                <div className="row">
+                  <div className="col-md-6 mb-4 mb-lg-0 stretch-card transparent">
+                    <div className="card card-light-blue">
+                      <div className="card-body">
+                        <p className="mb-4">Vouchers</p>
+                        <p className="fs-30 mb-2">34040</p>
                       </div>
                     </div>
                   </div>
-                  <div class="col-md-6 stretch-card transparent">
-                    <div class="card card-light-danger">
-                      <div class="card-body">
-                        <p class="mb-4">Hotels</p>
-                        <p class="fs-30 mb-2">47033</p>
+                  <div className="col-md-6 stretch-card transparent">
+                    <div className="card card-light-danger">
+                      <div className="card-body">
+                        <p className="mb-4">Hotels</p>
+                        <p className="fs-30 mb-2">47033</p>
                       </div>
                     </div>
                   </div>
@@ -152,9 +152,9 @@ const Homepage = () => {
             </div>
           </div>
 
-          <footer class="footer">
-            <div class="d-sm-flex justify-content-center justify-content-sm-between">
-              <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">
+          <footer className="footer">
+            <div className="d-sm-flex justify-content-center justify-content-sm-between">
+              <span className="text-muted text-center text-sm-left d-block d-sm-inline-block">
                 Copyright © 2024. All rights reserved.
               </span>
             </div>
