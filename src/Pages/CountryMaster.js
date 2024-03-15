@@ -1,8 +1,17 @@
 import { useState } from "react";
 import { Footer, Navbar, Sidebar } from "../components/CommonImport";
+// import axios from "axios";
 const CountryMaster = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
+  const [countryName, setCountryName] = useState("");
+  // const addCountry = async()=>{
+  //   try{
+  //     let url = 
+  //   }
+  //   catch(e){
 
+  //   }
+  // }
   return (
     <div className="container-scroller">
       <Navbar setSidebarOpen={setSidebarOpen}></Navbar>
@@ -239,7 +248,11 @@ const CountryMaster = () => {
                                       <span aria-hidden="true">×</span>
                                     </button>
                                   </div>
+                                  <form >
                                   <div className="modal-body">
+                                    
+
+                                    
                                     <div className="form-group">
                                       <label>Country Name</label>
                                       <input
@@ -247,6 +260,10 @@ const CountryMaster = () => {
                                         className="form-control form-control-sm"
                                         placeholder="Enter Country Name"
                                         aria-label="Username"
+                                        value={countryName}
+                                        onChange={(e)=>{
+                                          setCountryName(e.target.value)
+                                        }}
                                       />
                                     </div>
                                   </div>
@@ -254,6 +271,9 @@ const CountryMaster = () => {
                                     <button
                                       type="button"
                                       className="btn btn-success"
+                                      onClick={()=>{
+                                        addCountry()
+                                      }}
                                     >
                                       Submit
                                     </button>
@@ -264,7 +284,9 @@ const CountryMaster = () => {
                                     >
                                       Cancel
                                     </button>
+                                   
                                   </div>
+                                  </form>
                                 </div>
                               </div>
                             </div>
