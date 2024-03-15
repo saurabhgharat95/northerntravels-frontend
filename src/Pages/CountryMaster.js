@@ -4,14 +4,14 @@ import { Footer, Navbar, Sidebar } from "../components/CommonImport";
 const CountryMaster = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
   const [countryName, setCountryName] = useState("");
-  // const addCountry = async()=>{
-  //   try{
-  //     let url = 
-  //   }
-  //   catch(e){
+  const addCountry = async()=>{
+    try{
+      let url = ""
+    }
+    catch(e){
 
-  //   }
-  // }
+    }
+  }
   return (
     <div className="container-scroller">
       <Navbar setSidebarOpen={setSidebarOpen}></Navbar>
