@@ -1,17 +1,132 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Footer, Navbar, Sidebar } from "../components/CommonImport";
-// import axios from "axios";
+import { FETCH_COUNTRY_API,ADD_COUNTRY_API,DELETE_COUNTRY_API,UPDATE_COUNTRY_API } from "../utils/constants";
+
+import axios from "axios";
+import { toast, ToastContainer } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
+
 const CountryMaster = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
   const [countryName, setCountryName] = useState("");
-  const addCountry = async()=>{
+  const [countries, setCountries] = useState("");
+  const [showModal, setShowModal] = useState(false);
+  const [isUpdate, setUpdate] = useState(false);
+  const [updateId, setUpdateId] = useState("");
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
+
+  const fetchCountries = async()=>{
     try{
-      let url = ""
+      let url = FETCH_COUNTRY_API
+     
+      let response = await axios.post(url)
+      console.log('response',response.data.data)
+      if(response){
+        if(response.status==200){
+          setCountries(response.data.data)
+        }
+      }
     }
     catch(e){
       console.log('e',e);
     }
   }
+
+  const addCountry = async()=>{
+    try{
+      let url = ADD_COUNTRY_API
+      let body = {
+        "countryName":countryName
+      }
+      let response = await axios.post(url,body)
+      console.log('response',response)
+      if(response){
+        if(response.status==200){
+          toast.success(response.data.message, {
+            position: "top-right"
+          });
+          
+          setShowModal(false);
+          console.log('showModal',showModal);
+          setCountryName('')
+          fetchCountries()
+        }
+      }
+    }
+    catch(e){
+      console.log('e',e);
+    }
+  }
+  const updateCountry = async()=>{
+    try{
+      let url = UPDATE_COUNTRY_API
+      let body = {
+        "countryName":countryName,
+        "id":updateId
+      }
+      let response = await axios.post(url,body)
+      console.log('response',response)
+      if(response){
+        if(response.status==200){
+          toast.success(response.data.message, {
+            position: "top-right"
+          });
+          
+          setShowModal(false);
+          console.log('showModal',showModal);
+          setCountryName('')
+          fetchCountries()
+        }
+      }
+    }
+    catch(e){
+      console.log('e',e);
+    }
+  }
+  const deleteCountry = async(id)=>{
+    try{
+      let url = DELETE_COUNTRY_API
+      let body = {
+        "id":id
+      }
+      let response = await axios.post(url,body)
+      console.log('response',response)
+      if(response){
+        if(response.status==200){
+          toast.success(response.data.message, {
+            position: "top-right"
+          });
+          
+          setShowModal(false);
+          console.log('showModal',showModal);
+          setCountryName('')
+          fetchCountries()
+        }
+      }
+    }
+    catch(e){
+      console.log('e',e);
+    }
+  }
+
+  const modalStyle = {
+    display: showModal ? 'block' : 'none',
+    opacity:showModal ? '1' : '0',
+    transition: showModal?'opacity 0.15s linear':''
+  };
+  const openModal = (countryName,updateId) =>{
+    console.log('in',countryName);
+    setShowModal(true)
+    setCountryName(countryName)
+    setUpdate(true)
+    setUpdateId(updateId)
+  }
+  useEffect(()=>{
+    fetchCountries()
+  },[])
   return (
     <div className="container-scroller">
       <Navbar setSidebarOpen={setSidebarOpen}></Navbar>
@@ -21,14 +136,15 @@ const CountryMaster = () => {
           <div className="content-wrapper">
             <div className="card">
               <div className="card-body">
-                <h4 className="card-title">Countries Master</h4>
+                <h4 className="card-title">Countries Master {console.log('aaa',modalStyle)}</h4>
                 <div className="float-right">
                   <button
                     className="btn btn-primary btn-sm"
-                    data-bs-toggle="modal"
-                    data-bs-target="#countryModal"
+                    // data-bs-toggle="modal"
+                    // data-bs-target="#countryModal"
+                    onClick={() => setShowModal(true)}
                   >
-                    Add Country
+                    Add Country 
                   </button>
                 </div>
                 <br></br>
@@ -136,12 +252,13 @@ const CountryMaster = () => {
                                 </tr>
                               </thead>
                               <tbody>
-                                <tr className="odd">
-                                  <td className="sorting_1">1</td>
-                                  <td>India</td>
+                                {countries && countries.map((country,index)=>(
+                                  <tr className="odd">
+                                  <td className="sorting_1">{index+1}</td>
+                                  <td>{country.countryName}</td>
                                   <td>
-                                    <label className="badge badge-success">
-                                      Active
+                                    <label className={`badge ${country.status=='1'?'badge-success':'badge-danger'}`}>
+                                    {country.status=='1'?'Active':'Inactive'}
                                     </label>
                                   </td>
                                   <td>
@@ -149,83 +266,31 @@ const CountryMaster = () => {
                                       name="trash-outline"
                                       color="danger"
                                       style={{ marginRight: "10px" }}
+                                      onClick={()=>deleteCountry(country.id)}
                                     ></ion-icon>
                                     <ion-icon
+                                      onClick={()=> openModal(country.countryName,country.id)}
                                       name="create-outline"
                                       color="primary"
                                     ></ion-icon>
                                   </td>
-                                </tr>
-                                <tr className="odd">
-                                  <td className="sorting_1">2</td>
-                                  <td>UAE</td>
-                                  <td>
-                                    <label className="badge badge-success">
-                                      Active
-                                    </label>
-                                  </td>
-                                  <td>
-                                    <ion-icon
-                                      name="trash-outline"
-                                      color="danger"
-                                      style={{ marginRight: "10px" }}
-                                    ></ion-icon>
-                                    <ion-icon
-                                      name="create-outline"
-                                      color="primary"
-                                    ></ion-icon>
-                                  </td>
-                                </tr>
-                                <tr className="odd">
-                                  <td className="sorting_1">3</td>
-                                  <td>China</td>
-                                  <td>
-                                    <label className="badge badge-danger">
-                                      Inactive
-                                    </label>
-                                  </td>
-                                  <td>
-                                    <ion-icon
-                                      name="trash-outline"
-                                      color="danger"
-                                      style={{ marginRight: "10px" }}
-                                    ></ion-icon>
-                                    <ion-icon
-                                      name="create-outline"
-                                      color="primary"
-                                    ></ion-icon>
-                                  </td>
-                                </tr>
-                                <tr className="odd">
-                                  <td className="sorting_1">4</td>
-                                  <td>England</td>
-                                  <td>
-                                    <label className="badge badge-success">
-                                      Active
-                                    </label>
-                                  </td>
-                                  <td>
-                                    <ion-icon
-                                      name="trash-outline"
-                                      color="danger"
-                                      style={{ marginRight: "10px" }}
-                                    ></ion-icon>
-                                    <ion-icon
-                                      name="create-outline"
-                                      color="primary"
-                                    ></ion-icon>
-                                  </td>
-                                </tr>
+                                  </tr>
+                                ))}
+                               
+                              
                               </tbody>
                             </table>
-
+                            
                             <div
+                              style={modalStyle}
+                              // className={`modal ${showModal?' show':'fade'}`}
                               className="modal fade"
                               id="countryModal"
                               tabindex="-1"
                               aria-labelledby="exampleModalLabel"
-                              style={{ display: "none" }}
+                              // style={{ display: "none" }}
                               aria-hidden="true"
+                              data-backdrop="false"
                             >
                               <div
                                 className="modal-dialog modal-md"
@@ -237,13 +302,14 @@ const CountryMaster = () => {
                                       className="modal-title"
                                       id="exampleModalLabel"
                                     >
-                                      Add Country
+                                      {isUpdate?'Edit':'Add'} Country
                                     </h5>
                                     <button
                                       type="button"
                                       className="close"
                                       data-bs-dismiss="modal"
                                       aria-label="Close"
+                                      onClick={handleCloseModal}
                                     >
                                       <span aria-hidden="true">×</span>
                                     </button>
@@ -272,7 +338,7 @@ const CountryMaster = () => {
                                       type="button"
                                       className="btn btn-success"
                                       onClick={()=>{
-                                        addCountry()
+                                        {isUpdate?updateCountry():addCountry()}
                                       }}
                                     >
                                       Submit
@@ -281,6 +347,7 @@ const CountryMaster = () => {
                                       type="button"
                                       className="btn btn-light"
                                       data-bs-dismiss="modal"
+                                      onClick={handleCloseModal}
                                     >
                                       Cancel
                                     </button>
@@ -290,6 +357,7 @@ const CountryMaster = () => {
                                 </div>
                               </div>
                             </div>
+                           
                           </div>
                         </div>
                         <div className="row">
@@ -364,6 +432,7 @@ const CountryMaster = () => {
             </div>
           </div>
           <Footer></Footer>
+          <ToastContainer />
         </div>
       </div>
     </div>
