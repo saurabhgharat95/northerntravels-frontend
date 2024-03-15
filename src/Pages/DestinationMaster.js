@@ -21,7 +21,7 @@ const DestinationMaster = () => {
                     data-bs-target="#countryModal"
                   >
                     Add Destinations
-                  </button>
+                  </button> 
                 </div>
                 <br></br>
                 <br></br>
