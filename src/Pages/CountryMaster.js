@@ -1,132 +1,143 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Footer, Navbar, Sidebar } from "../components/CommonImport";
-import { FETCH_COUNTRY_API,ADD_COUNTRY_API,DELETE_COUNTRY_API,UPDATE_COUNTRY_API } from "../utils/constants";
+import {
+  FETCH_COUNTRY_API,
+  ADD_COUNTRY_API,
+  DELETE_COUNTRY_API,
+  UPDATE_COUNTRY_API,
+} from "../utils/constants";
 
 import axios from "axios";
-import { toast, ToastContainer } from 'react-toastify';
+import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import NoData from "../components/NoData";
+import ConfirmationDialog from "../components/ConfirmationDialog";
 
 const CountryMaster = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
   const [countryName, setCountryName] = useState("");
-  const [countries, setCountries] = useState("");
-  const [showModal, setShowModal] = useState(false);
+  const [countries, setCountries] = useState([]);
   const [isUpdate, setUpdate] = useState(false);
+  const [deleteId, setDeleteId] = useState(false);
   const [updateId, setUpdateId] = useState("");
+  const [showConfirmation, setShowConfirmation] = useState(false);
 
   const handleCloseModal = () => {
-    setShowModal(false);
+    document.getElementById("countryModal").classList.remove("show", "d-block");
+    document
+      .querySelectorAll(".modal-backdrop")
+      .forEach((el) => el.classList.remove("modal-backdrop"));
   };
 
-  const fetchCountries = async()=>{
-    try{
-      let url = FETCH_COUNTRY_API
-     
-      let response = await axios.post(url)
-      console.log('response',response.data.data)
-      if(response){
-        if(response.status==200){
-          setCountries(response.data.data)
-        }
-      }
-    }
-    catch(e){
-      console.log('e',e);
-    }
-  }
+  const fetchCountries = async () => {
+    try {
+      let url = FETCH_COUNTRY_API;
 
-  const addCountry = async()=>{
-    try{
-      let url = ADD_COUNTRY_API
-      let body = {
-        "countryName":countryName
-      }
-      let response = await axios.post(url,body)
-      console.log('response',response)
-      if(response){
-        if(response.status==200){
-          toast.success(response.data.message, {
-            position: "top-right"
-          });
-          
-          setShowModal(false);
-          console.log('showModal',showModal);
-          setCountryName('')
-          fetchCountries()
+      let response = await axios.post(url);
+      console.log("response", response.data.data);
+      if (response) {
+        if (response.status == 200) {
+          setCountries(response.data.data);
         }
       }
+    } catch (e) {
+      setCountries([]);
     }
-    catch(e){
-      console.log('e',e);
-    }
-  }
-  const updateCountry = async()=>{
-    try{
-      let url = UPDATE_COUNTRY_API
-      let body = {
-        "countryName":countryName,
-        "id":updateId
-      }
-      let response = await axios.post(url,body)
-      console.log('response',response)
-      if(response){
-        if(response.status==200){
-          toast.success(response.data.message, {
-            position: "top-right"
-          });
-          
-          setShowModal(false);
-          console.log('showModal',showModal);
-          setCountryName('')
-          fetchCountries()
-        }
-      }
-    }
-    catch(e){
-      console.log('e',e);
-    }
-  }
-  const deleteCountry = async(id)=>{
-    try{
-      let url = DELETE_COUNTRY_API
-      let body = {
-        "id":id
-      }
-      let response = await axios.post(url,body)
-      console.log('response',response)
-      if(response){
-        if(response.status==200){
-          toast.success(response.data.message, {
-            position: "top-right"
-          });
-          
-          setShowModal(false);
-          console.log('showModal',showModal);
-          setCountryName('')
-          fetchCountries()
-        }
-      }
-    }
-    catch(e){
-      console.log('e',e);
-    }
-  }
-
-  const modalStyle = {
-    display: showModal ? 'block' : 'none',
-    opacity:showModal ? '1' : '0',
-    transition: showModal?'opacity 0.15s linear':''
   };
-  const openModal = (countryName,updateId) =>{
-    console.log('in',countryName);
-    setShowModal(true)
-    setCountryName(countryName)
-    setUpdate(true)
-    setUpdateId(updateId)
-  }
-  useEffect(()=>{
-    fetchCountries()
-  },[])
+
+  const addCountry = async () => {
+    try {
+      let url = ADD_COUNTRY_API;
+      let body = {
+        countryName: countryName,
+      };
+      let response = await axios.post(url, body);
+      console.log("response", response);
+      if (response) {
+        if (response.status == 200) {
+          toast.success(response.data.message, {
+            position: "top-right",
+          });
+          handleCloseModal();
+          console.log("showModal", showModal);
+          setCountryName("");
+          fetchCountries();
+        }
+      }
+    } catch (e) {
+      toast.error("Something Went Wrong :(", {
+        position: "top-right",
+      });
+    }
+  };
+  const updateCountry = async () => {
+    try {
+      let url = UPDATE_COUNTRY_API;
+      let body = {
+        countryName: countryName,
+        id: updateId,
+      };
+      let response = await axios.post(url, body);
+      if (response) {
+        if (response.status == 200) {
+          toast.success(response.data.message, {
+            position: "top-right",
+          });
+
+          handleCloseModal();
+          setCountryName("");
+          fetchCountries();
+        }
+      }
+    } catch (e) {
+      toast.error("Something Went Wrong :(", {
+        position: "top-right",
+      });
+    }
+  };
+  const deleteCountry = async (id) => {
+    try {
+      let url = DELETE_COUNTRY_API;
+      let body = {
+        id: id,
+      };
+      let response = await axios.post(url, body);
+      console.log("response", response);
+      if (response) {
+        if (response.status == 200) {
+          toast.success(response.data.message, {
+            position: "top-right",
+          });
+
+          setCountryName("");
+          fetchCountries();
+        }
+      }
+    } catch (e) {
+      toast.error("Something Went Wrong :(", {
+        position: "top-right",
+      });
+    }
+  };
+
+  const openModal = (countryName, updateId) => {
+    setCountryName(countryName);
+    setUpdate(true);
+    setUpdateId(updateId);
+  };
+
+  const handleConfirm = () => {
+    deleteCountry(deleteId);
+    setShowConfirmation(false);
+  };
+
+  const handleCancel = () => {
+    console.log("Cancelled");
+    setShowConfirmation(false);
+  };
+  useEffect(() => {
+    fetchCountries();
+  }, []);
   return (
     <div className="container-scroller">
       <Navbar setSidebarOpen={setSidebarOpen}></Navbar>
@@ -136,15 +147,18 @@ const CountryMaster = () => {
           <div className="content-wrapper">
             <div className="card">
               <div className="card-body">
-                <h4 className="card-title">Countries Master {console.log('aaa',modalStyle)}</h4>
+                <h4 className="card-title">Countries Master </h4>
                 <div className="float-right">
                   <button
                     className="btn btn-primary btn-sm"
-                    // data-bs-toggle="modal"
-                    // data-bs-target="#countryModal"
-                    onClick={() => setShowModal(true)}
+                    data-bs-toggle="modal"
+                    data-bs-target="#countryModal"
+                    onClick={() => {
+                      setCountryName("");
+                      setUpdate(false);
+                    }}
                   >
-                    Add Country 
+                    Add Country
                   </button>
                 </div>
                 <br></br>
@@ -197,100 +211,120 @@ const CountryMaster = () => {
                         </div>
                         <div className="row dt-row">
                           <div className="col-sm-12">
-                            <table
-                              id="order-listing"
-                              className="table dataTable no-footer"
-                              aria-describedby="order-listing_info"
-                            >
-                              <thead>
-                                <tr>
-                                  <th
-                                    className="sorting sorting_asc"
-                                    tabindex="0"
-                                    aria-controls="order-listing"
-                                    rowspan="1"
-                                    colspan="1"
-                                    aria-sort="ascending"
-                                    aria-label="Order #: activate to sort column descending"
-                                    style={{ width: "107.016px" }}
-                                  >
-                                    Sr. No.
-                                  </th>
-                                  <th
-                                    className="sorting"
-                                    tabindex="0"
-                                    aria-controls="order-listing"
-                                    rowspan="1"
-                                    colspan="1"
-                                    aria-label="Purchased On: activate to sort column ascending"
-                                    style={{ width: "171.375px" }}
-                                  >
-                                    Country
-                                  </th>
-                                  <th
-                                    className="sorting"
-                                    tabindex="0"
-                                    aria-controls="order-listing"
-                                    rowspan="1"
-                                    colspan="1"
-                                    aria-label="Customer: activate to sort column ascending"
-                                    style={{ width: "127.391px" }}
-                                  >
-                                    Status
-                                  </th>
-                                  <th
-                                    className="sorting"
-                                    tabindex="0"
-                                    aria-controls="order-listing"
-                                    rowspan="1"
-                                    colspan="1"
-                                    aria-label="Ship to: activate to sort column ascending"
-                                    style={{ width: "116.672px" }}
-                                  >
-                                    Action
-                                  </th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                {countries && countries.map((country,index)=>(
-                                  <tr className="odd">
-                                  <td className="sorting_1">{index+1}</td>
-                                  <td>{country.countryName}</td>
-                                  <td>
-                                    <label className={`badge ${country.status=='1'?'badge-success':'badge-danger'}`}>
-                                    {country.status=='1'?'Active':'Inactive'}
-                                    </label>
-                                  </td>
-                                  <td>
-                                    <ion-icon
-                                      name="trash-outline"
-                                      color="danger"
-                                      style={{ marginRight: "10px" }}
-                                      onClick={()=>deleteCountry(country.id)}
-                                    ></ion-icon>
-                                    <ion-icon
-                                      onClick={()=> openModal(country.countryName,country.id)}
-                                      name="create-outline"
-                                      color="primary"
-                                    ></ion-icon>
-                                  </td>
+                            {countries && countries.length > 0 && (
+                              <table
+                                id="order-listing"
+                                className="table dataTable no-footer"
+                                aria-describedby="order-listing_info"
+                              >
+                                <thead>
+                                  <tr>
+                                    <th
+                                      className="sorting sorting_asc"
+                                      tabindex="0"
+                                      aria-controls="order-listing"
+                                      rowspan="1"
+                                      colspan="1"
+                                      aria-sort="ascending"
+                                      aria-label="Order #: activate to sort column descending"
+                                      style={{ width: "107.016px" }}
+                                    >
+                                      Sr. No.
+                                    </th>
+                                    <th
+                                      className="sorting"
+                                      tabindex="0"
+                                      aria-controls="order-listing"
+                                      rowspan="1"
+                                      colspan="1"
+                                      aria-label="Purchased On: activate to sort column ascending"
+                                      style={{ width: "171.375px" }}
+                                    >
+                                      Country
+                                    </th>
+                                    <th
+                                      className="sorting"
+                                      tabindex="0"
+                                      aria-controls="order-listing"
+                                      rowspan="1"
+                                      colspan="1"
+                                      aria-label="Customer: activate to sort column ascending"
+                                      style={{ width: "127.391px" }}
+                                    >
+                                      Status
+                                    </th>
+                                    <th
+                                      className="sorting"
+                                      tabindex="0"
+                                      aria-controls="order-listing"
+                                      rowspan="1"
+                                      colspan="1"
+                                      aria-label="Ship to: activate to sort column ascending"
+                                      style={{ width: "116.672px" }}
+                                    >
+                                      Action
+                                    </th>
                                   </tr>
-                                ))}
-                               
-                              
-                              </tbody>
-                            </table>
-                            
+                                </thead>
+                                <tbody>
+                                  {countries &&
+                                    countries.map((country, index) => (
+                                      <tr className="odd" key={index}>
+                                        <td className="sorting_1">
+                                          {index + 1}
+                                        </td>
+                                        <td>{country.countryName}</td>
+                                        <td>
+                                          <label
+                                            className={`badge ${
+                                              country.status == "1"
+                                                ? "badge-success"
+                                                : "badge-danger"
+                                            }`}
+                                          >
+                                            {country.status == "1"
+                                              ? "Active"
+                                              : "Inactive"}
+                                          </label>
+                                        </td>
+                                        <td>
+                                          <ion-icon
+                                            name="trash-outline"
+                                            color="danger"
+                                            style={{ marginRight: "10px" }}
+                                            onClick={() => {
+                                              setShowConfirmation(true);
+                                              setDeleteId(country.id);
+                                            }}
+                                          ></ion-icon>
+                                          <ion-icon
+                                            onClick={() =>
+                                              openModal(
+                                                country.countryName,
+                                                country.id
+                                              )
+                                            }
+                                            name="create-outline"
+                                            color="primary"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#countryModal"
+                                          ></ion-icon>
+                                        </td>
+                                      </tr>
+                                    ))}
+                                </tbody>
+                              </table>
+                            )}
+                            {countries && countries.length == 0 && (
+                              <NoData></NoData>
+                            )}
+
                             <div
-                              style={modalStyle}
-                              // className={`modal ${showModal?' show':'fade'}`}
                               className="modal fade"
                               id="countryModal"
                               tabindex="-1"
                               aria-labelledby="exampleModalLabel"
-                              // style={{ display: "none" }}
                               aria-hidden="true"
-                              data-backdrop="false"
                             >
                               <div
                                 className="modal-dialog modal-md"
@@ -302,7 +336,7 @@ const CountryMaster = () => {
                                       className="modal-title"
                                       id="exampleModalLabel"
                                     >
-                                      {isUpdate?'Edit':'Add'} Country
+                                      {isUpdate ? "Edit" : "Add"} Country
                                     </h5>
                                     <button
                                       type="button"
@@ -314,50 +348,49 @@ const CountryMaster = () => {
                                       <span aria-hidden="true">×</span>
                                     </button>
                                   </div>
-                                  <form >
-                                  <div className="modal-body">
-                                    
-
-                                    
-                                    <div className="form-group">
-                                      <label>Country Name</label>
-                                      <input
-                                        type="text"
-                                        className="form-control form-control-sm"
-                                        placeholder="Enter Country Name"
-                                        aria-label="Username"
-                                        value={countryName}
-                                        onChange={(e)=>{
-                                          setCountryName(e.target.value)
-                                        }}
-                                      />
+                                  <form>
+                                    <div className="modal-body">
+                                      <div className="form-group">
+                                        <label>Country Name</label>
+                                        <input
+                                          type="text"
+                                          className="form-control form-control-sm"
+                                          placeholder="Enter Country Name"
+                                          aria-label="Username"
+                                          value={countryName}
+                                          onChange={(e) => {
+                                            setCountryName(e.target.value);
+                                          }}
+                                        />
+                                      </div>
                                     </div>
-                                  </div>
-                                  <div className="modal-footer">
-                                    <button
-                                      type="button"
-                                      className="btn btn-success"
-                                      onClick={()=>{
-                                        {isUpdate?updateCountry():addCountry()}
-                                      }}
-                                    >
-                                      Submit
-                                    </button>
-                                    <button
-                                      type="button"
-                                      className="btn btn-light"
-                                      data-bs-dismiss="modal"
-                                      onClick={handleCloseModal}
-                                    >
-                                      Cancel
-                                    </button>
-                                   
-                                  </div>
+                                    <div className="modal-footer">
+                                      <button
+                                        type="button"
+                                        className="btn btn-success"
+                                        onClick={() => {
+                                          {
+                                            isUpdate
+                                              ? updateCountry()
+                                              : addCountry();
+                                          }
+                                        }}
+                                      >
+                                        Submit
+                                      </button>
+                                      <button
+                                        type="button"
+                                        className="btn btn-light"
+                                        data-bs-dismiss="modal"
+                                        onClick={handleCloseModal}
+                                      >
+                                        Cancel
+                                      </button>
+                                    </div>
                                   </form>
                                 </div>
                               </div>
                             </div>
-                           
                           </div>
                         </div>
                         <div className="row">
@@ -433,6 +466,13 @@ const CountryMaster = () => {
           </div>
           <Footer></Footer>
           <ToastContainer />
+
+          <ConfirmationDialog
+            message="Are you sure you want to delete?"
+            onConfirm={handleConfirm}
+            onCancel={handleCancel}
+            show={showConfirmation}
+          />
         </div>
       </div>
     </div>
