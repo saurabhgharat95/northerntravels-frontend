@@ -2,7 +2,9 @@ import { useState } from "react";
 import { Footer, Navbar, Sidebar } from "../components/CommonImport";
 const QuotationManagement = () =>{
     const [isSidebarOpen, setSidebarOpen] = useState(true);
-
+    const goToAddForm = () =>{
+      window.location.href = "/add-quotation"
+    }
     return (
       <div className="container-scroller">
         <Navbar setSidebarOpen={setSidebarOpen}></Navbar>
@@ -16,8 +18,7 @@ const QuotationManagement = () =>{
                   <div className="float-right">
                     <button
                       className="btn btn-primary btn-sm"
-                      data-bs-toggle="modal"
-                      data-bs-target="#countryModal"
+                      onClick={()=>goToAddForm()}
                     >
                       Add Quotation
                     </button>
