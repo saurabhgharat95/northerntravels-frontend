@@ -15,6 +15,7 @@ import MealTypeMaster from './Pages/MealTypeMaster';
 import RoomTypeMaster from './Pages/RoomTypeMaster';
 import QuotationManagement from './Pages/QuotationManagement';
 import LeadManagement from './Pages/LeadManagement';
+import AddQuotation from './Pages/AddQuotation';
 function App() {
   return (
    <BrowserRouter>
@@ -35,6 +36,7 @@ function App() {
       <Route exact path={`/room-types`} element={<RoomTypeMaster/>}/>
       <Route exact path={`/quotations`} element={<QuotationManagement/>}/>
       <Route exact path={`/leads`} element={<LeadManagement/>}/>
+      <Route exact path={`/add-quotation`} element={<AddQuotation/>}/>
     </Routes>
    </BrowserRouter>
   );
