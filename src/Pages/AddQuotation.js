@@ -14,7 +14,6 @@ const AddQuotation = () => {
   const openFormTab = (tabId) => {
     setSelectedTab(tabId);
   };
-
   
   const selectForm = (action, selectedTab) => {
     switch (selectedTab) {
