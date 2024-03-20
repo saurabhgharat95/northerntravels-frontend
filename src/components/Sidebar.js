@@ -25,21 +25,14 @@ const Sidebar = (props) => {
             </a>
           </li>
           <li className="nav-item">
-            <a className="nav-link" href="">
+            <a className="nav-link" href="/maintain-rooms">
               <i className="menu-icon">
                 <ion-icon name="business-outline"></ion-icon>
               </i>
               <span className="menu-title">Hotel Room Management</span>
             </a>
           </li>
-          <li className="nav-item">
-            <a className="nav-link" href="">
-              <i className="menu-icon">
-                <ion-icon name="car-outline"></ion-icon>
-              </i>
-              <span className="menu-title">Transport Management</span>
-            </a>
-          </li>
+        
           <li className="nav-item">
             <a className="nav-link" href="">
               <i className="menu-icon">
