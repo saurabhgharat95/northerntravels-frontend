@@ -113,3 +113,15 @@ ion-icon{
 .breadcrumb{
   border-radius: 8px;
 }
+
+.custom-table td {
+  width: 10%;
+
+}
+
+.custom-table input[type="number"] {
+  width: 100%;
+  box-sizing: border-box;
+  height: 42px;
+  padding-left:8px
+}
