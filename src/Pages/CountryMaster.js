@@ -4,7 +4,12 @@ import {
   Navbar,
   Sidebar,
   CSSTransition,
+  axios,
+  toast,
+  ToastContainer,
+  SimpleReactValidator,
 } from "../components/CommonImport";
+
 import {
   FETCH_COUNTRY_API,
   ADD_COUNTRY_API,
@@ -12,12 +17,9 @@ import {
   UPDATE_COUNTRY_API,
 } from "../utils/constants";
 
-import axios from "axios";
-import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import NoData from "../components/NoData";
 import ConfirmationDialog from "../components/ConfirmationDialog";
-import SimpleReactValidator from "simple-react-validator";
 
 const CountryMaster = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
@@ -26,6 +28,8 @@ const CountryMaster = () => {
   const [isUpdate, setUpdate] = useState(false);
   const [deleteId, setDeleteId] = useState(false);
   const [updateId, setUpdateId] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
   const [showConfirmation, setShowConfirmation] = useState(false);
   const simpleValidator = useRef(
     new SimpleReactValidator({ autoForceUpdate: this })
@@ -153,6 +157,45 @@ const CountryMaster = () => {
     console.log("Cancelled");
     setShowConfirmation(false);
   };
+
+  const pageNumbers = [];
+  for (let i = 1; i <= Math.ceil(countries.length / 10); i++) {
+    pageNumbers.push(i);
+  }
+  const handlePagination = (event) => {
+    setCurrentPage(Number(number));
+  };
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const totalPages = Math.ceil(countries.length / itemsPerPage);
+
+  // setCountries(countries.slice(startIndex, endIndex))
+  const handleNextPage = () => {
+    setCurrentPage(prevPage => Math.min(prevPage + 1, totalPages));
+  };
+
+  const handlePrevPage = () => {
+    setCurrentPage(prevPage => Math.max(prevPage - 1, 1));
+  };
+  const renderPageNumbers = pageNumbers.map((number) => {
+    return (
+      <>
+        <li className={`paginate_button page-item ${number==1?"active":""}`}>
+          <span
+            aria-controls="order-listing"
+            role="link"
+            data-dt-idx={number}
+            tabindex={number}
+            className="page-link"
+            onClick={(e) => handlePagination(number)}
+          >
+            {number}
+          </span>
+        </li>
+      </>
+    );
+  });
+
   useEffect(() => {
     fetchCountries();
   }, []);
@@ -285,7 +328,6 @@ const CountryMaster = () => {
                                   </tr>
                                 </thead>
                                 <tbody>
-                                  {/* <TransitionGroup > */}
                                   {countries &&
                                     countries.map((country, index) => (
                                       <CSSTransition
@@ -337,7 +379,6 @@ const CountryMaster = () => {
                                         </tr>
                                       </CSSTransition>
                                     ))}
-                                  {/* </TransitionGroup> */}
                                 </tbody>
                               </table>
                             )}
@@ -394,10 +435,6 @@ const CountryMaster = () => {
                                           }}
                                         />
 
-                                        {console.log(
-                                          "sss",
-                                          simpleValidator.current
-                                        )}
                                         <>
                                           {simpleValidator.current.element
                                             .length > 0 &&
@@ -457,6 +494,7 @@ const CountryMaster = () => {
                               Showing 1 to 10 of 10 entries
                             </div>
                           </div>
+
                           <div className="col-sm-12 col-md-7">
                             <div
                               className="dataTables_paginate paging_simple_numbers"
@@ -467,6 +505,21 @@ const CountryMaster = () => {
                                   className="paginate_button page-item previous disabled"
                                   id="order-listing_previous"
                                 >
+                                  <span
+                                    aria-controls="order-listing"
+                                    aria-disabled="true"
+                                    role="link"
+                                    data-dt-idx="previous"
+                                    tabindex="-1"
+                                    className="page-link"
+                                    disabled={currentPage === 1}
+                                    onClick={handlePrevPage}
+                                  >
+                                    Previous
+                                  </span>
+                                </li>
+                                {renderPageNumbers}
+                                <li>
                                   <a
                                     aria-controls="order-listing"
                                     aria-disabled="true"
@@ -474,34 +527,8 @@ const CountryMaster = () => {
                                     data-dt-idx="previous"
                                     tabindex="-1"
                                     className="page-link"
-                                  >
-                                    Previous
-                                  </a>
-                                </li>
-                                <li className="paginate_button page-item active">
-                                  <a
-                                    href="https://demo.bootstrapdash.com/skydash/themes/vertical-default-light/pages/tables/data-table.html#"
-                                    aria-controls="order-listing"
-                                    role="link"
-                                    aria-current="page"
-                                    data-dt-idx="0"
-                                    tabindex="0"
-                                    className="page-link"
-                                  >
-                                    1
-                                  </a>
-                                </li>
-                                <li
-                                  className="paginate_button page-item next disabled"
-                                  id="order-listing_next"
-                                >
-                                  <a
-                                    aria-controls="order-listing"
-                                    aria-disabled="true"
-                                    role="link"
-                                    data-dt-idx="next"
-                                    tabindex="-1"
-                                    className="page-link"
+                                    onClick={handleNextPage} 
+                                    disabled={currentPage === totalPages}
                                   >
                                     Next
                                   </a>

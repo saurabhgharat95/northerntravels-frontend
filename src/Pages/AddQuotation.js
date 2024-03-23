@@ -99,17 +99,7 @@ const AddQuotation = () => {
                     </div>
                     <div className="content clearfix">
                       <ComponentSelector selectedTab={selectedTab} />
-                      {/* {selectedTab && selectedTab == 1 ? (
-                        <BasicDetailsForm></BasicDetailsForm>
-                      ) : selectedTab == 2 ? (
-                        <AccommodationDetailsForm></AccommodationDetailsForm>
-                      ) : selectedTab == 3 ? (
-                        <HotelDetailsForm></HotelDetailsForm>
-                      ) : selectedTab == 4 ? (
-                        <ItineraryForm></ItineraryForm>
-                      ) : (
-                        <MarkupForm></MarkupForm>
-                      )} */}
+
                     </div>
                     <div className="actions clearfix">
                       <ul role="menu" aria-label="Pagination">
