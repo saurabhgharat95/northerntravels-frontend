@@ -10,8 +10,8 @@ import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import SimpleReactValidator from "simple-react-validator";
 import Select from "react-select";
+import ReactPaginate from 'react-paginate';
 
 
 
-
-export { Footer, Navbar, Sidebar,CSSTransition, TransitionGroup,axios,toast,ToastContainer,SimpleReactValidator,Select};
+export { Footer, Navbar, Sidebar,CSSTransition, TransitionGroup,axios,toast,ToastContainer,SimpleReactValidator,Select,ReactPaginate};

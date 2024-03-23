@@ -8,6 +8,7 @@ import {
   toast,
   ToastContainer,
   SimpleReactValidator,
+  ReactPaginate,
 } from "../components/CommonImport";
 
 import {
@@ -29,7 +30,9 @@ const CountryMaster = () => {
   const [deleteId, setDeleteId] = useState(false);
   const [updateId, setUpdateId] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
+  const itemsPerPage = 10
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
   const [showConfirmation, setShowConfirmation] = useState(false);
   const simpleValidator = useRef(
     new SimpleReactValidator({ autoForceUpdate: this })
@@ -162,25 +165,15 @@ const CountryMaster = () => {
   for (let i = 1; i <= Math.ceil(countries.length / 10); i++) {
     pageNumbers.push(i);
   }
-  const handlePagination = (event) => {
+  const handlePagination = (number) => {
     setCurrentPage(Number(number));
-  };
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const totalPages = Math.ceil(countries.length / itemsPerPage);
-
-  // setCountries(countries.slice(startIndex, endIndex))
-  const handleNextPage = () => {
-    setCurrentPage(prevPage => Math.min(prevPage + 1, totalPages));
-  };
-
-  const handlePrevPage = () => {
-    setCurrentPage(prevPage => Math.max(prevPage - 1, 1));
   };
   const renderPageNumbers = pageNumbers.map((number) => {
     return (
       <>
-        <li className={`paginate_button page-item ${number==1?"active":""}`}>
+        <li
+          className={`paginate_button page-item ${number == currentPage ? "active" : ""}`}
+        >
           <span
             aria-controls="order-listing"
             role="link"
@@ -195,7 +188,15 @@ const CountryMaster = () => {
       </>
     );
   });
+  const totalPages = Math.ceil(countries.length / itemsPerPage);
+  const handleNextPage = () => {
+    setCurrentPage(prevPage => Math.min(prevPage + 1, totalPages));
+  };
 
+  const handlePrevPage = () => {
+    console.log('hh')
+    setCurrentPage(prevPage => Math.max(prevPage - 1, 1));
+  };
   useEffect(() => {
     fetchCountries();
   }, []);
@@ -275,7 +276,7 @@ const CountryMaster = () => {
                             {countries && countries.length > 0 && (
                               <table
                                 id="order-listing"
-                                className="table dataTable no-footer"
+                                className="table dataTable no-footer dataTables_paginate"
                                 aria-describedby="order-listing_info"
                               >
                                 <thead>
@@ -328,8 +329,8 @@ const CountryMaster = () => {
                                   </tr>
                                 </thead>
                                 <tbody>
-                                  {countries &&
-                                    countries.map((country, index) => (
+                                  {countries && countries.length>0 && 
+                                    countries.slice(startIndex, endIndex).map((country, index) => (
                                       <CSSTransition
                                         key={country.id}
                                         timeout={500}
@@ -337,7 +338,7 @@ const CountryMaster = () => {
                                       >
                                         <tr className="odd" key={index}>
                                           <td className="sorting_1">
-                                            {index + 1}
+                                            {startIndex+index + 1}
                                           </td>
                                           <td>{country.countryName}</td>
                                           <td>
@@ -484,25 +485,16 @@ const CountryMaster = () => {
                           </div>
                         </div>
                         <div className="row">
-                          <div className="col-sm-12 col-md-5">
-                            <div
-                              className="dataTables_info"
-                              id="order-listing_info"
-                              role="status"
-                              aria-live="polite"
-                            >
-                              Showing 1 to 10 of 10 entries
-                            </div>
-                          </div>
+                         
 
-                          <div className="col-sm-12 col-md-7">
+                          <div className="col-sm-12 col-md-12">
                             <div
                               className="dataTables_paginate paging_simple_numbers"
                               id="order-listing_paginate"
                             >
                               <ul className="pagination">
-                                <li
-                                  className="paginate_button page-item previous disabled"
+                              <li
+                                  className="paginate_button page-item previous "
                                   id="order-listing_previous"
                                 >
                                   <span
@@ -512,14 +504,16 @@ const CountryMaster = () => {
                                     data-dt-idx="previous"
                                     tabindex="-1"
                                     className="page-link"
-                                    disabled={currentPage === 1}
                                     onClick={handlePrevPage}
+                                    disabled={currentPage === 1}
+
                                   >
-                                    Previous
+                                    Previous 
                                   </span>
                                 </li>
                                 {renderPageNumbers}
-                                <li>
+                                <li className="paginate_button page-item next "
+                                  id="order-listing_next">
                                   <a
                                     aria-controls="order-listing"
                                     aria-disabled="true"
@@ -536,6 +530,7 @@ const CountryMaster = () => {
                               </ul>
                             </div>
                           </div>
+                        
                         </div>
                       </div>
                     </div>
