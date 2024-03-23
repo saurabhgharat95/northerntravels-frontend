@@ -1,5 +1,10 @@
 import { useEffect, useState, useRef } from "react";
-import { Footer, Navbar, Sidebar } from "../components/CommonImport";
+import {
+  Footer,
+  Navbar,
+  Sidebar,
+  CSSTransition,
+} from "../components/CommonImport";
 import {
   FETCH_COUNTRY_API,
   ADD_COUNTRY_API,
@@ -12,6 +17,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import NoData from "../components/NoData";
 import ConfirmationDialog from "../components/ConfirmationDialog";
+import SimpleReactValidator from "simple-react-validator";
 
 const CountryMaster = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
@@ -21,7 +27,9 @@ const CountryMaster = () => {
   const [deleteId, setDeleteId] = useState(false);
   const [updateId, setUpdateId] = useState("");
   const [showConfirmation, setShowConfirmation] = useState(false);
-
+  const simpleValidator = useRef(
+    new SimpleReactValidator({ autoForceUpdate: this })
+  );
   const handleCloseModal = () => {
     document.getElementById("countryModal").classList.remove("show", "d-block");
     document
@@ -51,20 +59,25 @@ const CountryMaster = () => {
       let body = {
         countryName: countryName,
       };
-      let response = await axios.post(url, body);
-      console.log("response", response);
-      if (response) {
-        if (response.status == 200) {
-          toast.success(response.data.message, {
-            position: "top-right",
-          });
-          handleCloseModal();
-          console.log("showModal", showModal);
-          setCountryName("");
-          fetchCountries();
+      if (simpleValidator.current.allValid()) {
+        let response = await axios.post(url, body);
+        console.log("response", response);
+        if (response) {
+          if (response.status == 200) {
+            toast.success(response.data.message, {
+              position: "top-right",
+            });
+            handleCloseModal();
+            setCountryName("");
+            fetchCountries();
+            simpleValidator.current.hideMessages();
+          }
         }
+      } else {
+        simpleValidator.current.showMessages();
       }
     } catch (e) {
+      console.log("ee", e);
       toast.error("Something Went Wrong :(", {
         position: "top-right",
       });
@@ -77,17 +90,22 @@ const CountryMaster = () => {
         countryName: countryName,
         id: updateId,
       };
-      let response = await axios.post(url, body);
-      if (response) {
-        if (response.status == 200) {
-          toast.success(response.data.message, {
-            position: "top-right",
-          });
+      if (simpleValidator.current.allValid()) {
+        let response = await axios.post(url, body);
+        if (response) {
+          if (response.status == 200) {
+            toast.success(response.data.message, {
+              position: "top-right",
+            });
 
-          handleCloseModal();
-          setCountryName("");
-          fetchCountries();
+            handleCloseModal();
+            setCountryName("");
+            fetchCountries();
+            simpleValidator.current.hideMessages();
+          }
         }
+      } else {
+        simpleValidator.current.showMessages();
       }
     } catch (e) {
       toast.error("Something Went Wrong :(", {
@@ -267,51 +285,59 @@ const CountryMaster = () => {
                                   </tr>
                                 </thead>
                                 <tbody>
+                                  {/* <TransitionGroup > */}
                                   {countries &&
                                     countries.map((country, index) => (
-                                      <tr className="odd" key={index}>
-                                        <td className="sorting_1">
-                                          {index + 1}
-                                        </td>
-                                        <td>{country.countryName}</td>
-                                        <td>
-                                          <label
-                                            className={`badge ${
-                                              country.status == "1"
-                                                ? "badge-success"
-                                                : "badge-danger"
-                                            }`}
-                                          >
-                                            {country.status == "1"
-                                              ? "Active"
-                                              : "Inactive"}
-                                          </label>
-                                        </td>
-                                        <td>
-                                          <ion-icon
-                                            name="trash-outline"
-                                            color="danger"
-                                            style={{ marginRight: "10px" }}
-                                            onClick={() => {
-                                              setShowConfirmation(true);
-                                              setDeleteId(country.id);
-                                            }}
-                                          ></ion-icon>
-                                          <ion-icon
-                                            onClick={() =>
-                                              openModal(
-                                                country.countryName,
-                                                country.id
-                                              )
-                                            }
-                                            name="create-outline"
-                                            color="primary"
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#countryModal"
-                                          ></ion-icon>
-                                        </td>
-                                      </tr>
+                                      <CSSTransition
+                                        key={country.id}
+                                        timeout={500}
+                                        classNames="item elementdiv"
+                                      >
+                                        <tr className="odd" key={index}>
+                                          <td className="sorting_1">
+                                            {index + 1}
+                                          </td>
+                                          <td>{country.countryName}</td>
+                                          <td>
+                                            <label
+                                              className={`badge ${
+                                                country.status == "1"
+                                                  ? "badge-success"
+                                                  : "badge-danger"
+                                              }`}
+                                            >
+                                              {country.status == "1"
+                                                ? "Active"
+                                                : "Inactive"}
+                                            </label>
+                                          </td>
+                                          <td>
+                                            <ion-icon
+                                              name="trash-outline"
+                                              color="danger"
+                                              style={{ marginRight: "10px" }}
+                                              onClick={() => {
+                                                setShowConfirmation(true);
+                                                setDeleteId(country.id);
+                                              }}
+                                            ></ion-icon>
+                                            <ion-icon
+                                              onClick={() =>
+                                                openModal(
+                                                  country.countryName,
+                                                  country.id
+                                                )
+                                              }
+                                              name="create-outline"
+                                              color="primary"
+                                              data-bs-toggle="modal"
+                                              data-bs-target="#countryModal"
+                                            ></ion-icon>
+                                          </td>
+                                        </tr>
+                                      </CSSTransition>
                                     ))}
+                                  {/* </TransitionGroup> */}
                                 </tbody>
                               </table>
                             )}
@@ -361,7 +387,34 @@ const CountryMaster = () => {
                                           onChange={(e) => {
                                             setCountryName(e.target.value);
                                           }}
+                                          onBlur={() => {
+                                            simpleValidator.current.showMessageFor(
+                                              "country_name"
+                                            );
+                                          }}
                                         />
+
+                                        {console.log(
+                                          "sss",
+                                          simpleValidator.current
+                                        )}
+                                        <>
+                                          {simpleValidator.current.element
+                                            .length > 0 &&
+                                            simpleValidator.current.message(
+                                              "country_name",
+                                              countryName,
+                                              "required|alpha_space",
+                                              {
+                                                messages: {
+                                                  required:
+                                                    "Please enter country name",
+                                                  alpha_space:
+                                                    "Alphabets are allowed only.",
+                                                },
+                                              }
+                                            )}
+                                        </>
                                       </div>
                                     </div>
                                     <div className="modal-footer">
