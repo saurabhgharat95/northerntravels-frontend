@@ -63,7 +63,7 @@ const Sidebar = (props) => {
                 <li className="nav-item"> <a className="nav-link" href="/countries">Countries</a></li>
                 <li className="nav-item"> <a className="nav-link" href="/states">State / Location</a></li>
                 <li className="nav-item"> <a className="nav-link" href="/transit-pts">Transit points </a></li>
-                <li className="nav-item"> <a className="nav-link" href="/destinations">Destinations</a></li>
+                {/* <li className="nav-item"> <a className="nav-link" href="/destinations">Destinations</a></li> */}
                 <li className="nav-item"> <a className="nav-link" href="/hotel-type">Hotel Type</a></li>
                 <li className="nav-item"> <a className="nav-link" href="/halting-dest">Halting Destinations</a></li>
                 <li className="nav-item"> <a className="nav-link" href="/hotels">Hotels</a></li>
