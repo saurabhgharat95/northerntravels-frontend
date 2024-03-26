@@ -23,12 +23,14 @@ import {
 import "react-toastify/dist/ReactToastify.css";
 import NoData from "../components/NoData";
 import ConfirmationDialog from "../components/ConfirmationDialog";
+import RenderPageNumbers from "./RenderPageNumbers";
 
 const HotelMaster = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
 
   const [hotelName, setHotelName] = useState("");
   const [hotels, setHotels] = useState([]);
+  const [originalHotelsList, setOriginalHotelsList] = useState([]);
   const [hotelAddress, setHotelAddress] = useState("");
 
   const [stateId, setStateId] = useState(null);
@@ -51,6 +53,13 @@ const HotelMaster = () => {
   const [deleteId, setDeleteId] = useState(false);
   const [updateId, setUpdateId] = useState("");
   const [showConfirmation, setShowConfirmation] = useState(false);
+
+  const [searchValue, setSearchValue] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
 
   const simpleValidator = useRef(
     new SimpleReactValidator({
@@ -165,6 +174,7 @@ const HotelMaster = () => {
       if (response) {
         if (response.status == 200) {
           setHotels(response.data.data);
+          setOriginalHotelsList(response.data.data);
         }
       }
     } catch (e) {
@@ -204,6 +214,8 @@ const HotelMaster = () => {
           }
         }
       } else {
+        setForceUpdate((v) => ++v);
+
         simpleValidator.current.showMessages();
       }
     } catch (e) {
@@ -240,6 +252,8 @@ const HotelMaster = () => {
           }
         }
       } else {
+        setForceUpdate((v) => ++v);
+
         simpleValidator.current.showMessages();
       }
     } catch (e) {
@@ -320,6 +334,34 @@ const HotelMaster = () => {
     })[0];
     return hotelTypeObj ? hotelTypeObj.hotelTypeName : "";
   };
+  const handlePagination = (number) => {
+    setCurrentPage(Number(number));
+  };
+
+  const totalPages = Math.ceil(hotels ? hotels.length / itemsPerPage : 1);
+  const handleNextPage = () => {
+    setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages));
+  };
+
+  const handlePrevPage = () => {
+    setCurrentPage((prevPage) => Math.max(prevPage - 1, 1));
+  };
+  const escapeRegExp = (string) => {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // Escaping special characters
+  };
+  const filterData = (searchValue) => {
+    setSearchValue(searchValue);
+    if (searchValue && searchValue.trim() !== "") {
+      var escapedSearchValue = escapeRegExp(searchValue); // Escaping searchValue
+      var filteredHotels = hotels?.filter((row) =>
+        row?.hotelName?.toLowerCase().includes(escapedSearchValue.toLowerCase())
+      );
+      setHotels(filteredHotels);
+    } else {
+      setHotels(originalHotelsList);
+    }
+  };
+
   useEffect(() => {
     fetchCountries();
     fetchStates();
@@ -372,6 +414,9 @@ const HotelMaster = () => {
                                   name="order-listing_length"
                                   aria-controls="order-listing"
                                   className="form-select form-select-sm"
+                                  onChange={(e) => {
+                                    setItemsPerPage(e.target.value);
+                                  }}
                                 >
                                   <option value="5">5</option>
                                   <option value="10">10</option>
@@ -393,6 +438,8 @@ const HotelMaster = () => {
                                   className="form-control"
                                   placeholder="Search"
                                   aria-controls="order-listing"
+                                  value={searchValue}
+                                  onChange={(e) => filterData(e.target.value)}
                                 />
                               </label>
                             </div>
@@ -408,161 +455,102 @@ const HotelMaster = () => {
                               >
                                 <thead>
                                   <tr>
-                                    <th
-                                      className="sorting sorting_asc"
-                                      tabindex="0"
-                                      aria-controls="order-listing"
-                                      rowspan="1"
-                                      colspan="1"
-                                      aria-sort="ascending"
-                                      aria-label="Order #: activate to sort column descending"
-                                      style={{ width: "107.016px" }}
-                                    >
+                                    <th style={{ width: "107.016px" }}>
                                       Sr. No.
                                     </th>
-                                    <th
-                                      className="sorting"
-                                      tabindex="0"
-                                      aria-controls="order-listing"
-                                      rowspan="1"
-                                      colspan="1"
-                                      aria-label="Purchased On: activate to sort column ascending"
-                                      style={{ width: "171.375px" }}
-                                    >
+                                    <th style={{ width: "171.375px" }}>
                                       Hotel Name
                                     </th>
-                                    <th
-                                      className="sorting"
-                                      tabindex="0"
-                                      aria-controls="order-listing"
-                                      rowspan="1"
-                                      colspan="1"
-                                      aria-label="Purchased On: activate to sort column ascending"
-                                      style={{ width: "171.375px" }}
-                                    >
+                                    <th style={{ width: "171.375px" }}>
                                       Hotel Type
                                     </th>
-                                    <th
-                                      className="sorting"
-                                      tabindex="0"
-                                      aria-controls="order-listing"
-                                      rowspan="1"
-                                      colspan="1"
-                                      aria-label="Purchased On: activate to sort column ascending"
-                                      style={{ width: "171.375px" }}
-                                    >
+                                    <th style={{ width: "171.375px" }}>
                                       Halting Destination
                                     </th>
-                                    <th
-                                      className="sorting"
-                                      tabindex="0"
-                                      aria-controls="order-listing"
-                                      rowspan="1"
-                                      colspan="1"
-                                      aria-label="Purchased On: activate to sort column ascending"
-                                      style={{ width: "171.375px" }}
-                                    >
+                                    <th style={{ width: "171.375px" }}>
                                       State / Location
                                     </th>
-                                    <th
-                                      className="sorting"
-                                      tabindex="0"
-                                      aria-controls="order-listing"
-                                      rowspan="1"
-                                      colspan="1"
-                                      aria-label="Purchased On: activate to sort column ascending"
-                                      style={{ width: "171.375px" }}
-                                    >
+                                    <th style={{ width: "171.375px" }}>
                                       Country
                                     </th>
-                                    <th
-                                      className="sorting"
-                                      tabindex="0"
-                                      aria-controls="order-listing"
-                                      rowspan="1"
-                                      colspan="1"
-                                      aria-label="Customer: activate to sort column ascending"
-                                      style={{ width: "127.391px" }}
-                                    >
+                                    <th style={{ width: "127.391px" }}>
                                       Status
                                     </th>
-                                    <th
-                                      className="sorting"
-                                      tabindex="0"
-                                      aria-controls="order-listing"
-                                      rowspan="1"
-                                      colspan="1"
-                                      aria-label="Ship to: activate to sort column ascending"
-                                      style={{ width: "116.672px" }}
-                                    >
+                                    <th style={{ width: "116.672px" }}>
                                       Action
                                     </th>
                                   </tr>
                                 </thead>
                                 <tbody>
                                   {hotels &&
-                                    hotels.map((hotel, index) => (
-                                      <CSSTransition
-                                        key={hotel.id}
-                                        timeout={500}
-                                        classNames="item elementdiv"
-                                      >
-                                        <tr className="odd" key={index}>
-                                          <td className="sorting_1">
-                                            {" "}
-                                            {index + 1}
-                                          </td>
-                                          <td>{hotel.hotelName}</td>
-                                          <td>
-                                            {getHotelType(hotel.fkHotelTypeId)}
-                                          </td>
-                                          <td>
-                                            {getHaltDest(
-                                              hotel.fkHaltingPointId
-                                            )}
-                                          </td>
-                                          <td>
-                                            {getStateName(hotel.fkStateId)}
-                                          </td>
-                                          <td>
-                                            {getCountryName(hotel.fkCountryId)}
-                                          </td>
-                                          <td>
-                                            <label
-                                              className={`badge ${
-                                                hotel.status == "1"
-                                                  ? "badge-success"
-                                                  : "badge-danger"
-                                              }`}
-                                            >
-                                              {hotel.status == "1"
-                                                ? "Active"
-                                                : "Inactive"}
-                                            </label>
-                                          </td>
-                                          <td>
-                                            <ion-icon
-                                              name="trash-outline"
-                                              color="danger"
-                                              style={{ marginRight: "10px" }}
-                                              onClick={() => {
-                                                setShowConfirmation(true);
-                                                setDeleteId(hotel.id);
-                                              }}
-                                            ></ion-icon>
-                                            <ion-icon
-                                              onClick={() =>
-                                                openModal(hotel.id)
-                                              }
-                                              name="create-outline"
-                                              color="primary"
-                                              data-bs-toggle="modal"
-                                              data-bs-target="#hotelModal"
-                                            ></ion-icon>
-                                          </td>
-                                        </tr>
-                                      </CSSTransition>
-                                    ))}
+                                    hotels
+                                      .slice(startIndex, endIndex)
+                                      .map((hotel, index) => (
+                                        <CSSTransition
+                                          key={hotel.id}
+                                          timeout={500}
+                                          classNames="item elementdiv"
+                                        >
+                                          <tr className="odd" key={index}>
+                                            <td className="sorting_1">
+                                              {" "}
+                                              {startIndex + index + 1}
+                                            </td>
+                                            <td>{hotel.hotelName}</td>
+                                            <td>
+                                              {getHotelType(
+                                                hotel.fkHotelTypeId
+                                              )}
+                                            </td>
+                                            <td>
+                                              {getHaltDest(
+                                                hotel.fkHaltingPointId
+                                              )}
+                                            </td>
+                                            <td>
+                                              {getStateName(hotel.fkStateId)}
+                                            </td>
+                                            <td>
+                                              {getCountryName(
+                                                hotel.fkCountryId
+                                              )}
+                                            </td>
+                                            <td>
+                                              <label
+                                                className={`badge ${
+                                                  hotel.status == "1"
+                                                    ? "badge-success"
+                                                    : "badge-danger"
+                                                }`}
+                                              >
+                                                {hotel.status == "1"
+                                                  ? "Active"
+                                                  : "Inactive"}
+                                              </label>
+                                            </td>
+                                            <td>
+                                              <ion-icon
+                                                name="trash-outline"
+                                                color="danger"
+                                                style={{ marginRight: "10px" }}
+                                                onClick={() => {
+                                                  setShowConfirmation(true);
+                                                  setDeleteId(hotel.id);
+                                                }}
+                                              ></ion-icon>
+                                              <ion-icon
+                                                onClick={() =>
+                                                  openModal(hotel.id)
+                                                }
+                                                name="create-outline"
+                                                color="primary"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#hotelModal"
+                                              ></ion-icon>
+                                            </td>
+                                          </tr>
+                                        </CSSTransition>
+                                      ))}
                                 </tbody>
                               </table>
                             )}
@@ -640,6 +628,7 @@ const HotelMaster = () => {
                                       <Select
                                         options={hotelTypeOptions}
                                         placeholder="Select Hotel Type"
+                                        name="hotel_type"
                                         value={
                                           hotelTypeId
                                             ? hotelTypeOptions.find(
@@ -655,13 +644,32 @@ const HotelMaster = () => {
                                               : ""
                                           );
                                         }}
+                                        onBlur={() => {
+                                          simpleValidator.current.showMessageFor(
+                                            "hotel_type"
+                                          );
+                                        }}
                                       />
+                                      <>
+                                        {simpleValidator.current.message(
+                                          "hotel_type",
+                                          country,
+                                          ["required"],
+                                          {
+                                            messages: {
+                                              required:
+                                                "Please select hotel type",
+                                            },
+                                          }
+                                        )}
+                                      </>
                                     </div>
                                     <div className="form-group">
                                       <label>Halting Destination</label>
                                       <Select
                                         options={haltDestOptions}
                                         placeholder="Select Halting Destination"
+                                        name="halt_dest"
                                         value={
                                           haltDestId
                                             ? haltDestOptions.find(
@@ -677,13 +685,32 @@ const HotelMaster = () => {
                                               : ""
                                           );
                                         }}
+                                        onBlur={() => {
+                                          simpleValidator.current.showMessageFor(
+                                            "halt_dest"
+                                          );
+                                        }}
                                       />
+                                      <>
+                                        {simpleValidator.current.message(
+                                          "halt_dest",
+                                          country,
+                                          ["required"],
+                                          {
+                                            messages: {
+                                              required:
+                                                "Please select halting destination",
+                                            },
+                                          }
+                                        )}
+                                      </>
                                     </div>
                                     <div className="form-group">
                                       <label>State / Location</label>
                                       <Select
                                         options={stateOptions}
-                                        placeholder="Select State / Location"
+                                        placeholder="Select State"
+                                        name="state_name"
                                         value={
                                           stateId
                                             ? stateOptions.find(
@@ -699,7 +726,24 @@ const HotelMaster = () => {
                                               : ""
                                           );
                                         }}
+                                        onBlur={() => {
+                                          simpleValidator.current.showMessageFor(
+                                            "state_name"
+                                          );
+                                        }}
                                       />
+                                      <>
+                                        {simpleValidator.current.message(
+                                          "state_name",
+                                          stateId,
+                                          ["required"],
+                                          {
+                                            messages: {
+                                              required: "Please select state",
+                                            },
+                                          }
+                                        )}
+                                      </>
                                     </div>
                                     <div className="form-group">
                                       <label>Country</label>
@@ -721,7 +765,24 @@ const HotelMaster = () => {
                                               : null
                                           );
                                         }}
+                                        onBlur={() => {
+                                          simpleValidator.current.showMessageFor(
+                                            "country_name"
+                                          );
+                                        }}
                                       />
+                                      <>
+                                        {simpleValidator.current.message(
+                                          "country_name",
+                                          country,
+                                          ["required"],
+                                          {
+                                            messages: {
+                                              required: "Please select country",
+                                            },
+                                          }
+                                        )}
+                                      </>
                                     </div>
                                   </div>
                                   <div className="modal-footer">
@@ -750,66 +811,19 @@ const HotelMaster = () => {
                           </div>
                         </div>
                         <div className="row">
-                          <div className="col-sm-12 col-md-5">
-                            <div
-                              className="dataTables_info"
-                              id="order-listing_info"
-                              role="status"
-                              aria-live="polite"
-                            >
-                              Showing 1 to 10 of 10 entries
-                            </div>
-                          </div>
-                          <div className="col-sm-12 col-md-7">
+                          <div className="col-sm-12 col-md-12">
                             <div
                               className="dataTables_paginate paging_simple_numbers"
                               id="order-listing_paginate"
                             >
-                              <ul className="pagination">
-                                <li
-                                  className="paginate_button page-item previous disabled"
-                                  id="order-listing_previous"
-                                >
-                                  <a
-                                    aria-controls="order-listing"
-                                    aria-disabled="true"
-                                    role="link"
-                                    data-dt-idx="previous"
-                                    tabindex="-1"
-                                    className="page-link"
-                                  >
-                                    Previous
-                                  </a>
-                                </li>
-                                <li className="paginate_button page-item active">
-                                  <a
-                                    href="https://demo.bootstrapdash.com/skydash/themes/vertical-default-light/pages/tables/data-table.html#"
-                                    aria-controls="order-listing"
-                                    role="link"
-                                    aria-current="page"
-                                    data-dt-idx="0"
-                                    tabindex="0"
-                                    className="page-link"
-                                  >
-                                    1
-                                  </a>
-                                </li>
-                                <li
-                                  className="paginate_button page-item next disabled"
-                                  id="order-listing_next"
-                                >
-                                  <a
-                                    aria-controls="order-listing"
-                                    aria-disabled="true"
-                                    role="link"
-                                    data-dt-idx="next"
-                                    tabindex="-1"
-                                    className="page-link"
-                                  >
-                                    Next
-                                  </a>
-                                </li>
-                              </ul>
+                              <RenderPageNumbers
+                                data={hotels}
+                                currentPage={currentPage}
+                                handlePagination={handlePagination}
+                                handlePrevPage={handlePrevPage}
+                                handleNextPage={handleNextPage}
+                                totalPages={totalPages}
+                              ></RenderPageNumbers>
                             </div>
                           </div>
                         </div>

@@ -21,12 +21,14 @@ import {
 import "react-toastify/dist/ReactToastify.css";
 import NoData from "../components/NoData";
 import ConfirmationDialog from "../components/ConfirmationDialog";
+import RenderPageNumbers from "./RenderPageNumbers";
 
 const TransitPointMaster = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
-  const [transitPts, setTransitPts] = useState("");
+  const [transitPts, setTransitPts] = useState([]);
+  const [originalTransitPtList, setOriginalTransitPtList] = useState([]);
   const [transitPtName, setTransitPtName] = useState("");
-  const [stateId, setStateId] = useState([]);
+  const [stateId, setStateId] = useState(null);
   const [statesList, setStates] = useState([]);
   const [countries, setCountries] = useState([]);
   const [country, setCountry] = useState([]);
@@ -36,6 +38,12 @@ const TransitPointMaster = () => {
   const [deleteId, setDeleteId] = useState(false);
   const [updateId, setUpdateId] = useState("");
   const [showConfirmation, setShowConfirmation] = useState(false);
+  const [searchValue, setSearchValue] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [, setForceUpdate] = useState(0);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
   const simpleValidator = useRef(
     new SimpleReactValidator({
       autoForceUpdate: this,
@@ -106,6 +114,7 @@ const TransitPointMaster = () => {
       if (response) {
         if (response.status == 200) {
           setTransitPts(response.data.data);
+          setOriginalTransitPtList(response.data.data);
         }
       }
     } catch (e) {
@@ -139,6 +148,7 @@ const TransitPointMaster = () => {
           }
         }
       } else {
+        setForceUpdate((v) => ++v);
         simpleValidator.current.showMessages();
       }
     } catch (e) {
@@ -172,6 +182,7 @@ const TransitPointMaster = () => {
           }
         }
       } else {
+        setForceUpdate((v) => ++v);
         simpleValidator.current.showMessages();
       }
     } catch (e) {
@@ -238,6 +249,37 @@ const TransitPointMaster = () => {
     })[0];
     return stateObj ? stateObj.stateName : "";
   };
+  const handlePagination = (number) => {
+    setCurrentPage(Number(number));
+  };
+
+  const totalPages = Math.ceil(
+    transitPts ? transitPts.length / itemsPerPage : 1
+  );
+  const handleNextPage = () => {
+    setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages));
+  };
+
+  const handlePrevPage = () => {
+    setCurrentPage((prevPage) => Math.max(prevPage - 1, 1));
+  };
+  const escapeRegExp = (string) => {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // Escaping special characters
+  };
+  const filterData = (searchValue) => {
+    setSearchValue(searchValue);
+    if (searchValue && searchValue.trim() !== "") {
+      var escapedSearchValue = escapeRegExp(searchValue); // Escaping searchValue
+      var filteredPts = transitPts?.filter((row) =>
+        row?.transitPointName
+          ?.toLowerCase()
+          .includes(escapedSearchValue.toLowerCase())
+      );
+      setTransitPts(filteredPts);
+    } else {
+      setTransitPts(originalTransitPtList);
+    }
+  };
   useEffect(() => {
     fetchCountries();
     fetchStates();
@@ -288,6 +330,9 @@ const TransitPointMaster = () => {
                                   name="order-listing_length"
                                   aria-controls="order-listing"
                                   className="form-select form-select-sm"
+                                  onChange={(e) => {
+                                    setItemsPerPage(e.target.value);
+                                  }}
                                 >
                                   <option value="5">5</option>
                                   <option value="10">10</option>
@@ -309,6 +354,8 @@ const TransitPointMaster = () => {
                                   className="form-control"
                                   placeholder="Search"
                                   aria-controls="order-listing"
+                                  value={searchValue}
+                                  onChange={(e) => filterData(e.target.value)}
                                 />
                               </label>
                             </div>
@@ -324,131 +371,84 @@ const TransitPointMaster = () => {
                               >
                                 <thead>
                                   <tr>
-                                    <th
-                                      className="sorting sorting_asc"
-                                      tabindex="0"
-                                      aria-controls="order-listing"
-                                      rowspan="1"
-                                      colspan="1"
-                                      aria-sort="ascending"
-                                      aria-label="Order #: activate to sort column descending"
-                                      style={{ width: "107.016px" }}
-                                    >
+                                    <th style={{ width: "107.016px" }}>
                                       Sr. No.
                                     </th>
-                                    <th
-                                      className="sorting"
-                                      tabindex="0"
-                                      aria-controls="order-listing"
-                                      rowspan="1"
-                                      colspan="1"
-                                      aria-label="Purchased On: activate to sort column ascending"
-                                      style={{ width: "171.375px" }}
-                                    >
-                                      Name
-                                    </th>
-                                    <th
-                                      className="sorting"
-                                      tabindex="0"
-                                      aria-controls="order-listing"
-                                      rowspan="1"
-                                      colspan="1"
-                                      aria-label="Purchased On: activate to sort column ascending"
-                                      style={{ width: "171.375px" }}
-                                    >
+                                    <th style={{ width: "171.375px" }}>Name</th>
+                                    <th style={{ width: "171.375px" }}>
                                       State / Location
                                     </th>
-                                    <th
-                                      className="sorting"
-                                      tabindex="0"
-                                      aria-controls="order-listing"
-                                      rowspan="1"
-                                      colspan="1"
-                                      aria-label="Purchased On: activate to sort column ascending"
-                                      style={{ width: "171.375px" }}
-                                    >
+                                    <th style={{ width: "171.375px" }}>
                                       Country
                                     </th>
-                                    <th
-                                      className="sorting"
-                                      tabindex="0"
-                                      aria-controls="order-listing"
-                                      rowspan="1"
-                                      colspan="1"
-                                      aria-label="Customer: activate to sort column ascending"
-                                      style={{ width: "127.391px" }}
-                                    >
+                                    <th style={{ width: "127.391px" }}>
                                       Status
                                     </th>
-                                    <th
-                                      className="sorting"
-                                      tabindex="0"
-                                      aria-controls="order-listing"
-                                      rowspan="1"
-                                      colspan="1"
-                                      aria-label="Ship to: activate to sort column ascending"
-                                      style={{ width: "116.672px" }}
-                                    >
+                                    <th style={{ width: "116.672px" }}>
                                       Action
                                     </th>
                                   </tr>
                                 </thead>
                                 <tbody>
                                   {transitPts &&
-                                    transitPts.map((point, index) => (
-                                      <CSSTransition
-                                        key={point.id}
-                                        timeout={500}
-                                        classNames="item elementdiv"
-                                      >
-                                        <tr className="odd" key={index}>
-                                          <td className="sorting_1">
-                                            {" "}
-                                            {index + 1}
-                                          </td>
-                                          <td>{point.transitPointName}</td>
-                                          <td>
-                                            {getStateName(point.fkStateId)}
-                                          </td>
-                                          <td>
-                                            {getCountryName(point.fkCountryId)}
-                                          </td>
-                                          <td>
-                                            <label
-                                              className={`badge ${
-                                                point.status == "1"
-                                                  ? "badge-success"
-                                                  : "badge-danger"
-                                              }`}
-                                            >
-                                              {point.status == "1"
-                                                ? "Active"
-                                                : "Inactive"}
-                                            </label>
-                                          </td>
-                                          <td>
-                                            <ion-icon
-                                              name="trash-outline"
-                                              color="danger"
-                                              style={{ marginRight: "10px" }}
-                                              onClick={() => {
-                                                setShowConfirmation(true);
-                                                setDeleteId(point.id);
-                                              }}
-                                            ></ion-icon>
-                                            <ion-icon
-                                              onClick={() =>
-                                                openModal(point.id)
-                                              }
-                                              name="create-outline"
-                                              color="primary"
-                                              data-bs-toggle="modal"
-                                              data-bs-target="#transitPtModal"
-                                            ></ion-icon>
-                                          </td>
-                                        </tr>
-                                      </CSSTransition>
-                                    ))}
+                                    transitPts
+                                      .slice(startIndex, endIndex)
+                                      .map((point, index) => (
+                                        <CSSTransition
+                                          key={point.id}
+                                          timeout={500}
+                                          classNames="item elementdiv"
+                                        >
+                                          <tr className="odd" key={index}>
+                                            <td className="sorting_1">
+                                              {" "}
+                                              {startIndex + index + 1}
+                                            </td>
+                                            <td>{point.transitPointName}</td>
+                                            <td>
+                                              {getStateName(point.fkStateId)}
+                                            </td>
+                                            <td>
+                                              {getCountryName(
+                                                point.fkCountryId
+                                              )}
+                                            </td>
+                                            <td>
+                                              <label
+                                                className={`badge ${
+                                                  point.status == "1"
+                                                    ? "badge-success"
+                                                    : "badge-danger"
+                                                }`}
+                                              >
+                                                {point.status == "1"
+                                                  ? "Active"
+                                                  : "Inactive"}
+                                              </label>
+                                            </td>
+                                            <td>
+                                              <ion-icon
+                                                name="trash-outline"
+                                                color="danger"
+                                                style={{ marginRight: "10px" }}
+                                                onClick={() => {
+                                                  setShowConfirmation(true);
+                                                  setDeleteId(point.id);
+                                                }}
+                                              ></ion-icon>
+                                              <ion-icon
+                                                onClick={() =>
+                                                  openModal(point.id)
+                                                }
+                                                name="create-outline"
+                                                color="primary"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#transitPtModal"
+                                              ></ion-icon>
+                                            </td>
+                                          </tr>
+                                        </CSSTransition>
+                                      ))}
                                 </tbody>
                               </table>
                             )}
@@ -528,9 +528,16 @@ const TransitPointMaster = () => {
                                       <Select
                                         options={stateOptions}
                                         placeholder="Select State"
-                                        value={stateOptions.find(
-                                          (option) => option.value === stateId
-                                        )}
+                                        required
+                                        name="state_name"
+                                        value={
+                                          stateId
+                                            ? stateOptions.find(
+                                                (option) =>
+                                                  option.value === stateId
+                                              )
+                                            : null
+                                        }
                                         onChange={(selectedOption) => {
                                           setStateId(
                                             selectedOption
@@ -538,24 +545,63 @@ const TransitPointMaster = () => {
                                               : ""
                                           );
                                         }}
+                                        onBlur={() => {
+                                          simpleValidator.current.showMessageFor(
+                                            "state_name"
+                                          );
+                                        }}
                                       />
+                                      <>
+                                        {simpleValidator.current.message(
+                                          "state_name",
+                                          stateId,
+                                          ["required"],
+                                          {
+                                            messages: {
+                                              required: "Please select state",
+                                            },
+                                          }
+                                        )}
+                                      </>
                                     </div>
                                     <div className="form-group">
                                       <label>Country</label>
                                       <Select
                                         options={countryOptions}
                                         placeholder="Select Country"
-                                        value={countryOptions.find(
-                                          (option) => option.value === country
-                                        )}
+                                        value={
+                                          country
+                                            ? countryOptions.find(
+                                                (option) =>
+                                                  option.value === country
+                                              )
+                                            : null
+                                        }
                                         onChange={(selectedOption) => {
                                           setCountry(
                                             selectedOption
                                               ? selectedOption.value
-                                              : ""
+                                              : null
+                                          );
+                                        }}
+                                        onBlur={() => {
+                                          simpleValidator.current.showMessageFor(
+                                            "country_name"
                                           );
                                         }}
                                       />
+                                      <>
+                                        {simpleValidator.current.message(
+                                          "country_name",
+                                          country,
+                                          ["required"],
+                                          {
+                                            messages: {
+                                              required: "Please select country",
+                                            },
+                                          }
+                                        )}
+                                      </>
                                     </div>
                                   </div>
                                   <div className="modal-footer">
@@ -586,66 +632,19 @@ const TransitPointMaster = () => {
                           </div>
                         </div>
                         <div className="row">
-                          <div className="col-sm-12 col-md-5">
-                            <div
-                              className="dataTables_info"
-                              id="order-listing_info"
-                              role="status"
-                              aria-live="polite"
-                            >
-                              Showing 1 to 10 of 10 entries
-                            </div>
-                          </div>
-                          <div className="col-sm-12 col-md-7">
+                          <div className="col-sm-12 col-md-12">
                             <div
                               className="dataTables_paginate paging_simple_numbers"
                               id="order-listing_paginate"
                             >
-                              <ul className="pagination">
-                                <li
-                                  className="paginate_button page-item previous disabled"
-                                  id="order-listing_previous"
-                                >
-                                  <a
-                                    aria-controls="order-listing"
-                                    aria-disabled="true"
-                                    role="link"
-                                    data-dt-idx="previous"
-                                    tabindex="-1"
-                                    className="page-link"
-                                  >
-                                    Previous
-                                  </a>
-                                </li>
-                                <li className="paginate_button page-item active">
-                                  <a
-                                    href="https://demo.bootstrapdash.com/skydash/themes/vertical-default-light/pages/tables/data-table.html#"
-                                    aria-controls="order-listing"
-                                    role="link"
-                                    aria-current="page"
-                                    data-dt-idx="0"
-                                    tabindex="0"
-                                    className="page-link"
-                                  >
-                                    1
-                                  </a>
-                                </li>
-                                <li
-                                  className="paginate_button page-item next disabled"
-                                  id="order-listing_next"
-                                >
-                                  <a
-                                    aria-controls="order-listing"
-                                    aria-disabled="true"
-                                    role="link"
-                                    data-dt-idx="next"
-                                    tabindex="-1"
-                                    className="page-link"
-                                  >
-                                    Next
-                                  </a>
-                                </li>
-                              </ul>
+                              <RenderPageNumbers
+                                data={transitPts}
+                                currentPage={currentPage}
+                                handlePagination={handlePagination}
+                                handlePrevPage={handlePrevPage}
+                                handleNextPage={handleNextPage}
+                                totalPages={totalPages}
+                              ></RenderPageNumbers>
                             </div>
                           </div>
                         </div>

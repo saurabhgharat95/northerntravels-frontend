@@ -1,5 +1,4 @@
 const Sidebar = (props) => {
-  console.log(props.isSidebarOpen)
   return (
     <div>
       <nav

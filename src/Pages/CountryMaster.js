@@ -8,7 +8,6 @@ import {
   toast,
   ToastContainer,
   SimpleReactValidator,
-  ReactPaginate,
 } from "../components/CommonImport";
 
 import {
@@ -21,16 +20,19 @@ import {
 import "react-toastify/dist/ReactToastify.css";
 import NoData from "../components/NoData";
 import ConfirmationDialog from "../components/ConfirmationDialog";
+import RenderPageNumbers from "./RenderPageNumbers";
 
 const CountryMaster = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
   const [countryName, setCountryName] = useState("");
   const [countries, setCountries] = useState([]);
+  const [originalCountriesList, setOriginalCountriesList] = useState([]);
   const [isUpdate, setUpdate] = useState(false);
   const [deleteId, setDeleteId] = useState(false);
   const [updateId, setUpdateId] = useState("");
+  const [searchValue, setSearchValue] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10
+  const [itemsPerPage, setItemsPerPage] = useState(10);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const [showConfirmation, setShowConfirmation] = useState(false);
@@ -53,6 +55,7 @@ const CountryMaster = () => {
       if (response) {
         if (response.status == 200) {
           setCountries(response.data.data);
+          setOriginalCountriesList(response.data.data);
         }
       }
     } catch (e) {
@@ -161,42 +164,36 @@ const CountryMaster = () => {
     setShowConfirmation(false);
   };
 
-  const pageNumbers = [];
-  for (let i = 1; i <= Math.ceil(countries.length / 10); i++) {
-    pageNumbers.push(i);
-  }
   const handlePagination = (number) => {
     setCurrentPage(Number(number));
   };
-  const renderPageNumbers = pageNumbers.map((number) => {
-    return (
-      <>
-        <li
-          className={`paginate_button page-item ${number == currentPage ? "active" : ""}`}
-        >
-          <span
-            aria-controls="order-listing"
-            role="link"
-            data-dt-idx={number}
-            tabindex={number}
-            className="page-link"
-            onClick={(e) => handlePagination(number)}
-          >
-            {number}
-          </span>
-        </li>
-      </>
-    );
-  });
-  const totalPages = Math.ceil(countries.length / itemsPerPage);
+
+  const totalPages = Math.ceil(countries ? countries.length / itemsPerPage : 1);
   const handleNextPage = () => {
-    setCurrentPage(prevPage => Math.min(prevPage + 1, totalPages));
+    setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages));
   };
 
   const handlePrevPage = () => {
-    console.log('hh')
-    setCurrentPage(prevPage => Math.max(prevPage - 1, 1));
+    setCurrentPage((prevPage) => Math.max(prevPage - 1, 1));
   };
+  const escapeRegExp = (string) => {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // Escaping special characters
+  };
+  const filterData = (searchValue) => {
+    setSearchValue(searchValue);
+    if (searchValue && searchValue.trim() !== "") {
+      var escapedSearchValue = escapeRegExp(searchValue); // Escaping searchValue
+      var filteredCountries = countries?.filter((row) =>
+        row?.countryName
+          ?.toLowerCase()
+          .includes(escapedSearchValue.toLowerCase())
+      );
+      setCountries(filteredCountries);
+    } else {
+      setCountries(originalCountriesList);
+    }
+  };
+
   useEffect(() => {
     fetchCountries();
   }, []);
@@ -245,11 +242,14 @@ const CountryMaster = () => {
                                   name="order-listing_length"
                                   aria-controls="order-listing"
                                   className="form-select form-select-sm"
+                                  onChange={(e) => {
+                                    setItemsPerPage(e.target.value);
+                                  }}
                                 >
                                   <option value="5">5</option>
                                   <option value="10">10</option>
                                   <option value="15">15</option>
-                                  <option value="-1">All</option>
+                                  {/* <option value="">All</option> */}
                                 </select>{" "}
                                 entries
                               </label>
@@ -266,6 +266,8 @@ const CountryMaster = () => {
                                   className="form-control"
                                   placeholder="Search"
                                   aria-controls="order-listing"
+                                  value={searchValue}
+                                  onChange={(e) => filterData(e.target.value)}
                                 />
                               </label>
                             </div>
@@ -281,105 +283,75 @@ const CountryMaster = () => {
                               >
                                 <thead>
                                   <tr>
-                                    <th
-                                      className="sorting sorting_asc"
-                                      tabindex="0"
-                                      aria-controls="order-listing"
-                                      rowspan="1"
-                                      colspan="1"
-                                      aria-sort="ascending"
-                                      aria-label="Order #: activate to sort column descending"
-                                      style={{ width: "107.016px" }}
-                                    >
+                                    <th style={{ width: "107.016px" }}>
                                       Sr. No.
                                     </th>
-                                    <th
-                                      className="sorting"
-                                      tabindex="0"
-                                      aria-controls="order-listing"
-                                      rowspan="1"
-                                      colspan="1"
-                                      aria-label="Purchased On: activate to sort column ascending"
-                                      style={{ width: "171.375px" }}
-                                    >
+                                    <th style={{ width: "171.375px" }}>
                                       Country
                                     </th>
-                                    <th
-                                      className="sorting"
-                                      tabindex="0"
-                                      aria-controls="order-listing"
-                                      rowspan="1"
-                                      colspan="1"
-                                      aria-label="Customer: activate to sort column ascending"
-                                      style={{ width: "127.391px" }}
-                                    >
+                                    <th style={{ width: "127.391px" }}>
                                       Status
                                     </th>
-                                    <th
-                                      className="sorting"
-                                      tabindex="0"
-                                      aria-controls="order-listing"
-                                      rowspan="1"
-                                      colspan="1"
-                                      aria-label="Ship to: activate to sort column ascending"
-                                      style={{ width: "116.672px" }}
-                                    >
+                                    <th style={{ width: "116.672px" }}>
                                       Action
                                     </th>
                                   </tr>
                                 </thead>
                                 <tbody>
-                                  {countries && countries.length>0 && 
-                                    countries.slice(startIndex, endIndex).map((country, index) => (
-                                      <CSSTransition
-                                        key={country.id}
-                                        timeout={500}
-                                        classNames="item elementdiv"
-                                      >
-                                        <tr className="odd" key={index}>
-                                          <td className="sorting_1">
-                                            {startIndex+index + 1}
-                                          </td>
-                                          <td>{country.countryName}</td>
-                                          <td>
-                                            <label
-                                              className={`badge ${
-                                                country.status == "1"
-                                                  ? "badge-success"
-                                                  : "badge-danger"
-                                              }`}
-                                            >
-                                              {country.status == "1"
-                                                ? "Active"
-                                                : "Inactive"}
-                                            </label>
-                                          </td>
-                                          <td>
-                                            <ion-icon
-                                              name="trash-outline"
-                                              color="danger"
-                                              style={{ marginRight: "10px" }}
-                                              onClick={() => {
-                                                setShowConfirmation(true);
-                                                setDeleteId(country.id);
-                                              }}
-                                            ></ion-icon>
-                                            <ion-icon
-                                              onClick={() =>
-                                                openModal(
-                                                  country.countryName,
-                                                  country.id
-                                                )
-                                              }
-                                              name="create-outline"
-                                              color="primary"
-                                              data-bs-toggle="modal"
-                                              data-bs-target="#countryModal"
-                                            ></ion-icon>
-                                          </td>
-                                        </tr>
-                                      </CSSTransition>
-                                    ))}
+                                  {countries &&
+                                    countries.length > 0 &&
+                                    countries
+                                      .slice(startIndex, endIndex)
+                                      .map((country, index) => (
+                                        <CSSTransition
+                                          key={country.id}
+                                          timeout={500}
+                                          classNames="item elementdiv"
+                                        >
+                                          <tr className="odd" key={index}>
+                                            <td className="sorting_1">
+                                              {startIndex + index + 1}
+                                            </td>
+                                            <td>{country.countryName}</td>
+                                            <td>
+                                              <label
+                                                className={`badge ${
+                                                  country.status == "1"
+                                                    ? "badge-success"
+                                                    : "badge-danger"
+                                                }`}
+                                              >
+                                                {country.status == "1"
+                                                  ? "Active"
+                                                  : "Inactive"}
+                                              </label>
+                                            </td>
+                                            <td>
+                                              <ion-icon
+                                                name="trash-outline"
+                                                color="danger"
+                                                style={{ marginRight: "10px" }}
+                                                onClick={() => {
+                                                  setShowConfirmation(true);
+                                                  setDeleteId(country.id);
+                                                }}
+                                              ></ion-icon>
+                                              <ion-icon
+                                                onClick={() =>
+                                                  openModal(
+                                                    country.countryName,
+                                                    country.id
+                                                  )
+                                                }
+                                                name="create-outline"
+                                                color="primary"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#countryModal"
+                                              ></ion-icon>
+                                            </td>
+                                          </tr>
+                                        </CSSTransition>
+                                      ))}
                                 </tbody>
                               </table>
                             )}
@@ -391,8 +363,6 @@ const CountryMaster = () => {
                               className="modal fade"
                               id="countryModal"
                               tabindex="-1"
-                              aria-labelledby="exampleModalLabel"
-                              aria-hidden="true"
                             >
                               <div
                                 className="modal-dialog modal-md"
@@ -485,52 +455,21 @@ const CountryMaster = () => {
                           </div>
                         </div>
                         <div className="row">
-                         
-
                           <div className="col-sm-12 col-md-12">
                             <div
                               className="dataTables_paginate paging_simple_numbers"
                               id="order-listing_paginate"
                             >
-                              <ul className="pagination">
-                              <li
-                                  className="paginate_button page-item previous "
-                                  id="order-listing_previous"
-                                >
-                                  <span
-                                    aria-controls="order-listing"
-                                    aria-disabled="true"
-                                    role="link"
-                                    data-dt-idx="previous"
-                                    tabindex="-1"
-                                    className="page-link"
-                                    onClick={handlePrevPage}
-                                    disabled={currentPage === 1}
-
-                                  >
-                                    Previous 
-                                  </span>
-                                </li>
-                                {renderPageNumbers}
-                                <li className="paginate_button page-item next "
-                                  id="order-listing_next">
-                                  <a
-                                    aria-controls="order-listing"
-                                    aria-disabled="true"
-                                    role="link"
-                                    data-dt-idx="previous"
-                                    tabindex="-1"
-                                    className="page-link"
-                                    onClick={handleNextPage} 
-                                    disabled={currentPage === totalPages}
-                                  >
-                                    Next
-                                  </a>
-                                </li>
-                              </ul>
+                              <RenderPageNumbers
+                                data={countries}
+                                currentPage={currentPage}
+                                handlePagination={handlePagination}
+                                handlePrevPage={handlePrevPage}
+                                handleNextPage={handleNextPage}
+                                totalPages = {totalPages}
+                              ></RenderPageNumbers>
                             </div>
                           </div>
-                        
                         </div>
                       </div>
                     </div>

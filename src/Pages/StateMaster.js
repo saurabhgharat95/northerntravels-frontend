@@ -8,7 +8,7 @@ import {
   toast,
   ToastContainer,
   SimpleReactValidator,
-  Select
+  Select,
 } from "../components/CommonImport";
 
 import {
@@ -22,22 +22,28 @@ import {
 import "react-toastify/dist/ReactToastify.css";
 import NoData from "../components/NoData";
 import ConfirmationDialog from "../components/ConfirmationDialog";
-
+import RenderPageNumbers from "./RenderPageNumbers";
 const StateMaster = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
   const [stateName, setStateName] = useState("");
   const [country, setCountry] = useState("");
   const [states, setStates] = useState([]);
+  const [originalStatesList, setOriginalStatesList] = useState([]);
   const [countries, setCountries] = useState([]);
   const [countryOptions, setCountryOptions] = useState([]);
   const [isUpdate, setUpdate] = useState(false);
   const [deleteId, setDeleteId] = useState(false);
   const [updateId, setUpdateId] = useState("");
   const [showConfirmation, setShowConfirmation] = useState(false);
+  const [searchValue, setSearchValue] = useState("");
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
   const simpleValidator = useRef(
     new SimpleReactValidator({
       autoForceUpdate: this,
-   
     })
   );
 
@@ -81,6 +87,7 @@ const StateMaster = () => {
       if (response) {
         if (response.status == 200) {
           setStates(response.data.data);
+          setOriginalStatesList(response.data.data);
         }
       }
     } catch (e) {
@@ -205,6 +212,32 @@ const StateMaster = () => {
     })[0];
     return countryObj ? countryObj.countryName : "";
   };
+  const totalPages = Math.ceil(states ? states.length / itemsPerPage : 1);
+  const handleNextPage = () => {
+    setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages));
+  };
+
+  const handlePrevPage = () => {
+    setCurrentPage((prevPage) => Math.max(prevPage - 1, 1));
+  };
+  const handlePagination = (number) => {
+    setCurrentPage(Number(number));
+  };
+  const escapeRegExp = (string) => {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // Escaping special characters
+  };
+  const filterData = (searchValue) => {
+    setSearchValue(searchValue);
+    if (searchValue && searchValue.trim() !== "") {
+      var escapedSearchValue = escapeRegExp(searchValue);
+      var filteredStates = states?.filter((row) =>
+        row?.stateName?.toLowerCase().includes(escapedSearchValue.toLowerCase())
+      );
+      setStates(filteredStates);
+    } else {
+      setStates(originalStatesList);
+    }
+  };
   useEffect(() => {
     fetchCountries();
     fetchStates();
@@ -254,11 +287,13 @@ const StateMaster = () => {
                                   name="order-listing_length"
                                   aria-controls="order-listing"
                                   className="form-select form-select-sm"
+                                  onChange={(e) => {
+                                    setItemsPerPage(e.target.value);
+                                  }}
                                 >
                                   <option value="5">5</option>
                                   <option value="10">10</option>
                                   <option value="15">15</option>
-                                  <option value="-1">All</option>
                                 </select>{" "}
                                 entries
                               </label>
@@ -275,6 +310,8 @@ const StateMaster = () => {
                                   className="form-control"
                                   placeholder="Search"
                                   aria-controls="order-listing"
+                                  value={searchValue}
+                                  onChange={(e) => filterData(e.target.value)}
                                 />
                               </label>
                             </div>
@@ -290,67 +327,26 @@ const StateMaster = () => {
                               >
                                 <thead>
                                   <tr>
-                                    <th
-                                      className="sorting sorting_asc"
-                                      tabindex="0"
-                                      aria-controls="order-listing"
-                                      rowspan="1"
-                                      colspan="1"
-                                      aria-sort="ascending"
-                                      aria-label="Order #: activate to sort column descending"
-                                      style={{ width: "107.016px" }}
-                                    >
+                                    <th style={{ width: "107.016px" }}>
                                       Sr. No.
                                     </th>
-                                    <th
-                                      className="sorting"
-                                      tabindex="0"
-                                      aria-controls="order-listing"
-                                      rowspan="1"
-                                      colspan="1"
-                                      aria-label="Purchased On: activate to sort column ascending"
-                                      style={{ width: "171.375px" }}
-                                    >
+                                    <th style={{ width: "171.375px" }}>
                                       State / Location
                                     </th>
-                                    <th
-                                      className="sorting"
-                                      tabindex="0"
-                                      aria-controls="order-listing"
-                                      rowspan="1"
-                                      colspan="1"
-                                      aria-label="Purchased On: activate to sort column ascending"
-                                      style={{ width: "171.375px" }}
-                                    >
+                                    <th style={{ width: "171.375px" }}>
                                       Country
                                     </th>
-                                    <th
-                                      className="sorting"
-                                      tabindex="0"
-                                      aria-controls="order-listing"
-                                      rowspan="1"
-                                      colspan="1"
-                                      aria-label="Customer: activate to sort column ascending"
-                                      style={{ width: "127.391px" }}
-                                    >
+                                    <th style={{ width: "127.391px" }}>
                                       Status
                                     </th>
-                                    <th
-                                      className="sorting"
-                                      tabindex="0"
-                                      aria-controls="order-listing"
-                                      rowspan="1"
-                                      colspan="1"
-                                      aria-label="Ship to: activate to sort column ascending"
-                                      style={{ width: "116.672px" }}
-                                    >
+                                    <th style={{ width: "116.672px" }}>
                                       Action
                                     </th>
                                   </tr>
                                 </thead>
                                 <tbody>
                                   {states &&
-                                    states.map((state, index) => (
+                                    states.slice(startIndex, endIndex).map((state, index) => (
                                       <CSSTransition
                                         key={state.id}
                                         timeout={500}
@@ -358,7 +354,7 @@ const StateMaster = () => {
                                       >
                                         <tr className="odd" key={index}>
                                           <td className="sorting_1">
-                                            {index + 1}
+                                          {startIndex + index + 1}
                                           </td>
                                           <td>{state.stateName}</td>
                                           <td>
@@ -389,9 +385,7 @@ const StateMaster = () => {
                                             ></ion-icon>
                                             <ion-icon
                                               onClick={() =>
-                                                openModal(
-                                                  state.id
-                                                )
+                                                openModal(state.id)
                                               }
                                               name="create-outline"
                                               color="primary"
@@ -460,12 +454,15 @@ const StateMaster = () => {
                                           simpleValidator.current.message(
                                             "state_name",
                                             stateName,
-                                            ['required', { regex: /^[A-Za-z\s&-]+$/ }],
+                                            [
+                                              "required",
+                                              { regex: /^[A-Za-z\s&-]+$/ },
+                                            ],
                                             {
                                               messages: {
                                                 required:
                                                   "Please enter state name",
-                                                regex:"Enter valid state name"
+                                                regex: "Enter valid state name",
                                               },
                                             }
                                           )}
@@ -495,9 +492,7 @@ const StateMaster = () => {
                                       className="btn btn-success"
                                       onClick={() => {
                                         {
-                                          isUpdate
-                                            ? updateState()
-                                            : addState();
+                                          isUpdate ? updateState() : addState();
                                         }
                                       }}
                                     >
@@ -517,66 +512,22 @@ const StateMaster = () => {
                           </div>
                         </div>
                         <div className="row">
-                          <div className="col-sm-12 col-md-5">
-                            <div
-                              className="dataTables_info"
-                              id="order-listing_info"
-                              role="status"
-                              aria-live="polite"
-                            >
-                              Showing 1 to 10 of 10 entries
-                            </div>
-                          </div>
-                          <div className="col-sm-12 col-md-7">
+                        <div className="col-sm-12 col-md-12">
+                           
+                     
                             <div
                               className="dataTables_paginate paging_simple_numbers"
                               id="order-listing_paginate"
                             >
-                              <ul className="pagination">
-                                <li
-                                  className="paginate_button page-item previous disabled"
-                                  id="order-listing_previous"
-                                >
-                                  <a
-                                    aria-controls="order-listing"
-                                    aria-disabled="true"
-                                    role="link"
-                                    data-dt-idx="previous"
-                                    tabindex="-1"
-                                    className="page-link"
-                                  >
-                                    Previous
-                                  </a>
-                                </li>
-                                <li className="paginate_button page-item active">
-                                  <a
-                                    href="https://demo.bootstrapdash.com/skydash/themes/vertical-default-light/pages/tables/data-table.html#"
-                                    aria-controls="order-listing"
-                                    role="link"
-                                    aria-current="page"
-                                    data-dt-idx="0"
-                                    tabindex="0"
-                                    className="page-link"
-                                  >
-                                    1
-                                  </a>
-                                </li>
-                                <li
-                                  className="paginate_button page-item next disabled"
-                                  id="order-listing_next"
-                                >
-                                  <a
-                                    aria-controls="order-listing"
-                                    aria-disabled="true"
-                                    role="link"
-                                    data-dt-idx="next"
-                                    tabindex="-1"
-                                    className="page-link"
-                                  >
-                                    Next
-                                  </a>
-                                </li>
-                              </ul>
+                               <RenderPageNumbers
+                                data={states}
+                                currentPage={currentPage}
+                                handlePagination={handlePagination}
+                                handlePrevPage={handlePrevPage}
+                                handleNextPage={handleNextPage}
+                                totalPages = {totalPages}
+                              ></RenderPageNumbers>
+                         
                             </div>
                           </div>
                         </div>
