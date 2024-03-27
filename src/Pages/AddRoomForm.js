@@ -78,7 +78,7 @@ const AddRoomForm = () => {
           <div className="col-sm-12">
             <table
               id="order-listing"
-              className="table table-bordered dataTable no-footer custom-table"
+              className="table table-bordered dataTable no-footer custom-table table-responsive"
               aria-describedby="order-listing_info"
             >
               <tr>

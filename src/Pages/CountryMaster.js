@@ -8,6 +8,7 @@ import {
   toast,
   ToastContainer,
   SimpleReactValidator,
+  ShimmerTable,
 } from "../components/CommonImport";
 
 import {
@@ -16,11 +17,12 @@ import {
   DELETE_COUNTRY_API,
   UPDATE_COUNTRY_API,
 } from "../utils/constants";
-
+import { getDateFormatted } from "../utils/helpers";
 import "react-toastify/dist/ReactToastify.css";
 import NoData from "../components/NoData";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import RenderPageNumbers from "./RenderPageNumbers";
+import Loader from "../components/Loader";
 
 const CountryMaster = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
@@ -36,6 +38,8 @@ const CountryMaster = () => {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const [showConfirmation, setShowConfirmation] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isDataReady, setDataReady] = useState(false);
   const simpleValidator = useRef(
     new SimpleReactValidator({ autoForceUpdate: this })
   );
@@ -54,12 +58,14 @@ const CountryMaster = () => {
       console.log("response", response.data.data);
       if (response) {
         if (response.status == 200) {
+          setDataReady(true);
           setCountries(response.data.data);
           setOriginalCountriesList(response.data.data);
         }
       }
     } catch (e) {
       setCountries([]);
+      setDataReady(true);
     }
   };
 
@@ -69,10 +75,13 @@ const CountryMaster = () => {
       let body = {
         countryName: countryName,
       };
+      setIsLoading(true);
       if (simpleValidator.current.allValid()) {
         let response = await axios.post(url, body);
         console.log("response", response);
         if (response) {
+          setIsLoading(false);
+
           if (response.status == 200) {
             toast.success(response.data.message, {
               position: "top-right",
@@ -84,9 +93,13 @@ const CountryMaster = () => {
           }
         }
       } else {
+        setIsLoading(false);
+
         simpleValidator.current.showMessages();
       }
     } catch (e) {
+      setIsLoading(false);
+
       console.log("ee", e);
       toast.error("Something Went Wrong :(", {
         position: "top-right",
@@ -100,6 +113,8 @@ const CountryMaster = () => {
         countryName: countryName,
         id: updateId,
       };
+      setIsLoading(true);
+
       if (simpleValidator.current.allValid()) {
         let response = await axios.post(url, body);
         if (response) {
@@ -107,6 +122,7 @@ const CountryMaster = () => {
             toast.success(response.data.message, {
               position: "top-right",
             });
+            setIsLoading(false);
 
             handleCloseModal();
             setCountryName("");
@@ -115,9 +131,13 @@ const CountryMaster = () => {
           }
         }
       } else {
+        setIsLoading(false);
+
         simpleValidator.current.showMessages();
       }
     } catch (e) {
+      setIsLoading(false);
+
       toast.error("Something Went Wrong :(", {
         position: "top-right",
       });
@@ -273,6 +293,8 @@ const CountryMaster = () => {
                             </div>
                           </div>
                         </div>
+
+                        {isDataReady == false && <ShimmerTable row={10} />}
                         <div className="row dt-row">
                           <div className="col-sm-12">
                             {countries && countries.length > 0 && (
@@ -290,8 +312,12 @@ const CountryMaster = () => {
                                       Country
                                     </th>
                                     <th style={{ width: "127.391px" }}>
+                                      Created
+                                    </th>
+                                    <th style={{ width: "127.391px" }}>
                                       Status
                                     </th>
+
                                     <th style={{ width: "116.672px" }}>
                                       Action
                                     </th>
@@ -314,6 +340,11 @@ const CountryMaster = () => {
                                             </td>
                                             <td>{country.countryName}</td>
                                             <td>
+                                              {getDateFormatted(
+                                                country.createdAt
+                                              )}
+                                            </td>
+                                            <td>
                                               <label
                                                 className={`badge ${
                                                   country.status == "1"
@@ -326,6 +357,7 @@ const CountryMaster = () => {
                                                   : "Inactive"}
                                               </label>
                                             </td>
+
                                             <td>
                                               <ion-icon
                                                 name="trash-outline"
@@ -466,7 +498,7 @@ const CountryMaster = () => {
                                 handlePagination={handlePagination}
                                 handlePrevPage={handlePrevPage}
                                 handleNextPage={handleNextPage}
-                                totalPages = {totalPages}
+                                totalPages={totalPages}
                               ></RenderPageNumbers>
                             </div>
                           </div>
@@ -487,6 +519,7 @@ const CountryMaster = () => {
             onCancel={handleCancel}
             show={showConfirmation}
           />
+          <Loader isLoading={isLoading}></Loader>
         </div>
       </div>
     </div>

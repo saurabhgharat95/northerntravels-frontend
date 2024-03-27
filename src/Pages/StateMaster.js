@@ -9,6 +9,7 @@ import {
   ToastContainer,
   SimpleReactValidator,
   Select,
+  ShimmerTable,
 } from "../components/CommonImport";
 
 import {
@@ -18,11 +19,14 @@ import {
   DELETE_STATE_API,
   UPDATE_STATE_API,
 } from "../utils/constants";
+import { getDateFormatted } from "../utils/helpers";
 
 import "react-toastify/dist/ReactToastify.css";
 import NoData from "../components/NoData";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import RenderPageNumbers from "./RenderPageNumbers";
+import Loader from "../components/Loader";
+
 const StateMaster = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
   const [stateName, setStateName] = useState("");
@@ -39,6 +43,8 @@ const StateMaster = () => {
 
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isDataReady, setDataReady] = useState(false);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const simpleValidator = useRef(
@@ -86,11 +92,13 @@ const StateMaster = () => {
       console.log("response", response.data.data);
       if (response) {
         if (response.status == 200) {
+          setDataReady(true);
           setStates(response.data.data);
           setOriginalStatesList(response.data.data);
         }
       }
     } catch (e) {
+      setDataReady(true);
       setStates([]);
     }
   };
@@ -105,6 +113,8 @@ const StateMaster = () => {
         stateName: stateName,
         fkCountryId: country,
       };
+      setIsLoading(true);
+
       if (simpleValidator.current.allValid()) {
         let response = await axios.post(url, body);
         console.log("response", response);
@@ -117,13 +127,16 @@ const StateMaster = () => {
             resetForm();
             fetchStates();
             simpleValidator.current.hideMessages();
+            setIsLoading(false);
           }
         }
       } else {
         simpleValidator.current.showMessages();
+        setIsLoading(false);
       }
     } catch (e) {
       console.log("ee", e);
+      setIsLoading(false);
       toast.error("Something Went Wrong :(", {
         position: "top-right",
       });
@@ -137,6 +150,8 @@ const StateMaster = () => {
         stateName: stateName,
         fkCountryId: country,
       };
+      setIsLoading(true);
+
       if (simpleValidator.current.allValid()) {
         let response = await axios.post(url, body);
         if (response) {
@@ -149,12 +164,16 @@ const StateMaster = () => {
             resetForm();
             fetchStates();
             simpleValidator.current.hideMessages();
+            setIsLoading(false);
           }
         }
       } else {
         simpleValidator.current.showMessages();
+        setIsLoading(false);
       }
     } catch (e) {
+      setIsLoading(false);
+
       toast.error("Something Went Wrong :(", {
         position: "top-right",
       });
@@ -317,6 +336,7 @@ const StateMaster = () => {
                             </div>
                           </div>
                         </div>
+                        {isDataReady == false && <ShimmerTable row={10} />}
                         <div className="row dt-row">
                           <div className="col-sm-12">
                             {states && states.length > 0 && (
@@ -337,6 +357,9 @@ const StateMaster = () => {
                                       Country
                                     </th>
                                     <th style={{ width: "127.391px" }}>
+                                      Created
+                                    </th>
+                                    <th style={{ width: "127.391px" }}>
                                       Status
                                     </th>
                                     <th style={{ width: "116.672px" }}>
@@ -346,56 +369,65 @@ const StateMaster = () => {
                                 </thead>
                                 <tbody>
                                   {states &&
-                                    states.slice(startIndex, endIndex).map((state, index) => (
-                                      <CSSTransition
-                                        key={state.id}
-                                        timeout={500}
-                                        classNames="item elementdiv"
-                                      >
-                                        <tr className="odd" key={index}>
-                                          <td className="sorting_1">
-                                          {startIndex + index + 1}
-                                          </td>
-                                          <td>{state.stateName}</td>
-                                          <td>
-                                            {getCountryName(state.fkCountryId)}
-                                          </td>
-                                          <td>
-                                            <label
-                                              className={`badge ${
-                                                state.status == "1"
-                                                  ? "badge-success"
-                                                  : "badge-danger"
-                                              }`}
-                                            >
-                                              {state.status == "1"
-                                                ? "Active"
-                                                : "Inactive"}
-                                            </label>
-                                          </td>
-                                          <td>
-                                            <ion-icon
-                                              name="trash-outline"
-                                              color="danger"
-                                              style={{ marginRight: "10px" }}
-                                              onClick={() => {
-                                                setShowConfirmation(true);
-                                                setDeleteId(state.id);
-                                              }}
-                                            ></ion-icon>
-                                            <ion-icon
-                                              onClick={() =>
-                                                openModal(state.id)
-                                              }
-                                              name="create-outline"
-                                              color="primary"
-                                              data-bs-toggle="modal"
-                                              data-bs-target="#stateModal"
-                                            ></ion-icon>
-                                          </td>
-                                        </tr>
-                                      </CSSTransition>
-                                    ))}
+                                    states
+                                      .slice(startIndex, endIndex)
+                                      .map((state, index) => (
+                                        <CSSTransition
+                                          key={state.id}
+                                          timeout={500}
+                                          classNames="item elementdiv"
+                                        >
+                                          <tr className="odd" key={index}>
+                                            <td className="sorting_1">
+                                              {startIndex + index + 1}
+                                            </td>
+                                            <td>{state.stateName}</td>
+                                            <td>
+                                              {getCountryName(
+                                                state.fkCountryId
+                                              )}
+                                            </td>
+                                            <td>
+                                              {getDateFormatted(
+                                                state.createdAt
+                                              )}
+                                            </td>
+                                            <td>
+                                              <label
+                                                className={`badge ${
+                                                  state.status == "1"
+                                                    ? "badge-success"
+                                                    : "badge-danger"
+                                                }`}
+                                              >
+                                                {state.status == "1"
+                                                  ? "Active"
+                                                  : "Inactive"}
+                                              </label>
+                                            </td>
+                                            <td>
+                                              <ion-icon
+                                                name="trash-outline"
+                                                color="danger"
+                                                style={{ marginRight: "10px" }}
+                                                onClick={() => {
+                                                  setShowConfirmation(true);
+                                                  setDeleteId(state.id);
+                                                }}
+                                              ></ion-icon>
+                                              <ion-icon
+                                                onClick={() =>
+                                                  openModal(state.id)
+                                                }
+                                                name="create-outline"
+                                                color="primary"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#stateModal"
+                                              ></ion-icon>
+                                            </td>
+                                          </tr>
+                                        </CSSTransition>
+                                      ))}
                                 </tbody>
                               </table>
                             )}
@@ -512,22 +544,19 @@ const StateMaster = () => {
                           </div>
                         </div>
                         <div className="row">
-                        <div className="col-sm-12 col-md-12">
-                           
-                     
+                          <div className="col-sm-12 col-md-12">
                             <div
                               className="dataTables_paginate paging_simple_numbers"
                               id="order-listing_paginate"
                             >
-                               <RenderPageNumbers
+                              <RenderPageNumbers
                                 data={states}
                                 currentPage={currentPage}
                                 handlePagination={handlePagination}
                                 handlePrevPage={handlePrevPage}
                                 handleNextPage={handleNextPage}
-                                totalPages = {totalPages}
+                                totalPages={totalPages}
                               ></RenderPageNumbers>
-                         
                             </div>
                           </div>
                         </div>
@@ -547,6 +576,7 @@ const StateMaster = () => {
             onCancel={handleCancel}
             show={showConfirmation}
           />
+          <Loader isLoading={isLoading}></Loader>
         </div>
       </div>
     </div>

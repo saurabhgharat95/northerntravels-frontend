@@ -1,5 +1,7 @@
 import { useState } from "react";
 import NoData from "../components/NoData";
+import Select from "react-select";
+
 const HotelDetailsForm = () => {
   const options = [
     { value: "1", label: "Budshah Residency" },

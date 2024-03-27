@@ -9,6 +9,7 @@ import {
   ToastContainer,
   SimpleReactValidator,
   Select,
+  ShimmerTable,
 } from "../components/CommonImport";
 import {
   FETCH_HALTING_POINTS_API,
@@ -18,10 +19,13 @@ import {
   UPDATE_HALTING_POINT_API,
   DELETE_HALTING_POINT_API,
 } from "../utils/constants";
+import { getDateFormatted } from "../utils/helpers";
+
 import "react-toastify/dist/ReactToastify.css";
 import NoData from "../components/NoData";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import RenderPageNumbers from "./RenderPageNumbers";
+import Loader from "../components/Loader";
 
 const HaltingDestinationMaster = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
@@ -42,7 +46,8 @@ const HaltingDestinationMaster = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [, setForceUpdate] = useState(0);
-
+  const [isLoading, setIsLoading] = useState(false);
+  const [isDataReady, setDataReady] = useState(false);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const simpleValidator = useRef(
@@ -113,11 +118,15 @@ const HaltingDestinationMaster = () => {
       let response = await axios.post(url);
       if (response) {
         if (response.status == 200) {
+          setDataReady(true);
+
           setHaltDests(response.data.data);
           setOriginalHaltDestsList(response.data.data);
         }
       }
     } catch (e) {
+      setDataReady(true);
+
       setHaltDests([]);
     }
   };
@@ -134,6 +143,8 @@ const HaltingDestinationMaster = () => {
         fkStateId: stateId,
         fkCountryId: country,
       };
+      setIsLoading(true);
+
       if (simpleValidator.current.allValid()) {
         let response = await axios.post(url, body);
         if (response) {
@@ -145,14 +156,18 @@ const HaltingDestinationMaster = () => {
             resetForm();
             fetchHaltDestinations();
             simpleValidator.current.hideMessages();
+            setIsLoading(false);
           }
         }
       } else {
         setForceUpdate((v) => ++v);
         simpleValidator.current.showMessages();
+        setIsLoading(false);
       }
     } catch (e) {
       console.log("ee", e);
+      setIsLoading(false);
+
       toast.error("Something Went Wrong :(", {
         position: "top-right",
       });
@@ -167,6 +182,8 @@ const HaltingDestinationMaster = () => {
         fkStateId: stateId,
         fkCountryId: country,
       };
+      setIsLoading(true);
+
       if (simpleValidator.current.allValid()) {
         let response = await axios.post(url, body);
         if (response) {
@@ -179,13 +196,17 @@ const HaltingDestinationMaster = () => {
             resetForm();
             fetchHaltDestinations();
             simpleValidator.current.hideMessages();
+            setIsLoading(false);
           }
         }
       } else {
         setForceUpdate((v) => ++v);
         simpleValidator.current.showMessages();
+        setIsLoading(false);
       }
     } catch (e) {
+      setIsLoading(false);
+
       toast.error("Something Went Wrong :(", {
         position: "top-right",
       });
@@ -358,6 +379,7 @@ const HaltingDestinationMaster = () => {
                             </div>
                           </div>
                         </div>
+                        {isDataReady == false && <ShimmerTable row={10} />}
                         <div className="row dt-row">
                           <div className="col-sm-12">
                             {haltDests && haltDests.length > 0 && (
@@ -379,6 +401,9 @@ const HaltingDestinationMaster = () => {
                                     </th>
                                     <th style={{ width: "171.375px" }}>
                                       Country
+                                    </th>
+                                    <th style={{ width: "127.391px" }}>
+                                      Created
                                     </th>
                                     <th style={{ width: "127.391px" }}>
                                       Status
@@ -404,6 +429,11 @@ const HaltingDestinationMaster = () => {
                                               {startIndex + index + 1}
                                             </td>
                                             <td>{point.haltingPointName}</td>
+                                            <td>
+                                              {getDateFormatted(
+                                                point.createdAt
+                                              )}
+                                            </td>
                                             <td>
                                               {getStateName(point.fkStateId)}
                                             </td>
@@ -662,6 +692,7 @@ const HaltingDestinationMaster = () => {
             onCancel={handleCancel}
             show={showConfirmation}
           />
+          <Loader isLoading={isLoading}></Loader>
         </div>
       </div>
     </div>

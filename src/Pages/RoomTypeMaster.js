@@ -8,6 +8,7 @@ import {
   toast,
   ToastContainer,
   SimpleReactValidator,
+  ShimmerTable,
 } from "../components/CommonImport";
 import {
   FETCH_ROOM_TYPES_API,
@@ -15,10 +16,13 @@ import {
   UPDATE_ROOM_TYPE_API,
   DELETE_ROOM_TYPE_API,
 } from "../utils/constants";
+import { getDateFormatted } from "../utils/helpers";
+
 import "react-toastify/dist/ReactToastify.css";
 import NoData from "../components/NoData";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import RenderPageNumbers from "./RenderPageNumbers";
+import Loader from "../components/Loader";
 
 const RoomTypeMaster = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
@@ -33,6 +37,8 @@ const RoomTypeMaster = () => {
   const [searchValue, setSearchValue] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isDataReady, setDataReady] = useState(false);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const simpleValidator = useRef(
@@ -55,11 +61,13 @@ const RoomTypeMaster = () => {
       let response = await axios.post(url);
       if (response) {
         if (response.status == 200) {
+          setDataReady(true);
           setRoomTypes(response.data.data);
           setOriginalRoomTypesList(response.data.data);
         }
       }
     } catch (e) {
+      setDataReady(true);
       setRoomTypes([]);
     }
   };
@@ -72,6 +80,7 @@ const RoomTypeMaster = () => {
       let body = {
         roomTypeName: roomType,
       };
+      setIsLoading(true);
       if (simpleValidator.current.allValid()) {
         let response = await axios.post(url, body);
         if (response) {
@@ -83,13 +92,16 @@ const RoomTypeMaster = () => {
             resetForm();
             fetchRoomTypes();
             simpleValidator.current.hideMessages();
+            setIsLoading(false);
           }
         }
       } else {
         simpleValidator.current.showMessages();
+        setIsLoading(false);
       }
     } catch (e) {
       console.log("ee", e);
+      setIsLoading(false);
       toast.error("Something Went Wrong :(", {
         position: "top-right",
       });
@@ -102,6 +114,8 @@ const RoomTypeMaster = () => {
         id: updateId,
         roomTypeName: roomType,
       };
+      setIsLoading(true);
+
       if (simpleValidator.current.allValid()) {
         let response = await axios.post(url, body);
         if (response) {
@@ -114,12 +128,16 @@ const RoomTypeMaster = () => {
             resetForm();
             fetchRoomTypes();
             simpleValidator.current.hideMessages();
+            setIsLoading(false);
           }
         }
       } else {
         simpleValidator.current.showMessages();
+        setIsLoading(false);
       }
     } catch (e) {
+      setIsLoading(false);
+
       toast.error("Something Went Wrong :(", {
         position: "top-right",
       });
@@ -275,6 +293,7 @@ const RoomTypeMaster = () => {
                             </div>
                           </div>
                         </div>
+                        {isDataReady == false && <ShimmerTable row={10} />}
                         <div className="row dt-row">
                           <div className="col-sm-12">
                             {roomTypes && roomTypes.length > 0 && (
@@ -291,7 +310,9 @@ const RoomTypeMaster = () => {
                                     <th style={{ width: "171.375px" }}>
                                       Room Type
                                     </th>
-
+                                    <th style={{ width: "127.391px" }}>
+                                      Created
+                                    </th>
                                     <th style={{ width: "127.391px" }}>
                                       Status
                                     </th>
@@ -315,7 +336,11 @@ const RoomTypeMaster = () => {
                                               {startIndex + index + 1}
                                             </td>
                                             <td>{roomType.roomTypeName}</td>
-
+                                            <td>
+                                              {getDateFormatted(
+                                                roomType.createdAt
+                                              )}
+                                            </td>
                                             <td>
                                               <label
                                                 className={`badge ${
@@ -486,6 +511,7 @@ const RoomTypeMaster = () => {
             onCancel={handleCancel}
             show={showConfirmation}
           />
+          <Loader isLoading={isLoading}></Loader>
         </div>
       </div>
     </div>

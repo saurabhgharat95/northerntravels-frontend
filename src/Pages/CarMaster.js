@@ -8,6 +8,7 @@ import {
   toast,
   ToastContainer,
   SimpleReactValidator,
+  ShimmerTable,
 } from "../components/CommonImport";
 import {
   FETCH_VEHICLES_API,
@@ -15,10 +16,13 @@ import {
   UPDATE_VEHICLE_API,
   DELETE_VEHICLE_API,
 } from "../utils/constants";
+import { getDateFormatted } from "../utils/helpers";
+
 import "react-toastify/dist/ReactToastify.css";
 import NoData from "../components/NoData";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import RenderPageNumbers from "./RenderPageNumbers";
+import Loader from "../components/Loader";
 
 const CarMaster = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
@@ -32,6 +36,8 @@ const CarMaster = () => {
   const [searchValue, setSearchValue] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isDataReady, setDataReady] = useState(false);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const simpleValidator = useRef(
@@ -52,11 +58,13 @@ const CarMaster = () => {
       let response = await axios.post(url);
       if (response) {
         if (response.status == 200) {
+          setDataReady(true);
           setVehicles(response.data.data);
           setOriginalVehiclesList(response.data.data);
         }
       }
     } catch (e) {
+      setDataReady(true);
       setVehicles([]);
     }
   };
@@ -69,6 +77,7 @@ const CarMaster = () => {
       let body = {
         vehicleName: vehicleName,
       };
+      setIsLoading(true);
       if (simpleValidator.current.allValid()) {
         let response = await axios.post(url, body);
         if (response) {
@@ -80,13 +89,17 @@ const CarMaster = () => {
             resetForm();
             fetchVehicles();
             simpleValidator.current.hideMessages();
+            setIsLoading(false);
           }
         }
       } else {
         simpleValidator.current.showMessages();
+        setIsLoading(false);
       }
     } catch (e) {
       console.log("ee", e);
+      setIsLoading(false);
+
       toast.error("Something Went Wrong :(", {
         position: "top-right",
       });
@@ -99,6 +112,7 @@ const CarMaster = () => {
         id: updateId,
         vehicleName: vehicleName,
       };
+      setIsLoading(true);
       if (simpleValidator.current.allValid()) {
         let response = await axios.post(url, body);
         if (response) {
@@ -111,12 +125,16 @@ const CarMaster = () => {
             resetForm();
             fetchVehicles();
             simpleValidator.current.hideMessages();
+            setIsLoading(false);
           }
         }
       } else {
         simpleValidator.current.showMessages();
+        setIsLoading(false);
       }
     } catch (e) {
+      setIsLoading(false);
+
       toast.error("Something Went Wrong :(", {
         position: "top-right",
       });
@@ -273,6 +291,7 @@ const CarMaster = () => {
                             </div>
                           </div>
                         </div>
+                        {isDataReady == false && <ShimmerTable row={10} />}
                         <div className="row dt-row">
                           <div className="col-sm-12">
                             {vehicles && vehicles.length > 0 && (
@@ -289,7 +308,9 @@ const CarMaster = () => {
                                     <th style={{ width: "171.375px" }}>
                                       Car Name
                                     </th>
-
+                                    <th style={{ width: "127.391px" }}>
+                                      Created
+                                    </th>
                                     <th style={{ width: "127.391px" }}>
                                       Status
                                     </th>
@@ -314,7 +335,11 @@ const CarMaster = () => {
                                               {startIndex + index + 1}
                                             </td>
                                             <td>{vehicle.vehicleName}</td>
-
+                                            <td>
+                                              {getDateFormatted(
+                                                vehicle.createdAt
+                                              )}
+                                            </td>
                                             <td>
                                               <label
                                                 className={`badge ${
@@ -486,6 +511,8 @@ const CarMaster = () => {
             onCancel={handleCancel}
             show={showConfirmation}
           />
+          <Loader isLoading={isLoading}></Loader>
+
         </div>
       </div>
     </div>

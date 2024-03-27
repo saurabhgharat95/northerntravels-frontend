@@ -9,6 +9,7 @@ import {
   ToastContainer,
   SimpleReactValidator,
   Select,
+  ShimmerTable,
 } from "../components/CommonImport";
 import {
   FETCH_TRANSIT_POINTS_API,
@@ -18,10 +19,13 @@ import {
   UPDATE_TRANSIT_POINT_API,
   DELETE_TRANSIT_POINT_API,
 } from "../utils/constants";
+import { getDateFormatted } from "../utils/helpers";
+
 import "react-toastify/dist/ReactToastify.css";
 import NoData from "../components/NoData";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import RenderPageNumbers from "./RenderPageNumbers";
+import Loader from "../components/Loader";
 
 const TransitPointMaster = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
@@ -41,6 +45,8 @@ const TransitPointMaster = () => {
   const [searchValue, setSearchValue] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isDataReady, setDataReady] = useState(false);
   const [, setForceUpdate] = useState(0);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
@@ -113,11 +119,13 @@ const TransitPointMaster = () => {
       let response = await axios.post(url);
       if (response) {
         if (response.status == 200) {
+          setDataReady(true);
           setTransitPts(response.data.data);
           setOriginalTransitPtList(response.data.data);
         }
       }
     } catch (e) {
+      setDataReady(true);
       setTransitPts([]);
     }
   };
@@ -134,6 +142,7 @@ const TransitPointMaster = () => {
         fkStateId: stateId,
         fkCountryId: country,
       };
+      setIsLoading(true);
       if (simpleValidator.current.allValid()) {
         let response = await axios.post(url, body);
         if (response) {
@@ -145,11 +154,13 @@ const TransitPointMaster = () => {
             resetForm();
             fetchTransitPts();
             simpleValidator.current.hideMessages();
+            setIsLoading(false);
           }
         }
       } else {
         setForceUpdate((v) => ++v);
         simpleValidator.current.showMessages();
+        setIsLoading(false);
       }
     } catch (e) {
       console.log("ee", e);
@@ -167,6 +178,8 @@ const TransitPointMaster = () => {
         fkStateId: stateId,
         fkCountryId: country,
       };
+      setIsLoading(true);
+
       if (simpleValidator.current.allValid()) {
         let response = await axios.post(url, body);
         if (response) {
@@ -179,11 +192,13 @@ const TransitPointMaster = () => {
             resetForm();
             fetchTransitPts();
             simpleValidator.current.hideMessages();
+            setIsLoading(false);
           }
         }
       } else {
         setForceUpdate((v) => ++v);
         simpleValidator.current.showMessages();
+        setIsLoading(false);
       }
     } catch (e) {
       toast.error("Something Went Wrong :(", {
@@ -361,6 +376,7 @@ const TransitPointMaster = () => {
                             </div>
                           </div>
                         </div>
+                        {isDataReady == false && <ShimmerTable row={10} />}
                         <div className="row dt-row">
                           <div className="col-sm-12">
                             {transitPts && transitPts.length > 0 && (
@@ -380,6 +396,9 @@ const TransitPointMaster = () => {
                                     </th>
                                     <th style={{ width: "171.375px" }}>
                                       Country
+                                    </th>
+                                    <th style={{ width: "127.391px" }}>
+                                      Created
                                     </th>
                                     <th style={{ width: "127.391px" }}>
                                       Status
@@ -411,6 +430,11 @@ const TransitPointMaster = () => {
                                             <td>
                                               {getCountryName(
                                                 point.fkCountryId
+                                              )}
+                                            </td>
+                                            <td>
+                                              {getDateFormatted(
+                                                point.createdAt
                                               )}
                                             </td>
                                             <td>
@@ -664,6 +688,8 @@ const TransitPointMaster = () => {
             onCancel={handleCancel}
             show={showConfirmation}
           />
+          <Loader isLoading={isLoading}></Loader>
+
         </div>
       </div>
     </div>

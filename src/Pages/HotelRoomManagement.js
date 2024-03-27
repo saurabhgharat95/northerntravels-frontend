@@ -105,7 +105,7 @@ const HotelRoomManagement = () => {
                               <div className="col-sm-12">
                                 <table
                                   id="order-listing"
-                                  className="table dataTable no-footer"
+                                  className="table dataTable no-footer table-responsive"
                                   aria-describedby="order-listing_info"
                                 >
                                   <thead>
@@ -672,7 +672,7 @@ const HotelRoomManagement = () => {
                               <div className="col-sm-12">
                                 <table
                                   id="order-listing"
-                                  className="table table-bordered dataTable no-footer"
+                                  className="table table-bordered dataTable no-footer table-responsive"
                                   aria-describedby="order-listing_info"
                                 >
                                   <tr>

@@ -8,6 +8,7 @@ import {
   toast,
   ToastContainer,
   SimpleReactValidator,
+  ShimmerTable,
 } from "../components/CommonImport";
 import {
   FETCH_MEAL_TYPES_API,
@@ -15,10 +16,13 @@ import {
   UPDATE_MEAL_TYPE_API,
   DELETE_MEAL_TYPE_API,
 } from "../utils/constants";
+import { getDateFormatted } from "../utils/helpers";
+
 import "react-toastify/dist/ReactToastify.css";
 import NoData from "../components/NoData";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import RenderPageNumbers from "./RenderPageNumbers";
+import Loader from "../components/Loader";
 
 const MealTypeMaster = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
@@ -32,6 +36,8 @@ const MealTypeMaster = () => {
   const [searchValue, setSearchValue] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isDataReady, setDataReady] = useState(false);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const simpleValidator = useRef(
@@ -54,11 +60,15 @@ const MealTypeMaster = () => {
       let response = await axios.post(url);
       if (response) {
         if (response.status == 200) {
+          setDataReady(true);
+
           setMealTypes(response.data.data);
           setOriginalMealTypesList(response.data.data);
         }
       }
     } catch (e) {
+      setDataReady(true);
+
       setMealTypes([]);
     }
   };
@@ -71,6 +81,8 @@ const MealTypeMaster = () => {
       let body = {
         mealTypeName: mealType,
       };
+      setIsLoading(true);
+
       if (simpleValidator.current.allValid()) {
         let response = await axios.post(url, body);
         if (response) {
@@ -82,13 +94,18 @@ const MealTypeMaster = () => {
             resetForm();
             fetchMealTypes();
             simpleValidator.current.hideMessages();
+            setIsLoading(false);
+
           }
         }
       } else {
         simpleValidator.current.showMessages();
+        setIsLoading(false);
+
       }
     } catch (e) {
       console.log("ee", e);
+      setIsLoading(false);
       toast.error("Something Went Wrong :(", {
         position: "top-right",
       });
@@ -101,6 +118,7 @@ const MealTypeMaster = () => {
         id: updateId,
         mealTypeName: mealType,
       };
+      setIsLoading(true);
       if (simpleValidator.current.allValid()) {
         let response = await axios.post(url, body);
         if (response) {
@@ -113,12 +131,17 @@ const MealTypeMaster = () => {
             resetForm();
             fetchMealTypes();
             simpleValidator.current.hideMessages();
+            setIsLoading(false);
+
           }
         }
       } else {
         simpleValidator.current.showMessages();
+        setIsLoading(false);
+
       }
     } catch (e) {
+      setIsLoading(false);
       toast.error("Something Went Wrong :(", {
         position: "top-right",
       });
@@ -274,6 +297,7 @@ const MealTypeMaster = () => {
                             </div>
                           </div>
                         </div>
+                        {isDataReady == false && <ShimmerTable row={10} />}
                         <div className="row dt-row">
                           <div className="col-sm-12">
                             {mealTypes && mealTypes.length > 0 && (
@@ -290,7 +314,9 @@ const MealTypeMaster = () => {
                                     <th style={{ width: "171.375px" }}>
                                       Meal Type
                                     </th>
-
+                                    <th style={{ width: "127.391px" }}>
+                                      Created
+                                    </th>
                                     <th style={{ width: "127.391px" }}>
                                       Status
                                     </th>
@@ -313,7 +339,11 @@ const MealTypeMaster = () => {
                                             {startIndex + index + 1}
                                           </td>
                                           <td>{mealType.mealTypeName}</td>
-
+                                          <td>
+                                              {getDateFormatted(
+                                                mealType.createdAt
+                                              )}
+                                            </td>
                                           <td>
                                             <label
                                               className={`badge ${
@@ -484,6 +514,8 @@ const MealTypeMaster = () => {
             onCancel={handleCancel}
             show={showConfirmation}
           />
+          <Loader isLoading={isLoading}></Loader>
+
         </div>
       </div>
     </div>

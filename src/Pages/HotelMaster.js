@@ -9,6 +9,7 @@ import {
   ToastContainer,
   SimpleReactValidator,
   Select,
+  ShimmerTable,
 } from "../components/CommonImport";
 import {
   FETCH_HOTELS_API,
@@ -20,11 +21,12 @@ import {
   UPDATE_HOTEL_API,
   DELETE_HOTEL_API,
 } from "../utils/constants";
+import { getDateFormatted } from "../utils/helpers";
 import "react-toastify/dist/ReactToastify.css";
 import NoData from "../components/NoData";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import RenderPageNumbers from "./RenderPageNumbers";
-
+import Loader from "../components/Loader";
 const HotelMaster = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
 
@@ -57,6 +59,9 @@ const HotelMaster = () => {
   const [searchValue, setSearchValue] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [isDataReady, setDataReady] = useState(false);
 
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
@@ -173,11 +178,13 @@ const HotelMaster = () => {
       let response = await axios.post(url);
       if (response) {
         if (response.status == 200) {
+          setDataReady(true);
           setHotels(response.data.data);
           setOriginalHotelsList(response.data.data);
         }
       }
     } catch (e) {
+      setDataReady(true);
       setHotels([]);
     }
   };
@@ -200,6 +207,7 @@ const HotelMaster = () => {
         fkStateId: stateId,
         fkCountryId: country,
       };
+      setIsLoading(true);
       if (simpleValidator.current.allValid()) {
         let response = await axios.post(url, body);
         if (response) {
@@ -211,12 +219,13 @@ const HotelMaster = () => {
             resetForm();
             fetchHotels();
             simpleValidator.current.hideMessages();
+            setIsLoading(false);
           }
         }
       } else {
         setForceUpdate((v) => ++v);
-
         simpleValidator.current.showMessages();
+        setIsLoading(false);
       }
     } catch (e) {
       console.log("ee", e);
@@ -237,6 +246,7 @@ const HotelMaster = () => {
         fkStateId: stateId,
         fkCountryId: country,
       };
+      setIsLoading(true);
       if (simpleValidator.current.allValid()) {
         let response = await axios.post(url, body);
         if (response) {
@@ -249,12 +259,13 @@ const HotelMaster = () => {
             resetForm();
             fetchHotels();
             simpleValidator.current.hideMessages();
+            setIsLoading(false);
           }
         }
       } else {
         setForceUpdate((v) => ++v);
-
         simpleValidator.current.showMessages();
+        setIsLoading(false);
       }
     } catch (e) {
       toast.error("Something Went Wrong :(", {
@@ -445,6 +456,7 @@ const HotelMaster = () => {
                             </div>
                           </div>
                         </div>
+                        {isDataReady == false && <ShimmerTable row={10} />}
                         <div className="row dt-row">
                           <div className="col-sm-12">
                             {hotels && hotels.length > 0 && (
@@ -472,6 +484,9 @@ const HotelMaster = () => {
                                     </th>
                                     <th style={{ width: "171.375px" }}>
                                       Country
+                                    </th>
+                                    <th style={{ width: "127.391px" }}>
+                                      Created
                                     </th>
                                     <th style={{ width: "127.391px" }}>
                                       Status
@@ -515,6 +530,12 @@ const HotelMaster = () => {
                                                 hotel.fkCountryId
                                               )}
                                             </td>
+                                            <td>
+                                              {getDateFormatted(
+                                                hotel.createdAt
+                                              )}
+                                            </td>
+
                                             <td>
                                               <label
                                                 className={`badge ${
@@ -843,6 +864,7 @@ const HotelMaster = () => {
             onCancel={handleCancel}
             show={showConfirmation}
           />
+          <Loader isLoading={isLoading}></Loader>
         </div>
       </div>
     </div>
