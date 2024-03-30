@@ -394,7 +394,7 @@ const CountryMaster = () => {
                             <div
                               className="modal fade"
                               id="countryModal"
-                              tabindex="-1"
+                              tabIndex="-1"
                             >
                               <div
                                 className="modal-dialog modal-md"

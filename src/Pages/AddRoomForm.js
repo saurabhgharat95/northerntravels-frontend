@@ -1,6 +1,6 @@
 import Select from "react-select";
 
-const AddRoomForm = () => {
+const AddRoomForm = ({cancelForm}) => {
   const options = [
     { value: "1", label: "Jammu & Kashmir Tour" },
     { value: "2", label: "Andaman Tour" },
@@ -12,63 +12,63 @@ const AddRoomForm = () => {
         id="steps-uid-0-p-0"
         role="tabpanel"
         aria-labelledby="steps-uid-0-h-0"
-        class="body current"
+        className="body current"
         aria-hidden="false"
         style={{ left: "0px" }}
       >
         <h4>Add Hotel Room</h4>
         <br></br>
-        <div class="form-group row">
-          <div class="col-sm-6">
+        <div className="form-group row">
+          <div className="col-sm-6">
             <label>Hotel Name</label>
             <Select options={options} placeholder="Select Hotel" />
           </div>
-          <div class="col-sm-6">
+          <div className="col-sm-6">
             <label>Room Type</label>
             <Select options={options} placeholder="Select Room Type" />
           </div>
         </div>
-        <div class="form-group row">
-          <div class="col-sm-6">
+        <div className="form-group row">
+          <div className="col-sm-6">
             <label>No. of Rooms</label>
             <input
               type="text"
-              class="form-control"
+              className="form-control"
               placeholder="Enter No. of Rooms"
             />
           </div>
         </div>
-        <div class="form-group row">
-          <label class="col-sm-1 col-xs-2 col-form-label">AC/Non-AC :</label>
+        <div className="form-group row">
+          <label className="col-sm-1 col-xs-2 col-form-label">AC/Non-AC :</label>
           <br></br>
-          <div class="col-sm-1 col-xs-2 mt-2">
-            <div class="form-check">
-              <label class="form-check-label">
+          <div className="col-sm-1 col-xs-2 mt-2">
+            <div className="form-check">
+              <label className="form-check-label">
                 <input
                   type="radio"
-                  class="form-check-input"
+                  className="form-check-input"
                   name="membershipRadios"
                   id="membershipRadios1"
                   value="1"
                   checked
                 />
                 AC
-                <i class="input-helper"></i>
+                <i className="input-helper"></i>
               </label>
             </div>
           </div>
-          <div class="col-sm-1 col-xs-2 mt-2">
-            <div class="form-check">
-              <label class="form-check-label">
+          <div className="col-sm-1 col-xs-2 mt-2">
+            <div className="form-check">
+              <label className="form-check-label">
                 <input
                   type="radio"
-                  class="form-check-input"
+                  className="form-check-input"
                   name="membershipRadios"
                   id="membershipRadios2"
                   value="2"
                 />
                 Non-AC
-                <i class="input-helper"></i>
+                <i className="input-helper"></i>
               </label>
             </div>
           </div>
@@ -115,10 +115,10 @@ const AddRoomForm = () => {
                 </th>
                 <th
                   className="sorting sorting_asc"
-                  tabindex="0"
+                  tabIndex="0"
                   aria-controls="order-listing"
-                  rowspan="1"
-                  colspan="1"
+                  rowSpan="1"
+                  colSpan="1"
                   aria-sort="ascending"
                   aria-label="Order #: activate to sort column descending"
                   style={{ width: "107.016px" }}
@@ -128,10 +128,10 @@ const AddRoomForm = () => {
                 </th>
                 <th
                   className="sorting sorting_asc"
-                  tabindex="0"
+                  tabIndex="0"
                   aria-controls="order-listing"
-                  rowspan="1"
-                  colspan="1"
+                  rowSpan="1"
+                  colSpan="1"
                   aria-sort="ascending"
                   aria-label="Order #: activate to sort column descending"
                   style={{ width: "107.016px" }}
@@ -141,10 +141,10 @@ const AddRoomForm = () => {
                 </th>
                 <th
                   className="sorting sorting_asc"
-                  tabindex="0"
+                  tabIndex="0"
                   aria-controls="order-listing"
-                  rowspan="1"
-                  colspan="1"
+                  rowSpan="1"
+                  colSpan="1"
                   aria-sort="ascending"
                   aria-label="Order #: activate to sort column descending"
                   style={{ width: "107.016px" }}
@@ -154,10 +154,10 @@ const AddRoomForm = () => {
                 </th>
                 <th
                   className="sorting sorting_asc"
-                  tabindex="0"
+                  tabIndex="0"
                   aria-controls="order-listing"
-                  rowspan="1"
-                  colspan="1"
+                  rowSpan="1"
+                  colSpan="1"
                   aria-sort="ascending"
                   aria-label="Order #: activate to sort column descending"
                   style={{ width: "107.016px" }}
@@ -167,10 +167,10 @@ const AddRoomForm = () => {
                 </th>
                 <th
                   className="sorting sorting_asc"
-                  tabindex="0"
+                  tabIndex="0"
                   aria-controls="order-listing"
-                  rowspan="1"
-                  colspan="1"
+                  rowSpan="1"
+                  colSpan="1"
                   aria-sort="ascending"
                   aria-label="Order #: activate to sort column descending"
                   style={{ width: "107.016px" }}
@@ -180,10 +180,10 @@ const AddRoomForm = () => {
                 </th>
                 <th
                   className="sorting sorting_asc"
-                  tabindex="0"
+                  tabIndex="0"
                   aria-controls="order-listing"
-                  rowspan="1"
-                  colspan="1"
+                  rowSpan="1"
+                  colSpan="1"
                   aria-sort="ascending"
                   aria-label="Order #: activate to sort column descending"
                   style={{ width: "107.016px" }}
@@ -307,14 +307,21 @@ const AddRoomForm = () => {
        
       </section>
       <br></br>
+   
       <div className="actions clearfix float-right">
         <button
           className="btn btn-secondary"
-          onClick={() => {
-            selectForm("prev", selectedTab);
-          }}
+          
         >
           Submit
+        </button>
+      </div>
+      <div className="actions clearfix float-right mr-2">
+        <button
+          className="btn primary text-white"
+          onClick={()=>cancelForm()}
+        >
+          Cancel
         </button>
       </div>
     </>

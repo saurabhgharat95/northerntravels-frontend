@@ -386,7 +386,7 @@ const RoomTypeMaster = () => {
                             <div
                               className="modal fade"
                               id="roomTypeModal"
-                              tabindex="-1"
+                              tabIndex="-1"
                               aria-labelledby="exampleModalLabel"
                               style={{ display: "none" }}
                               aria-hidden="true"

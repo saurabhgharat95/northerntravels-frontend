@@ -14,6 +14,10 @@ const HotelRoomManagement = () => {
   const viewCharges = () => {
     setFormModule("charges");
   };
+  const cancelForm = () =>{
+    setFormModule("room");
+
+  }
   return (
     <div className="container-scroller">
       <Navbar setSidebarOpen={setSidebarOpen}></Navbar>
@@ -24,21 +28,21 @@ const HotelRoomManagement = () => {
             <div className="card">
               <div className="card-body">
                 {(formModule == "room" || formModule == "charges") && (
-                  <ol class="breadcrumb bg-primary">
-                    <li class="breadcrumb-item">
+                  <ol className="breadcrumb bg-primary">
+                    <li className="breadcrumb-item">
                       <span onClick={() => setFormModule("hotel")}>
                         Hotel Rooms
                       </span>
                     </li>
                     {(formModule == "room" || formModule == "charges") && (
-                      <li onClick={() => viewRooms()} class="breadcrumb-item">
+                      <li onClick={() => viewRooms()} className="breadcrumb-item">
                         Rooms
                       </li>
                     )}
                     {formModule == "charges" && (
                       <li
                         onClick={() => viewCharges()}
-                        class="breadcrumb-item active"
+                        className="breadcrumb-item active"
                         aria-current="page"
                       >
                         <span>Charges</span>
@@ -105,17 +109,17 @@ const HotelRoomManagement = () => {
                               <div className="col-sm-12">
                                 <table
                                   id="order-listing"
-                                  className="table dataTable no-footer table-responsive"
+                                  className="table dataTable no-footer"
                                   aria-describedby="order-listing_info"
                                 >
                                   <thead>
                                     <tr>
                                       <th
                                         className="sorting sorting_asc"
-                                        tabindex="0"
+                                        tabIndex="0"
                                         aria-controls="order-listing"
-                                        rowspan="1"
-                                        colspan="1"
+                                        rowSpan="1"
+                                        colSpan="1"
                                         aria-sort="ascending"
                                         aria-label="Order #: activate to sort column descending"
                                         style={{ width: "107.016px" }}
@@ -124,10 +128,10 @@ const HotelRoomManagement = () => {
                                       </th>
                                       <th
                                         className="sorting"
-                                        tabindex="0"
+                                        tabIndex="0"
                                         aria-controls="order-listing"
-                                        rowspan="1"
-                                        colspan="1"
+                                        rowSpan="1"
+                                        colSpan="1"
                                         aria-label="Purchased On: activate to sort column ascending"
                                         style={{ width: "171.375px" }}
                                       >
@@ -135,10 +139,10 @@ const HotelRoomManagement = () => {
                                       </th>
                                       <th
                                         className="sorting"
-                                        tabindex="0"
+                                        tabIndex="0"
                                         aria-controls="order-listing"
-                                        rowspan="1"
-                                        colspan="1"
+                                        rowSpan="1"
+                                        colSpan="1"
                                         aria-label="Customer: activate to sort column ascending"
                                         style={{ width: "127.391px" }}
                                       >
@@ -147,10 +151,10 @@ const HotelRoomManagement = () => {
 
                                       <th
                                         className="sorting"
-                                        tabindex="0"
+                                        tabIndex="0"
                                         aria-controls="order-listing"
-                                        rowspan="1"
-                                        colspan="1"
+                                        rowSpan="1"
+                                        colSpan="1"
                                         aria-label="Ship to: activate to sort column ascending"
                                         style={{ width: "116.672px" }}
                                       >
@@ -243,7 +247,7 @@ const HotelRoomManagement = () => {
                                         aria-disabled="true"
                                         role="link"
                                         data-dt-idx="previous"
-                                        tabindex="-1"
+                                        tabIndex="-1"
                                         className="page-link"
                                       >
                                         Previous
@@ -256,7 +260,7 @@ const HotelRoomManagement = () => {
                                         role="link"
                                         aria-current="page"
                                         data-dt-idx="0"
-                                        tabindex="0"
+                                        tabIndex="0"
                                         className="page-link"
                                       >
                                         1
@@ -271,7 +275,7 @@ const HotelRoomManagement = () => {
                                         aria-disabled="true"
                                         role="link"
                                         data-dt-idx="next"
-                                        tabindex="-1"
+                                        tabIndex="-1"
                                         className="page-link"
                                       >
                                         Next
@@ -299,17 +303,17 @@ const HotelRoomManagement = () => {
                    
                     </div>
                     <div className="row">
-                      <div class="col-md-4 grid-margin stretch-card">
-                        <div class="card border border-primary">
-                          <div class="card-body">
-                            <div class="media">
+                      <div className="col-md-4 grid-margin stretch-card">
+                        <div className="card border border-primary">
+                          <div className="card-body">
+                            <div className="media">
                               <ion-icon
                                 color="primary"
                                 name="business-outline"
                                 size="large"
                               ></ion-icon>
-                              <div class="media-body ml-2 mt-1">
-                                <p class="card-text">
+                              <div className="media-body ml-2 mt-1">
+                                <p className="card-text">
                                   Hotel : <b>Budshah Residency</b>
                                 </p>
                               </div>
@@ -376,10 +380,10 @@ const HotelRoomManagement = () => {
                                     <tr>
                                       <th
                                         className="sorting sorting_asc"
-                                        tabindex="0"
+                                        tabIndex="0"
                                         aria-controls="order-listing"
-                                        rowspan="1"
-                                        colspan="1"
+                                        rowSpan="1"
+                                        colSpan="1"
                                         aria-sort="ascending"
                                         aria-label="Order #: activate to sort column descending"
                                         style={{ width: "107.016px" }}
@@ -389,10 +393,10 @@ const HotelRoomManagement = () => {
 
                                       <th
                                         className="sorting"
-                                        tabindex="0"
+                                        tabIndex="0"
                                         aria-controls="order-listing"
-                                        rowspan="1"
-                                        colspan="1"
+                                        rowSpan="1"
+                                        colSpan="1"
                                         aria-label="Customer: activate to sort column ascending"
                                         style={{ width: "127.391px" }}
                                       >
@@ -400,10 +404,10 @@ const HotelRoomManagement = () => {
                                       </th>
                                       <th
                                         className="sorting"
-                                        tabindex="0"
+                                        tabIndex="0"
                                         aria-controls="order-listing"
-                                        rowspan="1"
-                                        colspan="1"
+                                        rowSpan="1"
+                                        colSpan="1"
                                         aria-label="Customer: activate to sort column ascending"
                                         style={{ width: "127.391px" }}
                                       >
@@ -411,10 +415,10 @@ const HotelRoomManagement = () => {
                                       </th>
                                       <th
                                         className="sorting"
-                                        tabindex="0"
+                                        tabIndex="0"
                                         aria-controls="order-listing"
-                                        rowspan="1"
-                                        colspan="1"
+                                        rowSpan="1"
+                                        colSpan="1"
                                         aria-label="Customer: activate to sort column ascending"
                                         style={{ width: "127.391px" }}
                                       >
@@ -423,10 +427,10 @@ const HotelRoomManagement = () => {
 
                                       <th
                                         className="sorting"
-                                        tabindex="0"
+                                        tabIndex="0"
                                         aria-controls="order-listing"
-                                        rowspan="1"
-                                        colspan="1"
+                                        rowSpan="1"
+                                        colSpan="1"
                                         aria-label="Ship to: activate to sort column ascending"
                                         style={{ width: "116.672px" }}
                                       >
@@ -549,7 +553,7 @@ const HotelRoomManagement = () => {
                                         aria-disabled="true"
                                         role="link"
                                         data-dt-idx="previous"
-                                        tabindex="-1"
+                                        tabIndex="-1"
                                         className="page-link"
                                       >
                                         Previous
@@ -562,7 +566,7 @@ const HotelRoomManagement = () => {
                                         role="link"
                                         aria-current="page"
                                         data-dt-idx="0"
-                                        tabindex="0"
+                                        tabIndex="0"
                                         className="page-link"
                                       >
                                         1
@@ -577,7 +581,7 @@ const HotelRoomManagement = () => {
                                         aria-disabled="true"
                                         role="link"
                                         data-dt-idx="next"
-                                        tabindex="-1"
+                                        tabIndex="-1"
                                         className="page-link"
                                       >
                                         Next
@@ -596,24 +600,24 @@ const HotelRoomManagement = () => {
                 {formModule == "charges" && (
                   <>
                     <div className="row">
-                      <div class="col-md-4 grid-margin stretch-card">
-                        <div class="card border border-primary">
-                          <div class="card-body">
-                            <div class="media">
+                      <div className="col-md-4 grid-margin stretch-card">
+                        <div className="card border border-primary">
+                          <div className="card-body">
+                            <div className="media">
                               <ion-icon
                                 style={{ marginTop: "5px" }}
                                 color="primary"
                                 name="business-outline"
                                 size="large"
                               ></ion-icon>
-                              <div class="media-body ml-2">
+                              <div className="media-body ml-2">
                                 <p
-                                  class="card-text"
+                                  className="card-text"
                                   style={{ marginBottom: 0 }}
                                 >
                                   Hotel : <b>Budshah Residency</b>
                                 </p>
-                                <p class="card-text">
+                                <p className="card-text">
                                   Room Type : <b>Deluxe</b>
                                 </p>
                               </div>
@@ -694,10 +698,10 @@ const HotelRoomManagement = () => {
                                     <th></th>
                                     <th
                                       className="sorting sorting_asc"
-                                      tabindex="0"
+                                      tabIndex="0"
                                       aria-controls="order-listing"
-                                      rowspan="1"
-                                      colspan="1"
+                                      rowSpan="1"
+                                      colSpan="1"
                                       aria-sort="ascending"
                                       aria-label="Order #: activate to sort column descending"
                                       style={{ width: "107.016px" }}
@@ -707,10 +711,10 @@ const HotelRoomManagement = () => {
                                     </th>
                                     <th
                                       className="sorting sorting_asc"
-                                      tabindex="0"
+                                      tabIndex="0"
                                       aria-controls="order-listing"
-                                      rowspan="1"
-                                      colspan="1"
+                                      rowSpan="1"
+                                      colSpan="1"
                                       aria-sort="ascending"
                                       aria-label="Order #: activate to sort column descending"
                                       style={{ width: "107.016px" }}
@@ -720,10 +724,10 @@ const HotelRoomManagement = () => {
                                     </th>
                                     <th
                                       className="sorting sorting_asc"
-                                      tabindex="0"
+                                      tabIndex="0"
                                       aria-controls="order-listing"
-                                      rowspan="1"
-                                      colspan="1"
+                                      rowSpan="1"
+                                      colSpan="1"
                                       aria-sort="ascending"
                                       aria-label="Order #: activate to sort column descending"
                                       style={{ width: "107.016px" }}
@@ -733,10 +737,10 @@ const HotelRoomManagement = () => {
                                     </th>
                                     <th
                                       className="sorting sorting_asc"
-                                      tabindex="0"
+                                      tabIndex="0"
                                       aria-controls="order-listing"
-                                      rowspan="1"
-                                      colspan="1"
+                                      rowSpan="1"
+                                      colSpan="1"
                                       aria-sort="ascending"
                                       aria-label="Order #: activate to sort column descending"
                                       style={{ width: "107.016px" }}
@@ -746,10 +750,10 @@ const HotelRoomManagement = () => {
                                     </th>
                                     <th
                                       className="sorting sorting_asc"
-                                      tabindex="0"
+                                      tabIndex="0"
                                       aria-controls="order-listing"
-                                      rowspan="1"
-                                      colspan="1"
+                                      rowSpan="1"
+                                      colSpan="1"
                                       aria-sort="ascending"
                                       aria-label="Order #: activate to sort column descending"
                                       style={{ width: "107.016px" }}
@@ -759,10 +763,10 @@ const HotelRoomManagement = () => {
                                     </th>
                                     <th
                                       className="sorting sorting_asc"
-                                      tabindex="0"
+                                      tabIndex="0"
                                       aria-controls="order-listing"
-                                      rowspan="1"
-                                      colspan="1"
+                                      rowSpan="1"
+                                      colSpan="1"
                                       aria-sort="ascending"
                                       aria-label="Order #: activate to sort column descending"
                                       style={{ width: "107.016px" }}
@@ -772,10 +776,10 @@ const HotelRoomManagement = () => {
                                     </th>
                                     <th
                                       className="sorting sorting_asc"
-                                      tabindex="0"
+                                      tabIndex="0"
                                       aria-controls="order-listing"
-                                      rowspan="1"
-                                      colspan="1"
+                                      rowSpan="1"
+                                      colSpan="1"
                                       aria-sort="ascending"
                                       aria-label="Order #: activate to sort column descending"
                                       style={{ width: "107.016px" }}
@@ -785,10 +789,10 @@ const HotelRoomManagement = () => {
                                     </th>
                                     <th
                                       className="sorting sorting_asc"
-                                      tabindex="0"
+                                      tabIndex="0"
                                       aria-controls="order-listing"
-                                      rowspan="1"
-                                      colspan="1"
+                                      rowSpan="1"
+                                      colSpan="1"
                                       aria-sort="ascending"
                                       aria-label="Order #: activate to sort column descending"
                                       style={{ width: "107.016px" }}
@@ -872,7 +876,7 @@ const HotelRoomManagement = () => {
                                         aria-disabled="true"
                                         role="link"
                                         data-dt-idx="previous"
-                                        tabindex="-1"
+                                        tabIndex="-1"
                                         className="page-link"
                                       >
                                         Previous
@@ -885,7 +889,7 @@ const HotelRoomManagement = () => {
                                         role="link"
                                         aria-current="page"
                                         data-dt-idx="0"
-                                        tabindex="0"
+                                        tabIndex="0"
                                         className="page-link"
                                       >
                                         1
@@ -900,7 +904,7 @@ const HotelRoomManagement = () => {
                                         aria-disabled="true"
                                         role="link"
                                         data-dt-idx="next"
-                                        tabindex="-1"
+                                        tabIndex="-1"
                                         className="page-link"
                                       >
                                         Next
@@ -918,7 +922,7 @@ const HotelRoomManagement = () => {
                 )}
                 {
                   formModule == "roomform" && (
-                    <AddRoomForm></AddRoomForm>
+                    <AddRoomForm cancelForm={cancelForm}></AddRoomForm>
                   )
                 }
               </div>

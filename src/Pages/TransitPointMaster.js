@@ -252,18 +252,7 @@ const TransitPointMaster = () => {
   const handleCancel = () => {
     setShowConfirmation(false);
   };
-  const getCountryName = (countryId) => {
-    var countryObj = countries.filter((country) => {
-      return country.id == countryId;
-    })[0];
-    return countryObj ? countryObj.countryName : "";
-  };
-  const getStateName = (stateId) => {
-    var stateObj = statesList.filter((state) => {
-      return state.id == stateId;
-    })[0];
-    return stateObj ? stateObj.stateName : "";
-  };
+
   const handlePagination = (number) => {
     setCurrentPage(Number(number));
   };
@@ -424,14 +413,8 @@ const TransitPointMaster = () => {
                                               {startIndex + index + 1}
                                             </td>
                                             <td>{point.transitPointName}</td>
-                                            <td>
-                                              {getStateName(point.fkStateId)}
-                                            </td>
-                                            <td>
-                                              {getCountryName(
-                                                point.fkCountryId
-                                              )}
-                                            </td>
+                                            <td>{point.stateName}</td>
+                                            <td>{point.countryName}</td>
                                             <td>
                                               {getDateFormatted(
                                                 point.createdAt
@@ -482,7 +465,7 @@ const TransitPointMaster = () => {
                             <div
                               className="modal fade"
                               id="transitPtModal"
-                              tabindex="-1"
+                              tabIndex="-1"
                               aria-labelledby="exampleModalLabel"
                               style={{ display: "none" }}
                               aria-hidden="true"
@@ -689,7 +672,6 @@ const TransitPointMaster = () => {
             show={showConfirmation}
           />
           <Loader isLoading={isLoading}></Loader>
-
         </div>
       </div>
     </div>

@@ -435,7 +435,7 @@ const StateMaster = () => {
                             <div
                               className="modal fade"
                               id="stateModal"
-                              tabindex="-1"
+                              tabIndex="-1"
                               aria-labelledby="exampleModalLabel"
                               style={{ display: "none" }}
                               aria-hidden="true"

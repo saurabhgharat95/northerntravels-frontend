@@ -258,18 +258,7 @@ const HaltingDestinationMaster = () => {
   const handleCancel = () => {
     setShowConfirmation(false);
   };
-  const getCountryName = (countryId) => {
-    var countryObj = countries.filter((country) => {
-      return country.id == countryId;
-    })[0];
-    return countryObj ? countryObj.countryName : "";
-  };
-  const getStateName = (stateId) => {
-    var stateObj = statesList.filter((state) => {
-      return state.id == stateId;
-    })[0];
-    return stateObj ? stateObj.stateName : "";
-  };
+
   const handlePagination = (number) => {
     setCurrentPage(Number(number));
   };
@@ -292,6 +281,12 @@ const HaltingDestinationMaster = () => {
       var filteredDest = haltDests?.filter((row) =>
         row?.haltDestName
           ?.toLowerCase()
+          .includes(escapedSearchValue.toLowerCase()) || 
+        row?.countryName
+          ?.toLowerCase()
+          .includes(escapedSearchValue.toLowerCase()) || 
+        row?.stateName
+          ?.toLowerCase()
           .includes(escapedSearchValue.toLowerCase())
       );
       setHaltDests(filteredDest);
@@ -299,6 +294,7 @@ const HaltingDestinationMaster = () => {
       setHaltDests(originalHaltDestsList);
     }
   };
+  
   useEffect(() => {
     fetchCountries();
     fetchStates();
@@ -429,17 +425,12 @@ const HaltingDestinationMaster = () => {
                                               {startIndex + index + 1}
                                             </td>
                                             <td>{point.haltingPointName}</td>
+                                           
+                                            <td>{point.stateName}</td>
+                                            <td>{point.countryName}</td>
                                             <td>
                                               {getDateFormatted(
                                                 point.createdAt
-                                              )}
-                                            </td>
-                                            <td>
-                                              {getStateName(point.fkStateId)}
-                                            </td>
-                                            <td>
-                                              {getCountryName(
-                                                point.fkCountryId
                                               )}
                                             </td>
                                             <td>
@@ -487,7 +478,7 @@ const HaltingDestinationMaster = () => {
                             <div
                               className="modal fade"
                               id="haltDestModal"
-                              tabindex="-1"
+                              tabIndex="-1"
                               aria-labelledby="exampleModalLabel"
                               style={{ display: "none" }}
                               aria-hidden="true"

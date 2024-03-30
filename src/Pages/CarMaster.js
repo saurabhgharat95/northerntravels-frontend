@@ -385,7 +385,7 @@ const CarMaster = () => {
                             <div
                               className="modal fade"
                               id="vehicleModal"
-                              tabindex="-1"
+                              tabIndex="-1"
                               aria-labelledby="exampleModalLabel"
                               style={{ display: "none" }}
                               aria-hidden="true"

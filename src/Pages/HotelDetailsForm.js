@@ -60,7 +60,7 @@ const HotelDetailsForm = () => {
         id="steps-uid-0-p-0"
         role="tabpanel"
         aria-labelledby="steps-uid-0-h-0"
-        class="body current"
+        className="body current"
         aria-hidden="false"
         style={{ left: "0px" }}
       >
@@ -69,12 +69,12 @@ const HotelDetailsForm = () => {
         <br></br>
         <br></br>
         <form>
-          <div class="form-group row">
-            <div class="col-sm-6">
+          <div className="form-group row">
+            <div className="col-sm-6">
               <label>Package Name</label>
               <input
                 type="text"
-                class="form-control"
+                className="form-control"
                 min={0}
                 placeholder="Enter Package Name"
                 value={packageObject.packageName}
@@ -88,7 +88,7 @@ const HotelDetailsForm = () => {
 
               />
             </div>
-            <div class="col-sm-6">
+            <div className="col-sm-6">
               <label>Halting Destination</label>
               <Select
                 options={options}
@@ -104,8 +104,8 @@ const HotelDetailsForm = () => {
             </div>
           </div>
 
-          <div class="form-group row">
-            <div class="col-sm-6">
+          <div className="form-group row">
+            <div className="col-sm-6">
               <label>Hotel Type</label>
               <Select
                 options={options}
@@ -118,7 +118,7 @@ const HotelDetailsForm = () => {
                 }
               />
             </div>
-            <div class="col-sm-6">
+            <div className="col-sm-6">
               <label>Hotel Name</label>
               <Select
                 options={options}
@@ -132,12 +132,12 @@ const HotelDetailsForm = () => {
               />
             </div>
           </div>
-          <div class="form-group row">
-            <div class="col-sm-6">
+          <div className="form-group row">
+            <div className="col-sm-6">
               <label>From Date</label>
               <input
                 type="date"
-                class="form-control"
+                className="form-control"
                 placeholder="Select From Date"
                 value={packageObject.fromDate}
                 onChange={(event) =>
@@ -148,11 +148,11 @@ const HotelDetailsForm = () => {
                 }
               />
             </div>
-            <div class="col-sm-6">
+            <div className="col-sm-6">
               <label>To Date</label>
               <input
                 type="date"
-                class="form-control"
+                className="form-control"
                 placeholder="Select To Date"
                 value={packageObject.toDate}
                 onChange={(event) =>
@@ -164,12 +164,12 @@ const HotelDetailsForm = () => {
               />
             </div>
           </div>
-          <div class="form-group row">
-            <div class="col-sm-6">
+          <div className="form-group row">
+            <div className="col-sm-6">
               <label>Number of Nights</label>
               <input
                 type="number"
-                class="form-control"
+                className="form-control"
                 placeholder="Enter Number of Nights"
                 value={packageObject.noOfNights}
                 onChange={(event) =>
@@ -180,7 +180,7 @@ const HotelDetailsForm = () => {
                 }
               />
             </div>
-            <div class="col-sm-6">
+            <div className="col-sm-6">
               <label>Room Type</label>
               <Select
                 options={options}
@@ -194,8 +194,8 @@ const HotelDetailsForm = () => {
               />
             </div>
           </div>
-          <div class="form-group row">
-            <div class="col-sm-6">
+          <div className="form-group row">
+            <div className="col-sm-6">
               <label>Meal Type</label>
               <Select
                 options={options}
@@ -291,10 +291,10 @@ const HotelDetailsForm = () => {
                           <tr>
                             <th
                               className="sorting sorting_asc"
-                              tabindex="0"
+                              tabIndex="0"
                               aria-controls="order-listing"
-                              rowspan="1"
-                              colspan="1"
+                              rowSpan="1"
+                              colSpan="1"
                               aria-sort="ascending"
                               aria-label="Order #: activate to sort column descending"
                               style={{ width: "107.016px" }}
@@ -303,10 +303,10 @@ const HotelDetailsForm = () => {
                             </th>
                             <th
                               className="sorting"
-                              tabindex="0"
+                              tabIndex="0"
                               aria-controls="order-listing"
-                              rowspan="1"
-                              colspan="1"
+                              rowSpan="1"
+                              colSpan="1"
                               aria-label="Purchased On: activate to sort column ascending"
                               style={{ width: "171.375px" }}
                             >
@@ -314,10 +314,10 @@ const HotelDetailsForm = () => {
                             </th>
                             <th
                               className="sorting"
-                              tabindex="0"
+                              tabIndex="0"
                               aria-controls="order-listing"
-                              rowspan="1"
-                              colspan="1"
+                              rowSpan="1"
+                              colSpan="1"
                               aria-label="Customer: activate to sort column ascending"
                               style={{ width: "127.391px" }}
                             >
@@ -325,10 +325,10 @@ const HotelDetailsForm = () => {
                             </th>
                             <th
                               className="sorting"
-                              tabindex="0"
+                              tabIndex="0"
                               aria-controls="order-listing"
-                              rowspan="1"
-                              colspan="1"
+                              rowSpan="1"
+                              colSpan="1"
                               aria-label="Ship to: activate to sort column ascending"
                               style={{ width: "116.672px" }}
                             >
@@ -336,10 +336,10 @@ const HotelDetailsForm = () => {
                             </th>
                             <th
                               className="sorting"
-                              tabindex="0"
+                              tabIndex="0"
                               aria-controls="order-listing"
-                              rowspan="1"
-                              colspan="1"
+                              rowSpan="1"
+                              colSpan="1"
                               aria-label="Ship to: activate to sort column ascending"
                               style={{ width: "116.672px" }}
                             >
@@ -347,10 +347,10 @@ const HotelDetailsForm = () => {
                             </th>
                             <th
                               className="sorting"
-                              tabindex="0"
+                              tabIndex="0"
                               aria-controls="order-listing"
-                              rowspan="1"
-                              colspan="1"
+                              rowSpan="1"
+                              colSpan="1"
                               aria-label="Ship to: activate to sort column ascending"
                               style={{ width: "116.672px" }}
                             >
@@ -358,10 +358,10 @@ const HotelDetailsForm = () => {
                             </th>
                             <th
                               className="sorting"
-                              tabindex="0"
+                              tabIndex="0"
                               aria-controls="order-listing"
-                              rowspan="1"
-                              colspan="1"
+                              rowSpan="1"
+                              colSpan="1"
                               aria-label="Ship to: activate to sort column ascending"
                               style={{ width: "116.672px" }}
                             >
@@ -369,10 +369,10 @@ const HotelDetailsForm = () => {
                             </th>
                             <th
                               className="sorting"
-                              tabindex="0"
+                              tabIndex="0"
                               aria-controls="order-listing"
-                              rowspan="1"
-                              colspan="1"
+                              rowSpan="1"
+                              colSpan="1"
                               aria-label="Ship to: activate to sort column ascending"
                               style={{ width: "116.672px" }}
                             >
@@ -380,10 +380,10 @@ const HotelDetailsForm = () => {
                             </th>
                             <th
                               className="sorting"
-                              tabindex="0"
+                              tabIndex="0"
                               aria-controls="order-listing"
-                              rowspan="1"
-                              colspan="1"
+                              rowSpan="1"
+                              colSpan="1"
                               aria-label="Ship to: activate to sort column ascending"
                               style={{ width: "116.672px" }}
                             >
@@ -391,10 +391,10 @@ const HotelDetailsForm = () => {
                             </th>
                             <th
                               className="sorting"
-                              tabindex="0"
+                              tabIndex="0"
                               aria-controls="order-listing"
-                              rowspan="1"
-                              colspan="1"
+                              rowSpan="1"
+                              colSpan="1"
                               aria-label="Ship to: activate to sort column ascending"
                               style={{ width: "116.672px" }}
                             >

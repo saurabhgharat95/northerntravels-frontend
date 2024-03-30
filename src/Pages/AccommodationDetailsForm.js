@@ -5,7 +5,7 @@ const AccommodationDetailsForm = () => {
         id="steps-uid-0-p-0"
         role="tabpanel"
         aria-labelledby="steps-uid-0-h-0"
-        class="body current"
+        className="body current"
         aria-hidden="false"
         style={{ left: "0px" }}
       >
@@ -13,39 +13,39 @@ const AccommodationDetailsForm = () => {
         <br></br>
         <br></br>
         <br></br>
-        <div class="form-group row">
-          <div class="col-sm-6">
+        <div className="form-group row">
+          <div className="col-sm-6">
             <label>Total No. of Person</label>
-            <input type="number" class="form-control" min={0} placeholder="Enter Total No. of Person" max={50} />
+            <input type="number" className="form-control" min={0} placeholder="Enter Total No. of Person" max={50} />
           </div>
         </div>
-        <div class="form-group row">
-          <div class="col-sm-6">
+        <div className="form-group row">
+          <div className="col-sm-6">
             <label>Room Required</label>
-            <input type="number" class="form-control" min={0} placeholder="Enter No. of Rooms Required" max={50}/>
+            <input type="number" className="form-control" min={0} placeholder="Enter No. of Rooms Required" max={50}/>
           </div>
         </div>
-        <div class="form-group row">
-          <div class="col-sm-6">
+        <div className="form-group row">
+          <div className="col-sm-6">
             <label>Children Below 5 years</label>
-            <input type="number" class="form-control" min={0} max={50} />
+            <input type="number" className="form-control" min={0} max={50} />
           </div>
         </div>
-        <div class="form-group row">
-          <div class="col-sm-6">
+        <div className="form-group row">
+          <div className="col-sm-6">
             <label>Children Between 6-8 years</label>
             <small> (Without Bed)</small>
             <br></br>
             <br></br>
 
-            <input type="number" class="form-control" min={0} max={50}/>
+            <input type="number" className="form-control" min={0} max={50}/>
           </div>
         </div>
-        <div class="form-group row">
-          <div class="col-sm-6">
+        <div className="form-group row">
+          <div className="col-sm-6">
             <label>Children Above 9 years </label>
             <small>(Extra Bed)</small>
-            <input type="number" class="form-control" min={0} max={50} />
+            <input type="number" className="form-control" min={0} max={50} />
           </div>
         </div>
      

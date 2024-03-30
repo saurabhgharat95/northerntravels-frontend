@@ -392,7 +392,7 @@ const HotelTypeMaster = () => {
                             <div
                               className="modal fade"
                               id="hotelTypeModal"
-                              tabindex="-1"
+                              tabIndex="-1"
                               aria-labelledby="exampleModalLabel"
                               style={{ display: "none" }}
                               aria-hidden="true"

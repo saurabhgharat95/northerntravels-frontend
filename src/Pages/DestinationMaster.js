@@ -82,10 +82,10 @@ const DestinationMaster = () => {
                                 <tr>
                                   <th
                                     className="sorting sorting_asc"
-                                    tabindex="0"
+                                    tabIndex="0"
                                     aria-controls="order-listing"
-                                    rowspan="1"
-                                    colspan="1"
+                                    rowSpan="1"
+                                    colSpan="1"
                                     aria-sort="ascending"
                                     aria-label="Order #: activate to sort column descending"
                                     style={{ width: "107.016px" }}
@@ -94,10 +94,10 @@ const DestinationMaster = () => {
                                   </th>
                                   <th
                                     className="sorting"
-                                    tabindex="0"
+                                    tabIndex="0"
                                     aria-controls="order-listing"
-                                    rowspan="1"
-                                    colspan="1"
+                                    rowSpan="1"
+                                    colSpan="1"
                                     aria-label="Purchased On: activate to sort column ascending"
                                     style={{ width: "171.375px" }}
                                   >
@@ -105,10 +105,10 @@ const DestinationMaster = () => {
                                   </th>
                                   <th
                                     className="sorting"
-                                    tabindex="0"
+                                    tabIndex="0"
                                     aria-controls="order-listing"
-                                    rowspan="1"
-                                    colspan="1"
+                                    rowSpan="1"
+                                    colSpan="1"
                                     aria-label="Purchased On: activate to sort column ascending"
                                     style={{ width: "171.375px" }}
                                   >
@@ -116,10 +116,10 @@ const DestinationMaster = () => {
                                   </th>
                                   <th
                                     className="sorting"
-                                    tabindex="0"
+                                    tabIndex="0"
                                     aria-controls="order-listing"
-                                    rowspan="1"
-                                    colspan="1"
+                                    rowSpan="1"
+                                    colSpan="1"
                                     aria-label="Purchased On: activate to sort column ascending"
                                     style={{ width: "171.375px" }}
                                   >
@@ -127,10 +127,10 @@ const DestinationMaster = () => {
                                   </th>
                                   <th
                                     className="sorting"
-                                    tabindex="0"
+                                    tabIndex="0"
                                     aria-controls="order-listing"
-                                    rowspan="1"
-                                    colspan="1"
+                                    rowSpan="1"
+                                    colSpan="1"
                                     aria-label="Customer: activate to sort column ascending"
                                     style={{ width: "127.391px" }}
                                   >
@@ -138,10 +138,10 @@ const DestinationMaster = () => {
                                   </th>
                                   <th
                                     className="sorting"
-                                    tabindex="0"
+                                    tabIndex="0"
                                     aria-controls="order-listing"
-                                    rowspan="1"
-                                    colspan="1"
+                                    rowSpan="1"
+                                    colSpan="1"
                                     aria-label="Ship to: activate to sort column ascending"
                                     style={{ width: "116.672px" }}
                                   >
@@ -247,7 +247,7 @@ const DestinationMaster = () => {
                             <div
                               className="modal fade"
                               id="countryModal"
-                              tabindex="-1"
+                              tabIndex="-1"
                               aria-labelledby="exampleModalLabel"
                               style={{ display: "none" }}
                               aria-hidden="true"
@@ -287,7 +287,7 @@ const DestinationMaster = () => {
                                       <select
                                         className="js-example-basic-single w-100 select2-hidden-accessible"
                                         data-select2-id="1"
-                                        tabindex="-1"
+                                        tabIndex="-1"
                                         aria-hidden="true"
                                       >
                                         <option value="in" data-select2-id="3">
@@ -312,7 +312,7 @@ const DestinationMaster = () => {
                                       <select
                                         className="js-example-basic-single w-100 select2-hidden-accessible"
                                         data-select2-id="1"
-                                        tabindex="-1"
+                                        tabIndex="-1"
                                         aria-hidden="true"
                                       >
                                         <option value="in" data-select2-id="3">
@@ -379,7 +379,7 @@ const DestinationMaster = () => {
                                     aria-disabled="true"
                                     role="link"
                                     data-dt-idx="previous"
-                                    tabindex="-1"
+                                    tabIndex="-1"
                                     className="page-link"
                                   >
                                     Previous
@@ -392,7 +392,7 @@ const DestinationMaster = () => {
                                     role="link"
                                     aria-current="page"
                                     data-dt-idx="0"
-                                    tabindex="0"
+                                    tabIndex="0"
                                     className="page-link"
                                   >
                                     1
@@ -407,7 +407,7 @@ const DestinationMaster = () => {
                                     aria-disabled="true"
                                     role="link"
                                     data-dt-idx="next"
-                                    tabindex="-1"
+                                    tabIndex="-1"
                                     className="page-link"
                                   >
                                     Next

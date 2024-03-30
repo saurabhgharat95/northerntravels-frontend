@@ -33,7 +33,7 @@ const Sidebar = (props) => {
           </li>
         
           <li className="nav-item">
-            <a className="nav-link" href="">
+            <a className="nav-link" href="/tours">
               <i className="menu-icon">
                 <ion-icon name="map-outline"></ion-icon>
               </i>

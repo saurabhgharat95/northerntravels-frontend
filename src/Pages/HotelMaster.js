@@ -512,24 +512,10 @@ const HotelMaster = () => {
                                               {startIndex + index + 1}
                                             </td>
                                             <td>{hotel.hotelName}</td>
-                                            <td>
-                                              {getHotelType(
-                                                hotel.fkHotelTypeId
-                                              )}
-                                            </td>
-                                            <td>
-                                              {getHaltDest(
-                                                hotel.fkHaltingPointId
-                                              )}
-                                            </td>
-                                            <td>
-                                              {getStateName(hotel.fkStateId)}
-                                            </td>
-                                            <td>
-                                              {getCountryName(
-                                                hotel.fkCountryId
-                                              )}
-                                            </td>
+                                            <td>{hotel.hotelTypeName}</td>
+                                            <td>{hotel.haltingPointName}</td>
+                                            <td>{hotel.stateName}</td>
+                                            <td>{hotel.countryName}</td>
                                             <td>
                                               {getDateFormatted(
                                                 hotel.createdAt
@@ -579,7 +565,7 @@ const HotelMaster = () => {
                             <div
                               className="modal fade"
                               id="hotelModal"
-                              tabindex="-1"
+                              tabIndex="-1"
                               aria-labelledby="exampleModalLabel"
                               style={{ display: "none" }}
                               aria-hidden="true"

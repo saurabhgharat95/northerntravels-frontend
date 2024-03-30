@@ -17,6 +17,8 @@ import QuotationManagement from './Pages/QuotationManagement';
 import LeadManagement from './Pages/LeadManagement';
 import AddQuotation from './Pages/AddQuotation';
 import HotelRoomManagement from './Pages/HotelRoomManagement';
+import TourManagement from './Pages/TourManagement';
+import AddTourForm from './Pages/AddTourForm';
 function App() {
   return (
    <BrowserRouter>
@@ -39,6 +41,8 @@ function App() {
       <Route exact path={`/leads`} element={<LeadManagement/>}/>
       <Route exact path={`/add-quotation`} element={<AddQuotation/>}/>
       <Route exact path={`/maintain-rooms`} element={<HotelRoomManagement/>}/>
+      <Route exact path={`/tours`} element={<TourManagement/>}/>
+      <Route exact path={`/add-tour`} element={<AddTourForm/>}/>
     </Routes>
    </BrowserRouter>
   );

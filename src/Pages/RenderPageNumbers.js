@@ -23,7 +23,7 @@ const RenderPageNumbers = ({
             aria-disabled="true"
             role="link"
             data-dt-idx="previous"
-            tabindex="-1"
+            tabIndex="-1"
             className="page-link"
             onClick={handlePrevPage}
             disabled={currentPage === 1}
@@ -58,7 +58,7 @@ const RenderPageNumbers = ({
             aria-disabled="true"
             role="link"
             data-dt-idx="previous"
-            tabindex="-1"
+            tabIndex="-1"
             className="page-link"
             onClick={handleNextPage}
             disabled={currentPage === totalPages}
