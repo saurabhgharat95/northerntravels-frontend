@@ -278,23 +278,24 @@ const HaltingDestinationMaster = () => {
     setSearchValue(searchValue);
     if (searchValue && searchValue.trim() !== "") {
       var escapedSearchValue = escapeRegExp(searchValue); // Escaping searchValue
-      var filteredDest = haltDests?.filter((row) =>
-        row?.haltDestName
-          ?.toLowerCase()
-          .includes(escapedSearchValue.toLowerCase()) || 
-        row?.countryName
-          ?.toLowerCase()
-          .includes(escapedSearchValue.toLowerCase()) || 
-        row?.stateName
-          ?.toLowerCase()
-          .includes(escapedSearchValue.toLowerCase())
+      var filteredDest = haltDests?.filter(
+        (row) =>
+          row?.haltDestName
+            ?.toLowerCase()
+            .includes(escapedSearchValue.toLowerCase()) ||
+          row?.countryName
+            ?.toLowerCase()
+            .includes(escapedSearchValue.toLowerCase()) ||
+          row?.stateName
+            ?.toLowerCase()
+            .includes(escapedSearchValue.toLowerCase())
       );
       setHaltDests(filteredDest);
     } else {
       setHaltDests(originalHaltDestsList);
     }
   };
-  
+
   useEffect(() => {
     fetchCountries();
     fetchStates();
@@ -425,7 +426,7 @@ const HaltingDestinationMaster = () => {
                                               {startIndex + index + 1}
                                             </td>
                                             <td>{point.haltingPointName}</td>
-                                           
+
                                             <td>{point.stateName}</td>
                                             <td>{point.countryName}</td>
                                             <td>
@@ -448,15 +449,6 @@ const HaltingDestinationMaster = () => {
                                             </td>
                                             <td>
                                               <ion-icon
-                                                name="trash-outline"
-                                                color="danger"
-                                                style={{ marginRight: "10px" }}
-                                                onClick={() => {
-                                                  setShowConfirmation(true);
-                                                  setDeleteId(point.id);
-                                                }}
-                                              ></ion-icon>
-                                              <ion-icon
                                                 onClick={() =>
                                                   openModal(point.id)
                                                 }
@@ -464,6 +456,15 @@ const HaltingDestinationMaster = () => {
                                                 color="primary"
                                                 data-bs-toggle="modal"
                                                 data-bs-target="#haltDestModal"
+                                              ></ion-icon>
+                                              <ion-icon
+                                                name="trash-outline"
+                                                color="danger"
+                                                style={{ marginRight: "10px" }}
+                                                onClick={() => {
+                                                  setShowConfirmation(true);
+                                                  setDeleteId(point.id);
+                                                }}
                                               ></ion-icon>
                                             </td>
                                           </tr>

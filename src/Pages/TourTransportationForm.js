@@ -38,7 +38,6 @@ const TourTransportationForm = () => {
       >
         <h3>Transportation </h3>
 
-        {/* <div className="form-group row"> */}
         {formValues.map((element, index) => (
           <>
             <div className="form-group row mb-0">
@@ -101,7 +100,6 @@ const TourTransportationForm = () => {
 
           </>
         ))}
-        {/* </div> */}
       </section>
     </>
   );

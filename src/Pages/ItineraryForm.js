@@ -388,18 +388,25 @@ const ItineraryForm = () => {
                                 <td>{itineraryObj.noOfVehicle}</td>
 
                                 <td>
-                                  <ion-icon
-                                    name="trash-outline"
-                                    color="danger"
-                                    style={{ marginRight: "10px" }}
-                                    title="Delete"
-                                  ></ion-icon>
+                                  
 
                                   <ion-icon
                                     name="create-outline"
                                     color="primary"
                                     style={{ marginRight: "10px" }}
                                     title="Edit"
+                                  ></ion-icon>
+                                  <ion-icon
+                                    name="swap-horizontal-outline"
+                                    color="tertiary"
+                                    style={{ marginRight: "10px" }}
+                                    title="Swap"
+                                  ></ion-icon>
+                                  <ion-icon
+                                    name="trash-outline"
+                                    color="danger"
+                                    style={{ marginRight: "10px" }}
+                                    title="Delete"
                                   ></ion-icon>
                                 </td>
                               </tr>

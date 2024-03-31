@@ -72,7 +72,7 @@ const BasicDetailsTourForm = () => {
         <h4>Visiting Locations</h4>
         <br></br>
        
-        <div className="form-group row">
+        <div className="form-group row ">
         {formValues.map((element, index) => (
             <>
           <div className="col-sm-6 mb-3">

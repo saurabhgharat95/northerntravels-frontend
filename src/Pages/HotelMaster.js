@@ -31,9 +31,10 @@ const HotelMaster = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
 
   const [hotelName, setHotelName] = useState("");
+  const [hotelContact, setHotelContact] = useState("");
+  const [hotelAddress, setHotelAddress] = useState("");
   const [hotels, setHotels] = useState([]);
   const [originalHotelsList, setOriginalHotelsList] = useState([]);
-  const [hotelAddress, setHotelAddress] = useState("");
 
   const [stateId, setStateId] = useState(null);
   const [statesList, setStates] = useState([]);
@@ -365,7 +366,19 @@ const HotelMaster = () => {
     if (searchValue && searchValue.trim() !== "") {
       var escapedSearchValue = escapeRegExp(searchValue); // Escaping searchValue
       var filteredHotels = hotels?.filter((row) =>
-        row?.hotelName?.toLowerCase().includes(escapedSearchValue.toLowerCase())
+        row?.hotelName?.toLowerCase().includes(escapedSearchValue.toLowerCase())  ||
+        row?.countryName
+          ?.toLowerCase()
+          .includes(escapedSearchValue.toLowerCase()) ||
+        row?.stateName
+          ?.toLowerCase()
+          .includes(escapedSearchValue.toLowerCase()) ||
+          row?.hotelTypeName
+            ?.toLowerCase()
+            .includes(escapedSearchValue.toLowerCase()) ||
+          row?.haltingPointName
+            ?.toLowerCase()
+            .includes(escapedSearchValue.toLowerCase())
       );
       setHotels(filteredHotels);
     } else {
@@ -485,6 +498,12 @@ const HotelMaster = () => {
                                     <th style={{ width: "171.375px" }}>
                                       Country
                                     </th>
+                                    <th style={{ width: "171.375px" }}>
+                                      Contact Number
+                                    </th>
+                                    <th style={{ width: "171.375px" }}>
+                                      Address
+                                    </th>
                                     <th style={{ width: "127.391px" }}>
                                       Created
                                     </th>
@@ -516,6 +535,8 @@ const HotelMaster = () => {
                                             <td>{hotel.haltingPointName}</td>
                                             <td>{hotel.stateName}</td>
                                             <td>{hotel.countryName}</td>
+                                            <td>N.A</td>
+                                            <td>{hotel.hotelAddress}</td>
                                             <td>
                                               {getDateFormatted(
                                                 hotel.createdAt
@@ -537,15 +558,6 @@ const HotelMaster = () => {
                                             </td>
                                             <td>
                                               <ion-icon
-                                                name="trash-outline"
-                                                color="danger"
-                                                style={{ marginRight: "10px" }}
-                                                onClick={() => {
-                                                  setShowConfirmation(true);
-                                                  setDeleteId(hotel.id);
-                                                }}
-                                              ></ion-icon>
-                                              <ion-icon
                                                 onClick={() =>
                                                   openModal(hotel.id)
                                                 }
@@ -553,6 +565,15 @@ const HotelMaster = () => {
                                                 color="primary"
                                                 data-bs-toggle="modal"
                                                 data-bs-target="#hotelModal"
+                                              ></ion-icon>
+                                              <ion-icon
+                                                name="trash-outline"
+                                                color="danger"
+                                                style={{ marginRight: "10px" }}
+                                                onClick={() => {
+                                                  setShowConfirmation(true);
+                                                  setDeleteId(hotel.id);
+                                                }}
                                               ></ion-icon>
                                             </td>
                                           </tr>
@@ -625,6 +646,43 @@ const HotelMaster = () => {
                                                   "Please enter halting destination",
                                                 regex:
                                                   "Enter valid halting destination",
+                                              },
+                                            }
+                                          )}
+                                      </>
+                                    </div>
+                                    <div className="form-group">
+                                      <label>Hotel Address</label>
+                                      <input
+                                        type="text"
+                                        className="form-control form-control-sm"
+                                        placeholder="Enter Hotel Address"
+                                        value={hotelName}
+                                        onChange={(e) => {
+                                          setHotelAddress(e.target.value);
+                                        }}
+                                        onBlur={() => {
+                                          simpleValidator.current.showMessageFor(
+                                            "hotel_address"
+                                          );
+                                        }}
+                                      />
+                                      <>
+                                        {simpleValidator.current.element
+                                          .length > 0 &&
+                                          simpleValidator.current.message(
+                                            "hotel_address",
+                                            hotelAddress,
+                                            [
+                                              "required",
+                                              { regex: /^[A-Za-z\s&-]+$/ },
+                                            ],
+                                            {
+                                              messages: {
+                                                required:
+                                                  "Please enter hotel address ",
+                                                regex:
+                                                  "Enter valid  hotel address",
                                               },
                                             }
                                           )}

@@ -356,15 +356,6 @@ const RoomTypeMaster = () => {
                                             </td>
                                             <td>
                                               <ion-icon
-                                                name="trash-outline"
-                                                color="danger"
-                                                style={{ marginRight: "10px" }}
-                                                onClick={() => {
-                                                  setShowConfirmation(true);
-                                                  setDeleteId(roomType.id);
-                                                }}
-                                              ></ion-icon>
-                                              <ion-icon
                                                 onClick={() =>
                                                   openModal(roomType.id)
                                                 }
@@ -372,6 +363,15 @@ const RoomTypeMaster = () => {
                                                 color="primary"
                                                 data-bs-toggle="modal"
                                                 data-bs-target="#roomTypeModal"
+                                              ></ion-icon>
+                                              <ion-icon
+                                                name="trash-outline"
+                                                color="danger"
+                                                style={{ marginRight: "10px" }}
+                                                onClick={() => {
+                                                  setShowConfirmation(true);
+                                                  setDeleteId(roomType.id);
+                                                }}
                                               ></ion-icon>
                                             </td>
                                           </tr>

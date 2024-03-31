@@ -14,10 +14,9 @@ const HotelRoomManagement = () => {
   const viewCharges = () => {
     setFormModule("charges");
   };
-  const cancelForm = () =>{
+  const cancelForm = () => {
     setFormModule("room");
-
-  }
+  };
   return (
     <div className="container-scroller">
       <Navbar setSidebarOpen={setSidebarOpen}></Navbar>
@@ -35,7 +34,10 @@ const HotelRoomManagement = () => {
                       </span>
                     </li>
                     {(formModule == "room" || formModule == "charges") && (
-                      <li onClick={() => viewRooms()} className="breadcrumb-item">
+                      <li
+                        onClick={() => viewRooms()}
+                        className="breadcrumb-item"
+                      >
                         Rooms
                       </li>
                     )}
@@ -56,7 +58,6 @@ const HotelRoomManagement = () => {
                 <br></br>
                 {formModule == "hotel" && (
                   <>
-                   
                     <br></br>
                     <br></br>
                     <br></br>
@@ -176,17 +177,16 @@ const HotelRoomManagement = () => {
                                       </td>
                                       <td>
                                         <ion-icon
-                                          name="trash-outline"
-                                          color="danger"
-                                          style={{ marginRight: "10px" }}
-                                          title="Delete"
-                                        ></ion-icon>
-
-                                        <ion-icon
                                           name="create-outline"
                                           color="primary"
                                           style={{ marginRight: "10px" }}
                                           title="Edit"
+                                        ></ion-icon>
+                                        <ion-icon
+                                          name="trash-outline"
+                                          color="danger"
+                                          style={{ marginRight: "10px" }}
+                                          title="Delete"
                                         ></ion-icon>
                                       </td>
                                     </tr>
@@ -203,17 +203,16 @@ const HotelRoomManagement = () => {
                                       </td>
                                       <td>
                                         <ion-icon
-                                          name="trash-outline"
-                                          color="danger"
-                                          style={{ marginRight: "10px" }}
-                                          title="Delete"
-                                        ></ion-icon>
-
-                                        <ion-icon
                                           name="create-outline"
                                           color="primary"
                                           style={{ marginRight: "10px" }}
                                           title="Edit"
+                                        ></ion-icon>
+                                        <ion-icon
+                                          name="trash-outline"
+                                          color="danger"
+                                          style={{ marginRight: "10px" }}
+                                          title="Delete"
                                         ></ion-icon>
                                       </td>
                                     </tr>
@@ -300,7 +299,6 @@ const HotelRoomManagement = () => {
                       >
                         Add Room
                       </button>
-                   
                     </div>
                     <div className="row">
                       <div className="col-md-4 grid-margin stretch-card">
@@ -453,17 +451,16 @@ const HotelRoomManagement = () => {
                                       </td>
                                       <td>
                                         <ion-icon
-                                          name="trash-outline"
-                                          color="danger"
-                                          style={{ marginRight: "10px" }}
-                                          title="Delete"
-                                        ></ion-icon>
-
-                                        <ion-icon
                                           name="create-outline"
                                           color="primary"
                                           style={{ marginRight: "10px" }}
                                           title="Edit"
+                                        ></ion-icon>
+                                        <ion-icon
+                                          name="trash-outline"
+                                          color="danger"
+                                          style={{ marginRight: "10px" }}
+                                          title="Delete"
                                         ></ion-icon>
                                       </td>
                                     </tr>
@@ -481,17 +478,16 @@ const HotelRoomManagement = () => {
                                       </td>
                                       <td>
                                         <ion-icon
-                                          name="trash-outline"
-                                          color="danger"
-                                          style={{ marginRight: "10px" }}
-                                          title="Delete"
-                                        ></ion-icon>
-
-                                        <ion-icon
                                           name="create-outline"
                                           color="primary"
                                           style={{ marginRight: "10px" }}
                                           title="Edit"
+                                        ></ion-icon>
+                                        <ion-icon
+                                          name="trash-outline"
+                                          color="danger"
+                                          style={{ marginRight: "10px" }}
+                                          title="Delete"
                                         ></ion-icon>
                                       </td>
                                     </tr>
@@ -509,17 +505,16 @@ const HotelRoomManagement = () => {
                                       </td>
                                       <td>
                                         <ion-icon
-                                          name="trash-outline"
-                                          color="danger"
-                                          style={{ marginRight: "10px" }}
-                                          title="Delete"
-                                        ></ion-icon>
-
-                                        <ion-icon
                                           name="create-outline"
                                           color="primary"
                                           style={{ marginRight: "10px" }}
                                           title="Edit"
+                                        ></ion-icon>
+                                        <ion-icon
+                                          name="trash-outline"
+                                          color="danger"
+                                          style={{ marginRight: "10px" }}
+                                          title="Delete"
                                         ></ion-icon>
                                       </td>
                                     </tr>
@@ -920,11 +915,9 @@ const HotelRoomManagement = () => {
                     </div>
                   </>
                 )}
-                {
-                  formModule == "roomform" && (
-                    <AddRoomForm cancelForm={cancelForm}></AddRoomForm>
-                  )
-                }
+                {formModule == "roomform" && (
+                  <AddRoomForm cancelForm={cancelForm}></AddRoomForm>
+                )}
               </div>
             </div>
           </div>

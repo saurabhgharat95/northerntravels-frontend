@@ -360,15 +360,6 @@ const CountryMaster = () => {
 
                                             <td>
                                               <ion-icon
-                                                name="trash-outline"
-                                                color="danger"
-                                                style={{ marginRight: "10px" }}
-                                                onClick={() => {
-                                                  setShowConfirmation(true);
-                                                  setDeleteId(country.id);
-                                                }}
-                                              ></ion-icon>
-                                              <ion-icon
                                                 onClick={() =>
                                                   openModal(
                                                     country.countryName,
@@ -379,6 +370,15 @@ const CountryMaster = () => {
                                                 color="primary"
                                                 data-bs-toggle="modal"
                                                 data-bs-target="#countryModal"
+                                              ></ion-icon>
+                                              <ion-icon
+                                                name="trash-outline"
+                                                color="danger"
+                                                style={{ marginRight: "10px" }}
+                                                onClick={() => {
+                                                  setShowConfirmation(true);
+                                                  setDeleteId(country.id);
+                                                }}
                                               ></ion-icon>
                                             </td>
                                           </tr>

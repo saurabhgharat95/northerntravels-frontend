@@ -355,15 +355,6 @@ const CarMaster = () => {
                                             </td>
                                             <td>
                                               <ion-icon
-                                                name="trash-outline"
-                                                color="danger"
-                                                style={{ marginRight: "10px" }}
-                                                onClick={() => {
-                                                  setShowConfirmation(true);
-                                                  setDeleteId(vehicle.id);
-                                                }}
-                                              ></ion-icon>
-                                              <ion-icon
                                                 onClick={() =>
                                                   openModal(vehicle.id)
                                                 }
@@ -371,6 +362,15 @@ const CarMaster = () => {
                                                 color="primary"
                                                 data-bs-toggle="modal"
                                                 data-bs-target="#vehicleModal"
+                                              ></ion-icon>
+                                              <ion-icon
+                                                name="trash-outline"
+                                                color="danger"
+                                                style={{ marginRight: "10px" }}
+                                                onClick={() => {
+                                                  setShowConfirmation(true);
+                                                  setDeleteId(vehicle.id);
+                                                }}
                                               ></ion-icon>
                                             </td>
                                           </tr>
@@ -512,7 +512,6 @@ const CarMaster = () => {
             show={showConfirmation}
           />
           <Loader isLoading={isLoading}></Loader>
-
         </div>
       </div>
     </div>

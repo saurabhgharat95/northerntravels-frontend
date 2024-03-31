@@ -95,13 +95,11 @@ const MealTypeMaster = () => {
             fetchMealTypes();
             simpleValidator.current.hideMessages();
             setIsLoading(false);
-
           }
         }
       } else {
         simpleValidator.current.showMessages();
         setIsLoading(false);
-
       }
     } catch (e) {
       console.log("ee", e);
@@ -132,13 +130,11 @@ const MealTypeMaster = () => {
             fetchMealTypes();
             simpleValidator.current.hideMessages();
             setIsLoading(false);
-
           }
         }
       } else {
         simpleValidator.current.showMessages();
         setIsLoading(false);
-
       }
     } catch (e) {
       setIsLoading(false);
@@ -327,59 +323,61 @@ const MealTypeMaster = () => {
                                 </thead>
                                 <tbody>
                                   {mealTypes &&
-                                    mealTypes.slice(startIndex, endIndex).map((mealType, index) => (
-                                      <CSSTransition
-                                        key={mealType.id}
-                                        timeout={500}
-                                        classNames="item elementdiv"
-                                      >
-                                        <tr className="odd" key={index}>
-                                          <td className="sorting_1">
-                                            {" "}
-                                            {startIndex + index + 1}
-                                          </td>
-                                          <td>{mealType.mealTypeName}</td>
-                                          <td>
+                                    mealTypes
+                                      .slice(startIndex, endIndex)
+                                      .map((mealType, index) => (
+                                        <CSSTransition
+                                          key={mealType.id}
+                                          timeout={500}
+                                          classNames="item elementdiv"
+                                        >
+                                          <tr className="odd" key={index}>
+                                            <td className="sorting_1">
+                                              {" "}
+                                              {startIndex + index + 1}
+                                            </td>
+                                            <td>{mealType.mealTypeName}</td>
+                                            <td>
                                               {getDateFormatted(
                                                 mealType.createdAt
                                               )}
                                             </td>
-                                          <td>
-                                            <label
-                                              className={`badge ${
-                                                mealType.status == "1"
-                                                  ? "badge-success"
-                                                  : "badge-danger"
-                                              }`}
-                                            >
-                                              {mealType.status == "1"
-                                                ? "Active"
-                                                : "Inactive"}
-                                            </label>
-                                          </td>
-                                          <td>
-                                            <ion-icon
-                                              name="trash-outline"
-                                              color="danger"
-                                              style={{ marginRight: "10px" }}
-                                              onClick={() => {
-                                                setShowConfirmation(true);
-                                                setDeleteId(mealType.id);
-                                              }}
-                                            ></ion-icon>
-                                            <ion-icon
-                                              onClick={() =>
-                                                openModal(mealType.id)
-                                              }
-                                              name="create-outline"
-                                              color="primary"
-                                              data-bs-toggle="modal"
-                                              data-bs-target="#mealTypeModal"
-                                            ></ion-icon>
-                                          </td>
-                                        </tr>
-                                      </CSSTransition>
-                                    ))}
+                                            <td>
+                                              <label
+                                                className={`badge ${
+                                                  mealType.status == "1"
+                                                    ? "badge-success"
+                                                    : "badge-danger"
+                                                }`}
+                                              >
+                                                {mealType.status == "1"
+                                                  ? "Active"
+                                                  : "Inactive"}
+                                              </label>
+                                            </td>
+                                            <td>
+                                              <ion-icon
+                                                onClick={() =>
+                                                  openModal(mealType.id)
+                                                }
+                                                name="create-outline"
+                                                color="primary"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#mealTypeModal"
+                                              ></ion-icon>
+                                              <ion-icon
+                                                name="trash-outline"
+                                                color="danger"
+                                                style={{ marginRight: "10px" }}
+                                                onClick={() => {
+                                                  setShowConfirmation(true);
+                                                  setDeleteId(mealType.id);
+                                                }}
+                                              ></ion-icon>
+                                            </td>
+                                          </tr>
+                                        </CSSTransition>
+                                      ))}
                                 </tbody>
                               </table>
                             )}
@@ -481,19 +479,18 @@ const MealTypeMaster = () => {
                           </div>
                         </div>
                         <div className="row">
-                          
                           <div className="col-sm-12 col-md-12">
                             <div
                               className="dataTables_paginate paging_simple_numbers"
                               id="order-listing_paginate"
                             >
-                               <RenderPageNumbers
+                              <RenderPageNumbers
                                 data={mealTypes}
                                 currentPage={currentPage}
                                 handlePagination={handlePagination}
                                 handlePrevPage={handlePrevPage}
                                 handleNextPage={handleNextPage}
-                                totalPages = {totalPages}
+                                totalPages={totalPages}
                               ></RenderPageNumbers>
                             </div>
                           </div>
@@ -515,7 +512,6 @@ const MealTypeMaster = () => {
             show={showConfirmation}
           />
           <Loader isLoading={isLoading}></Loader>
-
         </div>
       </div>
     </div>

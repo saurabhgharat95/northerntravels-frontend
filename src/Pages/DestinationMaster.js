@@ -162,13 +162,13 @@ const DestinationMaster = () => {
                                   </td>
                                   <td>
                                     <ion-icon
+                                      name="create-outline"
+                                      color="primary"
+                                    ></ion-icon>
+                                    <ion-icon
                                       name="trash-outline"
                                       color="danger"
                                       style={{ marginRight: "10px" }}
-                                    ></ion-icon>
-                                    <ion-icon
-                                      name="create-outline"
-                                      color="primary"
                                     ></ion-icon>
                                   </td>
                                 </tr>
@@ -183,15 +183,16 @@ const DestinationMaster = () => {
                                     </label>
                                   </td>
                                   <td>
+                                  <ion-icon
+                                      name="create-outline"
+                                      color="primary"
+                                    ></ion-icon>
                                     <ion-icon
                                       name="trash-outline"
                                       color="danger"
                                       style={{ marginRight: "10px" }}
                                     ></ion-icon>
-                                    <ion-icon
-                                      name="create-outline"
-                                      color="primary"
-                                    ></ion-icon>
+                                    
                                   </td>
                                 </tr>
                                 <tr className="odd">

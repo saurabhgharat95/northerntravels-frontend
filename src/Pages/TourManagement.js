@@ -104,23 +104,23 @@ const TourManagement = () => {
 
                                   <td>
                                     <ion-icon
-                                      name="trash-outline"
-                                      color="danger"
+                                      name="checkbox-outline"
+                                      color="success"
                                       style={{ marginRight: "10px" }}
-                                      title="Delete"
+                                      title="Approve"
                                     ></ion-icon>
-
                                     <ion-icon
                                       name="create-outline"
                                       color="primary"
                                       style={{ marginRight: "10px" }}
                                       title="Edit"
                                     ></ion-icon>
+
                                     <ion-icon
-                                      name="checkbox-outline"
-                                      color="success"
+                                      name="trash-outline"
+                                      color="danger"
                                       style={{ marginRight: "10px" }}
-                                      title="Approve"
+                                      title="Delete"
                                     ></ion-icon>
                                   </td>
                                 </tr>
@@ -132,10 +132,10 @@ const TourManagement = () => {
                                   <td>Jammu & Kashmir , Punjab</td>
                                   <td>
                                     <ion-icon
-                                      name="trash-outline"
-                                      color="danger"
+                                      name="checkbox-outline"
+                                      color="success"
                                       style={{ marginRight: "10px" }}
-                                      title="Delete"
+                                      title="Approve"
                                     ></ion-icon>
 
                                     <ion-icon
@@ -144,18 +144,17 @@ const TourManagement = () => {
                                       style={{ marginRight: "10px" }}
                                       title="Edit"
                                     ></ion-icon>
+
                                     <ion-icon
-                                      name="checkbox-outline"
-                                      color="success"
+                                      name="trash-outline"
+                                      color="danger"
                                       style={{ marginRight: "10px" }}
-                                      title="Approve"
+                                      title="Delete"
                                     ></ion-icon>
                                   </td>
                                 </tr>
                               </tbody>
                             </table>
-
-                            
                           </div>
                         </div>
                         <div className="row">

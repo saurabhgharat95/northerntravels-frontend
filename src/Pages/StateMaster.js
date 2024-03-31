@@ -225,12 +225,7 @@ const StateMaster = () => {
     console.log("Cancelled");
     setShowConfirmation(false);
   };
-  const getCountryName = (countryId) => {
-    var countryObj = countries.filter((country) => {
-      return country.id == countryId;
-    })[0];
-    return countryObj ? countryObj.countryName : "";
-  };
+
   const totalPages = Math.ceil(states ? states.length / itemsPerPage : 1);
   const handleNextPage = () => {
     setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages));
@@ -250,7 +245,7 @@ const StateMaster = () => {
     if (searchValue && searchValue.trim() !== "") {
       var escapedSearchValue = escapeRegExp(searchValue);
       var filteredStates = states?.filter((row) =>
-        row?.stateName?.toLowerCase().includes(escapedSearchValue.toLowerCase())
+        row?.stateName?.toLowerCase().includes(escapedSearchValue.toLowerCase()) || row?.countryName?.toLowerCase().includes(escapedSearchValue.toLowerCase())
       );
       setStates(filteredStates);
     } else {
@@ -382,11 +377,8 @@ const StateMaster = () => {
                                               {startIndex + index + 1}
                                             </td>
                                             <td>{state.stateName}</td>
-                                            <td>
-                                              {getCountryName(
-                                                state.fkCountryId
-                                              )}
-                                            </td>
+                                            <td>{state.countryName}</td>
+
                                             <td>
                                               {getDateFormatted(
                                                 state.createdAt
@@ -407,15 +399,6 @@ const StateMaster = () => {
                                             </td>
                                             <td>
                                               <ion-icon
-                                                name="trash-outline"
-                                                color="danger"
-                                                style={{ marginRight: "10px" }}
-                                                onClick={() => {
-                                                  setShowConfirmation(true);
-                                                  setDeleteId(state.id);
-                                                }}
-                                              ></ion-icon>
-                                              <ion-icon
                                                 onClick={() =>
                                                   openModal(state.id)
                                                 }
@@ -423,6 +406,15 @@ const StateMaster = () => {
                                                 color="primary"
                                                 data-bs-toggle="modal"
                                                 data-bs-target="#stateModal"
+                                              ></ion-icon>
+                                              <ion-icon
+                                                name="trash-outline"
+                                                color="danger"
+                                                style={{ marginRight: "10px" }}
+                                                onClick={() => {
+                                                  setShowConfirmation(true);
+                                                  setDeleteId(state.id);
+                                                }}
                                               ></ion-icon>
                                             </td>
                                           </tr>

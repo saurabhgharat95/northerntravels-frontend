@@ -277,7 +277,13 @@ const TransitPointMaster = () => {
       var filteredPts = transitPts?.filter((row) =>
         row?.transitPointName
           ?.toLowerCase()
-          .includes(escapedSearchValue.toLowerCase())
+          .includes(escapedSearchValue.toLowerCase()) ||
+          row?.countryName
+            ?.toLowerCase()
+            .includes(escapedSearchValue.toLowerCase()) ||
+          row?.stateName
+            ?.toLowerCase()
+            .includes(escapedSearchValue.toLowerCase())
       );
       setTransitPts(filteredPts);
     } else {
@@ -435,15 +441,6 @@ const TransitPointMaster = () => {
                                             </td>
                                             <td>
                                               <ion-icon
-                                                name="trash-outline"
-                                                color="danger"
-                                                style={{ marginRight: "10px" }}
-                                                onClick={() => {
-                                                  setShowConfirmation(true);
-                                                  setDeleteId(point.id);
-                                                }}
-                                              ></ion-icon>
-                                              <ion-icon
                                                 onClick={() =>
                                                   openModal(point.id)
                                                 }
@@ -451,6 +448,15 @@ const TransitPointMaster = () => {
                                                 color="primary"
                                                 data-bs-toggle="modal"
                                                 data-bs-target="#transitPtModal"
+                                              ></ion-icon>
+                                              <ion-icon
+                                                name="trash-outline"
+                                                color="danger"
+                                                style={{ marginRight: "10px" }}
+                                                onClick={() => {
+                                                  setShowConfirmation(true);
+                                                  setDeleteId(point.id);
+                                                }}
                                               ></ion-icon>
                                             </td>
                                           </tr>
