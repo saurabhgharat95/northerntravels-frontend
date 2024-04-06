@@ -130,11 +130,12 @@ ion-icon{
 
 }
 
-.custom-table input[type="number"] {
-  width: 100%;
+.custom-table input[type="text"] {
+  width: 100px;
   box-sizing: border-box;
   height: 42px;
-  padding-left:8px
+  padding-left:8px;
+  border: 1px solid #ccc
 }
 
 .item-enter {

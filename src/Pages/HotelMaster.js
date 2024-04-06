@@ -322,30 +322,7 @@ const HotelMaster = () => {
   const handleCancel = () => {
     setShowConfirmation(false);
   };
-  const getCountryName = (countryId) => {
-    var countryObj = countries.filter((country) => {
-      return country.id == countryId;
-    })[0];
-    return countryObj ? countryObj.countryName : "";
-  };
-  const getStateName = (stateId) => {
-    var stateObj = statesList.filter((state) => {
-      return state.id == stateId;
-    })[0];
-    return stateObj ? stateObj.stateName : "";
-  };
-  const getHaltDest = (haltDestId) => {
-    var haltObj = haltDests.filter((haltDest) => {
-      return haltDest.id == haltDestId;
-    })[0];
-    return haltObj ? haltObj.haltingPointName : "";
-  };
-  const getHotelType = (hotelTypeId) => {
-    var hotelTypeObj = hotelTypes.filter((hotel) => {
-      return hotel.id == hotelTypeId;
-    })[0];
-    return hotelTypeObj ? hotelTypeObj.hotelTypeName : "";
-  };
+  
   const handlePagination = (number) => {
     setCurrentPage(Number(number));
   };
@@ -445,7 +422,7 @@ const HotelMaster = () => {
                                   <option value="5">5</option>
                                   <option value="10">10</option>
                                   <option value="15">15</option>
-                                  <option value="-1">All</option>
+                                 
                                 </select>{" "}
                                 entries
                               </label>
