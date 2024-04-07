@@ -2,8 +2,8 @@ import {
   FETCH_HOTELS_API,
   FETCH_ROOM_TYPES_API,
   ADD_HOTEL_ROOM_API,
-  DELETE_HOTEL_ROOM_API,
   UPDATE_HOTEL_ROOM_API,
+  FETCH_HOTEL_ROOM_DETAILS_API,
 } from "../utils/constants";
 import { useState, useEffect, useRef } from "react";
 import {
@@ -15,7 +15,8 @@ import {
 } from "../components/CommonImport";
 import Loader from "../components/Loader";
 import "react-toastify/dist/ReactToastify.css";
-const AddRoomForm = ({ cancelForm, hotelId }) => {
+
+const AddRoomForm = ({ cancelForm, hotelId, formType, updateId }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [roomTypeOptions, setRoomTypeOptions] = useState([]);
   const [hotelOptions, setHotelOptions] = useState([]);
@@ -184,6 +185,68 @@ const AddRoomForm = ({ cancelForm, hotelId }) => {
       autoForceUpdate: this,
     })
   );
+  const groupedData = (data) => {
+    return data.reduce((acc, item) => {
+      const { fkRoomAccommodationId, ...rest } = item;
+      if (!acc[fkRoomAccommodationId]) {
+        acc[fkRoomAccommodationId] = [];
+      }
+      acc[fkRoomAccommodationId].push(rest);
+
+      return acc;
+    }, {});
+  };
+  const fetchHotelRoomDetails = async (id) => {
+    try {
+      let url = FETCH_HOTEL_ROOM_DETAILS_API;
+      let body = {
+        id: id,
+      };
+      let response = await axios.post(url, body);
+      if (response) {
+        if (response.status == 200) {
+          if (response.data.data) {
+            let roomDetails = response.data.data;
+
+            const chargesResult = [
+              {
+                on_season: {},
+                off_season: {},
+              },
+            ];
+
+            roomDetails.roomChargesData.forEach((item) => {
+              const {
+                seasonType,
+                fkRoomAccommodationId,
+                fkMealPlanId,
+                charges,
+              } = item;
+              const season = seasonType === 1 ? "on_season" : "off_season";
+
+              if (!chargesResult[0][season][fkRoomAccommodationId]) {
+                chargesResult[0][season][fkRoomAccommodationId] = [];
+              }
+
+              chargesResult[0][season][fkRoomAccommodationId].push({
+                meal_plan: fkMealPlanId,
+                charges: Number(charges),
+              });
+            });
+            setRoomObject((prevState) => ({
+              ...prevState,
+              fkHotelId: hotelId,
+              fkRoomTypeId: roomDetails.hotelRoomData.fkRoomTypeId,
+              noOfRooms: roomDetails.hotelRoomData.noOfRooms,
+              hasAC: roomDetails.hotelRoomData.hasAC,
+              chargesData: chargesResult,
+            }));
+            setForceUpdate((v) => ++v);
+          }
+        }
+      }
+    } catch (e) {}
+  };
   const handleACChange = (event) => {
     const value = event.target.value;
     setRoomObject((prevState) => ({
@@ -237,7 +300,6 @@ const AddRoomForm = ({ cancelForm, hotelId }) => {
     }
   };
   const handleInputChange = (newValue, season, mealType, mealPlanIndex) => {
-    
     const updatedRoomObject = { ...roomObject };
 
     const updatedChargesData = [...updatedRoomObject.chargesData];
@@ -259,7 +321,7 @@ const AddRoomForm = ({ cancelForm, hotelId }) => {
         hasAC: roomObject.hasAC,
         chargesData: roomObject.chargesData,
       };
-      console.log('boo',body)
+      console.log("boo", body);
       setIsLoading(true);
       if (simpleValidator.current.allValid()) {
         let response = await axios.post(url, body);
@@ -268,7 +330,7 @@ const AddRoomForm = ({ cancelForm, hotelId }) => {
             toast.success(response.data.message, {
               position: "top-right",
             });
-            cancelForm()
+            cancelForm();
             simpleValidator.current.hideMessages();
             setIsLoading(false);
           }
@@ -289,14 +351,14 @@ const AddRoomForm = ({ cancelForm, hotelId }) => {
     try {
       let url = UPDATE_HOTEL_ROOM_API;
       let body = {
-        id:hotelId,
+        id: updateId,
         fkHotelId: roomObject.fkHotelId,
         fkRoomTypeId: roomObject.fkRoomTypeId,
         noOfRooms: roomObject.noOfRooms,
         hasAC: roomObject.hasAC,
         chargesData: roomObject.chargesData,
       };
-      console.log('boo',body)
+      console.log("boo", body);
       setIsLoading(true);
       if (simpleValidator.current.allValid()) {
         let response = await axios.post(url, body);
@@ -305,9 +367,10 @@ const AddRoomForm = ({ cancelForm, hotelId }) => {
             toast.success(response.data.message, {
               position: "top-right",
             });
-            cancelForm()
+            // cancelForm();
             simpleValidator.current.hideMessages();
             setIsLoading(false);
+            fetchHotelRoomDetails(updateId);
           }
         }
       } else {
@@ -326,6 +389,12 @@ const AddRoomForm = ({ cancelForm, hotelId }) => {
   useEffect(() => {
     fetchHotels();
     fetchRoomTypes();
+  }, []);
+
+  useEffect(() => {
+    if (formType == "update") {
+      fetchHotelRoomDetails(updateId);
+    }
   }, []);
   return (
     <>
@@ -379,7 +448,22 @@ const AddRoomForm = ({ cancelForm, hotelId }) => {
                   fkRoomTypeId: selectedOption ? selectedOption.value : "",
                 }));
               }}
+              onBlur={() => {
+                simpleValidator.current.showMessageFor("room_type");
+              }}
             />
+            <>
+              {simpleValidator.current.message(
+                "room_type",
+                roomObject.fkRoomTypeId,
+                ["required"],
+                {
+                  messages: {
+                    required: "Please select room type",
+                  },
+                }
+              )}
+            </>
           </div>
         </div>
         <div className="form-group row">
@@ -387,16 +471,35 @@ const AddRoomForm = ({ cancelForm, hotelId }) => {
             <label>No. of Rooms</label>
             <input
               type="text"
+              pattern="[0-9]*"
               className="form-control"
               placeholder="Enter No. of Rooms"
               value={roomObject.noOfRooms}
-              onChange={(event) =>
-                setRoomObject((prevState) => ({
-                  ...prevState,
-                  noOfRooms: event.target.value,
-                }))
-              }
+              onChange={(event) => {
+                const newValue = event.target.value.trim();
+                if (/^\d*$/.test(newValue)) {
+                  setRoomObject((prevState) => ({
+                    ...prevState,
+                    noOfRooms: event.target.value,
+                  }));
+                }
+              }}
+              onBlur={() => {
+                simpleValidator.current.showMessageFor("noOfRooms");
+              }}
             />
+            <>
+              {simpleValidator.current.message(
+                "noOfRooms",
+                roomObject.noOfRooms,
+                ["required"],
+                {
+                  messages: {
+                    required: "Please enter no of rooms",
+                  },
+                }
+              )}
+            </>
           </div>
         </div>
         <div className="form-group row">
@@ -499,17 +602,16 @@ const AddRoomForm = ({ cancelForm, hotelId }) => {
                             ]
                       }
                       onChange={(e) => {
-                        const newValue = e.target.value.trim(); 
+                        const newValue = e.target.value.trim();
                         if (/^\d*$/.test(newValue)) {
                           handleInputChange(
-                            parseInt(newValue) || 0, 
+                            parseInt(newValue) || 0,
                             i < 4 ? "on_season" : "off_season",
                             1,
                             i < 4 ? i : i - 4
                           );
                         }
                       }}
-                      
                     />
                   </td>
                 ))}
@@ -531,10 +633,10 @@ const AddRoomForm = ({ cancelForm, hotelId }) => {
                             ]
                       }
                       onChange={(e) => {
-                        const newValue = e.target.value.trim(); 
+                        const newValue = e.target.value.trim();
                         if (/^\d*$/.test(newValue)) {
                           handleInputChange(
-                            parseInt(newValue) || 0, 
+                            parseInt(newValue) || 0,
                             i < 4 ? "on_season" : "off_season",
                             2,
                             i < 4 ? i : i - 4
@@ -562,10 +664,10 @@ const AddRoomForm = ({ cancelForm, hotelId }) => {
                             ]
                       }
                       onChange={(e) => {
-                        const newValue = e.target.value.trim(); 
+                        const newValue = e.target.value.trim();
                         if (/^\d*$/.test(newValue)) {
                           handleInputChange(
-                            parseInt(newValue) || 0, 
+                            parseInt(newValue) || 0,
                             i < 4 ? "on_season" : "off_season",
                             3,
                             i < 4 ? i : i - 4
@@ -593,10 +695,10 @@ const AddRoomForm = ({ cancelForm, hotelId }) => {
                             ]
                       }
                       onChange={(e) => {
-                        const newValue = e.target.value.trim(); 
+                        const newValue = e.target.value.trim();
                         if (/^\d*$/.test(newValue)) {
                           handleInputChange(
-                            parseInt(newValue) || 0, 
+                            parseInt(newValue) || 0,
                             i < 4 ? "on_season" : "off_season",
                             4,
                             i < 4 ? i : i - 4
@@ -615,8 +717,13 @@ const AddRoomForm = ({ cancelForm, hotelId }) => {
       <br></br>
 
       <div className="actions clearfix float-right">
-        <button className="btn btn-secondary" onClick={() => addHotelRoom()}>
-          Submit
+        <button
+          className="btn btn-secondary"
+          onClick={() => {
+            updateId == "" ? addHotelRoom() : updateHotelRoom();
+          }}
+        >
+          {updateId == "" ? "Submit" : "Update"}
         </button>
       </div>
       <div className="actions clearfix float-right mr-2">

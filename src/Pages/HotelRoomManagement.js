@@ -55,6 +55,8 @@ const HotelRoomManagement = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isDataReady, setDataReady] = useState(false);
 
+  const [formType, setFormType] = useState("add");
+
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
 
@@ -136,7 +138,7 @@ const HotelRoomManagement = () => {
               console.log("roomDetails", response.data.data.roomChargesData);
 
               let roomDetails = groupedData(response.data.data.roomChargesData);
-              console.log("roomDetails", roomDetails);
+
               setHotelRoomDetails(roomDetails);
             }
           }
@@ -173,7 +175,6 @@ const HotelRoomManagement = () => {
     fetchHotelRooms(id, hotelName);
   };
   const viewCharges = (id, roomType) => {
-    console.log("id", id);
     fetchHotelRoomDetails(id);
     setSelectHotel((prev) => ({ ...prev, roomType: roomType }));
 
@@ -209,31 +210,28 @@ const HotelRoomManagement = () => {
   const escapeRegExp = (string) => {
     return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // Escaping special characters
   };
-  const filterData = (searchValue) => {
+  const filterData = (searchValue, type) => {
     setSearchValue(searchValue);
     if (searchValue && searchValue.trim() !== "") {
       var escapedSearchValue = escapeRegExp(searchValue); // Escaping searchValue
-      var filteredHotels = hotels?.filter(
-        (row) =>
+      if (type == "hotels") {
+        var filteredHotels = hotels?.filter((row) =>
           row?.hotelName
             ?.toLowerCase()
-            .includes(escapedSearchValue.toLowerCase()) ||
-          row?.countryName
-            ?.toLowerCase()
-            .includes(escapedSearchValue.toLowerCase()) ||
-          row?.stateName
-            ?.toLowerCase()
-            .includes(escapedSearchValue.toLowerCase()) ||
-          row?.hotelTypeName
-            ?.toLowerCase()
-            .includes(escapedSearchValue.toLowerCase()) ||
-          row?.haltingPointName
+            .includes(escapedSearchValue.toLowerCase())
+        );
+        setHotels(filteredHotels);
+      } else {
+        var filteredRoom = hotelRooms?.filter((row) =>
+          row?.roomtypes.roomTypeName
             ?.toLowerCase()
             .includes(escapedSearchValue.toLowerCase())
-      );
-      setHotels(filteredHotels);
+        );
+        setHotelRooms(filteredRoom);
+      }
     } else {
       setHotels(originalHotelsList);
+      setHotelRooms(originalHotelRooms);
     }
   };
   useEffect(() => {
@@ -249,16 +247,22 @@ const HotelRoomManagement = () => {
           <div className="content-wrapper">
             <div className="card">
               <div className="card-body">
-                {(formModule == "room" || formModule == "charges") && (
+                {(formModule == "room" ||
+                  formModule == "charges" ||
+                  formModule == "roomform") && (
                   <ol className="breadcrumb bg-primary">
                     <li className="breadcrumb-item">
                       <span onClick={() => setFormModule("hotel")}>
                         Hotel Rooms
                       </span>
                     </li>
-                    {(formModule == "room" || formModule == "charges") && (
+                    {(formModule == "room" ||
+                      formModule == "charges" ||
+                      formModule == "roomform") && (
                       <li
-                        onClick={() => viewRooms(selectedHotel.id,selectedHotel.name)}
+                        onClick={() =>
+                          viewRooms(selectedHotel.id, selectedHotel.name)
+                        }
                         className="breadcrumb-item"
                       >
                         Rooms
@@ -266,7 +270,9 @@ const HotelRoomManagement = () => {
                     )}
                     {formModule == "charges" && (
                       <li
-                        onClick={() => viewCharges(selectedHotel.id,selectedHotel.roomType)}
+                        onClick={() =>
+                          viewCharges(selectedHotel.id, selectedHotel.roomType)
+                        }
                         className="breadcrumb-item active"
                         aria-current="page"
                       >
@@ -328,7 +334,7 @@ const HotelRoomManagement = () => {
                                       aria-controls="order-listing"
                                       value={searchValue}
                                       onChange={(e) =>
-                                        filterData(e.target.value)
+                                        filterData(e.target.value, "hotel")
                                       }
                                     />
                                   </label>
@@ -433,7 +439,10 @@ const HotelRoomManagement = () => {
                     <div className="float-right">
                       <button
                         className="btn btn-primary btn-sm"
-                        onClick={() => setFormModule("roomform")}
+                        onClick={() => {
+                          setFormType("add");
+                          setFormModule("roomform");
+                        }}
                       >
                         Add Room
                       </button>
@@ -504,7 +513,7 @@ const HotelRoomManagement = () => {
                                       aria-controls="order-listing"
                                       value={searchValue}
                                       onChange={(e) =>
-                                        filterData(e.target.value)
+                                        filterData(e.target.value, "room")
                                       }
                                     />
                                   </label>
@@ -549,6 +558,7 @@ const HotelRoomManagement = () => {
                                       </tr>
                                     </thead>
                                     <tbody>
+                                      {console.log("hotel", hotelRooms)}
                                       {hotelRooms &&
                                         hotelRooms
                                           .slice(startIndex, endIndex)
@@ -609,13 +619,13 @@ const HotelRoomManagement = () => {
                                                 </td>
                                                 <td>
                                                   <ion-icon
-                                                    onClick={() =>
-                                                      openModal(hotelRoom.id)
-                                                    }
+                                                    onClick={() => {
+                                                      setFormType("update");
+                                                      setUpdateId(hotelRoom.id);
+                                                      setFormModule("roomform");
+                                                    }}
                                                     name="create-outline"
                                                     color="primary"
-                                                    data-bs-toggle="modal"
-                                                    data-bs-target="#hotelModal"
                                                   ></ion-icon>
                                                   <ion-icon
                                                     name="trash-outline"
@@ -778,23 +788,19 @@ const HotelRoomManagement = () => {
                                       ([key, value]) => (
                                         <>
                                           <tr>
-
                                             <th>{accomodationObj[key]}</th>
                                             {value.map((item, index) => (
                                               <td key={index}>
-                                               { item['charges']}
+                                                {item["charges"]}
                                               </td>
                                             ))}
                                           </tr>
                                         </>
                                       )
                                     )}
-
-                               
                                 </table>
                               </div>
                             </div>
-                          
                           </div>
                         </div>
                       </div>
@@ -805,6 +811,8 @@ const HotelRoomManagement = () => {
                   <AddRoomForm
                     cancelForm={cancelForm}
                     hotelId={selectedHotel.id}
+                    formType={formType}
+                    updateId={formType == "update" ? updateId : ""}
                   ></AddRoomForm>
                 )}
               </div>
