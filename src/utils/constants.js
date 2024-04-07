@@ -53,3 +53,8 @@ export const FETCH_HOTEL_ROOM_DETAILS_API = BASE_API_URL + "/get-hotel-room-type
 export const ADD_HOTEL_ROOM_API = BASE_API_URL + "/add-hotel-room-type"
 export const UPDATE_HOTEL_ROOM_API = BASE_API_URL + "/update-hotel-room-type"
 export const DELETE_HOTEL_ROOM_API = BASE_API_URL + "/delete-hotel-room-type"
+
+export const FETCH_TOURS_API = BASE_API_URL + "/get-tours"
+export const ADD_TOUR_API = BASE_API_URL + "/add-tour"
+export const UPDATE_TOUR_API = BASE_API_URL + "/update-tour"
+export const DELETE_TOUR_API = BASE_API_URL + "/delete-tour"

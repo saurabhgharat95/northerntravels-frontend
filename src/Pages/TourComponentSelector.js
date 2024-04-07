@@ -1,8 +1,6 @@
 import { CSSTransition } from "react-transition-group";
 import BasicDetailsTourForm from "./BasicDetailsTourForm";
-import AddOnServicesForm from "./AddOnServicesForm";
 import TourTransportationForm from "./TourTransportationForm";
-
 
 const TourComponentSelector = ({ selectedTab }) => {
   return (
@@ -21,17 +19,8 @@ const TourComponentSelector = ({ selectedTab }) => {
         classNames="slide"
         unmountOnExit
       >
-        <AddOnServicesForm />
-      </CSSTransition>
-      <CSSTransition
-        in={selectedTab === 3}
-        timeout={300}
-        classNames="slide"
-        unmountOnExit
-      >
         <TourTransportationForm />
       </CSSTransition>
-     
     </>
   );
 };

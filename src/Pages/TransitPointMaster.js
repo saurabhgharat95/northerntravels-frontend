@@ -347,7 +347,6 @@ const TransitPointMaster = () => {
                                   <option value="5">5</option>
                                   <option value="10">10</option>
                                   <option value="15">15</option>
-                                  <option value="-1">All</option>
                                 </select>{" "}
                                 entries
                               </label>
@@ -537,6 +536,45 @@ const TransitPointMaster = () => {
                                       </>
                                     </div>
                                     <div className="form-group">
+                                      <label>Country</label>
+                                      <Select
+                                        options={countryOptions}
+                                        placeholder="Select Country"
+                                        value={
+                                          country
+                                            ? countryOptions.find(
+                                                (option) =>
+                                                  option.value === country
+                                              )
+                                            : null
+                                        }
+                                        onChange={(selectedOption) => {
+                                          setCountry(
+                                            selectedOption
+                                              ? selectedOption.value
+                                              : null
+                                          );
+                                        }}
+                                        onBlur={() => {
+                                          simpleValidator.current.showMessageFor(
+                                            "country_name"
+                                          );
+                                        }}
+                                      />
+                                      <>
+                                        {simpleValidator.current.message(
+                                          "country_name",
+                                          country,
+                                          ["required"],
+                                          {
+                                            messages: {
+                                              required: "Please select country",
+                                            },
+                                          }
+                                        )}
+                                      </>
+                                    </div>
+                                    <div className="form-group">
                                       <label>State / Location</label>
                                       <Select
                                         options={stateOptions}
@@ -577,45 +615,7 @@ const TransitPointMaster = () => {
                                         )}
                                       </>
                                     </div>
-                                    <div className="form-group">
-                                      <label>Country</label>
-                                      <Select
-                                        options={countryOptions}
-                                        placeholder="Select Country"
-                                        value={
-                                          country
-                                            ? countryOptions.find(
-                                                (option) =>
-                                                  option.value === country
-                                              )
-                                            : null
-                                        }
-                                        onChange={(selectedOption) => {
-                                          setCountry(
-                                            selectedOption
-                                              ? selectedOption.value
-                                              : null
-                                          );
-                                        }}
-                                        onBlur={() => {
-                                          simpleValidator.current.showMessageFor(
-                                            "country_name"
-                                          );
-                                        }}
-                                      />
-                                      <>
-                                        {simpleValidator.current.message(
-                                          "country_name",
-                                          country,
-                                          ["required"],
-                                          {
-                                            messages: {
-                                              required: "Please select country",
-                                            },
-                                          }
-                                        )}
-                                      </>
-                                    </div>
+                                   
                                   </div>
                                   <div className="modal-footer">
                                     <button

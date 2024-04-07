@@ -1,17 +1,33 @@
+import { useEffect, useState, useRef } from "react";
+import {
+  Footer,
+  Navbar,
+  Sidebar,
+  axios,
+  toast,
+  ToastContainer,
+  SimpleReactValidator,
+} from "../components/CommonImport";
 
+import {
+  FETCH_COUNTRY_API,
+  FETCH_STATES_API,
+  ADD_TOUR_API,
+  UPDATE_TOUR_API,
+} from "../utils/constants";
 
-import { useState } from "react";
-import { Footer, Navbar, Sidebar } from "../components/CommonImport";
 import TourComponentSelector from "./TourComponentSelector";
-
+import Loader from "../components/Loader";
+import "react-toastify/dist/ReactToastify.css";
 const AddTourForm = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
   const [selectedTab, setSelectedTab] = useState(1);
   const [isSubmit, setIsSubmit] = useState(false);
+  
+
   const tabNames = [
     { id: 1, name: "Basic Details" },
-    { id: 2, name: "Add On Services" },
-    { id: 3, name: "Transportation" },
+    { id: 2, name: "Transportation" },
   ];
   const openFormTab = (tabId) => {
     setSelectedTab(tabId);
@@ -37,14 +53,84 @@ const AddTourForm = () => {
       case 3:
         if (action == "prev") {
           setSelectedTab(2);
-        } 
-        else{
-            setIsSubmit(true)
+        } else {
+          setIsSubmit(true);
         }
         break;
-     
     }
   };
+
+  const resetForm = () => {};
+  const addTour = async () => {
+    try {
+      let url = ADD_TOUR_API;
+      let body = {
+        tourName: tourName,
+        fkStateId: stateId,
+        fkCountryId: country,
+      };
+      setIsLoading(true);
+      if (simpleValidator.current.allValid()) {
+        let response = await axios.post(url, body);
+        if (response) {
+          if (response.status == 200) {
+            toast.success(response.data.message, {
+              position: "top-right",
+            });
+            resetForm();
+            simpleValidator.current.hideMessages();
+            setIsLoading(false);
+          }
+        }
+      } else {
+        setForceUpdate((v) => ++v);
+        simpleValidator.current.showMessages();
+        setIsLoading(false);
+      }
+    } catch (e) {
+      console.log("ee", e);
+      toast.error("Something Went Wrong :(", {
+        position: "top-right",
+      });
+    }
+  };
+  const updateTour = async () => {
+    try {
+      let url = UPDATE_TRANSIT_POINT_API;
+      let body = {
+        id: updateId,
+        tourName: tourName,
+        fkStateId: stateId,
+        fkCountryId: country,
+      };
+      setIsLoading(true);
+
+      if (simpleValidator.current.allValid()) {
+        let response = await axios.post(url, body);
+        if (response) {
+          if (response.status == 200) {
+            toast.success(response.data.message, {
+              position: "top-right",
+            });
+
+            resetForm();
+            simpleValidator.current.hideMessages();
+            setIsLoading(false);
+          }
+        }
+      } else {
+        setForceUpdate((v) => ++v);
+        simpleValidator.current.showMessages();
+        setIsLoading(false);
+      }
+    } catch (e) {
+      toast.error("Something Went Wrong :(", {
+        position: "top-right",
+      });
+    }
+  };
+
+ 
   return (
     <>
       <div className="container-scroller">
@@ -87,7 +173,6 @@ const AddTourForm = () => {
                     </div>
                     <div className="content clearfix">
                       <TourComponentSelector selectedTab={selectedTab} />
-
                     </div>
                     <div className="actions clearfix">
                       <ul role="menu" aria-label="Pagination">
@@ -108,16 +193,16 @@ const AddTourForm = () => {
                               selectForm("next", selectedTab);
                             }}
                           >
-                            {selectedTab==3 ?"Submit":"Next"}
+                            {selectedTab == 3 ? "Submit" : "Next"}
                           </button>
                         </li>
-                        { isSubmit && 
-                        <li aria-hidden="true" style={{ display: "none" }}>
-                          <a href="#finish" role="menuitem">
-                            Submit
-                          </a>
-                        </li>
-                        }
+                        {isSubmit && (
+                          <li aria-hidden="true" style={{ display: "none" }}>
+                            <a href="#finish" role="menuitem">
+                              Submit
+                            </a>
+                          </li>
+                        )}
                       </ul>
                     </div>
                   </div>

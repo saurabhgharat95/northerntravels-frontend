@@ -230,8 +230,12 @@ const HotelRoomManagement = () => {
         setHotelRooms(filteredRoom);
       }
     } else {
-      setHotels(originalHotelsList);
-      setHotelRooms(originalHotelRooms);
+      if(type=="hotels"){
+        setHotels(originalHotelsList);
+      }
+      else{
+        setHotelRooms(originalHotelRooms);
+      }
     }
   };
   useEffect(() => {
@@ -334,7 +338,7 @@ const HotelRoomManagement = () => {
                                       aria-controls="order-listing"
                                       value={searchValue}
                                       onChange={(e) =>
-                                        filterData(e.target.value, "hotel")
+                                        filterData(e.target.value, "hotels")
                                       }
                                     />
                                   </label>

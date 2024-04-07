@@ -185,17 +185,7 @@ const AddRoomForm = ({ cancelForm, hotelId, formType, updateId }) => {
       autoForceUpdate: this,
     })
   );
-  const groupedData = (data) => {
-    return data.reduce((acc, item) => {
-      const { fkRoomAccommodationId, ...rest } = item;
-      if (!acc[fkRoomAccommodationId]) {
-        acc[fkRoomAccommodationId] = [];
-      }
-      acc[fkRoomAccommodationId].push(rest);
-
-      return acc;
-    }, {});
-  };
+ 
   const fetchHotelRoomDetails = async (id) => {
     try {
       let url = FETCH_HOTEL_ROOM_DETAILS_API;
