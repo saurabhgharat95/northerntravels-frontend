@@ -225,7 +225,7 @@ const CarMaster = () => {
           <div className="content-wrapper">
             <div className="card">
               <div className="card-body">
-                <h4 className="card-title">Cars Master </h4>
+                <h4 className="card-title">Vehicles Master </h4>
                 <div className="float-right">
                   <button
                     className="btn btn-primary btn-sm"
@@ -306,7 +306,7 @@ const CarMaster = () => {
                                       Sr. No.
                                     </th>
                                     <th style={{ width: "171.375px" }}>
-                                      Car Name
+                                      Vehicle Name
                                     </th>
                                     <th style={{ width: "127.391px" }}>
                                       Created
@@ -414,11 +414,11 @@ const CarMaster = () => {
                                   </div>
                                   <div className="modal-body">
                                     <div className="form-group">
-                                      <label>Car Name</label>
+                                      <label>Vehicle Name</label>
                                       <input
                                         type="text"
                                         className="form-control form-control-sm"
-                                        placeholder="Enter Car Name"
+                                        placeholder="Enter Vehicle Name"
                                         value={vehicleName}
                                         onChange={(e) => {
                                           setVehicleName(e.target.value);

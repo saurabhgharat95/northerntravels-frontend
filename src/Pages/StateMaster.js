@@ -13,7 +13,7 @@ import {
 } from "../components/CommonImport";
 
 import {
-  FETCH_COUNTRY_API,
+  FETCH_COUNTRIES_API,
   FETCH_STATES_API,
   ADD_STATE_API,
   DELETE_STATE_API,
@@ -62,7 +62,7 @@ const StateMaster = () => {
 
   const fetchCountries = async () => {
     try {
-      let url = FETCH_COUNTRY_API;
+      let url = FETCH_COUNTRIES_API;
 
       let response = await axios.post(url);
       console.log("response", response.data.data);

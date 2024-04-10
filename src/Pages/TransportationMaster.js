@@ -100,7 +100,7 @@ const TransportationMaster = () => {
                                     aria-label="Purchased On: activate to sort column ascending"
                                     style={{ width: "171.375px" }}
                                   >
-                                    Car Name
+                                    Vehicle Name
                                   </th>
                                   <th
                                     className="sorting"

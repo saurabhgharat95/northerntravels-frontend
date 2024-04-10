@@ -13,13 +13,13 @@ import {
 } from "../components/CommonImport";
 import {
   FETCH_HALTING_POINTS_API,
-  FETCH_COUNTRY_API,
+  FETCH_COUNTRIES_API,
   FETCH_STATES_API,
   ADD_HALTING_POINT_API,
   UPDATE_HALTING_POINT_API,
   DELETE_HALTING_POINT_API,
 } from "../utils/constants";
-import { getDateFormatted } from "../utils/helpers";
+import { getDateFormatted, getFilteredDropdownOptions } from "../utils/helpers";
 
 import "react-toastify/dist/ReactToastify.css";
 import NoData from "../components/NoData";
@@ -66,7 +66,7 @@ const HaltingDestinationMaster = () => {
 
   const fetchCountries = async () => {
     try {
-      let url = FETCH_COUNTRY_API;
+      let url = FETCH_COUNTRIES_API;
 
       let response = await axios.post(url);
       if (response) {
@@ -301,6 +301,18 @@ const HaltingDestinationMaster = () => {
     fetchStates();
     fetchHaltDestinations();
   }, []);
+  useEffect(() => {
+    let filteredStates = getFilteredDropdownOptions(country,statesList,"country")
+    let stateOptionsArray = [];
+    filteredStates.forEach((state) => {
+      stateOptionsArray.push({
+        value: state.id,
+        label: state.stateName,
+      });
+    });
+    setStateOptions(stateOptionsArray);
+    
+  }, [country]);
   return (
     <div className="container-scroller">
       <Navbar setSidebarOpen={setSidebarOpen}></Navbar>
@@ -546,45 +558,6 @@ const HaltingDestinationMaster = () => {
                                       </>
                                     </div>
                                     <div className="form-group">
-                                      <label>State / Location</label>
-                                      <Select
-                                        options={stateOptions}
-                                        placeholder="Select State"
-                                        value={
-                                          stateId
-                                            ? stateOptions.find(
-                                                (option) =>
-                                                  option.value === stateId
-                                              )
-                                            : null
-                                        }
-                                        onChange={(selectedOption) => {
-                                          setStateId(
-                                            selectedOption
-                                              ? selectedOption.value
-                                              : ""
-                                          );
-                                        }}
-                                        onBlur={() => {
-                                          simpleValidator.current.showMessageFor(
-                                            "state_name"
-                                          );
-                                        }}
-                                      />
-                                      <>
-                                        {simpleValidator.current.message(
-                                          "state_name",
-                                          stateId,
-                                          ["required"],
-                                          {
-                                            messages: {
-                                              required: "Please select state",
-                                            },
-                                          }
-                                        )}
-                                      </>
-                                    </div>
-                                    <div className="form-group">
                                       <label>Country</label>
                                       <Select
                                         options={countryOptions}
@@ -623,6 +596,46 @@ const HaltingDestinationMaster = () => {
                                         )}
                                       </>
                                     </div>
+                                    <div className="form-group">
+                                      <label>State / Location</label>
+                                      <Select
+                                        options={stateOptions}
+                                        placeholder="Select State"
+                                        value={
+                                          stateId
+                                            ? stateOptions.find(
+                                                (option) =>
+                                                  option.value === stateId
+                                              )
+                                            : null
+                                        }
+                                        onChange={(selectedOption) => {
+                                          setStateId(
+                                            selectedOption
+                                              ? selectedOption.value
+                                              : ""
+                                          );
+                                        }}
+                                        onBlur={() => {
+                                          simpleValidator.current.showMessageFor(
+                                            "state_name"
+                                          );
+                                        }}
+                                      />
+                                      <>
+                                        {simpleValidator.current.message(
+                                          "state_name",
+                                          stateId,
+                                          ["required"],
+                                          {
+                                            messages: {
+                                              required: "Please select state",
+                                            },
+                                          }
+                                        )}
+                                      </>
+                                    </div>
+                                   
                                   </div>
                                   <div className="modal-footer">
                                     <button

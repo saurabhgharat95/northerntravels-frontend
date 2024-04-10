@@ -1,8 +1,336 @@
-import { useState } from "react";
-import { Footer, Navbar, Sidebar } from "../components/CommonImport";
+import React from 'react';
+import { useState, useEffect, useRef } from "react";
+import {
+  Footer,
+  Navbar,
+  Sidebar,
+  CSSTransition,
+  axios,
+  toast,
+  ToastContainer,
+  SimpleReactValidator,
+  Select,
+  ShimmerTable,
+  ReactQuill
+} from "../components/CommonImport";
+import {
+  FETCH_LOCATIONS_API,
+  FETCH_COUNTRIES_API,
+  FETCH_STATES_API,
+  ADD_LOCATION_API,
+  UPDATE_LOCATION_API,
+  DELETE_LOCATION_API,
+} from "../utils/constants";
+import { getDateFormatted, getFilteredDropdownOptions } from "../utils/helpers";
+import "react-toastify/dist/ReactToastify.css";
+import 'react-quill/dist/quill.snow.css';
+import NoData from "../components/NoData";
+import ConfirmationDialog from "../components/ConfirmationDialog";
+import RenderPageNumbers from "./RenderPageNumbers";
+import Loader from "../components/Loader";
 
 const DestinationMaster = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
+
+  const [locations, setLocations] = useState([]);
+  const [originalLocationList, setOriginalLocationList] = useState([]);
+  const [locationName, setLocationName] = useState("");
+  const [locationDesc, setLocationDesc] = useState("");
+
+  const [stateId, setStateId] = useState(null);
+  const [statesList, setStates] = useState([]);
+  const [stateOptions, setStateOptions] = useState([]);
+
+  const [country, setCountry] = useState([]);
+  const [countryOptions, setCountryOptions] = useState([]);
+
+  const [isUpdate, setUpdate] = useState(false);
+  const [deleteId, setDeleteId] = useState(false);
+  const [updateId, setUpdateId] = useState("");
+
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [searchValue, setSearchValue] = useState("");
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [isDataReady, setDataReady] = useState(false);
+  const [, setForceUpdate] = useState(0);
+
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const editor = React.useRef(null);
+  const simpleValidator = useRef(
+    new SimpleReactValidator({
+      autoForceUpdate: this,
+    })
+  );
+
+  const modules = {
+    toolbar: [
+      [{ 'header': [1, 2, false] }],
+      ['bold', 'italic', 'underline','strike', 'blockquote'],
+      [{'list': 'ordered'}, {'list': 'bullet'}, {'indent': '-1'}, {'indent': '+1'}],
+      ['clean']
+    ],
+  }
+  
+
+  const handleCloseModal = () => {
+    document
+      .getElementById("locationModal")
+      .classList.remove("show", "d-block");
+    document
+      .querySelectorAll(".modal-backdrop")
+      .forEach((el) => el.classList.remove("modal-backdrop"));
+  };
+
+  const fetchCountries = async () => {
+    try {
+      let url = FETCH_COUNTRIES_API;
+
+      let response = await axios.post(url);
+      if (response) {
+        if (response.status == 200) {
+          let countries = response.data.data;
+          let countryOptionsArray = [];
+          countries.forEach((country) => {
+            countryOptionsArray.push({
+              value: country.id,
+              label: country.countryName,
+            });
+          });
+          setCountryOptions(countryOptionsArray);
+        }
+      }
+    } catch (e) {
+    }
+  };
+  const fetchStates = async () => {
+    try {
+      let url = FETCH_STATES_API;
+
+      let response = await axios.post(url);
+      console.log("response", response.data.data);
+      if (response) {
+        if (response.status == 200) {
+          let states = response.data.data;
+          let stateOptionsArray = [];
+          states.forEach((state) => {
+            stateOptionsArray.push({
+              value: state.id,
+              label: state.stateName,
+            });
+          });
+          setStateOptions(stateOptionsArray);
+          setStates(response.data.data);
+        }
+      }
+    } catch (e) {
+      setStates([]);
+    }
+  };
+  const fetchLocations = async () => {
+    try {
+      let url = FETCH_LOCATIONS_API;
+
+      let response = await axios.post(url);
+      if (response) {
+        if (response.status == 200) {
+          setDataReady(true);
+          setLocations(response.data.data);
+          setOriginalLocationList(response.data.data);
+        }
+      }
+    } catch (e) {
+      setDataReady(true);
+      setLocations([]);
+    }
+  };
+  const resetForm = () => {
+    setCountry(null);
+    setStateId(null);
+    setLocationName("");
+  };
+  const addLocation = async () => {
+    try {
+      let url = ADD_LOCATION_API;
+      let body = {
+        locationName: locationName,
+        locationDesc: locationDesc,
+        fkStateId: stateId,
+        fkCountryId: country,
+      };
+      setIsLoading(true);
+      if (simpleValidator.current.allValid()) {
+        let response = await axios.post(url, body);
+        if (response) {
+          if (response.status == 200) {
+            toast.success(response.data.message, {
+              position: "top-right",
+            });
+            handleCloseModal();
+            resetForm();
+            fetchLocations();
+            simpleValidator.current.hideMessages();
+            setIsLoading(false);
+          }
+        }
+      } else {
+        setForceUpdate((v) => ++v);
+        simpleValidator.current.showMessages();
+        setIsLoading(false);
+      }
+    } catch (e) {
+      console.log("ee", e);
+      toast.error("Something Went Wrong :(", {
+        position: "top-right",
+      });
+    }
+  };
+  const updateLocation = async () => {
+    try {
+      let url = UPDATE_LOCATION_API;
+      let body = {
+        id: updateId,
+        locationName: locationName,
+        locationDesc: locationDesc,
+        fkStateId: stateId,
+        fkCountryId: country,
+      };
+      setIsLoading(true);
+
+      if (simpleValidator.current.allValid()) {
+        let response = await axios.post(url, body);
+        if (response) {
+          if (response.status == 200) {
+            toast.success(response.data.message, {
+              position: "top-right",
+            });
+
+            handleCloseModal();
+            resetForm();
+            fetchLocations();
+            simpleValidator.current.hideMessages();
+            setIsLoading(false);
+          }
+        }
+      } else {
+        setForceUpdate((v) => ++v);
+        simpleValidator.current.showMessages();
+        setIsLoading(false);
+      }
+    } catch (e) {
+      toast.error("Something Went Wrong :(", {
+        position: "top-right",
+      });
+    }
+  };
+  const deleteLocation = async (id) => {
+    try {
+      let url = DELETE_LOCATION_API;
+      let body = {
+        id: id,
+      };
+      let response = await axios.post(url, body);
+      console.log("response", response);
+      if (response) {
+        if (response.status == 200) {
+          toast.success(response.data.message, {
+            position: "top-right",
+          });
+
+          setLocationName("");
+          fetchLocations();
+        }
+      }
+    } catch (e) {
+      toast.error("Something Went Wrong :(", {
+        position: "top-right",
+      });
+    }
+  };
+
+  const openModal = (updateId) => {
+    var locationObj = locations.filter((location) => {
+      return location.id == updateId;
+    })[0];
+    if (locationObj) {
+      setLocationName(locationObj.locationName);
+      setCountry(locationObj.fkCountryId);
+      setStateId(locationObj.fkStateId);
+      setUpdate(true);
+      setUpdateId(updateId);
+    }
+  };
+
+  const handleConfirm = () => {
+    deleteLocation(deleteId);
+    setShowConfirmation(false);
+  };
+
+  const handleCancel = () => {
+    setShowConfirmation(false);
+  };
+
+  const handlePagination = (number) => {
+    setCurrentPage(Number(number));
+  };
+
+  const totalPages = Math.ceil(locations ? locations.length / itemsPerPage : 1);
+  const handleNextPage = () => {
+    setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages));
+  };
+
+  const handlePrevPage = () => {
+    setCurrentPage((prevPage) => Math.max(prevPage - 1, 1));
+  };
+  const escapeRegExp = (string) => {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // Escaping special characters
+  };
+  const filterData = (searchValue) => {
+    setSearchValue(searchValue);
+    if (searchValue && searchValue.trim() !== "") {
+      var escapedSearchValue = escapeRegExp(searchValue); // Escaping searchValue
+      var filteredPts = locations?.filter(
+        (row) =>
+          row?.locationName
+            ?.toLowerCase()
+            .includes(escapedSearchValue.toLowerCase()) ||
+          row?.country.countryName
+            ?.toLowerCase()
+            .includes(escapedSearchValue.toLowerCase()) ||
+          row?.state.stateName
+            ?.toLowerCase()
+            .includes(escapedSearchValue.toLowerCase())
+      );
+      setLocations(filteredPts);
+    } else {
+      setLocations(originalLocationList);
+    }
+  };
+  useEffect(() => {
+    fetchCountries();
+    fetchStates();
+    fetchLocations();
+  }, []);
+
+  useEffect(() => {
+    let filteredStates = getFilteredDropdownOptions(
+      country,
+      statesList,
+      "country"
+    );
+    let stateOptionsArray = [];
+    filteredStates.forEach((state) => {
+      stateOptionsArray.push({
+        value: state.id,
+        label: state.stateName,
+      });
+    });
+    setStateOptions(stateOptionsArray);
+  }, [country]);
 
   return (
     <div className="container-scroller">
@@ -18,7 +346,7 @@ const DestinationMaster = () => {
                   <button
                     className="btn btn-primary btn-sm"
                     data-bs-toggle="modal"
-                    data-bs-target="#countryModal"
+                    data-bs-target="#locationModal"
                   >
                     Add Destinations
                   </button>
@@ -45,11 +373,13 @@ const DestinationMaster = () => {
                                   name="order-listing_length"
                                   aria-controls="order-listing"
                                   className="form-select form-select-sm"
+                                  onChange={(e) => {
+                                    setItemsPerPage(e.target.value);
+                                  }}
                                 >
                                   <option value="5">5</option>
                                   <option value="10">10</option>
                                   <option value="15">15</option>
-                                  <option value="-1">All</option>
                                 </select>{" "}
                                 entries
                               </label>
@@ -66,188 +396,119 @@ const DestinationMaster = () => {
                                   className="form-control"
                                   placeholder="Search"
                                   aria-controls="order-listing"
+                                  value={searchValue}
+                                  onChange={(e) => filterData(e.target.value)}
                                 />
                               </label>
                             </div>
                           </div>
                         </div>
+                        {isDataReady == false && <ShimmerTable row={10} />}
                         <div className="row dt-row">
                           <div className="col-sm-12">
-                            <table
-                              id="order-listing"
-                              className="table dataTable no-footer"
-                              aria-describedby="order-listing_info"
-                            >
-                              <thead>
-                                <tr>
-                                  <th
-                                    className="sorting sorting_asc"
-                                    tabIndex="0"
-                                    aria-controls="order-listing"
-                                    rowSpan="1"
-                                    colSpan="1"
-                                    aria-sort="ascending"
-                                    aria-label="Order #: activate to sort column descending"
-                                    style={{ width: "107.016px" }}
-                                  >
-                                    Sr. No.
-                                  </th>
-                                  <th
-                                    className="sorting"
-                                    tabIndex="0"
-                                    aria-controls="order-listing"
-                                    rowSpan="1"
-                                    colSpan="1"
-                                    aria-label="Purchased On: activate to sort column ascending"
-                                    style={{ width: "171.375px" }}
-                                  >
-                                    Destination Name
-                                  </th>
-                                  <th
-                                    className="sorting"
-                                    tabIndex="0"
-                                    aria-controls="order-listing"
-                                    rowSpan="1"
-                                    colSpan="1"
-                                    aria-label="Purchased On: activate to sort column ascending"
-                                    style={{ width: "171.375px" }}
-                                  >
-                                    State / Location
-                                  </th>
-                                  <th
-                                    className="sorting"
-                                    tabIndex="0"
-                                    aria-controls="order-listing"
-                                    rowSpan="1"
-                                    colSpan="1"
-                                    aria-label="Purchased On: activate to sort column ascending"
-                                    style={{ width: "171.375px" }}
-                                  >
-                                    Country
-                                  </th>
-                                  <th
-                                    className="sorting"
-                                    tabIndex="0"
-                                    aria-controls="order-listing"
-                                    rowSpan="1"
-                                    colSpan="1"
-                                    aria-label="Customer: activate to sort column ascending"
-                                    style={{ width: "127.391px" }}
-                                  >
-                                    Status
-                                  </th>
-                                  <th
-                                    className="sorting"
-                                    tabIndex="0"
-                                    aria-controls="order-listing"
-                                    rowSpan="1"
-                                    colSpan="1"
-                                    aria-label="Ship to: activate to sort column ascending"
-                                    style={{ width: "116.672px" }}
-                                  >
-                                    Action
-                                  </th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                <tr className="odd">
-                                  <td className="sorting_1">1</td>
-                                  <td>Mumbai Airport</td>
-                                  <td>Maharashtra</td>
-                                  <td>India</td>
-                                  <td>
-                                    <label className="badge badge-success">
-                                      Active
-                                    </label>
-                                  </td>
-                                  <td>
-                                    <ion-icon
-                                      name="create-outline"
-                                      color="primary"
-                                    ></ion-icon>
-                                    <ion-icon
-                                      name="trash-outline"
-                                      color="danger"
-                                      style={{ marginRight: "10px" }}
-                                    ></ion-icon>
-                                  </td>
-                                </tr>
-                                <tr className="odd">
-                                  <td className="sorting_1">2</td>
-                                  <td>Srinagar Airport</td>
-                                  <td>Jammu & Kashmir </td>
-                                  <td>India</td>
-                                  <td>
-                                    <label className="badge badge-success">
-                                      Active
-                                    </label>
-                                  </td>
-                                  <td>
-                                  <ion-icon
-                                      name="create-outline"
-                                      color="primary"
-                                    ></ion-icon>
-                                    <ion-icon
-                                      name="trash-outline"
-                                      color="danger"
-                                      style={{ marginRight: "10px" }}
-                                    ></ion-icon>
-                                    
-                                  </td>
-                                </tr>
-                                <tr className="odd">
-                                  <td className="sorting_1">3</td>
-                                  <td>Port Blair Airport</td>
-                                  <td>Andaman & Nicobar Islands</td>
-
-                                  <td>India</td>
-                                  <td>
-                                    <label className="badge badge-danger">
-                                      Inactive
-                                    </label>
-                                  </td>
-                                  <td>
-                                    <ion-icon
-                                      name="trash-outline"
-                                      color="danger"
-                                      style={{ marginRight: "10px" }}
-                                    ></ion-icon>
-                                    <ion-icon
-                                      name="create-outline"
-                                      color="primary"
-                                    ></ion-icon>
-                                  </td>
-                                </tr>
-                                <tr className="odd">
-                                  <td className="sorting_1">4</td>
-                                  <td>Shimla Airport</td>
-
-                                  <td>Himachal Pradesh</td>
-
-                                  <td>India</td>
-                                  <td>
-                                    <label className="badge badge-success">
-                                      Active
-                                    </label>
-                                  </td>
-                                  <td>
-                                    <ion-icon
-                                      name="trash-outline"
-                                      color="danger"
-                                      style={{ marginRight: "10px" }}
-                                    ></ion-icon>
-                                    <ion-icon
-                                      name="create-outline"
-                                      color="primary"
-                                    ></ion-icon>
-                                  </td>
-                                </tr>
-                              </tbody>
-                            </table>
-
+                            {locations && locations.length > 0 && (
+                              <table
+                                id="order-listing"
+                                className="table dataTable no-footer"
+                                aria-describedby="order-listing_info"
+                              >
+                                <thead>
+                                  <tr>
+                                    <th style={{ width: "107.016px" }}>
+                                      Sr. No.
+                                    </th>
+                                    <th style={{ width: "171.375px" }}>
+                                      Destination Name
+                                    </th>
+                                    <th style={{ width: "171.375px" }}>
+                                      Description
+                                    </th>
+                                    <th style={{ width: "171.375px" }}>
+                                      State / Location
+                                    </th>
+                                    <th style={{ width: "171.375px" }}>
+                                      Country
+                                    </th>
+                                    <th style={{ width: "127.391px" }}>
+                                      Created
+                                    </th>
+                                    <th style={{ width: "127.391px" }}>
+                                      Status
+                                    </th>
+                                    <th style={{ width: "116.672px" }}>
+                                      Action
+                                    </th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {locations &&
+                                    locations
+                                      .slice(startIndex, endIndex)
+                                      .map((location, index) => (
+                                        <CSSTransition
+                                          key={location.id}
+                                          timeout={500}
+                                          classNames="item elementdiv"
+                                        >
+                                          <tr className="odd" key={index}>
+                                            <td className="sorting_1">
+                                              {" "}
+                                              {startIndex + index + 1}
+                                            </td>
+                                            <td>{location.locationName}</td>
+                                            <td></td>
+                                            <td>{location.state.stateName}</td>
+                                            <td>{location.country.countryName}</td>
+                                            <td>
+                                              {getDateFormatted(
+                                                location.createdAt
+                                              )}
+                                            </td>
+                                            <td>
+                                              <label
+                                                className={`badge ${
+                                                  location.status == "1"
+                                                    ? "badge-success"
+                                                    : "badge-danger"
+                                                }`}
+                                              >
+                                                {location.status == "1"
+                                                  ? "Active"
+                                                  : "Inactive"}
+                                              </label>
+                                            </td>
+                                            <td>
+                                              <ion-icon
+                                                onClick={() =>
+                                                  openModal(location.id)
+                                                }
+                                                name="create-outline"
+                                                color="primary"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#locationModal"
+                                              ></ion-icon>
+                                              <ion-icon
+                                                name="trash-outline"
+                                                color="danger"
+                                                style={{ marginRight: "10px" }}
+                                                onClick={() => {
+                                                  setShowConfirmation(true);
+                                                  setDeleteId(location.id);
+                                                }}
+                                              ></ion-icon>
+                                            </td>
+                                          </tr>
+                                        </CSSTransition>
+                                      ))}
+                                </tbody>
+                              </table>
+                            )}
+                            {locations && locations.length == 0 && (
+                              <NoData></NoData>
+                            )}
                             <div
                               className="modal fade"
-                              id="countryModal"
+                              id="locationModal"
                               tabIndex="-1"
                               aria-labelledby="exampleModalLabel"
                               style={{ display: "none" }}
@@ -263,13 +524,14 @@ const DestinationMaster = () => {
                                       className="modal-title"
                                       id="exampleModalLabel"
                                     >
-                                      Add Destinations
+                                      {isUpdate ? "Edit" : "Add"} Destinations
                                     </h5>
                                     <button
                                       type="button"
                                       className="close"
                                       data-bs-dismiss="modal"
                                       aria-label="Close"
+                                      onClick={handleCloseModal}
                                     >
                                       <span aria-hidden="true">×</span>
                                     </button>
@@ -281,63 +543,165 @@ const DestinationMaster = () => {
                                         type="text"
                                         className="form-control form-control-sm"
                                         placeholder="Enter Destination Name"
+                                        value={locationName}
+                                        onChange={(e) => {
+                                          setLocationName(e.target.value);
+                                        }}
+                                        onBlur={() => {
+                                          simpleValidator.current.showMessageFor(
+                                            "location_name"
+                                          );
+                                        }}
                                       />
+                                      <>
+                                        {simpleValidator.current.element
+                                          .length > 0 &&
+                                          simpleValidator.current.message(
+                                            "location_name",
+                                            locationName,
+                                            [
+                                              "required",
+                                              { regex: /^[A-Za-z\s&-]+$/ },
+                                            ],
+                                            {
+                                              messages: {
+                                                required:
+                                                  "Please enter destination ",
+                                                regex:
+                                                  "Enter valid destination ",
+                                              },
+                                            }
+                                          )}
+                                      </>
                                     </div>
                                     <div className="form-group">
-                                      <label>State / Location</label>
-                                      <select
-                                        className="js-example-basic-single w-100 select2-hidden-accessible"
-                                        data-select2-id="1"
-                                        tabIndex="-1"
-                                        aria-hidden="true"
-                                      >
-                                        <option value="in" data-select2-id="3">
-                                          Maharashtra
-                                        </option>
-                                        <option
-                                          value="uae"
-                                          data-select2-id="16"
-                                        >
-                                          Jammu & Kashmir
-                                        </option>
-                                        <option
-                                          value="eng"
-                                          data-select2-id="18"
-                                        >
-                                          Himachal Pradesh
-                                        </option>
-                                      </select>
+                                      <label>Destination Description</label>
+                                      <ReactQuill modules={modules} theme="snow" value={locationDesc} onChange={setLocationDesc} />
+                                    
+                                      
+                                      {/* <textarea
+                                        type="text"
+                                        className="form-control form-control-sm"
+                                        placeholder="Enter Destination Description"
+                                        value={locationDesc}
+                                        onChange={(e) => {
+                                          setLocationDesc(e.target.value);
+                                        }}
+                                        
+                                      /> */}
+                                      <>
+                                        {simpleValidator.current.element
+                                          .length > 0 &&
+                                          simpleValidator.current.message(
+                                            "location_desc",
+                                            locationDesc,
+                                            [
+                                              "required",
+                                              { regex: /^[A-Za-z\s&-]+$/ },
+                                            ],
+                                            {
+                                              messages: {
+                                                required:
+                                                  "Please enter destination description ",
+                                                regex:
+                                                  "Enter valid destination description",
+                                              },
+                                            }
+                                          )}
+                                      </>
                                     </div>
                                     <div className="form-group">
                                       <label>Country</label>
-                                      <select
-                                        className="js-example-basic-single w-100 select2-hidden-accessible"
-                                        data-select2-id="1"
-                                        tabIndex="-1"
-                                        aria-hidden="true"
-                                      >
-                                        <option value="in" data-select2-id="3">
-                                          India
-                                        </option>
-                                        <option
-                                          value="uae"
-                                          data-select2-id="16"
-                                        >
-                                          UAE
-                                        </option>
-                                        <option
-                                          value="eng"
-                                          data-select2-id="18"
-                                        >
-                                          England
-                                        </option>
-                                      </select>
+                                      <Select
+                                        options={countryOptions}
+                                        placeholder="Select Country"
+                                        value={
+                                          country
+                                            ? countryOptions.find(
+                                                (option) =>
+                                                  option.value === country
+                                              )
+                                            : null
+                                        }
+                                        onChange={(selectedOption) => {
+                                          setCountry(
+                                            selectedOption
+                                              ? selectedOption.value
+                                              : null
+                                          );
+                                        }}
+                                        onBlur={() => {
+                                          simpleValidator.current.showMessageFor(
+                                            "country_name"
+                                          );
+                                        }}
+                                      />
+                                      <>
+                                        {simpleValidator.current.message(
+                                          "country_name",
+                                          country,
+                                          ["required"],
+                                          {
+                                            messages: {
+                                              required: "Please select country",
+                                            },
+                                          }
+                                        )}
+                                      </>
+                                    </div>
+                                    <div className="form-group">
+                                      <label>State / Location</label>
+                                      <Select
+                                        options={stateOptions}
+                                        placeholder="Select State"
+                                        required
+                                        name="state_name"
+                                        value={
+                                          stateId
+                                            ? stateOptions.find(
+                                                (option) =>
+                                                  option.value === stateId
+                                              )
+                                            : null
+                                        }
+                                        onChange={(selectedOption) => {
+                                          setStateId(
+                                            selectedOption
+                                              ? selectedOption.value
+                                              : ""
+                                          );
+                                        }}
+                                        onBlur={() => {
+                                          simpleValidator.current.showMessageFor(
+                                            "state_name"
+                                          );
+                                        }}
+                                      />
+                                      <>
+                                        {simpleValidator.current.message(
+                                          "state_name",
+                                          stateId,
+                                          ["required"],
+                                          {
+                                            messages: {
+                                              required: "Please select state",
+                                            },
+                                          }
+                                        )}
+                                      </>
                                     </div>
                                   </div>
                                   <div className="modal-footer">
                                     <button
                                       type="button"
                                       className="btn btn-success"
+                                      onClick={() => {
+                                        {
+                                          isUpdate
+                                            ? updateLocation()
+                                            : addLocation();
+                                        }
+                                      }}
                                     >
                                       Submit
                                     </button>
@@ -355,66 +719,19 @@ const DestinationMaster = () => {
                           </div>
                         </div>
                         <div className="row">
-                          <div className="col-sm-12 col-md-5">
-                            <div
-                              className="dataTables_info"
-                              id="order-listing_info"
-                              role="status"
-                              aria-live="polite"
-                            >
-                              Showing 1 to 10 of 10 entries
-                            </div>
-                          </div>
-                          <div className="col-sm-12 col-md-7">
+                          <div className="col-sm-12 col-md-12">
                             <div
                               className="dataTables_paginate paging_simple_numbers"
                               id="order-listing_paginate"
                             >
-                              <ul className="pagination">
-                                <li
-                                  className="paginate_button page-item previous disabled"
-                                  id="order-listing_previous"
-                                >
-                                  <a
-                                    aria-controls="order-listing"
-                                    aria-disabled="true"
-                                    role="link"
-                                    data-dt-idx="previous"
-                                    tabIndex="-1"
-                                    className="page-link"
-                                  >
-                                    Previous
-                                  </a>
-                                </li>
-                                <li className="paginate_button page-item active">
-                                  <a
-                                    href="https://demo.bootstrapdash.com/skydash/themes/vertical-default-light/pages/tables/data-table.html#"
-                                    aria-controls="order-listing"
-                                    role="link"
-                                    aria-current="page"
-                                    data-dt-idx="0"
-                                    tabIndex="0"
-                                    className="page-link"
-                                  >
-                                    1
-                                  </a>
-                                </li>
-                                <li
-                                  className="paginate_button page-item next disabled"
-                                  id="order-listing_next"
-                                >
-                                  <a
-                                    aria-controls="order-listing"
-                                    aria-disabled="true"
-                                    role="link"
-                                    data-dt-idx="next"
-                                    tabIndex="-1"
-                                    className="page-link"
-                                  >
-                                    Next
-                                  </a>
-                                </li>
-                              </ul>
+                              <RenderPageNumbers
+                                data={locations}
+                                currentPage={currentPage}
+                                handlePagination={handlePagination}
+                                handlePrevPage={handlePrevPage}
+                                handleNextPage={handleNextPage}
+                                totalPages={totalPages}
+                              ></RenderPageNumbers>
                             </div>
                           </div>
                         </div>
@@ -426,6 +743,15 @@ const DestinationMaster = () => {
             </div>
           </div>
           <Footer></Footer>
+          <ToastContainer />
+
+          <ConfirmationDialog
+            message="Are you sure you want to delete?"
+            onConfirm={handleConfirm}
+            onCancel={handleCancel}
+            show={showConfirmation}
+          />
+          <Loader isLoading={isLoading}></Loader>
         </div>
       </div>
     </div>

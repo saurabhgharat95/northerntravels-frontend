@@ -9,6 +9,7 @@ import Select from "react-select";
 
 import { ColorRing } from "react-loader-spinner";
 import { ShimmerTable } from "react-shimmer-effects";
+import ReactQuill from 'react-quill';
 
 export {
   Footer,
@@ -23,4 +24,7 @@ export {
   Select,
   ColorRing,
   ShimmerTable,
+  ReactQuill
+ 
+
 };

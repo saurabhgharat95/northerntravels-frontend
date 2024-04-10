@@ -10,7 +10,7 @@ import {
 } from "../components/CommonImport";
 
 import {
-  FETCH_COUNTRY_API,
+  FETCH_COUNTRIES_API,
   FETCH_STATES_API,
   ADD_TOUR_API,
   UPDATE_TOUR_API,
@@ -68,6 +68,7 @@ const AddTourForm = () => {
         tourName: tourName,
         fkStateId: stateId,
         fkCountryId: country,
+        
       };
       setIsLoading(true);
       if (simpleValidator.current.allValid()) {

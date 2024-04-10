@@ -15,13 +15,13 @@ import {
   FETCH_HOTELS_API,
   FETCH_HOTEL_TYPES_API,
   FETCH_HALTING_POINTS_API,
-  FETCH_COUNTRY_API,
+  FETCH_COUNTRIES_API,
   FETCH_STATES_API,
   ADD_HOTEL_API,
   UPDATE_HOTEL_API,
   DELETE_HOTEL_API,
 } from "../utils/constants";
-import { getDateFormatted } from "../utils/helpers";
+import { getDateFormatted, getFilteredDropdownOptions } from "../utils/helpers";
 import "react-toastify/dist/ReactToastify.css";
 import NoData from "../components/NoData";
 import ConfirmationDialog from "../components/ConfirmationDialog";
@@ -81,7 +81,7 @@ const HotelMaster = () => {
 
   const fetchCountries = async () => {
     try {
-      let url = FETCH_COUNTRY_API;
+      let url = FETCH_COUNTRIES_API;
 
       let response = await axios.post(url);
       if (response) {
@@ -370,6 +370,31 @@ const HotelMaster = () => {
     fetchHotels();
     fetchHotelTypes();
   }, []);
+  useEffect(() => {
+    let filteredStates = getFilteredDropdownOptions(country,statesList,"country")
+    let stateOptionsArray = [];
+    filteredStates.forEach((state) => {
+      stateOptionsArray.push({
+        value: state.id,
+        label: state.stateName,
+      });
+    });
+    setStateOptions(stateOptionsArray);
+    
+  }, [country]);
+
+  useEffect(() => {
+    let filteredDestinations = getFilteredDropdownOptions(stateId,haltDests,"state")
+    let destinationsOptionsArray = [];
+    filteredDestinations.forEach((haltDest) => {
+      destinationsOptionsArray.push({
+        value: haltDest.id,
+        label: haltDest.haltingPointName,
+      });
+    });
+    setHaltDestOptions(destinationsOptionsArray);
+    
+  }, [stateId]);
   return (
     <div className="container-scroller">
       <Navbar setSidebarOpen={setSidebarOpen}></Navbar>
@@ -706,42 +731,41 @@ const HotelMaster = () => {
                                         )}
                                       </>
                                     </div>
+                                   
                                     <div className="form-group">
-                                      <label>Halting Destination</label>
+                                      <label>Country</label>
                                       <Select
-                                        options={haltDestOptions}
-                                        placeholder="Select Halting Destination"
-                                        name="halt_dest"
+                                        options={countryOptions}
+                                        placeholder="Select Country"
                                         value={
-                                          haltDestId
-                                            ? haltDestOptions.find(
+                                          country
+                                            ? countryOptions.find(
                                                 (option) =>
-                                                  option.value === haltDestId
+                                                  option.value === country
                                               )
                                             : null
                                         }
                                         onChange={(selectedOption) => {
-                                          setHaltDestId(
+                                          setCountry(
                                             selectedOption
                                               ? selectedOption.value
-                                              : ""
+                                              : null
                                           );
                                         }}
                                         onBlur={() => {
                                           simpleValidator.current.showMessageFor(
-                                            "halt_dest"
+                                            "country_name"
                                           );
                                         }}
                                       />
                                       <>
                                         {simpleValidator.current.message(
-                                          "halt_dest",
+                                          "country_name",
                                           country,
                                           ["required"],
                                           {
                                             messages: {
-                                              required:
-                                                "Please select halting destination",
+                                              required: "Please select country",
                                             },
                                           }
                                         )}
@@ -788,39 +812,41 @@ const HotelMaster = () => {
                                       </>
                                     </div>
                                     <div className="form-group">
-                                      <label>Country</label>
+                                      <label>Halting Destination</label>
                                       <Select
-                                        options={countryOptions}
-                                        placeholder="Select Country"
+                                        options={haltDestOptions}
+                                        placeholder="Select Halting Destination"
+                                        name="halt_dest"
                                         value={
-                                          country
-                                            ? countryOptions.find(
+                                          haltDestId
+                                            ? haltDestOptions.find(
                                                 (option) =>
-                                                  option.value === country
+                                                  option.value === haltDestId
                                               )
                                             : null
                                         }
                                         onChange={(selectedOption) => {
-                                          setCountry(
+                                          setHaltDestId(
                                             selectedOption
                                               ? selectedOption.value
-                                              : null
+                                              : ""
                                           );
                                         }}
                                         onBlur={() => {
                                           simpleValidator.current.showMessageFor(
-                                            "country_name"
+                                            "halt_dest"
                                           );
                                         }}
                                       />
                                       <>
                                         {simpleValidator.current.message(
-                                          "country_name",
+                                          "halt_dest",
                                           country,
                                           ["required"],
                                           {
                                             messages: {
-                                              required: "Please select country",
+                                              required:
+                                                "Please select halting destination",
                                             },
                                           }
                                         )}

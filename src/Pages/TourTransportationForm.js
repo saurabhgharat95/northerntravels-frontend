@@ -112,8 +112,8 @@ const TourTransportationForm = () => {
 
         {formValues.map((element, index) => (
           <>
-            <div className="form-group row mb-0">
-              <div className="col-sm-6 mb-3">
+            {/* <div className="form-group row mb-0">
+              <div className="col-sm-2 mb-3">
                 <label>Vehicle</label>
 
                 <Select
@@ -150,9 +150,47 @@ const TourTransportationForm = () => {
                   )}
                 </>
               </div>
-            </div>
+            </div> */}
+          
             <div className="form-group row">
-              <div className="col-sm-6 mb-3">
+            <div className="col-sm-2 mb-3">
+                <label>Vehicle</label>
+
+                <Select
+                  options={optionsObj.vehicleOptions}
+                  placeholder="Select Vehicle"
+                  value={
+                    element.vehicleName
+                      ? optionsObj.vehicleOptions.find(
+                          (option) => option.value === element.vehicleName
+                        )
+                      : null
+                  }
+                  onChange={(selectedOption) => {
+                    const newFormValues = [...formValues];
+                    newFormValues[index].vehicleName = selectedOption
+                      ? selectedOption.value
+                      : "";
+                    setFormValues(newFormValues);
+                  }}
+                  onBlur={() => {
+                    simpleValidator.current.showMessageFor("vehicle_name");
+                  }}
+                />
+                <>
+                  {simpleValidator.current.message(
+                    "vehicle_name",
+                    element.vehicleName,
+                    ["required"],
+                    {
+                      messages: {
+                        required: "Please select vehicle",
+                      },
+                    }
+                  )}
+                </>
+              </div>
+              <div className="col-sm-3 mb-3">
                 <label>Start Point</label>
                 <Select
                   options={optionsObj.transitPtOptions}
@@ -188,7 +226,7 @@ const TourTransportationForm = () => {
                   )}
                 </>
               </div>
-              <div className="col-sm-6 mb-3">
+              <div className="col-sm-3 mb-3">
                 <label>End Point</label>
                 <Select
                   options={optionsObj.transitPtOptions}
@@ -222,8 +260,11 @@ const TourTransportationForm = () => {
                   )}
                 </>
               </div>
-              <div className="col-sm-6 mb-3">
-                <label>On Season Charge</label>
+              <div className="col-sm-4 mb-3">
+              <div className="row ">
+
+              <div className="col-sm-4 mb-3">
+                <label>On Season Rate</label>
                 <input
                   type="text"
                   pattern="[0-9]*"
@@ -255,8 +296,8 @@ const TourTransportationForm = () => {
                   )}
                 </>
               </div>
-              <div className="col-sm-5 mb-3">
-                <label>Off Season Charge</label>
+              <div className="col-sm-4 mb-3">
+                <label>Off Season Rate</label>
                 <input
                   type="text"
                   pattern="[0-9]*"
@@ -289,9 +330,9 @@ const TourTransportationForm = () => {
                 </>
               </div>
 
-              <div className="col-sm-1 mb-3">
+              <div className="col-sm-4 mb-3">
                 <ion-icon
-                  style={{ marginTop: "40%" }}
+                  style={{ marginTop: "30%" }}
                   name="add-circle-outline"
                   color="success"
                   size="large"
@@ -299,7 +340,7 @@ const TourTransportationForm = () => {
                 ></ion-icon>
                 {index ? (
                   <ion-icon
-                    style={{ marginTop: "40%" }}
+                    style={{ marginTop: "30%" }}
                     name="close-circle-outline"
                     color="danger"
                     size="large"
@@ -307,7 +348,11 @@ const TourTransportationForm = () => {
                   ></ion-icon>
                 ) : null}
               </div>
+              </div>
+             
 
+              </div>
+           
               <br></br>
               <br></br>
             </div>

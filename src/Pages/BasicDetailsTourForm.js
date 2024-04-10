@@ -7,14 +7,17 @@ import {
   Select,
 } from "../components/CommonImport";
 import {
-  FETCH_COUNTRY_API,
+  FETCH_COUNTRIES_API,
   FETCH_STATES_API,
   FETCH_TRANSIT_POINTS_API,
+  FETCH_LOCATIONS_API,
   ADD_TOUR_API,
   UPDATE_TOUR_API,
+
 } from "../utils/constants";
 import AddOnServicesForm from "./AddOnServicesForm";
 import makeAnimated from "react-select/animated";
+import { getFilteredDropdownOptions } from "../utils/helpers";
 const BasicDetailsTourForm = () => {
   const [country, setCountry] = useState([]);
   const [tourName, setTourName] = useState("");
@@ -24,6 +27,7 @@ const BasicDetailsTourForm = () => {
     countryOptions: [],
     stateOptions: [],
     transitPtOptions: [],
+    destOptions: []
   });
   const [isLoading, setIsLoading] = useState(false);
 
@@ -37,7 +41,7 @@ const BasicDetailsTourForm = () => {
 
   const fetchCountries = async () => {
     try {
-      let url = FETCH_COUNTRY_API;
+      let url = FETCH_COUNTRIES_API;
 
       let response = await axios.post(url);
       if (response) {
@@ -108,6 +112,31 @@ const BasicDetailsTourForm = () => {
       setTransitPts([]);
     }
   };
+  const fetchLocations = async () => {
+    try {
+      let url = FETCH_LOCATIONS_API;
+
+      let response = await axios.post(url);
+      if (response) {
+        if (response.status == 200) {
+          let locations = response.data.data;
+          let locationOptionsArray = [];
+          locations.forEach((location) => {
+            locationOptionsArray.push({
+              value: location.id,
+              label: location.locationName,
+            });
+          });
+          setOptionsObj((prevState) => ({
+            ...prevState,
+            destOptions: locationOptionsArray,
+          }));
+        }
+      }
+    } catch (e) {
+      setDataReady(true);
+    }
+  };
   const [formValues, setFormValues] = useState([
     { destinationName: "", destinationDesc: "" },
   ]);
@@ -132,7 +161,24 @@ const BasicDetailsTourForm = () => {
     fetchCountries();
     fetchStates();
     fetchTransitPts();
+    fetchLocations();
   }, []);
+
+  // useEffect(() => {
+  //   let filteredStates = getFilteredDropdownOptions(country,statesList,"country")
+  //   let stateOptionsArray = [];
+  //   filteredStates.forEach((state) => {
+  //     stateOptionsArray.push({
+  //       value: state.id,
+  //       label: state.stateName,
+  //     });
+  //   });
+  //   setOptionsObj((prevState) => ({
+  //     ...prevState,
+  //     stateOptions: stateOptionsArray,
+  //   }));
+    
+  // }, [country]);
   return (
     <>
       <section
@@ -298,7 +344,40 @@ const BasicDetailsTourForm = () => {
             <>
               <div className="col-sm-6 mb-3">
                 <label>Destination</label>
-                <input
+                <Select
+                  options={optionsObj.destOptions}
+                  placeholder="Select Destination"
+                  value={
+                    element.destinationName
+                      ? optionsObj.destOptions.find(
+                          (option) => option.value === element.destinationName
+                        )
+                      : null
+                  }
+                  onChange={(selectedOption) => {
+                    const newFormValues = [...formValues];
+                    newFormValues[index].destinationName = selectedOption
+                      ? selectedOption.value
+                      : "";
+                    setFormValues(newFormValues);
+                  }}
+                  onBlur={() => {
+                    simpleValidator.current.showMessageFor("dest_name");
+                  }}
+                />
+                <>
+                  {simpleValidator.current.message(
+                    "dest_name",
+                    element.destinationName,
+                    ["required"],
+                    {
+                      messages: {
+                        required: "Please select vehicle",
+                      },
+                    }
+                  )}
+                </>
+                {/* <input
                   type="text"
                   className="form-control"
                   placeholder="Enter Destination"
@@ -325,7 +404,7 @@ const BasicDetailsTourForm = () => {
                         },
                       }
                     )}
-                </>
+                </> */}
               </div>
               <div className="col-sm-5 mb-3">
                 <label>Description</label>

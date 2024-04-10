@@ -1,8 +1,9 @@
+// Get date in format month date,year hour:minute am/pm e.g. Mar 25, 2024, 10:35 PM
 const getDateFormatted = (dateString) => {
   const options = { year: "numeric", month: "short", day: "2-digit" };
   const date = new Date(dateString);
 
-  const istOffset = 5.5 * 60 * 60 * 1000; 
+  const istOffset = 5.5 * 60 * 60 * 1000;
   date.setTime(date.getTime() + istOffset);
 
   const formattedDate = date.toLocaleDateString("en-US", options);
@@ -16,4 +17,21 @@ const getDateFormatted = (dateString) => {
 
   return `${formattedDate}, ${formattedTime}`;
 };
-export { getDateFormatted };
+
+// Get dependent dropdown
+
+const getFilteredDropdownOptions = (id, optionsArray, filterType) => {
+  let filteredOptionsArray = [];
+  if (filterType == "country") {
+    filteredOptionsArray = optionsArray.filter((option) => {
+      return option.fkCountryId == id;
+    });
+  } else if (filterType == "state") {
+    filteredOptionsArray = optionsArray.filter((option) => {
+      return option.fkStateId == id;
+    });
+  }
+  return filteredOptionsArray;
+};
+
+export { getDateFormatted, getFilteredDropdownOptions };

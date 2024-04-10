@@ -3,7 +3,7 @@ export const BASE_URL = "http://localhost:4000"
 // export const BASE_URL = "https://northerntravels-backend.vercel.app"
 export const BASE_API_URL = BASE_URL + API_URL
 
-export const FETCH_COUNTRY_API = BASE_API_URL + "/get-countries"
+export const FETCH_COUNTRIES_API = BASE_API_URL + "/get-countries"
 export const ADD_COUNTRY_API = BASE_API_URL + "/add-country"
 export const UPDATE_COUNTRY_API = BASE_API_URL + "/update-country"
 export const DELETE_COUNTRY_API = BASE_API_URL + "/delete-country"
@@ -17,6 +17,11 @@ export const FETCH_TRANSIT_POINTS_API = BASE_API_URL + "/get-transit-points"
 export const ADD_TRANSIT_POINT_API = BASE_API_URL + "/add-transit-point"
 export const UPDATE_TRANSIT_POINT_API = BASE_API_URL + "/update-transit-point"
 export const DELETE_TRANSIT_POINT_API = BASE_API_URL + "/delete-transit-point"
+
+export const FETCH_LOCATIONS_API = BASE_API_URL + "/get-locations"
+export const ADD_LOCATION_API = BASE_API_URL + "/add-location"
+export const UPDATE_LOCATION_API = BASE_API_URL + "/update-location"
+export const DELETE_LOCATION_API = BASE_API_URL + "/delete-location"
 
 export const FETCH_HOTEL_TYPES_API = BASE_API_URL + "/get-hotel-types"
 export const ADD_HOTEL_TYPE_API = BASE_API_URL + "/add-hotel-type"

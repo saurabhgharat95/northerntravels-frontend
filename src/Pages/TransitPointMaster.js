@@ -13,13 +13,13 @@ import {
 } from "../components/CommonImport";
 import {
   FETCH_TRANSIT_POINTS_API,
-  FETCH_COUNTRY_API,
+  FETCH_COUNTRIES_API,
   FETCH_STATES_API,
   ADD_TRANSIT_POINT_API,
   UPDATE_TRANSIT_POINT_API,
   DELETE_TRANSIT_POINT_API,
 } from "../utils/constants";
-import { getDateFormatted } from "../utils/helpers";
+import { getDateFormatted, getFilteredDropdownOptions } from "../utils/helpers";
 
 import "react-toastify/dist/ReactToastify.css";
 import NoData from "../components/NoData";
@@ -67,7 +67,7 @@ const TransitPointMaster = () => {
 
   const fetchCountries = async () => {
     try {
-      let url = FETCH_COUNTRY_API;
+      let url = FETCH_COUNTRIES_API;
 
       let response = await axios.post(url);
       if (response) {
@@ -295,6 +295,18 @@ const TransitPointMaster = () => {
     fetchStates();
     fetchTransitPts();
   }, []);
+  useEffect(() => {
+    let filteredStates = getFilteredDropdownOptions(country,statesList,"country")
+    let stateOptionsArray = [];
+    filteredStates.forEach((state) => {
+      stateOptionsArray.push({
+        value: state.id,
+        label: state.stateName,
+      });
+    });
+    setStateOptions(stateOptionsArray);
+    
+  }, [country]);
   return (
     <div className="container-scroller">
       <Navbar setSidebarOpen={setSidebarOpen}></Navbar>
