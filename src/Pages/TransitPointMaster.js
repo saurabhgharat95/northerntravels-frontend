@@ -274,10 +274,11 @@ const TransitPointMaster = () => {
     setSearchValue(searchValue);
     if (searchValue && searchValue.trim() !== "") {
       var escapedSearchValue = escapeRegExp(searchValue); // Escaping searchValue
-      var filteredPts = transitPts?.filter((row) =>
-        row?.transitPointName
-          ?.toLowerCase()
-          .includes(escapedSearchValue.toLowerCase()) ||
+      var filteredPts = transitPts?.filter(
+        (row) =>
+          row?.transitPointName
+            ?.toLowerCase()
+            .includes(escapedSearchValue.toLowerCase()) ||
           row?.countryName
             ?.toLowerCase()
             .includes(escapedSearchValue.toLowerCase()) ||
@@ -296,7 +297,11 @@ const TransitPointMaster = () => {
     fetchTransitPts();
   }, []);
   useEffect(() => {
-    let filteredStates = getFilteredDropdownOptions(country,statesList,"country")
+    let filteredStates = getFilteredDropdownOptions(
+      country,
+      statesList,
+      "country"
+    );
     let stateOptionsArray = [];
     filteredStates.forEach((state) => {
       stateOptionsArray.push({
@@ -305,7 +310,6 @@ const TransitPointMaster = () => {
       });
     });
     setStateOptions(stateOptionsArray);
-    
   }, [country]);
   return (
     <div className="container-scroller">
@@ -316,7 +320,10 @@ const TransitPointMaster = () => {
           <div className="content-wrapper">
             <div className="card">
               <div className="card-body">
-                <h4 className="card-title">Transit point Master </h4>
+                <div className="flex">
+                  <ion-icon name="location-outline" color="primary"></ion-icon>
+                  <h4 className="card-title mt-1 ml-1">Transit point Master</h4>
+                </div>
                 <div className="float-right">
                   <button
                     className="btn btn-primary btn-sm"
@@ -627,7 +634,6 @@ const TransitPointMaster = () => {
                                         )}
                                       </>
                                     </div>
-                                   
                                   </div>
                                   <div className="modal-footer">
                                     <button

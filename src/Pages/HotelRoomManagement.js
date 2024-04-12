@@ -73,9 +73,7 @@ const HotelRoomManagement = () => {
   );
   const [, setForceUpdate] = useState(0);
 
-  const goToAddForm = () => {
-    window.location.href = "/add-quotation";
-  };
+  
   const fetchHotels = async () => {
     try {
       let url = FETCH_HOTELS_API;
@@ -230,10 +228,9 @@ const HotelRoomManagement = () => {
         setHotelRooms(filteredRoom);
       }
     } else {
-      if(type=="hotels"){
+      if (type == "hotels") {
         setHotels(originalHotelsList);
-      }
-      else{
+      } else {
         setHotelRooms(originalHotelRooms);
       }
     }
@@ -254,7 +251,7 @@ const HotelRoomManagement = () => {
                 {(formModule == "room" ||
                   formModule == "charges" ||
                   formModule == "roomform") && (
-                  <ol className="breadcrumb bg-primary">
+                  <ol className="breadcrumb ">
                     <li className="breadcrumb-item">
                       <span onClick={() => setFormModule("hotel")}>
                         Hotel Rooms
@@ -267,7 +264,11 @@ const HotelRoomManagement = () => {
                         onClick={() =>
                           viewRooms(selectedHotel.id, selectedHotel.name)
                         }
-                        className="breadcrumb-item"
+                        className={`breadcrumb-item ${
+                          formModule == "room"
+                            ? "font-weight-bold text-primary"
+                            : ""
+                        } `}
                       >
                         Rooms
                       </li>
@@ -277,7 +278,12 @@ const HotelRoomManagement = () => {
                         onClick={() =>
                           viewCharges(selectedHotel.id, selectedHotel.roomType)
                         }
-                        className="breadcrumb-item active"
+                        className={`breadcrumb-item ${
+                          formModule == "charges"
+                            ? "font-weight-bold text-primary"
+                            : ""
+                        } `}
+                        // className="breadcrumb-item active font-weight-bold text-primary"
                         aria-current="page"
                       >
                         <span>Charges</span>
@@ -285,8 +291,12 @@ const HotelRoomManagement = () => {
                     )}
                   </ol>
                 )}
-
-                <h4 className="card-title"> Hotel Room Management </h4>
+                <div className="flex">
+                  <ion-icon name="business-outline" color="primary"></ion-icon>
+                  <h4 className="card-title mt-1 ml-1">
+                    Hotel Room Management
+                  </h4>
+                </div>
 
                 <br></br>
                 {formModule == "hotel" && (

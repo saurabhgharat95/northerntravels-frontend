@@ -244,8 +244,14 @@ const StateMaster = () => {
     setSearchValue(searchValue);
     if (searchValue && searchValue.trim() !== "") {
       var escapedSearchValue = escapeRegExp(searchValue);
-      var filteredStates = states?.filter((row) =>
-        row?.stateName?.toLowerCase().includes(escapedSearchValue.toLowerCase()) || row?.countryName?.toLowerCase().includes(escapedSearchValue.toLowerCase())
+      var filteredStates = states?.filter(
+        (row) =>
+          row?.stateName
+            ?.toLowerCase()
+            .includes(escapedSearchValue.toLowerCase()) ||
+          row?.countryName
+            ?.toLowerCase()
+            .includes(escapedSearchValue.toLowerCase())
       );
       setStates(filteredStates);
     } else {
@@ -265,7 +271,12 @@ const StateMaster = () => {
           <div className="content-wrapper">
             <div className="card">
               <div className="card-body">
-                <h4 className="card-title">State / Location Master </h4>
+                <div className="flex">
+                  <ion-icon name="location-outline" color="primary"></ion-icon>
+                  <h4 className="card-title mt-1 ml-1">
+                    State / Location Master
+                  </h4>
+                </div>
                 <div className="float-right">
                   <button
                     className="btn btn-primary btn-sm"

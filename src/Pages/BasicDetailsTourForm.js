@@ -1,8 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import {
   axios,
-  toast,
-  ToastContainer,
   SimpleReactValidator,
   Select,
 } from "../components/CommonImport";
@@ -11,15 +9,21 @@ import {
   FETCH_STATES_API,
   FETCH_TRANSIT_POINTS_API,
   FETCH_LOCATIONS_API,
-  ADD_TOUR_API,
-  UPDATE_TOUR_API,
-
+  FETCH_STATES_BY_COUNTRY_API,
 } from "../utils/constants";
 import AddOnServicesForm from "./AddOnServicesForm";
 import makeAnimated from "react-select/animated";
-import { getFilteredDropdownOptions } from "../utils/helpers";
+
+// redux
+import { useDispatch, useSelector } from "react-redux";
+import { setTourFormData } from "../utils/store";
+
 const BasicDetailsTourForm = () => {
   const [country, setCountry] = useState([]);
+  const [locations, setLocations] = useState([]);
+  const [statesList, setStatesList] = useState([]);
+  const [selectedLocationDescription, setSelectedLocationDescription] =
+    useState("");
   const [tourName, setTourName] = useState("");
   const [stateId, setStateId] = useState(null);
   const [transitPtId, setTransitPtId] = useState([]);
@@ -27,9 +31,8 @@ const BasicDetailsTourForm = () => {
     countryOptions: [],
     stateOptions: [],
     transitPtOptions: [],
-    destOptions: []
+    destOptions: [],
   });
-  const [isLoading, setIsLoading] = useState(false);
 
   const [, setForceUpdate] = useState(0);
   const animatedComponents = makeAnimated();
@@ -38,6 +41,10 @@ const BasicDetailsTourForm = () => {
       autoForceUpdate: this,
     })
   );
+
+  //redux
+  const dispatch = useDispatch();
+  const tourFormData = useSelector((state) => state.form.tourFormData);
 
   const fetchCountries = async () => {
     try {
@@ -67,7 +74,6 @@ const BasicDetailsTourForm = () => {
       let url = FETCH_STATES_API;
 
       let response = await axios.post(url);
-      console.log("response", response.data.data);
       if (response) {
         if (response.status == 200) {
           let states = response.data.data;
@@ -82,6 +88,7 @@ const BasicDetailsTourForm = () => {
             ...prevState,
             stateOptions: stateOptionsArray,
           }));
+          setStatesList(states);
         }
       }
     } catch (e) {}
@@ -127,6 +134,7 @@ const BasicDetailsTourForm = () => {
               label: location.locationName,
             });
           });
+          setLocations(locations);
           setOptionsObj((prevState) => ({
             ...prevState,
             destOptions: locationOptionsArray,
@@ -142,13 +150,21 @@ const BasicDetailsTourForm = () => {
   ]);
 
   let addFormFields = () => {
-    setFormValues([...formValues, { name: "", email: "" }]);
+    setFormValues([...formValues, { destinationName: "", destinationDesc: "" }]);
   };
 
   let removeFormFields = (i) => {
     let newFormValues = [...formValues];
     newFormValues.splice(i, 1);
     setFormValues(newFormValues);
+    dispatch(
+      setTourFormData(
+        "locationIds",
+        newFormValues.map(
+          ({ destinationName }) => destinationName
+        )
+      )
+    );
   };
 
   let handleChange = (i, e) => {
@@ -156,7 +172,50 @@ const BasicDetailsTourForm = () => {
     newFormValues[i][e.target.name] = e.target.value;
     setFormValues(newFormValues);
   };
+  const getSetDescription = (index, locationId) => {
+    let destObj = locations.filter((location) => {
+      return location.id == locationId;
+    });
+    const newFormValues = [...formValues];
 
+    newFormValues[index].destinationDesc = destObj[0].locationDescription;
+    setSelectedLocationDescription(destObj[0].locationDescription);
+    setFormValues(newFormValues);
+  };
+  const handleCloseModal = () => {
+    document
+      .getElementById("locationDescriptionModal")
+      .classList.remove("show", "d-block");
+    document
+      .querySelectorAll(".modal-backdrop")
+      .forEach((el) => el.classList.remove("modal-backdrop"));
+  };
+  const fetchStatesByCountry = async () => {
+    try {
+      let url = FETCH_STATES_BY_COUNTRY_API;
+      let body = {
+        countryIds: country ? country.join(",") : "",
+      };
+      let response = await axios.post(url, body);
+      if (response) {
+        if (response.status == 200) {
+          let states = response.data.data;
+          let stateOptionsArray = [];
+          states.forEach((state) => {
+            stateOptionsArray.push({
+              value: state.id,
+              label: state.stateName,
+            });
+          });
+          setOptionsObj((prevState) => ({
+            ...prevState,
+            stateOptions: stateOptionsArray,
+          }));
+          setStatesList(states);
+        }
+      }
+    } catch (e) {}
+  };
   useEffect(() => {
     fetchCountries();
     fetchStates();
@@ -164,21 +223,34 @@ const BasicDetailsTourForm = () => {
     fetchLocations();
   }, []);
 
-  // useEffect(() => {
-  //   let filteredStates = getFilteredDropdownOptions(country,statesList,"country")
-  //   let stateOptionsArray = [];
-  //   filteredStates.forEach((state) => {
-  //     stateOptionsArray.push({
-  //       value: state.id,
-  //       label: state.stateName,
-  //     });
-  //   });
-  //   setOptionsObj((prevState) => ({
-  //     ...prevState,
-  //     stateOptions: stateOptionsArray,
-  //   }));
-    
-  // }, [country]);
+  useEffect(() => {
+    fetchStatesByCountry();
+  }, [country]);
+
+  useEffect(() => {
+    if (tourFormData){
+
+    setTourName(tourFormData.tourName);
+    setCountry(tourFormData.countryIds);
+    setStateId(tourFormData.stateIds);
+    setTransitPtId(tourFormData.transitPointIds);
+    let destinations = tourFormData.locationIds;
+
+    if (destinations) {
+      let destFormValues = [];
+
+      for (let index = 0; index < destinations.length; index++) {
+        destFormValues.push({
+          destinationName: destinations[index],
+          destinationDesc: "",
+        });
+      }
+      setFormValues(destFormValues);
+    }
+  }
+
+  }, [tourFormData]);
+
   return (
     <>
       <section
@@ -200,6 +272,7 @@ const BasicDetailsTourForm = () => {
               value={tourName}
               onChange={(e) => {
                 setTourName(e.target.value);
+                dispatch(setTourFormData("tourName", e.target.value));
               }}
               onBlur={() => {
                 simpleValidator.current.showMessageFor("tour_name");
@@ -227,15 +300,21 @@ const BasicDetailsTourForm = () => {
             <Select
               options={optionsObj.countryOptions}
               placeholder="Select Country"
+              isMulti
+              components={animatedComponents}
               value={
                 country
-                  ? optionsObj.countryOptions.find(
-                      (option) => option.value === country
+                  ? optionsObj.countryOptions.filter((option) =>
+                      country.includes(option.value)
                     )
                   : null
               }
-              onChange={(selectedOption) => {
-                setCountry(selectedOption ? selectedOption.value : null);
+              onChange={(selectedOptions) => {
+                const selectedIds = selectedOptions
+                  ? selectedOptions.map((option) => option.value)
+                  : [];
+                setCountry(selectedIds);
+                dispatch(setTourFormData("countryIds", selectedIds.join(",")));
               }}
               onBlur={() => {
                 simpleValidator.current.showMessageFor("country_name");
@@ -260,16 +339,22 @@ const BasicDetailsTourForm = () => {
               options={optionsObj.stateOptions}
               placeholder="Select State"
               required
+              isMulti
+              components={animatedComponents}
               name="state_name"
               value={
                 stateId
-                  ? optionsObj.stateOptions.find(
-                      (option) => option.value === stateId
+                  ? optionsObj.stateOptions.filter((option) =>
+                      stateId.includes(option.value)
                     )
                   : null
               }
-              onChange={(selectedOption) => {
-                setStateId(selectedOption ? selectedOption.value : "");
+              onChange={(selectedOptions) => {
+                const selectedIds = selectedOptions
+                  ? selectedOptions.map((option) => option.value)
+                  : [];
+                setStateId(selectedIds);
+                dispatch(setTourFormData("stateIds", selectedIds.join(",")));
               }}
               onBlur={() => {
                 simpleValidator.current.showMessageFor("state_name");
@@ -315,6 +400,9 @@ const BasicDetailsTourForm = () => {
                   ? selectedOptions.map((option) => option.value)
                   : [];
                 setTransitPtId(selectedIds);
+                dispatch(
+                  setTourFormData("transitPointIds", selectedIds.join(","))
+                );
               }}
               onBlur={() => {
                 simpleValidator.current.showMessageFor("transit_pt");
@@ -342,7 +430,7 @@ const BasicDetailsTourForm = () => {
         <div className="form-group row ">
           {formValues.map((element, index) => (
             <>
-              <div className="col-sm-6 mb-3">
+              <div className="col-sm-6 mb-3" key={index}>
                 <label>Destination</label>
                 <Select
                   options={optionsObj.destOptions}
@@ -360,6 +448,15 @@ const BasicDetailsTourForm = () => {
                       ? selectedOption.value
                       : "";
                     setFormValues(newFormValues);
+                    getSetDescription(index, selectedOption.value);
+                    dispatch(
+                      setTourFormData(
+                        "locationIds",
+                        newFormValues.map(
+                          ({ destinationName }) => destinationName
+                        )
+                      )
+                    );
                   }}
                   onBlur={() => {
                     simpleValidator.current.showMessageFor("dest_name");
@@ -406,36 +503,61 @@ const BasicDetailsTourForm = () => {
                     )}
                 </> */}
               </div>
-              <div className="col-sm-5 mb-3">
+              <div className="col-sm-5 mb-3" key={index}>
                 <label>Description</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder="Enter Description"
-                  value={element.destinationDesc}
-                  onChange={(e) => {
-                    const newFormValues = [...formValues];
-                    newFormValues[index].destinationDesc = e.target.value;
-                    setFormValues(newFormValues);
-                  }}
-                  onBlur={() => {
-                    simpleValidator.current.showMessageFor("dest_desc");
-                  }}
-                />
-                <>
-                  {simpleValidator.current.element.length > 0 &&
-                    simpleValidator.current.message(
-                      "dest_desc",
-                      element.destinationDesc,
-                      ["required", { regex: /^[A-Za-z\s&-]+$/ }],
-                      {
-                        messages: {
-                          required: "Please enter destination description ",
-                          regex: "Enter valid destination description",
-                        },
+                <br></br>
+                {element.destinationName && (
+                  <>
+                    <span
+                      data-bs-toggle="modal"
+                      data-bs-target="#locationDescriptionModal"
+                      onClick={() =>
+                        getSetDescription(index, element.destinationName)
                       }
-                    )}
-                </>
+                      className="badge badge-outline-info mt-2"
+                    >
+                      View Description
+                    </span>
+                  </>
+                )}
+                {/* <div style={{maxHeight:"400px",overflowY:"scroll"}}
+                                      dangerouslySetInnerHTML={{
+                                        __html: element.destinationDesc,
+                                      }}
+                                    ></div> */}
+                {!element.destinationName && (
+                  <>
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Enter Description"
+                      readOnly
+                      value={element.destinationDesc}
+                      onChange={(e) => {
+                        const newFormValues = [...formValues];
+                        newFormValues[index].destinationDesc = e.target.value;
+                        setFormValues(newFormValues);
+                      }}
+                      onBlur={() => {
+                        simpleValidator.current.showMessageFor("dest_desc");
+                      }}
+                    />
+                    <>
+                      {simpleValidator.current.element.length > 0 &&
+                        simpleValidator.current.message(
+                          "dest_desc",
+                          element.destinationDesc,
+                          ["required", { regex: /^[A-Za-z\s&-]+$/ }],
+                          {
+                            messages: {
+                              required: "Please enter destination description ",
+                              regex: "Enter valid destination description",
+                            },
+                          }
+                        )}
+                    </>
+                  </>
+                )}
               </div>
               <div className="col-sm-1 mb-3">
                 <ion-icon
@@ -461,6 +583,50 @@ const BasicDetailsTourForm = () => {
           ))}
         </div>
         <AddOnServicesForm />
+        <div
+          className="modal fade"
+          id="locationDescriptionModal"
+          tabIndex="-1"
+          aria-labelledby="exampleModalLabel"
+          style={{ display: "none" }}
+          aria-hidden="true"
+        >
+          <div className="modal-dialog modal-md" role="document">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title" id="exampleModalLabel">
+                  Description
+                </h5>
+                <button
+                  type="button"
+                  className="close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                  onClick={handleCloseModal}
+                >
+                  <span aria-hidden="true">×</span>
+                </button>
+              </div>
+              <div className="modal-body">
+                <div
+                  style={{ maxHeight: "400px", overflowY: "scroll" }}
+                  dangerouslySetInnerHTML={{
+                    __html: selectedLocationDescription,
+                  }}
+                ></div>
+              </div>
+              <div className="modal-footer">
+                <button
+                  type="button"
+                  className="btn btn-light"
+                  data-bs-dismiss="modal"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
     </>
   );

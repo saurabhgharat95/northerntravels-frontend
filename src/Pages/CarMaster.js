@@ -225,7 +225,10 @@ const CarMaster = () => {
           <div className="content-wrapper">
             <div className="card">
               <div className="card-body">
-                <h4 className="card-title">Vehicles Master </h4>
+                <div className="flex">
+                  <ion-icon name="car-sport-outline" color="primary"></ion-icon>
+                  <h4 className="card-title mt-1 ml-1">Vehicles Master</h4>
+                </div>
                 <div className="float-right">
                   <button
                     className="btn btn-primary btn-sm"

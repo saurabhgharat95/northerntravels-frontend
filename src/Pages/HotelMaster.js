@@ -322,7 +322,7 @@ const HotelMaster = () => {
   const handleCancel = () => {
     setShowConfirmation(false);
   };
-  
+
   const handlePagination = (number) => {
     setCurrentPage(Number(number));
   };
@@ -342,14 +342,17 @@ const HotelMaster = () => {
     setSearchValue(searchValue);
     if (searchValue && searchValue.trim() !== "") {
       var escapedSearchValue = escapeRegExp(searchValue); // Escaping searchValue
-      var filteredHotels = hotels?.filter((row) =>
-        row?.hotelName?.toLowerCase().includes(escapedSearchValue.toLowerCase())  ||
-        row?.countryName
-          ?.toLowerCase()
-          .includes(escapedSearchValue.toLowerCase()) ||
-        row?.stateName
-          ?.toLowerCase()
-          .includes(escapedSearchValue.toLowerCase()) ||
+      var filteredHotels = hotels?.filter(
+        (row) =>
+          row?.hotelName
+            ?.toLowerCase()
+            .includes(escapedSearchValue.toLowerCase()) ||
+          row?.countryName
+            ?.toLowerCase()
+            .includes(escapedSearchValue.toLowerCase()) ||
+          row?.stateName
+            ?.toLowerCase()
+            .includes(escapedSearchValue.toLowerCase()) ||
           row?.hotelTypeName
             ?.toLowerCase()
             .includes(escapedSearchValue.toLowerCase()) ||
@@ -371,7 +374,11 @@ const HotelMaster = () => {
     fetchHotelTypes();
   }, []);
   useEffect(() => {
-    let filteredStates = getFilteredDropdownOptions(country,statesList,"country")
+    let filteredStates = getFilteredDropdownOptions(
+      country,
+      statesList,
+      "country"
+    );
     let stateOptionsArray = [];
     filteredStates.forEach((state) => {
       stateOptionsArray.push({
@@ -380,11 +387,14 @@ const HotelMaster = () => {
       });
     });
     setStateOptions(stateOptionsArray);
-    
   }, [country]);
 
   useEffect(() => {
-    let filteredDestinations = getFilteredDropdownOptions(stateId,haltDests,"state")
+    let filteredDestinations = getFilteredDropdownOptions(
+      stateId,
+      haltDests,
+      "state"
+    );
     let destinationsOptionsArray = [];
     filteredDestinations.forEach((haltDest) => {
       destinationsOptionsArray.push({
@@ -393,7 +403,6 @@ const HotelMaster = () => {
       });
     });
     setHaltDestOptions(destinationsOptionsArray);
-    
   }, [stateId]);
   return (
     <div className="container-scroller">
@@ -404,7 +413,10 @@ const HotelMaster = () => {
           <div className="content-wrapper">
             <div className="card">
               <div className="card-body">
-                <h4 className="card-title">Hotel Master </h4>
+                <div className="flex">
+                  <ion-icon name="business-outline" color="primary"></ion-icon>
+                  <h4 className="card-title mt-1 ml-1">Hotel Master</h4>
+                </div>
                 <div className="float-right">
                   <button
                     className="btn btn-primary btn-sm"
@@ -447,7 +459,6 @@ const HotelMaster = () => {
                                   <option value="5">5</option>
                                   <option value="10">10</option>
                                   <option value="15">15</option>
-                                 
                                 </select>{" "}
                                 entries
                               </label>
@@ -731,7 +742,7 @@ const HotelMaster = () => {
                                         )}
                                       </>
                                     </div>
-                                   
+
                                     <div className="form-group">
                                       <label>Country</label>
                                       <Select

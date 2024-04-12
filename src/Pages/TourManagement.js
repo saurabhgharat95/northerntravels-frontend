@@ -18,6 +18,9 @@ import NoData from "../components/NoData";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import RenderPageNumbers from "./RenderPageNumbers";
 import Loader from "../components/Loader";
+import AddTourForm from "./AddTourForm";
+import { useNavigate } from "react-router-dom";
+
 const TourManagement = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
 
@@ -38,6 +41,8 @@ const TourManagement = () => {
 
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
+
+  const navigate = useNavigate();
 
   const fetchTours = async () => {
     try {
@@ -80,9 +85,7 @@ const TourManagement = () => {
       });
     }
   };
-  const goToAddForm = () => {
-    window.location.href = "/add-tour";
-  };
+
   const handleConfirm = () => {
     deleteTour(deleteId);
     setShowConfirmation(false);
@@ -132,11 +135,14 @@ const TourManagement = () => {
           <div className="content-wrapper">
             <div className="card">
               <div className="card-body">
-                <h4 className="card-title">Tours </h4>
+                <div className="flex">
+                  <ion-icon name="map-outline" color="primary"></ion-icon>
+                  <h4 className="card-title mt-1 ml-1">Tour Management</h4>
+                </div>
                 <div className="float-right">
                   <button
                     className="btn btn-primary btn-sm"
-                    onClick={() => goToAddForm()}
+                    onClick={() => (window.location.href = "/add-tour")}
                   >
                     Add Tour
                   </button>
@@ -240,12 +246,23 @@ const TourManagement = () => {
                                               {startIndex + index + 1}
                                             </td>
                                             <td>{tour.tourName}</td>
-                                            <td>{tour.countryName}</td>
-                                            <td>{tour.stateName} </td>
+                                            <td>{tour.countryNames}</td>
+                                            <td>{tour.stateNames} </td>
                                             <td>
                                               {getDateFormatted(tour.createdAt)}
                                             </td>
                                             <td>
+                                              {/* <ion-icon
+                                                name="eye-outline"
+                                                color="tertiary"
+                                                style={{ marginRight: "10px" }}
+                                                title="View"
+                                                onClick={() => {
+                                                  navigate(
+                                                    "/tour-details/" + tour.id
+                                                  );
+                                                }}
+                                              ></ion-icon> */}
                                               <ion-icon
                                                 name="checkbox-outline"
                                                 color="success"
@@ -257,6 +274,11 @@ const TourManagement = () => {
                                                 color="primary"
                                                 style={{ marginRight: "10px" }}
                                                 title="Edit"
+                                                onClick={() => {
+                                                  navigate(
+                                                    "/edit-tour/" + tour.id
+                                                  );
+                                                }}
                                               ></ion-icon>
 
                                               <ion-icon

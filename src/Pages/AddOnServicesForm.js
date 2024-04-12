@@ -1,14 +1,15 @@
-import { useEffect, useState, useRef } from "react";
+import { useState, useRef,useEffect } from "react";
 
-import {
-  axios,
-  toast,
-  ToastContainer,
-  SimpleReactValidator,
-  Select,
-} from "../components/CommonImport";
+import { SimpleReactValidator } from "../components/CommonImport";
+//redux
+import { useDispatch, useSelector } from "react-redux";
+import { setTourFormData } from "../utils/store";
 const AddOnServicesForm = () => {
-  const [formValues, setFormValues] = useState([{ serviceName: "" }]);
+  const [addOnFormValues, setAddOnFormValues] = useState([{ serviceName: "" }]);
+
+  const dispatch = useDispatch();
+  const tourFormData = useSelector((state) => state.form.tourFormData);
+
   const simpleValidator = useRef(
     new SimpleReactValidator({
       autoForceUpdate: this,
@@ -16,27 +17,37 @@ const AddOnServicesForm = () => {
   );
 
   let addFormFields = () => {
-    setFormValues([...formValues, { serviceName: "" }]);
+    setAddOnFormValues([...addOnFormValues, { serviceName: "" }]);
   };
 
   let removeFormFields = (i) => {
-    let newFormValues = [...formValues];
+    let newFormValues = [...addOnFormValues];
     newFormValues.splice(i, 1);
-    setFormValues(newFormValues);
+    setAddOnFormValues(newFormValues);
+    dispatch(setTourFormData("tourAddOnServices", newFormValues));
   };
 
-  let handleChange = (i, e) => {
-    let newFormValues = [...formValues];
-    newFormValues[i][e.target.name] = e.target.value;
-    setFormValues(newFormValues);
-  };
+  useEffect(() => {
+    let addOnServices = tourFormData.tourAddOnServices;
+    if (addOnServices) {
+      let addOnServicesValues = [];
+
+      for (let index = 0; index < addOnServices.length; index++) {
+        addOnServicesValues.push({
+          serviceName: addOnServices[index].serviceName,
+        });
+      }
+      setAddOnFormValues(addOnServicesValues);
+
+    }
+  }, [tourFormData]);
   return (
     <>
       <h3>Add On Services</h3>
       <div className="form-group row">
-        {formValues.map((element, index) => (
+        {addOnFormValues.map((element, index) => (
           <>
-            <div className="col-sm-6 mb-3">
+            <div className="col-sm-6 mb-3" key={index}>
               <label>Service Name</label>
               <input
                 type="text"
@@ -44,28 +55,29 @@ const AddOnServicesForm = () => {
                 placeholder="Enter Service Name"
                 value={element.serviceName}
                 onChange={(e) => {
-                  const newFormValues = [...formValues];
+                  const newFormValues = [...addOnFormValues];
                   newFormValues[index].serviceName = e.target.value;
-                  setFormValues(newFormValues);
+                  setAddOnFormValues(newFormValues);
+                  dispatch(setTourFormData("tourAddOnServices", newFormValues));
                 }}
                 onBlur={() => {
                   simpleValidator.current.showMessageFor("service_name");
                 }}
               />
-                <>
-                  {simpleValidator.current.element.length > 0 &&
-                    simpleValidator.current.message(
-                      "service_name",
-                      element.serviceName,
-                      ["required", { regex: /^[A-Za-z\s&-]+$/ }],
-                      {
-                        messages: {
-                          required: "Please enter service name ",
-                          regex: "Enter valid service name",
-                        },
-                      }
-                    )}
-                </>
+              <>
+                {simpleValidator.current.element.length > 0 &&
+                  simpleValidator.current.message(
+                    "service_name",
+                    element.serviceName,
+                    ["required", { regex: /^[A-Za-z\s&-]+$/ }],
+                    {
+                      messages: {
+                        required: "Please enter service name ",
+                        regex: "Enter valid service name",
+                      },
+                    }
+                  )}
+              </>
             </div>
 
             <div className="col-sm-1 mb-3">

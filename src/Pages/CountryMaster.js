@@ -221,12 +221,16 @@ const CountryMaster = () => {
     <div className="container-scroller">
       <Navbar setSidebarOpen={setSidebarOpen}></Navbar>
       <div className="container-fluid page-body-wrapper">
-        <Sidebar isSidebarOpen={isSidebarOpen}></Sidebar>
+        <Sidebar isSidebarOpen={isSidebarOpen} isSubmenuOpen={true}></Sidebar>
         <div className="main-panel">
           <div className="content-wrapper">
             <div className="card">
               <div className="card-body">
-                <h4 className="card-title">Countries Master </h4>
+                <div className="flex">
+                  <ion-icon name="earth-outline" color="primary"></ion-icon>{" "}
+                  <h4 className="card-title mt-1 ml-1"> Countries Master </h4>
+                </div>
+
                 <div className="float-right">
                   <button
                     className="btn btn-primary btn-sm"

@@ -302,7 +302,11 @@ const HaltingDestinationMaster = () => {
     fetchHaltDestinations();
   }, []);
   useEffect(() => {
-    let filteredStates = getFilteredDropdownOptions(country,statesList,"country")
+    let filteredStates = getFilteredDropdownOptions(
+      country,
+      statesList,
+      "country"
+    );
     let stateOptionsArray = [];
     filteredStates.forEach((state) => {
       stateOptionsArray.push({
@@ -311,7 +315,6 @@ const HaltingDestinationMaster = () => {
       });
     });
     setStateOptions(stateOptionsArray);
-    
   }, [country]);
   return (
     <div className="container-scroller">
@@ -322,7 +325,12 @@ const HaltingDestinationMaster = () => {
           <div className="content-wrapper">
             <div className="card">
               <div className="card-body">
-                <h4 className="card-title">Halting Destination Master </h4>
+                <div className="flex">
+                  <ion-icon name="location-outline" color="primary"></ion-icon>
+                  <h4 className="card-title mt-1 ml-1">
+                    Halting Destination Master
+                  </h4>
+                </div>
                 <div className="float-right">
                   <button
                     className="btn btn-primary btn-sm"
@@ -635,7 +643,6 @@ const HaltingDestinationMaster = () => {
                                         )}
                                       </>
                                     </div>
-                                   
                                   </div>
                                   <div className="modal-footer">
                                     <button

@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import { useState, useEffect, useRef } from "react";
 import {
   Footer,
@@ -11,7 +11,7 @@ import {
   SimpleReactValidator,
   Select,
   ShimmerTable,
-  ReactQuill
+  ReactQuill,
 } from "../components/CommonImport";
 import {
   FETCH_LOCATIONS_API,
@@ -23,7 +23,7 @@ import {
 } from "../utils/constants";
 import { getDateFormatted, getFilteredDropdownOptions } from "../utils/helpers";
 import "react-toastify/dist/ReactToastify.css";
-import 'react-quill/dist/quill.snow.css';
+import "react-quill/dist/quill.snow.css";
 import NoData from "../components/NoData";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import RenderPageNumbers from "./RenderPageNumbers";
@@ -36,6 +36,8 @@ const DestinationMaster = () => {
   const [originalLocationList, setOriginalLocationList] = useState([]);
   const [locationName, setLocationName] = useState("");
   const [locationDesc, setLocationDesc] = useState("");
+  const [selectedLocationDescription, setSelectedLocationDescription] =
+    useState("");
 
   const [stateId, setStateId] = useState(null);
   const [statesList, setStates] = useState([]);
@@ -69,17 +71,27 @@ const DestinationMaster = () => {
 
   const modules = {
     toolbar: [
-      [{ 'header': [1, 2, false] }],
-      ['bold', 'italic', 'underline','strike', 'blockquote'],
-      [{'list': 'ordered'}, {'list': 'bullet'}, {'indent': '-1'}, {'indent': '+1'}],
-      ['clean']
+      [{ header: [1, 2, false] }],
+      ["bold", "italic", "underline", "strike", "blockquote"],
+      [
+        { list: "ordered" },
+        { list: "bullet" },
+        { indent: "-1" },
+        { indent: "+1" },
+      ],
+      ["clean"],
     ],
-  }
-  
+  };
 
   const handleCloseModal = () => {
     document
       .getElementById("locationModal")
+      .classList.remove("show", "d-block");
+    document
+      .querySelectorAll(".modal-backdrop")
+      .forEach((el) => el.classList.remove("modal-backdrop"));
+    document
+      .getElementById("locationDescriptionModal")
       .classList.remove("show", "d-block");
     document
       .querySelectorAll(".modal-backdrop")
@@ -104,8 +116,7 @@ const DestinationMaster = () => {
           setCountryOptions(countryOptionsArray);
         }
       }
-    } catch (e) {
-    }
+    } catch (e) {}
   };
   const fetchStates = async () => {
     try {
@@ -158,7 +169,7 @@ const DestinationMaster = () => {
       let url = ADD_LOCATION_API;
       let body = {
         locationName: locationName,
-        locationDesc: locationDesc,
+        locationDescription: locationDesc,
         fkStateId: stateId,
         fkCountryId: country,
       };
@@ -195,7 +206,7 @@ const DestinationMaster = () => {
       let body = {
         id: updateId,
         locationName: locationName,
-        locationDesc: locationDesc,
+        locationDescription: locationDesc,
         fkStateId: stateId,
         fkCountryId: country,
       };
@@ -341,7 +352,11 @@ const DestinationMaster = () => {
           <div className="content-wrapper">
             <div className="card">
               <div className="card-body">
-                <h4 className="card-title">Destinations Master </h4>
+                <div className="flex">
+                  <ion-icon name="compass-outline" color="primary"></ion-icon>
+                  <h4 className="card-title mt-1 ml-1">Destinations Master</h4>
+                </div>
+                <h4 className="card-title"> </h4>
                 <div className="float-right">
                   <button
                     className="btn btn-primary btn-sm"
@@ -456,9 +471,25 @@ const DestinationMaster = () => {
                                               {startIndex + index + 1}
                                             </td>
                                             <td>{location.locationName}</td>
-                                            <td></td>
+                                            <td>
+                                              <span
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#locationDescriptionModal"
+                                                onClick={() =>
+                                                  setSelectedLocationDescription(
+                                                    location.locationDescription
+                                                  )
+                                                }
+                                                className="badge badge-outline-info"
+                                              >
+                                                View Description
+                                              </span>
+                                            </td>
+
                                             <td>{location.state.stateName}</td>
-                                            <td>{location.country.countryName}</td>
+                                            <td>
+                                              {location.country.countryName}
+                                            </td>
                                             <td>
                                               {getDateFormatted(
                                                 location.createdAt
@@ -576,35 +607,23 @@ const DestinationMaster = () => {
                                     </div>
                                     <div className="form-group">
                                       <label>Destination Description</label>
-                                      <ReactQuill modules={modules} theme="snow" value={locationDesc} onChange={setLocationDesc} />
-                                    
-                                      
-                                      {/* <textarea
-                                        type="text"
-                                        className="form-control form-control-sm"
-                                        placeholder="Enter Destination Description"
+                                      <ReactQuill
+                                        modules={modules}
+                                        theme="snow"
                                         value={locationDesc}
-                                        onChange={(e) => {
-                                          setLocationDesc(e.target.value);
-                                        }}
-                                        
-                                      /> */}
+                                        onChange={setLocationDesc}
+                                      />
                                       <>
                                         {simpleValidator.current.element
                                           .length > 0 &&
                                           simpleValidator.current.message(
                                             "location_desc",
                                             locationDesc,
-                                            [
-                                              "required",
-                                              { regex: /^[A-Za-z\s&-]+$/ },
-                                            ],
+                                            ["required"],
                                             {
                                               messages: {
                                                 required:
                                                   "Please enter destination description ",
-                                                regex:
-                                                  "Enter valid destination description",
                                               },
                                             }
                                           )}
@@ -705,6 +724,59 @@ const DestinationMaster = () => {
                                     >
                                       Submit
                                     </button>
+                                    <button
+                                      type="button"
+                                      className="btn btn-light"
+                                      data-bs-dismiss="modal"
+                                    >
+                                      Cancel
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            <div
+                              className="modal fade"
+                              id="locationDescriptionModal"
+                              tabIndex="-1"
+                              aria-labelledby="exampleModalLabel"
+                              style={{ display: "none" }}
+                              aria-hidden="true"
+                            >
+                              <div
+                                className="modal-dialog modal-md"
+                                role="document"
+                              >
+                                <div className="modal-content">
+                                  <div className="modal-header">
+                                    <h5
+                                      className="modal-title"
+                                      id="exampleModalLabel"
+                                    >
+                                      Description
+                                    </h5>
+                                    <button
+                                      type="button"
+                                      className="close"
+                                      data-bs-dismiss="modal"
+                                      aria-label="Close"
+                                      onClick={handleCloseModal}
+                                    >
+                                      <span aria-hidden="true">×</span>
+                                    </button>
+                                  </div>
+                                  <div className="modal-body">
+                                    <div
+                                      style={{
+                                        maxHeight: "400px",
+                                        overflowY: "scroll",
+                                      }}
+                                      dangerouslySetInnerHTML={{
+                                        __html: selectedLocationDescription,
+                                      }}
+                                    ></div>
+                                  </div>
+                                  <div className="modal-footer">
                                     <button
                                       type="button"
                                       className="btn btn-light"

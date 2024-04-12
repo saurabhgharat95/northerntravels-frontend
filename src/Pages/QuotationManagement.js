@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { Footer, Navbar, Sidebar } from "../components/CommonImport";
+import { useNavigate } from "react-router-dom"
 const QuotationManagement = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
-  const goToAddForm = () => {
-    window.location.href = "/add-quotation";
-  };
+  const navigate = useNavigate()
+ 
   return (
     <div className="container-scroller">
       <Navbar setSidebarOpen={setSidebarOpen}></Navbar>
@@ -14,11 +14,21 @@ const QuotationManagement = () => {
           <div className="content-wrapper">
             <div className="card">
               <div className="card-body">
-                <h4 className="card-title">Quotations </h4>
+                <div className="flex">
+                  <ion-icon
+                    name="document-text-outline"
+                    color="primary"
+                  ></ion-icon>{" "}
+                  <h4 className="card-title mt-1 ml-1">
+                    {" "}
+                    Quotation Management{" "}
+                  </h4>
+                </div>
                 <div className="float-right">
                   <button
                     className="btn btn-primary btn-sm"
-                    onClick={() => goToAddForm()}
+                    onClick={() =>navigate('/add-quotation')}
+                    
                   >
                     Add Quotation
                   </button>

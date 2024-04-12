@@ -90,9 +90,37 @@ ion-icon{
     transition: background-color 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s;
     border-radius: 6px;
 }
-.wizard > .steps > ul > li {
-  width: 20%;
+/* For small devices (phones) */
+@media only screen and (max-width: 576px) {
+  .wizard > .steps > ul > li {
+      width: 100%; /* Adjust as needed for smaller screens */
+  }
 }
+
+/* For medium devices (tablets) */
+@media only screen and (min-width: 577px) and (max-width: 992px) {
+  .wizard > .steps > ul > li {
+      width: 50%; /* Adjust as needed for medium screens */
+  }
+}
+
+/* For large devices (desktops) */
+@media only screen and (min-width: 993px) {
+  .wizard > .steps > ul > li {
+      width: 20%; /* Adjust as needed for larger screens */
+  }
+}
+.sidebar .nav.sub-menu .nav-item::before {
+ 
+  background: none;
+}
+.sidebar .nav.sub-menu {
+
+  padding: 0.25rem 0 0 1.07rem;
+
+}
+
+
 .wizard > .content {
   
   height: 75em;
