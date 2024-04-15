@@ -173,9 +173,13 @@ const AddTourForm = () => {
       let body = {
         id: id,
       };
+      setIsLoading(true);
+
       let response = await axios.post(url, body);
       if (response) {
         if (response.status == 200) {
+          setIsLoading(false);
+
           let tourDetails = response.data.data;
           const formData = {
             tourName: tourDetails.tourName || "",
@@ -264,6 +268,8 @@ const AddTourForm = () => {
         }
       }
     } catch (e) {
+      setIsLoading(false);
+
       toast.error("Something Went Wrong :(" + e, {
         position: "top-right",
       });

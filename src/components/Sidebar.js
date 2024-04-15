@@ -43,7 +43,7 @@ const Sidebar = (props) => {
       label: "Masters",
       icon: "list-outline",
       subItems: [
-        { path: "/countries", label: "Countries", icon: "globe-outline" },
+        { path: "/countries", label: "Countries", icon: "earth-outline" },
         {
           path: "/states",
           label: "State / Location",
@@ -55,7 +55,7 @@ const Sidebar = (props) => {
           label: "Destinations",
           icon: "compass-outline",
         },
-        { path: "/hotel-type", label: "Hotel Type", icon: "bed-outline" },
+        { path: "/hotel-type", label: "Hotel Type", icon: "business-outline" },
         {
           path: "/halting-dest",
           label: "Halting Destinations",
@@ -64,7 +64,7 @@ const Sidebar = (props) => {
         { path: "/hotels", label: "Hotels", icon: "business-outline" },
         { path: "/cars", label: "Vehicles", icon: "car-sport-outline" },
         { path: "/meal-types", label: "Meal Type", icon: "restaurant-outline" },
-        { path: "/room-types", label: "Room Type", icon: "bed-outline" },
+        { path: "/room-types", label: "Room Type", icon: "business-outline" },
       ],
     },
   ];

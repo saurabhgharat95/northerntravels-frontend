@@ -65,5 +65,4 @@ export const ADD_TOUR_API = BASE_API_URL + "/add-tour";
 export const UPDATE_TOUR_API = BASE_API_URL + "/update-tour";
 export const DELETE_TOUR_API = BASE_API_URL + "/delete-tour";
 
-export const FETCH_STATES_BY_COUNTRY_API =
-  BASE_API_URL + "/get-states-by-countries";
+export const FETCH_STATES_BY_COUNTRY_API = BASE_API_URL + "/get-states-by-countries";

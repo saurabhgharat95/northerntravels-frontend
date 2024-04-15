@@ -40,14 +40,24 @@ const CountryMaster = () => {
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isDataReady, setDataReady] = useState(false);
+
   const simpleValidator = useRef(
     new SimpleReactValidator({ autoForceUpdate: this })
   );
   const handleCloseModal = () => {
-    document.getElementById("countryModal").classList.remove("show", "d-block");
+    document.getElementById("countryModal").classList.remove("show","d-block");
     document
       .querySelectorAll(".modal-backdrop")
       .forEach((el) => el.classList.remove("modal-backdrop"));
+      var elementToRemove = document.querySelector('.fade.show');
+
+      // Check if the element exists before removing it
+      if (elementToRemove) {
+          elementToRemove.parentNode.removeChild(elementToRemove);
+      }
+      document.body.classList.remove('modal-open');
+      document.body.removeAttribute('style');
+      
   };
 
   const fetchCountries = async () => {
@@ -123,7 +133,6 @@ const CountryMaster = () => {
               position: "top-right",
             });
             setIsLoading(false);
-
             handleCloseModal();
             setCountryName("");
             fetchCountries();
@@ -321,7 +330,6 @@ const CountryMaster = () => {
                                     <th style={{ width: "127.391px" }}>
                                       Status
                                     </th>
-
                                     <th style={{ width: "116.672px" }}>
                                       Action
                                     </th>

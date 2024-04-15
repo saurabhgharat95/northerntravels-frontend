@@ -77,10 +77,10 @@ const ItineraryForm = () => {
           <div className="col-sm-4 mb-3">
             <label>Day</label>
             <input
-              type="text"
+              type="number"
               className="form-control"
-              readOnly
-              value={itineraryObject.day + 1}
+              
+              value={itineraryObject.day}
               onChange={(event) =>
                 setItineraryObject((prevState) => ({
                   ...prevState,
@@ -255,8 +255,15 @@ const ItineraryForm = () => {
                 </div>
               </div>
             </div>
-
             <div className="col-sm-4 mb-3">
+              <label>Amount </label>
+              <input
+                type="number"
+                className="form-control"
+                placeholder="Enter Amount"
+              />
+            </div>
+            <div className="col-sm-11 mb-3">
               <label>Remark </label>
               <input
                 type="text"
@@ -264,17 +271,10 @@ const ItineraryForm = () => {
                 placeholder="Enter Remark"
               />
             </div>
-            <div className="col-sm-4 mb-3">
-              <label>Amount </label>
-              <input
-                type="text"
-                className="form-control"
-                placeholder="Enter Remark"
-              />
-            </div>
-            <div className="col-sm-8 mb-3">
+        
+            <div className="col-sm-1 mb-3">
               <ion-icon
-                style={{ marginTop: "4%" }}
+              style={{ marginTop: "40%" }}
                 name="add-circle-outline"
                 color="success"
                 size="large"
@@ -282,7 +282,7 @@ const ItineraryForm = () => {
               ></ion-icon>
               {index ? (
                 <ion-icon
-                  style={{ marginTop: "4%" }}
+                style={{ marginTop: "40%" }}
                   name="close-circle-outline"
                   color="danger"
                   size="large"
@@ -396,12 +396,12 @@ const ItineraryForm = () => {
                                     style={{ marginRight: "10px" }}
                                     title="Edit"
                                   ></ion-icon>
-                                  <ion-icon
+                                  {/* <ion-icon
                                     name="swap-horizontal-outline"
                                     color="tertiary"
                                     style={{ marginRight: "10px" }}
                                     title="Swap"
-                                  ></ion-icon>
+                                  ></ion-icon> */}
                                   <ion-icon
                                     name="trash-outline"
                                     color="danger"

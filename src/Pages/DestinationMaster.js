@@ -163,6 +163,9 @@ const DestinationMaster = () => {
     setCountry(null);
     setStateId(null);
     setLocationName("");
+    setLocationDesc("");
+    setLocationDesc(null);
+    setForceUpdate(v=>++v)
   };
   const addLocation = async () => {
     try {
@@ -269,6 +272,7 @@ const DestinationMaster = () => {
     })[0];
     if (locationObj) {
       setLocationName(locationObj.locationName);
+      setLocationDesc(locationObj.locationDescription);
       setCountry(locationObj.fkCountryId);
       setStateId(locationObj.fkStateId);
       setUpdate(true);
@@ -362,8 +366,12 @@ const DestinationMaster = () => {
                     className="btn btn-primary btn-sm"
                     data-bs-toggle="modal"
                     data-bs-target="#locationModal"
+                    onClick={()=>{
+                      resetForm()
+                      setUpdate(false)}
+                    }
                   >
-                    Add Destinations
+                    Add Destination
                   </button>
                 </div>
                 <br></br>
@@ -472,7 +480,7 @@ const DestinationMaster = () => {
                                             </td>
                                             <td>{location.locationName}</td>
                                             <td>
-                                              <span
+                                              <button
                                                 data-bs-toggle="modal"
                                                 data-bs-target="#locationDescriptionModal"
                                                 onClick={() =>
@@ -483,7 +491,7 @@ const DestinationMaster = () => {
                                                 className="badge badge-outline-info"
                                               >
                                                 View Description
-                                              </span>
+                                              </button>
                                             </td>
 
                                             <td>{location.state.stateName}</td>
