@@ -15,10 +15,29 @@ const initialState = {
     tourOnSeason: "",
     tourOffSeason: "",
   },
+  quotationFormData: {
+    tourName: "",
+    tourDescription: "",
+    tourAddOnServices: "",
+    countryIds: "",
+    stateIds: "",
+    transitPointIds: "",
+    locationIds: "",
+    tourVehicle: "",
+    tourStartPt: "",
+    tourEndPt: "",
+    tourOnSeason: "",
+    tourOffSeason: "",
+  },
 };
 
 export const setTourFormData = (field, value) => ({
   type: "SET_TOUR_FORM_DATA",
+  payload: { field, value },
+});
+
+export const setQuotationFormData = (field, value) => ({
+  type: "SET_QUOTATION_FORM_DATA",
   payload: { field, value },
 });
 
@@ -34,6 +53,14 @@ const formReducer = (state = initialState, action) => {
         ...state,
         tourFormData: {
           ...state.tourFormData,
+          [action.payload.field]: action.payload.value,
+        },
+      };
+    case "SET_QUOTATION_FORM_DATA":
+      return {
+        ...state,
+        quotationFormData: {
+          ...state.quotationFormData,
           [action.payload.field]: action.payload.value,
         },
       };

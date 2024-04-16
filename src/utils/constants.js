@@ -66,3 +66,10 @@ export const UPDATE_TOUR_API = BASE_API_URL + "/update-tour";
 export const DELETE_TOUR_API = BASE_API_URL + "/delete-tour";
 
 export const FETCH_STATES_BY_COUNTRY_API = BASE_API_URL + "/get-states-by-countries";
+export const FETCH_TRANSIT_PT_BY_TOUR_API = BASE_API_URL + "/get-tour-transit-points";
+
+export const FETCH_QUOTATIONS_API = BASE_API_URL + "/get-quotations";
+export const FETCH_QUOTATION_DETAILS_API = BASE_API_URL + "/get-tour-details";
+export const ADD_QUOTATION_API = BASE_API_URL + "/add-tour";
+export const UPDATE_QUOTATION_API = BASE_API_URL + "/update-tour";
+export const DELETE_QUOTATION_API = BASE_API_URL + "/delete-tour";  

@@ -1,12 +1,308 @@
-import Select from "react-select";
+import { useEffect, useState, useRef } from "react";
+import {
+  axios,
+  SimpleReactValidator,
+  Select,
+} from "../components/CommonImport";
+import {
+  FETCH_COUNTRIES_API,
+  FETCH_STATES_API,
+  FETCH_TRANSIT_POINTS_API,
+  FETCH_LOCATIONS_API,
+  FETCH_STATES_BY_COUNTRY_API,
+  FETCH_TOURS_API,
+  FETCH_TOUR_DETAILS_API,
+  FETCH_TRANSIT_PT_BY_TOUR_API,
+} from "../utils/constants";
+import AddOnServicesForm from "./AddOnServicesForm";
+import makeAnimated from "react-select/animated";
 
+// redux
+import { useDispatch, useSelector } from "react-redux";
+import { setQuotationFormData } from "../utils/store";
 const BasicDetailsForm = () => {
-  const options = [
-    { value: "1", label: "Jammu & Kashmir Tour" },
-    { value: "2", label: "Andaman Tour" },
-    { value: "3", label: "North Tour" },
-  ];
+  const [optionsId, setOptionsId] = useState({
+    countryId: 0,
+    stateId: 0,
+    locationId: 0,
+    tourId: 0,
+    startPtId: 0,
+    endPtId: 0,
+  });
+  const [country, setCountry] = useState([]);
+  const [locations, setLocations] = useState([]);
+  const [statesList, setStatesList] = useState([]);
+  const [selectedLocationDescription, setSelectedLocationDescription] =
+    useState("");
+  const [tourName, setTourName] = useState("");
+  const [stateId, setStateId] = useState(null);
+  const [transitPtId, setTransitPtId] = useState([]);
+  const [optionsObj, setOptionsObj] = useState({
+    countryOptions: [],
+    stateOptions: [],
+    transitPtOptions: [],
+    destOptions: [],
+    tourOptions: [],
+  });
+  const [basicDetailsObject, setBasicDetailsObject] = useState({
+    isDomestic: "1",
+    season: "1",
+    clientName: "",
+    mobileNo: "",
+    whatsappNo: "",
+    email: "",
+    arrivalDate: "",
+    departureDate: "",
+    tourDurationDay: 0,
+    tourDurationNight: 0,
+  });
+  const [, setForceUpdate] = useState(0);
+  const animatedComponents = makeAnimated();
+  const simpleValidator = useRef(
+    new SimpleReactValidator({
+      autoForceUpdate: this,
+    })
+  );
 
+  //redux
+  const dispatch = useDispatch();
+  const tourFormData = useSelector((state) => state.form.tourFormData);
+
+  const fetchCountries = async () => {
+    try {
+      let url = FETCH_COUNTRIES_API;
+
+      let response = await axios.post(url);
+      if (response) {
+        if (response.status == 200) {
+          let countries = response.data.data;
+          let countryOptionsArray = [];
+          countries.forEach((country) => {
+            countryOptionsArray.push({
+              value: country.id,
+              label: country.countryName,
+            });
+          });
+          setOptionsObj((prevState) => ({
+            ...prevState,
+            countryOptions: countryOptionsArray,
+          }));
+        }
+      }
+    } catch (e) {}
+  };
+  const fetchStates = async () => {
+    try {
+      let url = FETCH_STATES_API;
+
+      let response = await axios.post(url);
+      if (response) {
+        if (response.status == 200) {
+          let states = response.data.data;
+          let stateOptionsArray = [];
+          states.forEach((state) => {
+            stateOptionsArray.push({
+              value: state.id,
+              label: state.stateName,
+            });
+          });
+          setOptionsObj((prevState) => ({
+            ...prevState,
+            stateOptions: stateOptionsArray,
+          }));
+          setStatesList(states);
+        }
+      }
+    } catch (e) {}
+  };
+  const fetchTransitPts = async () => {
+    try {
+      let url = FETCH_TRANSIT_POINTS_API;
+
+      let response = await axios.post(url);
+      if (response) {
+        if (response.status == 200) {
+          let trasitPts = response.data.data;
+          let trasitPtsOptionsArray = [];
+          trasitPts.forEach((trasitPt) => {
+            trasitPtsOptionsArray.push({
+              value: trasitPt.id,
+              label: trasitPt.transitPointName,
+            });
+          });
+          setOptionsObj((prevState) => ({
+            ...prevState,
+            transitPtOptions: trasitPtsOptionsArray,
+          }));
+        }
+      }
+    } catch (e) {
+      setDataReady(true);
+      setTransitPts([]);
+    }
+  };
+  const fetchLocations = async () => {
+    try {
+      let url = FETCH_LOCATIONS_API;
+
+      let response = await axios.post(url);
+      if (response) {
+        if (response.status == 200) {
+          let locations = response.data.data;
+          let locationOptionsArray = [];
+          locations.forEach((location) => {
+            locationOptionsArray.push({
+              value: location.id,
+              label: location.locationName,
+            });
+          });
+          setLocations(locations);
+          setOptionsObj((prevState) => ({
+            ...prevState,
+            destOptions: locationOptionsArray,
+          }));
+        }
+      }
+    } catch (e) {
+      setDataReady(true);
+    }
+  };
+  const fetchTours = async () => {
+    try {
+      let url = FETCH_TOURS_API;
+
+      let response = await axios.post(url);
+      if (response) {
+        if (response.status == 200) {
+          let tours = response.data.data;
+          let tourOptionsArray = [];
+          tours.forEach((tour) => {
+            tourOptionsArray.push({
+              value: tour.id,
+              label: tour.tourName,
+            });
+          });
+          setOptionsObj((prevState) => ({
+            ...prevState,
+            tourOptions: tourOptionsArray,
+          }));
+        }
+      }
+    } catch (e) {}
+  };
+  const fetchStatesByCountry = async () => {
+    try {
+      let url = FETCH_STATES_BY_COUNTRY_API;
+      let body = {
+        countryIds: country ? country.join(",") : "",
+      };
+      let response = await axios.post(url, body);
+      if (response) {
+        if (response.status == 200) {
+          let states = response.data.data;
+          let stateOptionsArray = [];
+          states.forEach((state) => {
+            stateOptionsArray.push({
+              value: state.id,
+              label: state.stateName,
+            });
+          });
+          setOptionsObj((prevState) => ({
+            ...prevState,
+            stateOptions: stateOptionsArray,
+          }));
+          setStatesList(states);
+        }
+      }
+    } catch (e) {}
+  };
+  const fetchTransitPtsByTour = async () => {
+    try {
+      let url = FETCH_TRANSIT_PT_BY_TOUR_API;
+      let body = {
+        id: optionsId.tourId ? optionsId.tourId : 0,
+      };
+      let response = await axios.post(url, body);
+      if (response) {
+        if (response.status == 200) {
+          let transitPts = response.data.data;
+          let transitPtOptionsArray = [];
+          transitPts.forEach((point) => {
+            transitPtOptionsArray.push({
+              value: point.id,
+              label: point.transitPoint.transitPointName,
+            });
+          });
+          setOptionsObj((prevState) => ({
+            ...prevState,
+            transitPtOptions: transitPtOptionsArray,
+          }));
+        }
+      }
+    } catch (e) {}
+  };
+  const handlePackageChange = (event) => {
+    const value = event.target.value;
+    console.log(value);
+    setBasicDetailsObject((prevState) => ({
+      ...prevState,
+      isDomestic: value,
+    }));
+    setForceUpdate((v) => ++v);
+  };
+  const handleSeasonChange = (event) => {
+    const value = event.target.value;
+    setBasicDetailsObject((prevState) => ({
+      ...prevState,
+      season: value,
+    }));
+    setForceUpdate((v) => ++v);
+  };
+
+  const handleCheckboxChange = (event) => {
+    if (event.target.checked) {
+      setBasicDetailsObject((prevState) => ({
+        ...prevState,
+        whatsappNo: prevState.mobileNo,
+      }));
+    } else {
+      setBasicDetailsObject((prevState) => ({
+        ...prevState,
+        whatsappNo: "",
+      }));
+    }
+  };
+
+  useEffect(() => {
+    fetchTours();
+  }, []);
+
+  useEffect(() => {
+    fetchStatesByCountry();
+  }, [country]);
+
+  useEffect(() => {
+    fetchTransitPtsByTour();
+  }, [optionsId.tourId]);
+
+  useEffect(() => {
+    if (basicDetailsObject.arrivalDate && basicDetailsObject.departureDate) {
+      const arrival = new Date(basicDetailsObject.arrivalDate);
+      const departure = new Date(basicDetailsObject.departureDate);
+
+      arrival.setHours(0, 0, 0, 0);
+      departure.setHours(0, 0, 0, 0);
+
+      const timeDiff = departure.getTime() - arrival.getTime();
+      const days = Math.ceil(timeDiff / (1000 * 3600 * 24)) + 1;
+      const nights = days - 1;
+      setBasicDetailsObject((prevState) => ({
+        ...prevState,
+        tourDurationDay: days,
+        tourDurationNight: nights,
+      }));
+    }
+  }, [basicDetailsObject.arrivalDate, basicDetailsObject.departureDate]);
   return (
     <>
       <section
@@ -29,9 +325,10 @@ const BasicDetailsForm = () => {
                       type="radio"
                       className="form-check-input"
                       name="packageRadio"
-                      id="packageRadio"
-                      value="1"
-                      checked
+                      id="packageRadio1"
+                      value={1}
+                      checked={basicDetailsObject.isDomestic == "1"}
+                      onChange={handlePackageChange}
                     />
                     Domestic
                     <i className="input-helper"></i>
@@ -45,8 +342,10 @@ const BasicDetailsForm = () => {
                       type="radio"
                       className="form-check-input"
                       name="packageRadio"
-                      id="packageRadio"
-                      value="2"
+                      id="packageRadio2"
+                      value={2}
+                      checked={basicDetailsObject.isDomestic == "2"}
+                      onChange={handlePackageChange}
                     />
                     International
                     <i className="input-helper"></i>
@@ -66,8 +365,9 @@ const BasicDetailsForm = () => {
                       className="form-check-input"
                       name="seasonRadio"
                       id="seasonRadio"
-                      value="1"
-                      checked
+                      value={1}
+                      checked={basicDetailsObject.season == "1"}
+                      onChange={handleSeasonChange}
                     />
                     On Season
                     <i className="input-helper"></i>
@@ -82,7 +382,9 @@ const BasicDetailsForm = () => {
                       className="form-check-input"
                       name="seasonRadio"
                       id="seasonRadio"
-                      value="2"
+                      value={2}
+                      checked={basicDetailsObject.season == "2"}
+                      onChange={handleSeasonChange}
                     />
                     Off Season
                     <i className="input-helper"></i>
@@ -96,7 +398,40 @@ const BasicDetailsForm = () => {
         <div className="form-group row">
           <div className="col-sm-6">
             <label>Tour</label>
-            <Select options={options} placeholder="Select Tour" />
+            <Select
+              options={optionsObj.tourOptions}
+              placeholder="Select Tour"
+              components={animatedComponents}
+              value={
+                optionsId.tourId
+                  ? optionsObj.tourOptions.filter(
+                      (option) => option.value === optionsId.tourId
+                    )
+                  : null
+              }
+              onChange={(selectedOption) => {
+                setOptionsId((prevState) => ({
+                  ...prevState,
+                  tourId: selectedOption ? selectedOption.value : null,
+                }));
+                dispatch(setQuotationFormData("tourId", selectedOption.value));
+              }}
+              onBlur={() => {
+                simpleValidator.current.showMessageFor("tour_name");
+              }}
+            />
+            <>
+              {simpleValidator.current.message(
+                "tour_name",
+                optionsId.tourId,
+                ["required"],
+                {
+                  messages: {
+                    required: "Please select tour",
+                  },
+                }
+              )}
+            </>
           </div>
         </div>
         <div className="form-group row">
@@ -106,30 +441,115 @@ const BasicDetailsForm = () => {
               type="text"
               className="form-control"
               placeholder="Enter Name"
+              value={basicDetailsObject.clientName}
+              onChange={(e) => {
+                setBasicDetailsObject((prevState) => ({
+                  ...prevState,
+                  clientName: e.target.value,
+                }));
+              }}
+              onBlur={() => {
+                simpleValidator.current.showMessageFor("client_name");
+              }}
             />
+            <>
+              {simpleValidator.current.element.length > 0 &&
+                simpleValidator.current.message(
+                  "client_name",
+                  basicDetailsObject.clientName,
+                  ["required", { regex: /^[A-Za-z\s&-]+$/ }],
+                  {
+                    messages: {
+                      required: "Please enter client name",
+                      regex: "Enter valid client name",
+                    },
+                  }
+                )}
+            </>
           </div>
         </div>
         <div className="form-group row">
           <div className="col-sm-6">
             <label>Mobile Number</label>
             <input
-              type="number"
+              type="text"
+              pattern="[0-9]{10}"
               className="form-control"
               placeholder="Enter Mobile Number"
+              maxLength="10"
+              value={basicDetailsObject.mobileNo}
+              onChange={(event) => {
+                const newValue = event.target.value.trim();
+                if (/^\d*$/.test(newValue)) {
+                  setBasicDetailsObject((prevState) => ({
+                    ...prevState,
+                    mobileNo: event.target.value,
+                  }));
+                }
+              }}
+              onBlur={() => {
+                simpleValidator.current.showMessageFor("mobileNo");
+              }}
             />
+            <>
+              {simpleValidator.current.message(
+                "mobileNo",
+                basicDetailsObject.mobileNo,
+                ["required"],
+                {
+                  messages: {
+                    required: "Please enter mobile number",
+                  },
+                }
+              )}
+            </>
           </div>
           <div className="col-sm-6">
             <label>Whatsapp Number</label>
             <input
-              type="number"
+              type="text"
+              pattern="[0-9]*"
               className="form-control"
-              placeholder="Enter Whatsapp Number"
+              placeholder="Enter WhatsApp Number"
+              maxLength="10"
+              value={basicDetailsObject.whatsappNo}
+              onChange={(event) => {
+                const newValue = event.target.value.trim();
+                if (/^\d*$/.test(newValue)) {
+                  setBasicDetailsObject((prevState) => ({
+                    ...prevState,
+                    whatsappNo: event.target.value,
+                  }));
+                }
+              }}
+              onBlur={() => {
+                simpleValidator.current.showMessageFor("whatsappNo");
+              }}
             />
+            <>
+              {simpleValidator.current.message(
+                "whatsappNo",
+                basicDetailsObject.mobileNo,
+                ["required"],
+                {
+                  messages: {
+                    required: "Please enter WhatsApp Number",
+                  },
+                }
+              )}
+            </>
             <div className="mt-1">
-            <input type="checkbox" id="whatsappNo" name="whatsappNo" value="isSame" />
-            <label for="whatsappNo" className="ml-1"> Same as Mobile Number</label>
+              <input
+                type="checkbox"
+                id="whatsappNo"
+                name="whatsappNo"
+                onChange={handleCheckboxChange}
+              />
+              <label for="whatsappNo" className="ml-1">
+                {" "}
+                Same as Mobile Number
+              </label>
             </div>
-            
           </div>
           <div className="col-sm-6">
             <label>Email</label>
@@ -137,19 +557,110 @@ const BasicDetailsForm = () => {
               type="text"
               className="form-control"
               placeholder="Enter Email"
+              value={basicDetailsObject.email}
+              onChange={(e) => {
+                setBasicDetailsObject((prevState) => ({
+                  ...prevState,
+                  email: e.target.value,
+                }));
+              }}
+              onBlur={() => {
+                simpleValidator.current.showMessageFor("email");
+              }}
             />
+            <>
+              {simpleValidator.current.element.length > 0 &&
+                simpleValidator.current.message(
+                  "email",
+                  basicDetailsObject.email,
+                  ["required", "email"],
+                  {
+                    messages: {
+                      required: "Please enter client email",
+                      email: "Enter valid client email",
+                    },
+                  }
+                )}
+            </>
           </div>
         </div>
 
-       
         <div className="form-group row">
           <div className="col-sm-6">
             <label>Start Point</label>
-            <Select options={options} placeholder="Select Start Point" />
+            <Select
+              placeholder="Select Start Point"
+              options={optionsObj.transitPtOptions}
+              components={animatedComponents}
+              value={
+                optionsId.startPtId
+                  ? optionsObj.transitPtOptions.filter(
+                      (option) => option.value === optionsId.startPtId
+                    )
+                  : null
+              }
+              onChange={(selectedOption) => {
+                setOptionsId((prevState) => ({
+                  ...prevState,
+                  startPtId: selectedOption ? selectedOption.value : null,
+                }));
+                dispatch(
+                  setQuotationFormData("startPtId", selectedOption.value)
+                );
+              }}
+              onBlur={() => {
+                simpleValidator.current.showMessageFor("start_pt");
+              }}
+            />
+            <>
+              {simpleValidator.current.message(
+                "start_pt",
+                optionsId.startPtId,
+                ["required"],
+                {
+                  messages: {
+                    required: "Please select start point",
+                  },
+                }
+              )}
+            </>
           </div>
           <div className="col-sm-6">
             <label>End Point</label>
-            <Select options={options} placeholder="Select End Point" />
+            <Select
+              placeholder="Select End Point"
+              options={optionsObj.transitPtOptions}
+              components={animatedComponents}
+              value={
+                optionsId.endPtId
+                  ? optionsObj.transitPtOptions.filter(
+                      (option) => option.value === optionsId.endPtId
+                    )
+                  : null
+              }
+              onChange={(selectedOption) => {
+                setOptionsId((prevState) => ({
+                  ...prevState,
+                  endPtId: selectedOption ? selectedOption.value : null,
+                }));
+                dispatch(setQuotationFormData("endPtId", selectedOption.value));
+              }}
+              onBlur={() => {
+                simpleValidator.current.showMessageFor("end_pt");
+              }}
+            />
+            <>
+              {simpleValidator.current.message(
+                "end_pt",
+                optionsId.endPtId,
+                ["required"],
+                {
+                  messages: {
+                    required: "Please select end point",
+                  },
+                }
+              )}
+            </>
           </div>
         </div>
         <div className="form-group row">
@@ -159,7 +670,30 @@ const BasicDetailsForm = () => {
               type="date"
               className="form-control"
               placeholder="Enter Arrival Date"
+              value={basicDetailsObject.arrivalDate}
+              onChange={(e) => {
+                setBasicDetailsObject((prevState) => ({
+                  ...prevState,
+                  arrivalDate: e.target.value,
+                }));
+              }}
+              onBlur={() => {
+                simpleValidator.current.showMessageFor("arrivalDate");
+              }}
             />
+            <>
+              {simpleValidator.current.element.length > 0 &&
+                simpleValidator.current.message(
+                  "arrivalDate",
+                  basicDetailsObject.arrivalDate,
+                  ["required"],
+                  {
+                    messages: {
+                      required: "Please select arrival date",
+                    },
+                  }
+                )}
+            </>
           </div>
           <div className="col-sm-6">
             <label>Departure Date</label>
@@ -167,7 +701,30 @@ const BasicDetailsForm = () => {
               type="date"
               className="form-control"
               placeholder="Enter Departure Date"
+              value={basicDetailsObject.departureDate}
+              onChange={(e) => {
+                setBasicDetailsObject((prevState) => ({
+                  ...prevState,
+                  departureDate: e.target.value,
+                }));
+              }}
+              onBlur={() => {
+                simpleValidator.current.showMessageFor("departureDate");
+              }}
             />
+            <>
+              {simpleValidator.current.element.length > 0 &&
+                simpleValidator.current.message(
+                  "departureDate",
+                  basicDetailsObject.departureDate,
+                  ["required"],
+                  {
+                    messages: {
+                      required: "Please select departure date",
+                    },
+                  }
+                )}
+            </>
           </div>
         </div>
         <div className="form-group row">
@@ -177,6 +734,8 @@ const BasicDetailsForm = () => {
               type="number"
               className="form-control"
               placeholder="Enter Day Duration"
+              value={basicDetailsObject.tourDurationDay}
+              readOnly
             />
           </div>
           <div className="col-sm-6">
@@ -185,6 +744,8 @@ const BasicDetailsForm = () => {
               type="number"
               className="form-control"
               placeholder="Enter Night Duration"
+              value={basicDetailsObject.tourDurationNight}
+              readOnly
             />
           </div>
         </div>
