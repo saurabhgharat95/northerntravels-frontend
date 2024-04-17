@@ -34,4 +34,14 @@ const getFilteredDropdownOptions = (id, optionsArray, filterType) => {
   return filteredOptionsArray;
 };
 
-export { getDateFormatted, getFilteredDropdownOptions };
+const toTitleCase = (str)  => {
+  if (!str || !/[a-zA-Z]/.test(str)) {
+      return "";
+  }
+
+  return str.toLowerCase().replace(/\b\w/g, function(char) {
+      return char.toUpperCase();
+  });
+}
+
+export { getDateFormatted, getFilteredDropdownOptions, toTitleCase };

@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 const Sidebar = (props) => {
   const navigate = useNavigate();
   const location = useLocation();
-  console.log("prop", props);
   const [activeItem, setActiveItem] = useState("");
 
   // const [isSubMenuOpen, setSubMenuOpen] = useState(false);

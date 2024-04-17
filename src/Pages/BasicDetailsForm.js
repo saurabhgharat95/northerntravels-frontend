@@ -5,16 +5,9 @@ import {
   Select,
 } from "../components/CommonImport";
 import {
-  FETCH_COUNTRIES_API,
-  FETCH_STATES_API,
-  FETCH_TRANSIT_POINTS_API,
-  FETCH_LOCATIONS_API,
-  FETCH_STATES_BY_COUNTRY_API,
   FETCH_TOURS_API,
-  FETCH_TOUR_DETAILS_API,
   FETCH_TRANSIT_PT_BY_TOUR_API,
 } from "../utils/constants";
-import AddOnServicesForm from "./AddOnServicesForm";
 import makeAnimated from "react-select/animated";
 
 // redux
@@ -29,14 +22,7 @@ const BasicDetailsForm = () => {
     startPtId: 0,
     endPtId: 0,
   });
-  const [country, setCountry] = useState([]);
-  const [locations, setLocations] = useState([]);
-  const [statesList, setStatesList] = useState([]);
-  const [selectedLocationDescription, setSelectedLocationDescription] =
-    useState("");
-  const [tourName, setTourName] = useState("");
-  const [stateId, setStateId] = useState(null);
-  const [transitPtId, setTransitPtId] = useState([]);
+
   const [optionsObj, setOptionsObj] = useState({
     countryOptions: [],
     stateOptions: [],
@@ -61,6 +47,14 @@ const BasicDetailsForm = () => {
   const simpleValidator = useRef(
     new SimpleReactValidator({
       autoForceUpdate: this,
+      validators: {
+        isDateAfter: {
+          message: "Departure date should be greater than arrival date.",
+          rule: (val, params, validator) => {
+            return val >= params[0];
+          },
+        },
+      },
     })
   );
 
@@ -68,105 +62,6 @@ const BasicDetailsForm = () => {
   const dispatch = useDispatch();
   const tourFormData = useSelector((state) => state.form.tourFormData);
 
-  const fetchCountries = async () => {
-    try {
-      let url = FETCH_COUNTRIES_API;
-
-      let response = await axios.post(url);
-      if (response) {
-        if (response.status == 200) {
-          let countries = response.data.data;
-          let countryOptionsArray = [];
-          countries.forEach((country) => {
-            countryOptionsArray.push({
-              value: country.id,
-              label: country.countryName,
-            });
-          });
-          setOptionsObj((prevState) => ({
-            ...prevState,
-            countryOptions: countryOptionsArray,
-          }));
-        }
-      }
-    } catch (e) {}
-  };
-  const fetchStates = async () => {
-    try {
-      let url = FETCH_STATES_API;
-
-      let response = await axios.post(url);
-      if (response) {
-        if (response.status == 200) {
-          let states = response.data.data;
-          let stateOptionsArray = [];
-          states.forEach((state) => {
-            stateOptionsArray.push({
-              value: state.id,
-              label: state.stateName,
-            });
-          });
-          setOptionsObj((prevState) => ({
-            ...prevState,
-            stateOptions: stateOptionsArray,
-          }));
-          setStatesList(states);
-        }
-      }
-    } catch (e) {}
-  };
-  const fetchTransitPts = async () => {
-    try {
-      let url = FETCH_TRANSIT_POINTS_API;
-
-      let response = await axios.post(url);
-      if (response) {
-        if (response.status == 200) {
-          let trasitPts = response.data.data;
-          let trasitPtsOptionsArray = [];
-          trasitPts.forEach((trasitPt) => {
-            trasitPtsOptionsArray.push({
-              value: trasitPt.id,
-              label: trasitPt.transitPointName,
-            });
-          });
-          setOptionsObj((prevState) => ({
-            ...prevState,
-            transitPtOptions: trasitPtsOptionsArray,
-          }));
-        }
-      }
-    } catch (e) {
-      setDataReady(true);
-      setTransitPts([]);
-    }
-  };
-  const fetchLocations = async () => {
-    try {
-      let url = FETCH_LOCATIONS_API;
-
-      let response = await axios.post(url);
-      if (response) {
-        if (response.status == 200) {
-          let locations = response.data.data;
-          let locationOptionsArray = [];
-          locations.forEach((location) => {
-            locationOptionsArray.push({
-              value: location.id,
-              label: location.locationName,
-            });
-          });
-          setLocations(locations);
-          setOptionsObj((prevState) => ({
-            ...prevState,
-            destOptions: locationOptionsArray,
-          }));
-        }
-      }
-    } catch (e) {
-      setDataReady(true);
-    }
-  };
   const fetchTours = async () => {
     try {
       let url = FETCH_TOURS_API;
@@ -190,32 +85,7 @@ const BasicDetailsForm = () => {
       }
     } catch (e) {}
   };
-  const fetchStatesByCountry = async () => {
-    try {
-      let url = FETCH_STATES_BY_COUNTRY_API;
-      let body = {
-        countryIds: country ? country.join(",") : "",
-      };
-      let response = await axios.post(url, body);
-      if (response) {
-        if (response.status == 200) {
-          let states = response.data.data;
-          let stateOptionsArray = [];
-          states.forEach((state) => {
-            stateOptionsArray.push({
-              value: state.id,
-              label: state.stateName,
-            });
-          });
-          setOptionsObj((prevState) => ({
-            ...prevState,
-            stateOptions: stateOptionsArray,
-          }));
-          setStatesList(states);
-        }
-      }
-    } catch (e) {}
-  };
+
   const fetchTransitPtsByTour = async () => {
     try {
       let url = FETCH_TRANSIT_PT_BY_TOUR_API;
@@ -278,10 +148,6 @@ const BasicDetailsForm = () => {
   }, []);
 
   useEffect(() => {
-    fetchStatesByCountry();
-  }, [country]);
-
-  useEffect(() => {
     fetchTransitPtsByTour();
   }, [optionsId.tourId]);
 
@@ -289,19 +155,22 @@ const BasicDetailsForm = () => {
     if (basicDetailsObject.arrivalDate && basicDetailsObject.departureDate) {
       const arrival = new Date(basicDetailsObject.arrivalDate);
       const departure = new Date(basicDetailsObject.departureDate);
+      if (departure >= arrival) {
+        arrival.setHours(0, 0, 0, 0);
+        departure.setHours(0, 0, 0, 0);
 
-      arrival.setHours(0, 0, 0, 0);
-      departure.setHours(0, 0, 0, 0);
-
-      const timeDiff = departure.getTime() - arrival.getTime();
-      const days = Math.ceil(timeDiff / (1000 * 3600 * 24)) + 1;
-      const nights = days - 1;
-      setBasicDetailsObject((prevState) => ({
-        ...prevState,
-        tourDurationDay: days,
-        tourDurationNight: nights,
-      }));
+        const timeDiff = departure.getTime() - arrival.getTime();
+        const days = Math.ceil(timeDiff / (1000 * 3600 * 24)) + 1;
+        const nights = days - 1;
+        setBasicDetailsObject((prevState) => ({
+          ...prevState,
+          tourDurationDay: days,
+          tourDurationNight: nights,
+        }));
+      }
     }
+    setForceUpdate((v) => ++v);
+
   }, [basicDetailsObject.arrivalDate, basicDetailsObject.departureDate]);
   return (
     <>
@@ -670,6 +539,7 @@ const BasicDetailsForm = () => {
               type="date"
               className="form-control"
               placeholder="Enter Arrival Date"
+              min={new Date().toISOString().split("T")[0]}
               value={basicDetailsObject.arrivalDate}
               onChange={(e) => {
                 setBasicDetailsObject((prevState) => ({
@@ -701,6 +571,7 @@ const BasicDetailsForm = () => {
               type="date"
               className="form-control"
               placeholder="Enter Departure Date"
+              min={new Date().toISOString().split("T")[0]}
               value={basicDetailsObject.departureDate}
               onChange={(e) => {
                 setBasicDetailsObject((prevState) => ({
@@ -717,7 +588,8 @@ const BasicDetailsForm = () => {
                 simpleValidator.current.message(
                   "departureDate",
                   basicDetailsObject.departureDate,
-                  ["required"],
+                  "required|isDateAfter:" + basicDetailsObject.arrivalDate,
+
                   {
                     messages: {
                       required: "Please select departure date",

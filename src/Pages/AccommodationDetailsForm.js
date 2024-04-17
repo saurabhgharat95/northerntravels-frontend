@@ -27,14 +27,14 @@ const AccommodationDetailsForm = () => {
         </div>
         <div className="form-group row">
           <div className="col-sm-6">
-            <label>Extra bed required ( Children Above 9 years )</label>
+            <label>Children Above 9 years ( Extra bed required )</label>
             <input type="number" className="form-control" min={0} max={50} />
           </div>
         </div>
         <div className="form-group row">
           <div className="col-sm-6">
-            <label>No extra bed</label>
-            <small> ( Children  between 8 - 6 years )</small>
+            <label>Children  between 8 - 6 years</label>
+            <small> ( No extra bed  )</small>
             <br></br>
 
             <input type="number" className="form-control" min={0} max={50}/>
@@ -42,8 +42,8 @@ const AccommodationDetailsForm = () => {
         </div>
         <div className="form-group row">
           <div className="col-sm-6">
-            <label>Free</label>
-            <small>( Children below 5 years )</small>
+            <label> Children below 5 years</label>
+            <small>( Free )</small>
             <input type="number" className="form-control" min={0} max={50} />
           </div>
         </div>
