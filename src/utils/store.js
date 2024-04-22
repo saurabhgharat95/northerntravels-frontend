@@ -16,18 +16,42 @@ const initialState = {
     tourOffSeason: "",
   },
   quotationFormData: {
-    tourName: "",
-    tourDescription: "",
-    tourAddOnServices: "",
-    countryIds: "",
-    stateIds: "",
-    transitPointIds: "",
-    locationIds: "",
-    tourVehicle: "",
-    tourStartPt: "",
-    tourEndPt: "",
-    tourOnSeason: "",
-    tourOffSeason: "",
+    quotId: "",
+    quotPackage: "",
+    quotSeason: "",
+    fkTourId: "",
+    stateIds: [],
+    tourData: "",
+    quotClientName: "",
+    fkLeadId: "",
+    quotMobileNo: "",
+    quotWhatsAppNo: "",
+    quotEmail: "",
+    quotStartPointId: "",
+    quotEndPointId: "",
+    quotArrivalDate: "",
+    quotDepartureDate: "",
+    quotDays: "",
+    quotNights: "",
+    quotTotalPeoples: "",
+    quotRoomsReqd: "",
+    quotChildAbove9: "",
+    quotChildBtwn8And9: "",
+    quotBlw5: "",
+    quotPackageNameArray: [],
+    quotPackageData: [],
+    quotItineraryData: [],
+    quotBeforeMarkup: "",
+    quotMarkup: "",
+    quotAfterMarkup: "",
+    quotCompanyName: "",
+    quotCorporateOffice: "",
+    quotRegionalOffice: "",
+    quotCompanyHotline: "",
+    quotCompanyEmail: "",
+    quotCompanyWebsite: "",
+    quotLogo: "",
+    quotCompanyLogo: "",
   },
 };
 
@@ -40,7 +64,6 @@ export const setQuotationFormData = (field, value) => ({
   type: "SET_QUOTATION_FORM_DATA",
   payload: { field, value },
 });
-
 
 export const resetFormData = () => ({
   type: "RESET_FORM_DATA",
@@ -77,6 +100,44 @@ const formReducer = (state = initialState, action) => {
           locationIds: "",
           transportationData: "",
         },
+        quotationFormData: {
+          quotId: "",
+          quotPackage: "",
+          quotSeason: "",
+          fkTourId: "",
+          tourData: "",
+          stateIds: [],
+          quotClientName: "",
+          fkLeadId: "",
+          quotMobileNo: "",
+          quotWhatsAppNo: "",
+          quotEmail: "",
+          quotStartPointId: "",
+          quotEndPointId: "",
+          quotArrivalDate: "",
+          quotDepartureDate: "",
+          quotDays: "",
+          quotNights: "",
+          quotTotalPeoples: "",
+          quotRoomsReqd: "",
+          quotChildAbove9: "",
+          quotChildBtwn8And9: "",
+          quotBlw5: "",
+          quotPackageNameArray: [],
+          quotPackageData: [],
+          quotItineraryData: [],
+          quotBeforeMarkup: "",
+          quotMarkup: "",
+          quotAfterMarkup: "",
+          quotCompanyName: "",
+          quotCorporateOffice: "",
+          quotRegionalOffice: "",
+          quotCompanyHotline: "",
+          quotCompanyEmail: "",
+          quotCompanyWebsite: "",
+          quotLogo: "",
+          quotCompanyLogo: "",
+        },
       };
     default:
       return state;
@@ -111,9 +172,9 @@ const formReducer = (state = initialState, action) => {
 //   }
 // };
 const rootReducer = combineReducers({
-    form:formReducer
-})
+  form: formReducer,
+});
 
-const store = createStore(rootReducer)
+const store = createStore(rootReducer);
 
 export default store;

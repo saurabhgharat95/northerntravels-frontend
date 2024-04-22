@@ -11,19 +11,19 @@ import {
   FETCH_ROOM_TYPES_API,
   FETCH_MEAL_TYPES_API,
 } from "../utils/constants";
-import makeAnimated from "react-select/animated";
 import NoData from "../components/NoData";
+
 // redux
 import { useDispatch, useSelector } from "react-redux";
 import { setQuotationFormData } from "../utils/store";
+
 import { toTitleCase } from "../utils/helpers";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 
 const HotelDetailsForm = () => {
   const [showConfirmation, setShowConfirmation] = useState(false);
-  const [deleteId, setDeleteId] = useState(null);
-  const [updateId, setUpdateId] = useState(null);
-
+  const [acionObj, setActionObj] = useState({ deleteId: null, updateId: null });
+  const [, setForceUpdate] = useState(0);
   const [optionsObj, setOptionsObj] = useState({
     haltingPtOptions: [],
     hotelTypeOptions: [],
@@ -32,12 +32,17 @@ const HotelDetailsForm = () => {
     roomTypeOptions: [],
   });
 
+  //redux
+  const dispatch = useDispatch();
+  const quotFormData = useSelector((state) => state.form.quotationFormData);
+
   const colorIndex = ["secondary", "success", "warning", "info", "danger"];
   const [isPackageReadOnly, setPackageReadOnly] = useState(false);
   const [packageData, setPackageData] = useState([]);
   const [packageNameArray, setPackageNameArray] = useState([]);
   const [originalPackageData, setOriginalPackageData] = useState([]);
   const [packageObject, setPackageObject] = useState({
+    quotHotelId: null,
     packageName: "",
     haltingDest: "",
     hotelType: "",
@@ -47,6 +52,11 @@ const HotelDetailsForm = () => {
     noOfNights: "",
     roomType: "",
     mealType: "",
+    haltingDestId: "",
+    hotelTypeId: "",
+    hotelId: "",
+    roomTypeId: "",
+    mealTypeId: "",
   });
 
   const addPackage = () => {
@@ -55,6 +65,7 @@ const HotelDetailsForm = () => {
       setOriginalPackageData((prevState) => [...prevState, packageObject]);
       setPackageObject((prevState) => ({
         ...prevState,
+        quotHotelId: null,
         haltingDest: null,
         hotelType: null,
         hotelName: null,
@@ -63,6 +74,11 @@ const HotelDetailsForm = () => {
         noOfNights: "",
         roomType: null,
         mealType: null,
+        haltingDestId: "",
+        hotelTypeId: "",
+        hotelId: "",
+        roomTypeId: "",
+        mealTypeId: "",
       }));
 
       if (!packageNameArray.includes(packageObject.packageName)) {
@@ -70,8 +86,20 @@ const HotelDetailsForm = () => {
           ...prevArray,
           packageObject.packageName,
         ]);
-      }
 
+        dispatch(
+          setQuotationFormData("quotPackageNameArray", [
+            ...quotFormData.quotPackageNameArray,
+            packageObject.packageName,
+          ])
+        );
+      }
+      dispatch(
+        setQuotationFormData("quotPackageData", [
+          ...quotFormData.quotPackageData,
+          packageObject,
+        ])
+      );
       setPackageReadOnly(true);
     } else {
       setForceUpdate((v) => ++v);
@@ -81,20 +109,28 @@ const HotelDetailsForm = () => {
   const editPackage = () => {
     if (simpleValidator.current.allValid()) {
       const updatedPackageData = [...packageData];
-      updatedPackageData[updateId] = packageObject;
+      updatedPackageData[acionObj.updateId] = packageObject;
 
       setPackageData(updatedPackageData);
       setOriginalPackageData(updatedPackageData);
+      dispatch(setQuotationFormData("quotPackageData", updatedPackageData));
 
       if (!packageNameArray.includes(packageObject.packageName)) {
         setPackageNameArray((prevArray) => [
           ...prevArray,
           packageObject.packageName,
         ]);
+        dispatch(
+          setQuotationFormData("quotPackageNameArray", [
+            ...quotFormData.quotPackageNameArray,
+            packageObject.packageName,
+          ])
+        );
       }
 
       setPackageObject((prevState) => ({
         ...prevState,
+        quotHotelId: null,
         haltingDest: null,
         hotelType: null,
         hotelName: null,
@@ -103,9 +139,15 @@ const HotelDetailsForm = () => {
         noOfNights: "",
         roomType: null,
         mealType: null,
+        haltingDestId: "",
+        hotelTypeId: "",
+        hotelId: "",
+        roomTypeId: "",
+        mealTypeId: "",
       }));
 
       setPackageReadOnly(true);
+      setActionObj((prevState) => ({ ...prevState, updateId: null }));
     } else {
       setForceUpdate((v) => ++v);
       simpleValidator.current.showMessages();
@@ -113,10 +155,25 @@ const HotelDetailsForm = () => {
   };
   const addNewPackage = () => {
     setPackageReadOnly(false);
-    setUpdateId(null)
+    setActionObj((prevState) => ({ ...prevState, updateId: null }));
+
     setPackageObject((prevState) => ({
       ...prevState,
+      quotHotelId: null,
       packageName: "",
+      haltingDest: null,
+      hotelType: null,
+      hotelName: null,
+      fromDate: "",
+      toDate: "",
+      noOfNights: "",
+      roomType: null,
+      mealType: null,
+      haltingDestId: "",
+      hotelTypeId: "",
+      hotelId: "",
+      roomTypeId: "",
+      mealTypeId: "",
     }));
   };
 
@@ -130,6 +187,7 @@ const HotelDetailsForm = () => {
   const clearFilter = () => {
     setPackageData(originalPackageData);
   };
+
   const simpleValidator = useRef(
     new SimpleReactValidator({
       autoForceUpdate: this,
@@ -143,6 +201,7 @@ const HotelDetailsForm = () => {
       },
     })
   );
+
   const fetchHaltingPoints = async () => {
     try {
       let url = FETCH_HALTING_POINTS_API;
@@ -153,10 +212,14 @@ const HotelDetailsForm = () => {
           let haltingPts = response.data.data;
           let haltingPtOptionsArray = [];
           haltingPts.forEach((point) => {
-            haltingPtOptionsArray.push({
-              value: point.id,
-              label: point.haltingPointName,
-            });
+            if (quotFormData.stateIds.length > 0) {
+              if (quotFormData.stateIds.includes(point.fkStateId)) {
+                haltingPtOptionsArray.push({
+                  value: point.id,
+                  label: point.haltingPointName,
+                });
+              }
+            }
           });
           setOptionsObj((prevState) => ({
             ...prevState,
@@ -199,10 +262,15 @@ const HotelDetailsForm = () => {
           let hotels = response.data.data;
           let hotelOptionsArray = [];
           hotels.forEach((hotel) => {
-            hotelOptionsArray.push({
-              value: hotel.id,
-              label: hotel.hotelName,
-            });
+            if (
+              packageObject.haltingDestId == hotel.fkHaltingPointId &&
+              packageObject.hotelTypeId == hotel.fkHotelTypeId
+            ) {
+              hotelOptionsArray.push({
+                value: hotel.id,
+                label: hotel.hotelName,
+              });
+            }
           });
           setOptionsObj((prevState) => ({
             ...prevState,
@@ -259,7 +327,7 @@ const HotelDetailsForm = () => {
     } catch (e) {}
   };
   const handleConfirm = () => {
-    handleDelete(deleteId);
+    handleDelete(acionObj.deleteId);
     setShowConfirmation(false);
   };
   const handleCancel = () => {
@@ -275,6 +343,12 @@ const HotelDetailsForm = () => {
     setPackageData(updatedPackageData);
     setOriginalPackageData(updatedPackageData);
   };
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
   useEffect(() => {
     fetchHaltingPoints();
     fetchHotelType();
@@ -282,6 +356,39 @@ const HotelDetailsForm = () => {
     fetchMealTypes();
     fetchRoomTypes();
   }, []);
+  useEffect(() => {
+    if (quotFormData) {
+      let quotPackage = quotFormData.quotPackageData;
+      console.log('inhotelform',quotPackage)
+      let quotPackageArray = [];
+      for (let index = 0; index < quotPackage.length; index++) {
+        quotPackageArray.push({
+          packageName: quotPackage[index].packageName,
+          haltingDest: quotPackage[index].haltingDest,
+          hotelType: quotPackage[index].hotelType,
+          hotelName: quotPackage[index].hotelName,
+          fromDate: quotPackage[index].fromDate,
+          toDate: quotPackage[index].toDate,
+          noOfNights: quotPackage[index].noOfNights,
+          roomType: quotPackage[index].roomType,
+          mealType: quotPackage[index].mealType,
+          haltingDestId: quotPackage[index].haltingDestId,
+          hotelTypeId: quotPackage[index].hotelTypeId,
+          hotelId: quotPackage[index].hotelId,
+          roomTypeId: quotPackage[index].roomTypeId,
+          mealTypeId: quotPackage[index].mealTypeId,
+          quotHotelId: quotPackage[index].quotHotelId,
+        });
+      }
+      setPackageData(quotPackageArray);
+      setOriginalPackageData(quotPackageArray);
+      setPackageNameArray(quotFormData.quotPackageNameArray);
+      setForceUpdate((v) => ++v);
+    }
+  }, [quotFormData]);
+  useEffect(() => {
+    fetchHotels();
+  }, [packageObject.haltingDestId, packageObject.hotelTypeId]);
   return (
     <>
       <section
@@ -347,6 +454,7 @@ const HotelDetailsForm = () => {
                   setPackageObject((prevState) => ({
                     ...prevState,
                     haltingDest: selectedOption ? selectedOption.label : null,
+                    haltingDestId: selectedOption ? selectedOption.value : null,
                   }));
                 }}
                 onBlur={() => {
@@ -381,10 +489,11 @@ const HotelDetailsForm = () => {
                       )
                     : null
                 }
-                onChange={(event) =>
+                onChange={(selectedOption) =>
                   setPackageObject((prevState) => ({
                     ...prevState,
-                    hotelType: event.label,
+                    hotelType: selectedOption ? selectedOption.label : "",
+                    hotelTypeId: selectedOption ? selectedOption.value : null,
                   }))
                 }
                 onBlur={() => {
@@ -416,10 +525,11 @@ const HotelDetailsForm = () => {
                     : null
                 }
                 placeholder="Select Hotel Name"
-                onChange={(event) =>
+                onChange={(selectedOption) =>
                   setPackageObject((prevState) => ({
                     ...prevState,
-                    hotelName: event.label,
+                    hotelName: selectedOption ? selectedOption.label : "",
+                    hotelId: selectedOption ? selectedOption.value : null,
                   }))
                 }
                 onBlur={() => {
@@ -554,10 +664,11 @@ const HotelDetailsForm = () => {
                     : null
                 }
                 placeholder="Select Room Type"
-                onChange={(event) =>
+                onChange={(selectedOption) =>
                   setPackageObject((prevState) => ({
                     ...prevState,
-                    roomType: event.label,
+                    roomType: selectedOption ? selectedOption.label : "",
+                    roomTypeId: selectedOption ? selectedOption.value : null,
                   }))
                 }
                 onBlur={() => {
@@ -591,10 +702,11 @@ const HotelDetailsForm = () => {
                     : null
                 }
                 placeholder="Select Meal Type"
-                onChange={(event) =>
+                onChange={(selectedOption) =>
                   setPackageObject((prevState) => ({
                     ...prevState,
-                    mealType: event.label,
+                    mealType: selectedOption ? selectedOption.label : "",
+                    mealTypeId: selectedOption ? selectedOption.value : null,
                   }))
                 }
                 onBlur={() => {
@@ -617,16 +729,15 @@ const HotelDetailsForm = () => {
           </div>
         </form>
         <div className="actions clearfix">
-          {console.log('updateid',updateId)}
           <button
             className="btn btn-success mr-2"
             onClick={() => {
               {
-                updateId != null ? editPackage() : addPackage();
+                acionObj.updateId != null ? editPackage() : addPackage();
               }
             }}
           >
-            {updateId != null ? "Update" : "Add"}
+            {acionObj.updateId != null ? "Update" : "Add"}
           </button>
 
           <button
@@ -711,24 +822,30 @@ const HotelDetailsForm = () => {
 
                                   <td>
                                     <ion-icon
-                                      name="trash-outline"
-                                      color="danger"
-                                      style={{ marginRight: "10px" }}
-                                      title="Delete"
-                                      onClick={() => {
-                                        setShowConfirmation(true);
-                                        setDeleteId(index);
-                                      }}
-                                    ></ion-icon>
-
-                                    <ion-icon
                                       name="create-outline"
                                       color="primary"
                                       style={{ marginRight: "10px" }}
                                       title="Edit"
                                       onClick={() => {
                                         setPackageObject(packageObj);
-                                        setUpdateId(index);
+                                        setActionObj((prevState) => ({
+                                          ...prevState,
+                                          updateId: index,
+                                        }));
+                                        scrollToTop();
+                                      }}
+                                    ></ion-icon>
+                                    <ion-icon
+                                      name="trash-outline"
+                                      color="danger"
+                                      style={{ marginRight: "10px" }}
+                                      title="Delete"
+                                      onClick={() => {
+                                        setShowConfirmation(true);
+                                        setActionObj((prevState) => ({
+                                          ...prevState,
+                                          deleteId: index,
+                                        }));
                                       }}
                                     ></ion-icon>
                                   </td>

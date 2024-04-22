@@ -360,7 +360,7 @@ const TourTransportationForm = () => {
                     <label>On Season Rate</label>
                     <input
                       type="text"
-                      pattern="[0-9]*"
+                      pattern="[0-9]+"
                       className="form-control"
                       placeholder="Enter On Season Charge"
                       value={element.onSeasonCharge}
@@ -403,7 +403,7 @@ const TourTransportationForm = () => {
                     <label>Off Season Rate</label>
                     <input
                       type="text"
-                      pattern="[0-9]*"
+                      pattern="[0-9]+"
                       className="form-control"
                       placeholder="Enter Off Season Charge"
                       value={element.offSeasonCharge}

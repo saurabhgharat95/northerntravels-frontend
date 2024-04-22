@@ -7,17 +7,16 @@ import {
 import {
   FETCH_TOURS_API,
   FETCH_TRANSIT_PT_BY_TOUR_API,
+  FETCH_TOUR_DETAILS_API
 } from "../utils/constants";
 import makeAnimated from "react-select/animated";
 
 // redux
 import { useDispatch, useSelector } from "react-redux";
 import { setQuotationFormData } from "../utils/store";
+
 const BasicDetailsForm = () => {
   const [optionsId, setOptionsId] = useState({
-    countryId: 0,
-    stateId: 0,
-    locationId: 0,
     tourId: 0,
     startPtId: 0,
     endPtId: 0,
@@ -31,16 +30,16 @@ const BasicDetailsForm = () => {
     tourOptions: [],
   });
   const [basicDetailsObject, setBasicDetailsObject] = useState({
-    isDomestic: "1",
-    season: "1",
-    clientName: "",
-    mobileNo: "",
-    whatsappNo: "",
-    email: "",
-    arrivalDate: "",
-    departureDate: "",
-    tourDurationDay: 0,
-    tourDurationNight: 0,
+    quotPackage: "1",
+    quotSeason: "1",
+    quotClientName: "",
+    quotMobileNo: "",
+    quotWhatsAppNo: "",
+    quotEmail: "",
+    quotArrivalDate: "",
+    quotDepartureDate: "",
+    quotDays: 0,
+    quotNights: 0,
   });
   const [, setForceUpdate] = useState(0);
   const animatedComponents = makeAnimated();
@@ -60,7 +59,7 @@ const BasicDetailsForm = () => {
 
   //redux
   const dispatch = useDispatch();
-  const tourFormData = useSelector((state) => state.form.tourFormData);
+  const quotFormData = useSelector((state) => state.form.quotationFormData);
 
   const fetchTours = async () => {
     try {
@@ -116,33 +115,62 @@ const BasicDetailsForm = () => {
     console.log(value);
     setBasicDetailsObject((prevState) => ({
       ...prevState,
-      isDomestic: value,
+      quotPackage: value,
     }));
+    dispatch(setQuotationFormData("quotPackage", value));
     setForceUpdate((v) => ++v);
   };
   const handleSeasonChange = (event) => {
     const value = event.target.value;
     setBasicDetailsObject((prevState) => ({
       ...prevState,
-      season: value,
+      quotSeason: value,
     }));
     setForceUpdate((v) => ++v);
+    dispatch(setQuotationFormData("quotSeason", value));
   };
 
   const handleCheckboxChange = (event) => {
     if (event.target.checked) {
       setBasicDetailsObject((prevState) => ({
         ...prevState,
-        whatsappNo: prevState.mobileNo,
+        quotWhatsAppNo: prevState.quotMobileNo,
       }));
+      dispatch(
+        setQuotationFormData("quotWhatsAppNo", basicDetailsObject.quotMobileNo)
+      );
     } else {
       setBasicDetailsObject((prevState) => ({
         ...prevState,
-        whatsappNo: "",
+        quotWhatsAppNo: "",
       }));
     }
   };
-
+  const fetchTourDetails = async (tourId) => {
+    try {
+      let url = FETCH_TOUR_DETAILS_API;
+      let body = {
+        id:tourId
+      }
+      let response = await axios.post(url,body);
+      if (response) {
+        if (response.status == 200) {
+          let stateIds = []
+          let states = response.data.data.states;
+          states.forEach(state => {
+            stateIds.push(state.fkLocationId)
+          });
+          console.log('stateIdsstateIds',stateIds)
+          dispatch(
+            setQuotationFormData("stateIds", stateIds)
+          );
+          dispatch(
+            setQuotationFormData("tourData", response.data.data)
+          );
+        }
+      }
+    } catch (e) {}
+  }
   useEffect(() => {
     fetchTours();
   }, []);
@@ -152,9 +180,12 @@ const BasicDetailsForm = () => {
   }, [optionsId.tourId]);
 
   useEffect(() => {
-    if (basicDetailsObject.arrivalDate && basicDetailsObject.departureDate) {
-      const arrival = new Date(basicDetailsObject.arrivalDate);
-      const departure = new Date(basicDetailsObject.departureDate);
+    if (
+      basicDetailsObject.quotArrivalDate &&
+      basicDetailsObject.quotDepartureDate
+    ) {
+      const arrival = new Date(basicDetailsObject.quotArrivalDate);
+      const departure = new Date(basicDetailsObject.quotDepartureDate);
       if (departure >= arrival) {
         arrival.setHours(0, 0, 0, 0);
         departure.setHours(0, 0, 0, 0);
@@ -164,14 +195,42 @@ const BasicDetailsForm = () => {
         const nights = days - 1;
         setBasicDetailsObject((prevState) => ({
           ...prevState,
-          tourDurationDay: days,
-          tourDurationNight: nights,
+          quotDays: days,
+          quotNights: nights,
         }));
+        dispatch(setQuotationFormData("quotDays", days));
+        dispatch(setQuotationFormData("quotNights", nights));
       }
     }
     setForceUpdate((v) => ++v);
-
-  }, [basicDetailsObject.arrivalDate, basicDetailsObject.departureDate]);
+  }, [
+    basicDetailsObject.quotArrivalDate,
+    basicDetailsObject.quotDepartureDate,
+  ]);
+  useEffect(() => {
+    if (quotFormData) {
+      
+      setBasicDetailsObject((prevState) => ({
+        ...prevState,
+        quotPackage: quotFormData.quotPackage ? quotFormData.quotPackage:"1",
+        quotSeason: quotFormData.quotSeason ? quotFormData.quotSeason:"1",
+        quotClientName: quotFormData.quotClientName,
+        quotMobileNo: quotFormData.quotMobileNo,
+        quotWhatsAppNo: quotFormData.quotWhatsAppNo,
+        quotEmail: quotFormData.quotEmail,
+        quotArrivalDate: quotFormData.quotArrivalDate,
+        quotDepartureDate: quotFormData.quotDepartureDate,
+        quotDays: quotFormData.quotDays,
+        quotNights: quotFormData.quotNights,
+      }));
+      setOptionsId((prevState) => ({
+        ...prevState,
+        tourId: quotFormData.fkTourId,
+        startPtId: quotFormData.quotStartPointId,
+        endPtId: quotFormData.quotEndPointId,
+      }));
+    }
+  }, [quotFormData]);
   return (
     <>
       <section
@@ -196,7 +255,7 @@ const BasicDetailsForm = () => {
                       name="packageRadio"
                       id="packageRadio1"
                       value={1}
-                      checked={basicDetailsObject.isDomestic == "1"}
+                      checked={basicDetailsObject.quotPackage == "1"}
                       onChange={handlePackageChange}
                     />
                     Domestic
@@ -213,7 +272,7 @@ const BasicDetailsForm = () => {
                       name="packageRadio"
                       id="packageRadio2"
                       value={2}
-                      checked={basicDetailsObject.isDomestic == "2"}
+                      checked={basicDetailsObject.quotPackage == "2"}
                       onChange={handlePackageChange}
                     />
                     International
@@ -232,10 +291,10 @@ const BasicDetailsForm = () => {
                     <input
                       type="radio"
                       className="form-check-input"
-                      name="seasonRadio"
-                      id="seasonRadio"
+                      name="quotSeasonRadio"
+                      id="quotSeasonRadio"
                       value={1}
-                      checked={basicDetailsObject.season == "1"}
+                      checked={basicDetailsObject.quotSeason == "1"}
                       onChange={handleSeasonChange}
                     />
                     On Season
@@ -249,10 +308,10 @@ const BasicDetailsForm = () => {
                     <input
                       type="radio"
                       className="form-check-input"
-                      name="seasonRadio"
-                      id="seasonRadio"
+                      name="quotSeasonRadio"
+                      id="quotSeasonRadio"
                       value={2}
-                      checked={basicDetailsObject.season == "2"}
+                      checked={basicDetailsObject.quotSeason == "2"}
                       onChange={handleSeasonChange}
                     />
                     Off Season
@@ -283,7 +342,11 @@ const BasicDetailsForm = () => {
                   ...prevState,
                   tourId: selectedOption ? selectedOption.value : null,
                 }));
-                dispatch(setQuotationFormData("tourId", selectedOption.value));
+                dispatch(
+                  setQuotationFormData("fkTourId", selectedOption.value)
+                );
+                fetchTourDetails(selectedOption.value)
+
               }}
               onBlur={() => {
                 simpleValidator.current.showMessageFor("tour_name");
@@ -310,12 +373,15 @@ const BasicDetailsForm = () => {
               type="text"
               className="form-control"
               placeholder="Enter Name"
-              value={basicDetailsObject.clientName}
+              value={basicDetailsObject.quotClientName}
               onChange={(e) => {
                 setBasicDetailsObject((prevState) => ({
                   ...prevState,
-                  clientName: e.target.value,
+                  quotClientName: e.target.value,
                 }));
+                dispatch(
+                  setQuotationFormData("quotClientName", e.target.value)
+                );
               }}
               onBlur={() => {
                 simpleValidator.current.showMessageFor("client_name");
@@ -325,7 +391,7 @@ const BasicDetailsForm = () => {
               {simpleValidator.current.element.length > 0 &&
                 simpleValidator.current.message(
                   "client_name",
-                  basicDetailsObject.clientName,
+                  basicDetailsObject.quotClientName,
                   ["required", { regex: /^[A-Za-z\s&-]+$/ }],
                   {
                     messages: {
@@ -346,24 +412,27 @@ const BasicDetailsForm = () => {
               className="form-control"
               placeholder="Enter Mobile Number"
               maxLength="10"
-              value={basicDetailsObject.mobileNo}
+              value={basicDetailsObject.quotMobileNo}
               onChange={(event) => {
                 const newValue = event.target.value.trim();
                 if (/^\d*$/.test(newValue)) {
                   setBasicDetailsObject((prevState) => ({
                     ...prevState,
-                    mobileNo: event.target.value,
+                    quotMobileNo: event.target.value,
                   }));
+                  dispatch(
+                    setQuotationFormData("quotMobileNo", event.target.value)
+                  );
                 }
               }}
               onBlur={() => {
-                simpleValidator.current.showMessageFor("mobileNo");
+                simpleValidator.current.showMessageFor("quotMobileNo");
               }}
             />
             <>
               {simpleValidator.current.message(
-                "mobileNo",
-                basicDetailsObject.mobileNo,
+                "quotMobileNo",
+                basicDetailsObject.quotMobileNo,
                 ["required"],
                 {
                   messages: {
@@ -377,28 +446,31 @@ const BasicDetailsForm = () => {
             <label>Whatsapp Number</label>
             <input
               type="text"
-              pattern="[0-9]*"
+              pattern="[0-9]+"
               className="form-control"
               placeholder="Enter WhatsApp Number"
               maxLength="10"
-              value={basicDetailsObject.whatsappNo}
+              value={basicDetailsObject.quotWhatsAppNo}
               onChange={(event) => {
                 const newValue = event.target.value.trim();
                 if (/^\d*$/.test(newValue)) {
                   setBasicDetailsObject((prevState) => ({
                     ...prevState,
-                    whatsappNo: event.target.value,
+                    quotWhatsAppNo: event.target.value,
                   }));
+                  dispatch(
+                    setQuotationFormData("quotWhatsAppNo", event.target.value)
+                  );
                 }
               }}
               onBlur={() => {
-                simpleValidator.current.showMessageFor("whatsappNo");
+                simpleValidator.current.showMessageFor("quotWhatsAppNo");
               }}
             />
             <>
               {simpleValidator.current.message(
-                "whatsappNo",
-                basicDetailsObject.mobileNo,
+                "quotWhatsAppNo",
+                basicDetailsObject.quotMobileNo,
                 ["required"],
                 {
                   messages: {
@@ -410,11 +482,11 @@ const BasicDetailsForm = () => {
             <div className="mt-1">
               <input
                 type="checkbox"
-                id="whatsappNo"
-                name="whatsappNo"
+                id="quotWhatsAppNo"
+                name="quotWhatsAppNo"
                 onChange={handleCheckboxChange}
               />
-              <label for="whatsappNo" className="ml-1">
+              <label for="quotWhatsAppNo" className="ml-1">
                 {" "}
                 Same as Mobile Number
               </label>
@@ -426,22 +498,23 @@ const BasicDetailsForm = () => {
               type="text"
               className="form-control"
               placeholder="Enter Email"
-              value={basicDetailsObject.email}
+              value={basicDetailsObject.quotEmail}
               onChange={(e) => {
                 setBasicDetailsObject((prevState) => ({
                   ...prevState,
-                  email: e.target.value,
+                  quotEmail: e.target.value,
                 }));
+                dispatch(setQuotationFormData("quotEmail", e.target.value));
               }}
               onBlur={() => {
-                simpleValidator.current.showMessageFor("email");
+                simpleValidator.current.showMessageFor("quotEmail");
               }}
             />
             <>
               {simpleValidator.current.element.length > 0 &&
                 simpleValidator.current.message(
-                  "email",
-                  basicDetailsObject.email,
+                  "quotEmail",
+                  basicDetailsObject.quotEmail,
                   ["required", "email"],
                   {
                     messages: {
@@ -474,7 +547,7 @@ const BasicDetailsForm = () => {
                   startPtId: selectedOption ? selectedOption.value : null,
                 }));
                 dispatch(
-                  setQuotationFormData("startPtId", selectedOption.value)
+                  setQuotationFormData("quotStartPointId", selectedOption.value)
                 );
               }}
               onBlur={() => {
@@ -512,7 +585,9 @@ const BasicDetailsForm = () => {
                   ...prevState,
                   endPtId: selectedOption ? selectedOption.value : null,
                 }));
-                dispatch(setQuotationFormData("endPtId", selectedOption.value));
+                dispatch(
+                  setQuotationFormData("quotEndPointId", selectedOption.value)
+                );
               }}
               onBlur={() => {
                 simpleValidator.current.showMessageFor("end_pt");
@@ -540,22 +615,25 @@ const BasicDetailsForm = () => {
               className="form-control"
               placeholder="Enter Arrival Date"
               min={new Date().toISOString().split("T")[0]}
-              value={basicDetailsObject.arrivalDate}
+              value={basicDetailsObject.quotArrivalDate}
               onChange={(e) => {
                 setBasicDetailsObject((prevState) => ({
                   ...prevState,
-                  arrivalDate: e.target.value,
+                  quotArrivalDate: e.target.value,
                 }));
+                dispatch(
+                  setQuotationFormData("quotArrivalDate", e.target.value)
+                );
               }}
               onBlur={() => {
-                simpleValidator.current.showMessageFor("arrivalDate");
+                simpleValidator.current.showMessageFor("quotArrivalDate");
               }}
             />
             <>
               {simpleValidator.current.element.length > 0 &&
                 simpleValidator.current.message(
-                  "arrivalDate",
-                  basicDetailsObject.arrivalDate,
+                  "quotArrivalDate",
+                  basicDetailsObject.quotArrivalDate,
                   ["required"],
                   {
                     messages: {
@@ -572,23 +650,26 @@ const BasicDetailsForm = () => {
               className="form-control"
               placeholder="Enter Departure Date"
               min={new Date().toISOString().split("T")[0]}
-              value={basicDetailsObject.departureDate}
+              value={basicDetailsObject.quotDepartureDate}
               onChange={(e) => {
                 setBasicDetailsObject((prevState) => ({
                   ...prevState,
-                  departureDate: e.target.value,
+                  quotDepartureDate: e.target.value,
                 }));
+                dispatch(
+                  setQuotationFormData("quotDepartureDate", e.target.value)
+                );
               }}
               onBlur={() => {
-                simpleValidator.current.showMessageFor("departureDate");
+                simpleValidator.current.showMessageFor("quotDepartureDate");
               }}
             />
             <>
               {simpleValidator.current.element.length > 0 &&
                 simpleValidator.current.message(
-                  "departureDate",
-                  basicDetailsObject.departureDate,
-                  "required|isDateAfter:" + basicDetailsObject.arrivalDate,
+                  "quotDepartureDate",
+                  basicDetailsObject.quotDepartureDate,
+                  "required|isDateAfter:" + basicDetailsObject.quotArrivalDate,
 
                   {
                     messages: {
@@ -606,7 +687,7 @@ const BasicDetailsForm = () => {
               type="number"
               className="form-control"
               placeholder="Enter Day Duration"
-              value={basicDetailsObject.tourDurationDay}
+              value={basicDetailsObject.quotDays}
               readOnly
             />
           </div>
@@ -616,7 +697,7 @@ const BasicDetailsForm = () => {
               type="number"
               className="form-control"
               placeholder="Enter Night Duration"
-              value={basicDetailsObject.tourDurationNight}
+              value={basicDetailsObject.quotNights}
               readOnly
             />
           </div>

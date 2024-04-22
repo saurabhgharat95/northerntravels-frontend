@@ -61,6 +61,7 @@ export const DELETE_HOTEL_ROOM_API = BASE_API_URL + "/delete-hotel-room-type";
 
 export const FETCH_TOURS_API = BASE_API_URL + "/get-tours";
 export const FETCH_TOUR_DETAILS_API = BASE_API_URL + "/get-tour-details";
+export const FETCH_TOUR_STATES_API = BASE_API_URL + "/get-tour-states";
 export const ADD_TOUR_API = BASE_API_URL + "/add-tour";
 export const UPDATE_TOUR_API = BASE_API_URL + "/update-tour";
 export const DELETE_TOUR_API = BASE_API_URL + "/delete-tour";
@@ -69,7 +70,17 @@ export const FETCH_STATES_BY_COUNTRY_API = BASE_API_URL + "/get-states-by-countr
 export const FETCH_TRANSIT_PT_BY_TOUR_API = BASE_API_URL + "/get-tour-transit-points";
 
 export const FETCH_QUOTATIONS_API = BASE_API_URL + "/get-quotations";
-export const FETCH_QUOTATION_DETAILS_API = BASE_API_URL + "/get-tour-details";
-export const ADD_QUOTATION_API = BASE_API_URL + "/add-tour";
-export const UPDATE_QUOTATION_API = BASE_API_URL + "/update-tour";
-export const DELETE_QUOTATION_API = BASE_API_URL + "/delete-tour";  
+export const FETCH_QUOTATION_DETAILS_API = BASE_API_URL + "/get-quotation-details";
+export const FETCH_QUOTATION_HOTELS_DETAILS_API = BASE_API_URL + "/get-quotation-hotels";
+export const FETCH_QUOTATION_ITINERARY_DETAILS_API = BASE_API_URL + "/get-quotation-itinerary";
+
+export const ADD_QUOTATION_API = BASE_API_URL + "/add-quotation";
+export const DELETE_QUOTATION_API = BASE_API_URL + "/delete-quotation";  
+
+export const UPDATE_QUOTATION_BASIC_API = BASE_API_URL + "/update-quotation-basic";
+export const UPDATE_QUOTATION_ACCOMMODATION_API = BASE_API_URL + "/update-quotation-accommodation";
+export const UPDATE_QUOTATION_MARKUP_API = BASE_API_URL + "/update-quotation-markup";
+export const UPDATE_QUOTATION_HOTEL_API = BASE_API_URL + "/update-quotation-hotel";
+export const UPDATE_QUOTATION_ITINERARY_API = BASE_API_URL + "/update-quotation-itinerary";
+
+export const FETCH_BEFORE_MARKUP_AMT_API = BASE_API_URL + "/get-quotation-before-markup-amt";

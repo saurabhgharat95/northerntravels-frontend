@@ -461,7 +461,7 @@ const AddRoomForm = ({ cancelForm, hotelId, formType, updateId }) => {
             <label>No. of Rooms</label>
             <input
               type="text"
-              pattern="[0-9]*"
+              pattern="[0-9]+"
               className="form-control"
               placeholder="Enter No. of Rooms"
               value={roomObject.noOfRooms}
@@ -581,7 +581,7 @@ const AddRoomForm = ({ cancelForm, hotelId, formType, updateId }) => {
                   <td key={i}>
                     <input
                       type="text"
-                      pattern="[0-9]*"
+                      pattern="[0-9]+"
                       value={
                         i < 4
                           ? roomObject.chargesData[0]["on_season"]["1"][i][
@@ -612,7 +612,7 @@ const AddRoomForm = ({ cancelForm, hotelId, formType, updateId }) => {
                   <td key={i}>
                     <input
                       type="text"
-                      pattern="[0-9]*"
+                      pattern="[0-9]+"
                       value={
                         i < 4
                           ? roomObject.chargesData[0]["on_season"]["2"][i][
@@ -643,7 +643,7 @@ const AddRoomForm = ({ cancelForm, hotelId, formType, updateId }) => {
                   <td key={i}>
                     <input
                       type="text"
-                      pattern="[0-9]*"
+                      pattern="[0-9]+"
                       value={
                         i < 4
                           ? roomObject.chargesData[0]["on_season"]["3"][i][
@@ -674,7 +674,7 @@ const AddRoomForm = ({ cancelForm, hotelId, formType, updateId }) => {
                   <td key={i}>
                     <input
                       type="text"
-                      pattern="[0-9]*"
+                      pattern="[0-9]+"
                       value={
                         i < 4
                           ? roomObject.chargesData[0]["on_season"]["4"][i][

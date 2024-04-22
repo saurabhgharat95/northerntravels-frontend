@@ -34,14 +34,80 @@ const getFilteredDropdownOptions = (id, optionsArray, filterType) => {
   return filteredOptionsArray;
 };
 
-const toTitleCase = (str)  => {
+// Convert string to titlecase
+
+const toTitleCase = (str) => {
   if (!str || !/[a-zA-Z]/.test(str)) {
-      return "";
+    return "";
   }
 
-  return str.toLowerCase().replace(/\b\w/g, function(char) {
-      return char.toUpperCase();
+  return str.toLowerCase().replace(/\b\w/g, function (char) {
+    return char.toUpperCase();
   });
+};
+
+// Convert date to Y-M-D format
+const getDateFormattedForDB = (dateString) => {
+  const date = new Date(dateString);
+
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are zero-based, so add 1
+  const day = String(date.getDate()).padStart(2, "0");
+
+  // Format into yyyy-mm-dd
+  const formattedDate = `${year}-${month}-${day}`;
+  console.log('formattedDate',formattedDate)
+  return formattedDate
+};
+
+const  getFormattedDateTime = () => {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+  const day = String(now.getDate()).padStart(2, '0');
+  const hours = String(now.getHours()).padStart(2, '0');
+  const minutes = String(now.getMinutes()).padStart(2, '0');
+  const seconds = String(now.getSeconds()).padStart(2, '0');
+
+  // Format: YYYYMMDD_HHMMSS
+  return `${year}${month}${day}_${hours}${minutes}${seconds}`;
 }
 
-export { getDateFormatted, getFilteredDropdownOptions, toTitleCase };
+// Function to create a filename with a date-time suffix
+const createFilename = (baseName, extension) =>{
+  const timestamp = getFormattedDateTime();
+  return `${baseName}_${timestamp}.${extension}`;
+}
+
+// Convert base64 string to blob
+const base64ToBlob = (base64, contentType = 'application/octet-stream', sliceSize = 512) => {
+  let base64WithPrefix = base64
+  let base64WithoutPrefix = base64WithPrefix.replace(/^data:image\/[a-zA-Z]+;base64,/, "");
+  console.log('base64WithoutPrefix',base64WithoutPrefix)
+  const byteCharacters = atob(base64WithoutPrefix); // Decode Base64
+  const byteArrays = [];
+
+  for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+    const slice = byteCharacters.slice(offset, offset + sliceSize);
+
+    const byteNumbers = new Array(slice.length);
+    for (let i = 0; i < slice.length; i++) {
+      byteNumbers[i] = slice.charCodeAt(i);
+    }
+
+    const byteArray = new Uint8Array(byteNumbers);
+    byteArrays.push(byteArray);
+  }
+
+  return new Blob(byteArrays, { type: contentType });
+}
+
+
+// Convert base64 string to file
+const base64ToFile = (base64, filename, contentType = 'image/jpeg') => {
+  console.log('blob',base64)
+  const blob = base64ToBlob(base64, contentType);
+  return new File([blob], filename, { type: contentType });
+}
+
+export { getDateFormatted, getFilteredDropdownOptions, toTitleCase, getDateFormattedForDB,base64ToFile,createFilename };

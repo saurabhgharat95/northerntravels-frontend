@@ -1,10 +1,132 @@
-import { useState } from "react";
-import { Footer, Navbar, Sidebar } from "../components/CommonImport";
-import { useNavigate } from "react-router-dom"
+import { useState, useEffect, useRef } from "react";
+import {
+  Footer,
+  Navbar,
+  Sidebar,
+  CSSTransition,
+  axios,
+  toast,
+  ToastContainer,
+  SimpleReactValidator,
+  ShimmerTable,
+} from "../components/CommonImport";
+import {
+  FETCH_VEHICLES_API,
+  ADD_VEHICLE_API,
+  UPDATE_VEHICLE_API,
+  DELETE_VEHICLE_API,
+  FETCH_QUOTATIONS_API,
+  DELETE_QUOTATION_API,
+} from "../utils/constants";
+import { useNavigate } from "react-router-dom";
+import { getDateFormatted } from "../utils/helpers";
+
+import "react-toastify/dist/ReactToastify.css";
+import NoData from "../components/NoData";
+import ConfirmationDialog from "../components/ConfirmationDialog";
+import RenderPageNumbers from "./RenderPageNumbers";
+import Loader from "../components/Loader";
 const QuotationManagement = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
-  const navigate = useNavigate()
- 
+  const [quotations, setQuotations] = useState([]);
+  const [originalQuotationsList, setOriginalQuotationsList] = useState([]);
+  const [isUpdate, setUpdate] = useState(false);
+  const [deleteId, setDeleteId] = useState(false);
+  const [updateId, setUpdateId] = useState("");
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [searchValue, setSearchValue] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isDataReady, setDataReady] = useState(false);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const navigate = useNavigate();
+
+  const fetchQuotations = async () => {
+    try {
+      let url = FETCH_QUOTATIONS_API;
+
+      let response = await axios.post(url);
+      if (response) {
+        if (response.status == 200) {
+          setDataReady(true);
+          setQuotations(response.data.data);
+          setOriginalQuotationsList(response.data.data);
+        }
+      }
+    } catch (e) {
+      setDataReady(true);
+      setQuotations([]);
+    }
+  };
+  const deleteQuotation = async (id) => {
+    try {
+      let url = DELETE_QUOTATION_API;
+      let body = {
+        id: id,
+      };
+      let response = await axios.post(url, body);
+      if (response) {
+        if (response.status == 200) {
+          toast.success(response.data.message, {
+            position: "top-right",
+          });
+
+          fetchQuotations();
+        }
+      }
+    } catch (e) {
+      toast.error("Something Went Wrong :(", {
+        position: "top-right",
+      });
+    }
+  };
+  const handleConfirm = () => {
+    deleteQuotation(deleteId);
+    setShowConfirmation(false);
+  };
+
+  const handleCancel = () => {
+    setShowConfirmation(false);
+  };
+  const handlePagination = (number) => {
+    setCurrentPage(Number(number));
+  };
+
+  const totalPages = Math.ceil(
+    quotations ? quotations.length / itemsPerPage : 1
+  );
+  const handleNextPage = () => {
+    setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages));
+  };
+
+  const handlePrevPage = () => {
+    setCurrentPage((prevPage) => Math.max(prevPage - 1, 1));
+  };
+  const escapeRegExp = (string) => {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // Escaping special characters
+  };
+  const filterData = (searchValue) => {
+    setSearchValue(searchValue);
+    if (searchValue && searchValue.trim() !== "") {
+      var escapedSearchValue = escapeRegExp(searchValue); // Escaping searchValue
+      var filteredQuotations = quotations?.filter(
+        (row) =>
+          row?.quotClientName
+            ?.toLowerCase()
+            .includes(escapedSearchValue.toLowerCase()) ||
+          row?.quotNo?.toLowerCase().includes(escapedSearchValue.toLowerCase())
+      );
+      setQuotations(filteredQuotations);
+    } else {
+      setQuotations(originalQuotationsList);
+    }
+  };
+
+  useEffect(() => {
+    fetchQuotations();
+  }, []);
   return (
     <div className="container-scroller">
       <Navbar setSidebarOpen={setSidebarOpen}></Navbar>
@@ -27,8 +149,7 @@ const QuotationManagement = () => {
                 <div className="float-right">
                   <button
                     className="btn btn-primary btn-sm"
-                    onClick={() =>navigate('/add-quotation')}
-                    
+                    onClick={() => navigate("/add-quotation")}
                   >
                     Add Quotation
                   </button>
@@ -55,11 +176,13 @@ const QuotationManagement = () => {
                                   name="order-listing_length"
                                   aria-controls="order-listing"
                                   className="form-select form-select-sm"
+                                  onChange={(e) => {
+                                    setItemsPerPage(e.target.value);
+                                  }}
                                 >
                                   <option value="5">5</option>
                                   <option value="10">10</option>
                                   <option value="15">15</option>
-                                  <option value="-1">All</option>
                                 </select>{" "}
                                 entries
                               </label>
@@ -76,326 +199,143 @@ const QuotationManagement = () => {
                                   className="form-control"
                                   placeholder="Search"
                                   aria-controls="order-listing"
+                                  value={searchValue}
+                                  onChange={(e) => filterData(e.target.value)}
                                 />
                               </label>
                             </div>
                           </div>
                         </div>
+                        {isDataReady == false && <ShimmerTable row={10} />}
                         <div className="row dt-row">
                           <div className="col-sm-12">
-                            <table
-                              id="order-listing"
-                              className="table dataTable no-footer"
-                              aria-describedby="order-listing_info"
-                            >
-                              <thead>
-                                <tr>
-                                  <th
-                                    className="sorting sorting_asc"
-                                    tabIndex="0"
-                                    aria-controls="order-listing"
-                                    rowSpan="1"
-                                    colSpan="1"
-                                    aria-sort="ascending"
-                                    aria-label="Order #: activate to sort column descending"
-                                    style={{ width: "107.016px" }}
-                                  >
-                                    Sr. No.
-                                  </th>
-                                  <th
-                                    className="sorting"
-                                    tabIndex="0"
-                                    aria-controls="order-listing"
-                                    rowSpan="1"
-                                    colSpan="1"
-                                    aria-label="Purchased On: activate to sort column ascending"
-                                    style={{ width: "171.375px" }}
-                                  >
-                                    Quotation No
-                                  </th>
-                                  <th
-                                    className="sorting"
-                                    tabIndex="0"
-                                    aria-controls="order-listing"
-                                    rowSpan="1"
-                                    colSpan="1"
-                                    aria-label="Customer: activate to sort column ascending"
-                                    style={{ width: "127.391px" }}
-                                  >
-                                    Quotation Date
-                                  </th>
-                                  <th
-                                    className="sorting"
-                                    tabIndex="0"
-                                    aria-controls="order-listing"
-                                    rowSpan="1"
-                                    colSpan="1"
-                                    aria-label="Ship to: activate to sort column ascending"
-                                    style={{ width: "116.672px" }}
-                                  >
-                                    Customer Name
-                                  </th>
-                                  <th
-                                    className="sorting"
-                                    tabIndex="0"
-                                    aria-controls="order-listing"
-                                    rowSpan="1"
-                                    colSpan="1"
-                                    aria-label="Ship to: activate to sort column ascending"
-                                    style={{ width: "116.672px" }}
-                                  >
-                                    Action
-                                  </th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                <tr className="odd">
-                                  <td className="sorting_1">1</td>
-                                  <td>NTQ000001</td>
-                                  <td>01-03-2024</td>
-                                  <td>John Doe</td>
-
-                                  <td>
-                                    <ion-icon
-                                      name="checkbox-outline"
-                                      color="success"
-                                      style={{ marginRight: "10px" }}
-                                      title="Approve"
-                                    ></ion-icon>
-                                    <ion-icon
-                                      name="print-outline"
-                                      color="secondary"
-                                      style={{ marginRight: "10px" }}
-                                      title="Print"
-                                    ></ion-icon>
-
-                                    <ion-icon
-                                      name="mail-outline"
-                                      color="tertiary"
-                                      style={{ marginRight: "10px" }}
-                                      title="Email"
-                                    ></ion-icon>
-                                    <ion-icon
-                                      name="create-outline"
-                                      color="primary"
-                                      style={{ marginRight: "10px" }}
-                                      title="Edit"
-                                    ></ion-icon>
-
-                                    <ion-icon
-                                      name="trash-outline"
-                                      color="danger"
-                                      style={{ marginRight: "10px" }}
-                                      title="Delete"
-                                    ></ion-icon>
-                                  </td>
-                                </tr>
-
-                                <tr className="odd">
-                                  <td className="sorting_1">1</td>
-                                  <td>NTQ000001</td>
-                                  <td>01-03-2024</td>
-                                  <td>John Doe</td>
-
-                                  <td>
-                                    <ion-icon
-                                      name="checkbox-outline"
-                                      color="success"
-                                      style={{ marginRight: "10px" }}
-                                      title="Approve"
-                                    ></ion-icon>
-                                    <ion-icon
-                                      name="print-outline"
-                                      color="secondary"
-                                      style={{ marginRight: "10px" }}
-                                      title="Print"
-                                    ></ion-icon>
-
-                                    <ion-icon
-                                      name="mail-outline"
-                                      color="tertiary"
-                                      style={{ marginRight: "10px" }}
-                                      title="Email"
-                                    ></ion-icon>
-                                    <ion-icon
-                                      name="create-outline"
-                                      color="primary"
-                                      style={{ marginRight: "10px" }}
-                                      title="Edit"
-                                    ></ion-icon>
-
-                                    <ion-icon
-                                      name="trash-outline"
-                                      color="danger"
-                                      style={{ marginRight: "10px" }}
-                                      title="Delete"
-                                    ></ion-icon>
-                                  </td>
-                                </tr>
-
-                                <tr className="odd">
-                                  <td className="sorting_1">1</td>
-                                  <td>NTQ000001</td>
-                                  <td>01-03-2024</td>
-                                  <td>John Doe</td>
-
-                                  <td>
-                                    <ion-icon
-                                      name="checkbox-outline"
-                                      color="success"
-                                      style={{ marginRight: "10px" }}
-                                      title="Approve"
-                                    ></ion-icon>
-                                    <ion-icon
-                                      name="print-outline"
-                                      color="secondary"
-                                      style={{ marginRight: "10px" }}
-                                      title="Print"
-                                    ></ion-icon>
-                                    <ion-icon
-                                      name="mail-outline"
-                                      color="tertiary"
-                                      style={{ marginRight: "10px" }}
-                                      title="Email"
-                                    ></ion-icon>
-                                    <ion-icon
-                                      name="create-outline"
-                                      color="primary"
-                                      style={{ marginRight: "10px" }}
-                                      title="Edit"
-                                    ></ion-icon>
-                                    <ion-icon
-                                      name="trash-outline"
-                                      color="danger"
-                                      style={{ marginRight: "10px" }}
-                                      title="Delete"
-                                    ></ion-icon>
-                                  </td>
-                                </tr>
-                              </tbody>
-                            </table>
-
-                            <div
-                              className="modal fade"
-                              id="countryModal"
-                              tabIndex="-1"
-                              aria-labelledby="exampleModalLabel"
-                              style={{ display: "none" }}
-                              aria-hidden="true"
-                            >
-                              <div
-                                className="modal-dialog modal-md"
-                                role="document"
+                            {quotations && quotations.length > 0 && (
+                              <table
+                                id="order-listing"
+                                className="table dataTable no-footer"
+                                aria-describedby="order-listing_info"
                               >
-                                <div className="modal-content">
-                                  <div className="modal-header">
-                                    <h5
-                                      className="modal-title"
-                                      id="exampleModalLabel"
-                                    >
-                                      Add Country
-                                    </h5>
-                                    <button
-                                      type="button"
-                                      className="close"
-                                      data-bs-dismiss="modal"
-                                      aria-label="Close"
-                                    >
-                                      <span aria-hidden="true">×</span>
-                                    </button>
-                                  </div>
-                                  <div className="modal-body">
-                                    <div className="form-group">
-                                      <label>Country Name</label>
-                                      <input
-                                        type="text"
-                                        className="form-control form-control-sm"
-                                        placeholder="Enter Country Name"
-                                        aria-label="Username"
-                                      />
-                                    </div>
-                                  </div>
-                                  <div className="modal-footer">
-                                    <button
-                                      type="button"
-                                      className="btn btn-success"
-                                    >
-                                      Submit
-                                    </button>
-                                    <button
-                                      type="button"
-                                      className="btn btn-light"
-                                      data-bs-dismiss="modal"
-                                    >
-                                      Cancel
-                                    </button>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
+                                <thead>
+                                  <tr>
+                                    <th style={{ width: "107.016px" }}>
+                                      Sr. No.
+                                    </th>
+                                    <th style={{ width: "171.375px" }}>
+                                      Quotation No
+                                    </th>
+                                    <th style={{ width: "127.391px" }}>
+                                      Quotation Date
+                                    </th>
+                                    <th style={{ width: "116.672px" }}>
+                                      Customer Name
+                                    </th>
+                                    <th style={{ width: "116.672px" }}>
+                                      Status
+                                    </th>
+                                    <th style={{ width: "116.672px" }}>
+                                      Action
+                                    </th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {quotations &&
+                                    quotations
+                                      .slice(startIndex, endIndex)
+                                      .map((quotation, index) => (
+                                        <CSSTransition
+                                          key={quotation.id}
+                                          timeout={500}
+                                          classNames="item elementdiv"
+                                        >
+                                          <tr className="odd" key={index}>
+                                            <td className="sorting_1">
+                                              {" "}
+                                              {startIndex + index + 1}
+                                            </td>
+                                            <td>{quotation.quotNo}</td>
+                                            <td>
+                                              {getDateFormatted(
+                                                quotation.quotDate
+                                              )}
+                                            </td>
+                                            <td>{quotation.quotClientName}</td>
+                                            <td>
+                                              <label
+                                                className={`badge ${
+                                                  quotation.status == "1"
+                                                    ? "badge-success"
+                                                    : "badge-danger"
+                                                }`}
+                                              >
+                                                {quotation.status == "1"
+                                                  ? "Active"
+                                                  : "Inactive"}
+                                              </label>
+                                            </td>
+                                            <td>
+                                              <ion-icon
+                                                name="checkbox-outline"
+                                                color="success"
+                                                style={{ marginRight: "10px" }}
+                                                title="Approve"
+                                              ></ion-icon>
+                                              <ion-icon
+                                                name="print-outline"
+                                                color="secondary"
+                                                style={{ marginRight: "10px" }}
+                                                title="Print"
+                                              ></ion-icon>
+
+                                              <ion-icon
+                                                name="mail-outline"
+                                                color="tertiary"
+                                                style={{ marginRight: "10px" }}
+                                                title="Email"
+                                              ></ion-icon>
+                                              <ion-icon
+                                                name="create-outline"
+                                                color="primary"
+                                                style={{ marginRight: "10px" }}
+                                                title="Edit"
+                                              ></ion-icon>
+
+                                              <ion-icon
+                                                name="trash-outline"
+                                                color="danger"
+                                                style={{ marginRight: "10px" }}
+                                                title="Delete"
+                                                onClick={() => {
+                                                  setShowConfirmation(true);
+                                                  setDeleteId(quotation.id);
+                                                }}
+                                              ></ion-icon>
+                                            </td>
+                                          </tr>
+                                        </CSSTransition>
+                                      ))}
+                                </tbody>
+                              </table>
+                            )}
+                            {quotations && quotations.length == 0 && (
+                              <NoData></NoData>
+                            )}
+                           
                           </div>
                         </div>
                         <div className="row">
-                          <div className="col-sm-12 col-md-5">
-                            <div
-                              className="dataTables_info"
-                              id="order-listing_info"
-                              role="status"
-                              aria-live="polite"
-                            >
-                              Showing 1 to 10 of 10 entries
-                            </div>
-                          </div>
-                          <div className="col-sm-12 col-md-7">
-                            <div
+                          <div className="col-sm-12 col-md-12">
+                          <div
                               className="dataTables_paginate paging_simple_numbers"
                               id="order-listing_paginate"
                             >
-                              <ul className="pagination">
-                                <li
-                                  className="paginate_button page-item previous disabled"
-                                  id="order-listing_previous"
-                                >
-                                  <a
-                                    aria-controls="order-listing"
-                                    aria-disabled="true"
-                                    role="link"
-                                    data-dt-idx="previous"
-                                    tabIndex="-1"
-                                    className="page-link"
-                                  >
-                                    Previous
-                                  </a>
-                                </li>
-                                <li className="paginate_button page-item active">
-                                  <a
-                                    href="https://demo.bootstrapdash.com/skydash/themes/vertical-default-light/pages/tables/data-table.html#"
-                                    aria-controls="order-listing"
-                                    role="link"
-                                    aria-current="page"
-                                    data-dt-idx="0"
-                                    tabIndex="0"
-                                    className="page-link"
-                                  >
-                                    1
-                                  </a>
-                                </li>
-                                <li
-                                  className="paginate_button page-item next disabled"
-                                  id="order-listing_next"
-                                >
-                                  <a
-                                    aria-controls="order-listing"
-                                    aria-disabled="true"
-                                    role="link"
-                                    data-dt-idx="next"
-                                    tabIndex="-1"
-                                    className="page-link"
-                                  >
-                                    Next
-                                  </a>
-                                </li>
-                              </ul>
+                              <RenderPageNumbers
+                                data={quotations}
+                                currentPage={currentPage}
+                                handlePagination={handlePagination}
+                                handlePrevPage={handlePrevPage}
+                                handleNextPage={handleNextPage}
+                                totalPages={totalPages}
+                              ></RenderPageNumbers>
                             </div>
                           </div>
                         </div>
@@ -407,6 +347,14 @@ const QuotationManagement = () => {
             </div>
           </div>
           <Footer></Footer>
+
+          <ConfirmationDialog
+            message="Are you sure you want to delete?"
+            onConfirm={handleConfirm}
+            onCancel={handleCancel}
+            show={showConfirmation}
+          />
+          <Loader isLoading={isLoading}></Loader>
         </div>
       </div>
     </div>
