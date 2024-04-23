@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef,useEffect } from "react";
 import {
   Footer,
   Navbar,
@@ -21,6 +21,8 @@ import {
   FETCH_QUOTATION_ITINERARY_DETAILS_API,
   UPDATE_QUOTATION_ITINERARY_API,
   UPDATE_QUOTATION_MARKUP_API,
+  FETCH_QUOTATION_DETAILS_API,
+  FETCH_TOUR_DETAILS_API
 } from "../utils/constants";
 import { setQuotationFormData, resetFormData } from "../utils/store";
 import {
@@ -36,7 +38,9 @@ const AddQuotation = () => {
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
   const [, setForceUpdate] = useState(0);
+  const { id } = useParams();
   const navigate = useNavigate();
+  const componentSelectorRef = useRef();
   const [tabNames, setTabNames] = useState([
     { id: 1, name: "Basic Details", isDisabled: false },
     { id: 2, name: "Accommodation Details", isDisabled: true },
@@ -49,7 +53,8 @@ const AddQuotation = () => {
       setSelectedTab(tab.id);
     }
   };
-  const setDisabledTab = (tabId) => {
+  const setTabDisabledFalse = (tabId) => {
+    console.log('isd2',tabId)
     const updatedTabNames = tabNames.map((tab) => {
       if (tab.id === tabId) {
         return { ...tab, isDisabled: false };
@@ -57,6 +62,18 @@ const AddQuotation = () => {
       return tab;
     });
 
+    setTabNames(updatedTabNames);
+    setTimeout(() => {
+      console.log('tabNames after update:', tabNames);
+    }, 100);
+  };
+  const setTabsDisabledFalseArray = (tabIds) => {
+    const updatedTabNames = tabNames.map((tab) => {
+      if (tabIds.includes(tab.id)) {
+        return { ...tab, isDisabled: false };
+      }
+      return tab;
+    });
     setTabNames(updatedTabNames);
   };
   const selectForm = (action, selectedTab) => {
@@ -127,17 +144,21 @@ const AddQuotation = () => {
         quotNights: quotFormData.quotNights,
       };
       console.log("body", body);
-      setIsLoading(true);
-      let response = await axios.post(url, body);
-      if (response) {
-        if (response.status == 200) {
-          toast.success(response.data.message, {
-            position: "top-right",
-          });
-          setIsLoading(false);
-          setSelectedTab(2);
-          setDisabledTab(2);
-          dispatch(setQuotationFormData("quotId", response.data.data));
+      const isFormValid =
+        componentSelectorRef.current.isBasicDetailsFormValid();
+      if (isFormValid) {
+        setIsLoading(true);
+        let response = await axios.post(url, body);
+        if (response) {
+          if (response.status == 200) {
+            toast.success(response.data.message, {
+              position: "top-right",
+            });
+            setIsLoading(false);
+            setSelectedTab(2);
+            setTabDisabledFalse(2);
+            dispatch(setQuotationFormData("quotId", response.data.data));
+          }
         }
       }
     } catch (e) {
@@ -170,15 +191,19 @@ const AddQuotation = () => {
         quotNights: quotFormData.quotNights,
       };
       console.log("body", body);
-      setIsLoading(true);
-      let response = await axios.post(url, body);
-      if (response) {
-        if (response.status == 200) {
-          toast.success(response.data.message, {
-            position: "top-right",
-          });
-          setIsLoading(false);
-          setSelectedTab(2);
+      const isFormValid =
+        componentSelectorRef.current.isBasicDetailsFormValid();
+      if (isFormValid) {
+        setIsLoading(true);
+        let response = await axios.post(url, body);
+        if (response) {
+          if (response.status == 200) {
+            toast.success(response.data.message, {
+              position: "top-right",
+            });
+            setIsLoading(false);
+            setSelectedTab(2);
+          }
         }
       }
     } catch (e) {
@@ -202,16 +227,20 @@ const AddQuotation = () => {
         quotBlw5: quotFormData.quotBlw5,
       };
       console.log("body", body);
-      setIsLoading(true);
-      let response = await axios.post(url, body);
-      if (response) {
-        if (response.status == 200) {
-          toast.success(response.data.message, {
-            position: "top-right",
-          });
-          setIsLoading(false);
-          setSelectedTab(3);
-          setDisabledTab(3);
+      const isFormValid = componentSelectorRef.current.isAccomFormValid();
+
+      if (isFormValid) {
+        setIsLoading(true);
+        let response = await axios.post(url, body);
+        if (response) {
+          if (response.status == 200) {
+            toast.success(response.data.message, {
+              position: "top-right",
+            });
+            setIsLoading(false);
+            setSelectedTab(3);
+            setTabDisabledFalse(3);
+          }
         }
       }
     } catch (e) {
@@ -306,17 +335,20 @@ const AddQuotation = () => {
         quotHotelData: quotHotelData,
       };
       console.log("body", body);
-      setIsLoading(true);
-      let response = await axios.post(url, body);
-      if (response) {
-        if (response.status == 200) {
-          toast.success(response.data.message, {
-            position: "top-right",
-          });
-          setIsLoading(false);
-          getQuotationHotelDetails();
-          setSelectedTab(4);
-          setDisabledTab(4);
+      const isFormValid = componentSelectorRef.current.isHotelFormValid();
+      if (isFormValid) {
+        setIsLoading(true);
+        let response = await axios.post(url, body);
+        if (response) {
+          if (response.status == 200) {
+            toast.success(response.data.message, {
+              position: "top-right",
+            });
+            setIsLoading(false);
+            getQuotationHotelDetails();
+            setSelectedTab(4);
+            setTabDisabledFalse(4);
+          }
         }
       }
     } catch (e) {
@@ -440,17 +472,21 @@ const AddQuotation = () => {
         quotItineraryData: quotItineraryData,
       };
       console.log("body", body);
-      setIsLoading(true);
-      let response = await axios.post(url, body);
-      if (response) {
-        if (response.status == 200) {
-          toast.success(response.data.message, {
-            position: "top-right",
-          });
-          setIsLoading(false);
-          getQuotationItineraryDetails();
-          setSelectedTab(5);
-          setDisabledTab(5);
+      const isFormValid = componentSelectorRef.current.isItineraryFormValid();
+
+      if (isFormValid) {
+        setIsLoading(true);
+        let response = await axios.post(url, body);
+        if (response) {
+          if (response.status == 200) {
+            toast.success(response.data.message, {
+              position: "top-right",
+            });
+            setIsLoading(false);
+            getQuotationItineraryDetails();
+            setSelectedTab(5);
+            setTabDisabledFalse(5);
+          }
         }
       }
     } catch (e) {
@@ -490,19 +526,23 @@ const AddQuotation = () => {
       );
 
       console.log("body", quotFormData.quotLogo);
-      setIsLoading(true);
-      let response = await axios.post(url, formData);
-      if (response) {
-        if (response.status == 200) {
-          toast.success(response.data.message, {
-            position: "top-right",
-          });
+      const isFormValid = componentSelectorRef.current.isMarkupFormValid();
 
-          dispatch(resetFormData());
-          setIsLoading(false);
-          setTimeout(() => {
-            navigate("/quotations");
-          }, 1000);
+      if (isFormValid) {
+        setIsLoading(true);
+        let response = await axios.post(url, formData);
+        if (response) {
+          if (response.status == 200) {
+            toast.success(response.data.message, {
+              position: "top-right",
+            });
+
+            dispatch(resetFormData());
+            setIsLoading(false);
+            setTimeout(() => {
+              navigate("/quotations");
+            }, 1000);
+          }
         }
       }
     } catch (e) {
@@ -513,6 +553,180 @@ const AddQuotation = () => {
       });
     }
   };
+  const fetchTourDetails = async (tourId) => {
+    try {
+      let url = FETCH_TOUR_DETAILS_API;
+      let body = {
+        id: tourId,
+      };
+      let response = await axios.post(url, body);
+      if (response) {
+        if (response.status == 200) {
+          let stateIds = [];
+          let states = response.data.data.states;
+          states.forEach((state) => {
+            stateIds.push(state.fkLocationId);
+          });
+          console.log('fetchTourDetails',stateIds)
+          dispatch(setQuotationFormData("stateIds", stateIds));
+          dispatch(setQuotationFormData("tourData", response.data.data));
+        }
+      }
+    } catch (e) {}
+  };
+  const fetchQuotationDetails = async (id) => {
+    try {
+      let url = FETCH_QUOTATION_DETAILS_API;
+      let body = {
+        id: id,
+      };
+      setIsLoading(true);
+
+      let response = await axios.post(url, body);
+      if (response) {
+        if (response.status == 200) {
+          setIsLoading(false);
+
+          let quotationDetails = response.data.data;
+          const tabsToEnable = [];
+
+          if (quotationDetails.quotTotalPeoples) {
+            tabsToEnable.push(2);
+          }
+          
+          if (quotationDetails?.hotels?.length > 0) {
+            tabsToEnable.push(3);
+            console.log("Updated tabNames:", tabNames);
+          }
+          
+          if (quotationDetails?.itinerary?.length > 0) {
+            tabsToEnable.push(4);
+          }
+          
+          if (quotationDetails.quotMarkup) {
+            tabsToEnable.push(5);
+          }
+          setTabsDisabledFalseArray(tabsToEnable);
+          fetchTourDetails(quotationDetails.fkTourId);
+          const uniquePackageNames = new Set();
+          const quotPackageData = []
+          const quotItineraryData = []
+          quotationDetails.hotels.forEach((pkg) => {
+            quotPackageData.push(
+            {
+              packageName: pkg.quotPackageName,
+              haltingDest: pkg.haltingPoint.haltingPointName,
+              hotelType: pkg.hotelType.hotelTypeName,
+              hotelName: pkg.hotel.hotelName,
+              fromDate: new Date(pkg.quotHotelFromDate).toISOString().split("T")[0],
+              toDate: new Date(pkg.quotHotelToDate).toISOString().split("T")[0],
+              noOfNights: pkg.quotHotelNoOfNights,
+              roomType: pkg.roomType.roomTypeName,
+              mealType: pkg.mealType.mealTypeName,
+              haltingDestId: pkg.fkHaltingDestId,
+              hotelTypeId: pkg.fkHotelTypeId,
+              hotelId: pkg.fkHotelId,
+              roomTypeId: pkg.fkRoomTypeId,
+              mealTypeId: pkg.fkMealTypeId,
+              quotHotelId: pkg.id,
+            })
+            uniquePackageNames.add(pkg.quotPackageName);
+          });
+          quotationDetails.itinerary.forEach((quotItinerary) => {
+            let quotItiAddons = []
+            let quotItiDestinations = []
+            quotItinerary.itiAddonData.forEach((addOn)=>{
+              quotItiAddons.push(
+                {
+                  quotItiAddonId: addOn.id,
+                  quotItiService: addOn.quotItiService,
+                  quotItiServicePayable: addOn.quotItiServicePayable,
+                  quotItiServiceAmount:addOn.quotItiServiceAmount,
+                  quotItiServiceRemark: addOn.quotItiServiceRemark,
+                }
+              )
+            })
+            quotItinerary.quotItiDestinations.split(",").forEach((dest)=>{
+              quotItiDestinations.push({
+                 destinationName: Number(dest), destinationDesc: "" 
+              })
+            })
+            quotItineraryData.push(
+            {
+              quotItiId: quotItinerary.id,
+              quotItiDay: quotItinerary.quotItiDay,
+              quotItiDate: new Date(quotItinerary.quotItiDate).toISOString().split("T")[0],
+              vehicleName: quotItinerary.vehicle.vehicleName,
+              fkVehicleId: quotItinerary.fkVehicleId,
+              pickupPt: quotItinerary.pickupPoint.transitPointName,
+              quotItiPickupPtId: quotItinerary.quotItiPickupPtId,
+              dropPt: quotItinerary.dropPoint.transitPointName,
+              quotItiDropPtId: quotItinerary.quotItiDropPtId,
+              quotItiNoOfVehicles: quotItinerary.quotItiNoOfVehicles,
+              quotItiAddons: quotItiAddons,
+              quotItiDestinations: quotItiDestinations,
+            })
+          });
+
+          const uniquePackageNamesArray = Array.from(uniquePackageNames);
+          const formData = {
+            quotId: quotationDetails.id,
+            quotPackage: quotationDetails.quotPackage,
+            quotSeason: quotationDetails.quotSeason,
+            fkTourId: quotationDetails.fkTourId,
+            quotClientName: quotationDetails.quotClientName,
+            fkLeadId: quotationDetails.fkLeadId,
+            quotMobileNo: quotationDetails.quotMobileNo,
+            quotWhatsAppNo: quotationDetails.quotWhatsAppNo,
+            quotEmail: quotationDetails.quotEmail,
+            quotStartPointId: quotationDetails.quotStartPointId,
+            quotEndPointId: quotationDetails.quotEndPointId,
+            quotArrivalDate: new Date(quotationDetails.quotArrivalDate).toISOString().split("T")[0],
+            quotDepartureDate: new Date(quotationDetails.quotDepartureDate).toISOString().split("T")[0],
+            quotDays: quotationDetails.quotDays,
+            quotNights: quotationDetails.quotNights,
+            quotTotalPeoples: quotationDetails.quotTotalPeoples,
+            quotRoomsReqd: quotationDetails.quotRoomsReqd,
+            quotChildAbove9: quotationDetails.quotChildAbove9,
+            quotChildBtwn8And9: quotationDetails.quotChildBtwn8And9,
+            quotBlw5: quotationDetails.quotBlw5,
+            quotPackageNameArray: uniquePackageNamesArray,
+            quotPackageData: quotPackageData,
+            quotItineraryData:quotItineraryData,
+            quotBeforeMarkup: quotationDetails.quotBeforeMarkup,
+            quotMarkup: quotationDetails.quotMarkup,
+            quotAfterMarkup: quotationDetails.quotAfterMarkup,
+            quotCompanyName: quotationDetails.quotCompanyName,
+            quotCorporateOffice: quotationDetails.quotCorporateOffice,
+            quotRegionalOffice: quotationDetails.quotRegionalOffice,
+            quotCompanyHotline: quotationDetails.quotCompanyHotline,
+            quotCompanyEmail: quotationDetails.quotCompanyEmail,
+            quotCompanyWebsite: quotationDetails.quotCompanyWebsite,
+            quotLogo: quotationDetails.quotLogo,
+            quotCompanyLogo: quotationDetails.quotCompanyLogo,
+          };
+          console.log('formdata',formData)
+          Object.entries(formData).forEach(([field, value]) => {
+            dispatch(setQuotationFormData(field, value));
+          });
+          setForceUpdate((v) => ++v);
+        }
+      }
+    } catch (e) {
+      console.log("ee", e);
+      setIsLoading(false);
+    }
+  };
+  useEffect(() => {
+    if (id) {
+      fetchQuotationDetails(id);
+    }
+  }, [id]);
+  useEffect(() => {
+    if (!id) {
+      dispatch(resetFormData());
+    }
+  }, []);
   return (
     <>
       <div className="container-scroller">
@@ -523,7 +737,21 @@ const AddQuotation = () => {
             <div className="content-wrapper">
               <div className="card">
                 <div className="card-body">
-                  <h4 className="card-title">Add Quotation </h4>
+                  <ol className="breadcrumb">
+                    <li
+                      className="breadcrumb-item"
+                      onClick={() => navigate("/quotations")}
+                    >
+                      Quotation Management
+                    </li>
+
+                    <li className="breadcrumb-item font-weight-bold text-primary">
+                      {id ? "Edit" : "Add"} Quotation
+                    </li>
+                  </ol>
+                  <h4 className="card-title ml-1">
+                    {id ? "Edit" : "Add"} Quotation{" "}
+                  </h4>
                   <div
                     role="application"
                     className="wizard clearfix"
@@ -563,13 +791,26 @@ const AddQuotation = () => {
                       </ul>
                     </div>
                     <div className="content clearfix">
-                      <ComponentSelector selectedTab={selectedTab} />
+                      <ComponentSelector
+                        selectedTab={selectedTab}
+                        ref={componentSelectorRef}
+                      />
                     </div>
                     <div className="actions clearfix">
                       <ul role="menu" aria-label="Pagination">
+                      <li>
+                            <button
+                              className="btn btn-danger"
+                              onClick={() => {
+                                navigate('/quotations');
+                              }}
+                            >
+                              Cancel
+                            </button>
+                          </li>
                         <li aria-disabled="true">
                           <button
-                            className="btn btn-secondary"
+                            className="btn text-light btn-secondary"
                             onClick={() => {
                               selectForm("prev", selectedTab);
                             }}
@@ -592,7 +833,7 @@ const AddQuotation = () => {
                         {selectedTab == 5 && (
                           <li>
                             <button
-                              className="btn btn-primary"
+                              className="btn btn-success"
                               onClick={() => {
                                 updateMarkup();
                               }}
@@ -601,6 +842,9 @@ const AddQuotation = () => {
                             </button>
                           </li>
                         )}
+                      
+                         
+                     
                       </ul>
                     </div>
                   </div>

@@ -54,6 +54,7 @@ function App() {
           <Route exact path={`/quotations`} element={<QuotationManagement />} />
           <Route exact path={`/leads`} element={<LeadManagement />} />
           <Route exact path={`/add-quotation`} element={<AddQuotation />} />
+          <Route exact path={`/edit-quotation/:id?`} element={<AddQuotation />} />
           <Route
             exact
             path={`/maintain-rooms`}

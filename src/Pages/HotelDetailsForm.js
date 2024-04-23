@@ -20,7 +20,7 @@ import { setQuotationFormData } from "../utils/store";
 import { toTitleCase } from "../utils/helpers";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 
-const HotelDetailsForm = () => {
+const HotelDetailsForm = ({onValidationStatusChange}) => {
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [acionObj, setActionObj] = useState({ deleteId: null, updateId: null });
   const [, setForceUpdate] = useState(0);
@@ -211,6 +211,7 @@ const HotelDetailsForm = () => {
         if (response.status == 200) {
           let haltingPts = response.data.data;
           let haltingPtOptionsArray = [];
+          console.log('quotFormData.stateIds',quotFormData.stateIds)
           haltingPts.forEach((point) => {
             if (quotFormData.stateIds.length > 0) {
               if (quotFormData.stateIds.includes(point.fkStateId)) {
@@ -349,6 +350,19 @@ const HotelDetailsForm = () => {
       behavior: "smooth",
     });
   };
+  const validateForm = () => {
+    const isValid = simpleValidator.current.allValid();
+    if (isValid) {
+      onValidationStatusChange(isValid,3); 
+    }
+    else{
+      console.log('isHotelFormValid',simpleValidator.current.errorMessages)
+      simpleValidator.current.showMessages();
+      setForceUpdate(v=>++v)
+    }
+    return isValid;
+  };
+  
   useEffect(() => {
     fetchHaltingPoints();
     fetchHotelType();
@@ -386,6 +400,9 @@ const HotelDetailsForm = () => {
       setForceUpdate((v) => ++v);
     }
   }, [quotFormData]);
+
+
+
   useEffect(() => {
     fetchHotels();
   }, [packageObject.haltingDestId, packageObject.hotelTypeId]);
@@ -732,6 +749,7 @@ const HotelDetailsForm = () => {
           <button
             className="btn btn-success mr-2"
             onClick={() => {
+              validateForm()
               {
                 acionObj.updateId != null ? editPackage() : addPackage();
               }

@@ -4,7 +4,7 @@ import { SimpleReactValidator } from "../components/CommonImport";
 //redux
 import { useDispatch, useSelector } from "react-redux";
 import { setTourFormData } from "../utils/store";
-const AddOnServicesForm = () => {
+const AddOnServicesForm = ({onValidationStatusChange}) => {
   const [addOnFormValues, setAddOnFormValues] = useState([{ serviceName: "" }]);
 
   const dispatch = useDispatch();
@@ -25,6 +25,17 @@ const AddOnServicesForm = () => {
     newFormValues.splice(i, 1);
     setAddOnFormValues(newFormValues);
     dispatch(setTourFormData("tourAddOnServices", newFormValues));
+  };
+  const validateForm = () => {
+    const isValid = simpleValidator.current.allValid();
+    if (isValid) {
+      onValidationStatusChange(isValid,1); 
+    }
+    else{
+      simpleValidator.current.showMessages();
+      setForceUpdate(v=>++v)
+    }
+    return isValid;
   };
 
   useEffect(() => {

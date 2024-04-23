@@ -15,7 +15,7 @@ import makeAnimated from "react-select/animated";
 import { useDispatch, useSelector } from "react-redux";
 import { setQuotationFormData } from "../utils/store";
 
-const BasicDetailsForm = () => {
+const BasicDetailsForm = ({onValidationStatusChange}) => {
   const [optionsId, setOptionsId] = useState({
     tourId: 0,
     startPtId: 0,
@@ -160,7 +160,6 @@ const BasicDetailsForm = () => {
           states.forEach(state => {
             stateIds.push(state.fkLocationId)
           });
-          console.log('stateIdsstateIds',stateIds)
           dispatch(
             setQuotationFormData("stateIds", stateIds)
           );
@@ -171,6 +170,17 @@ const BasicDetailsForm = () => {
       }
     } catch (e) {}
   }
+  const validateForm = () => {
+    const isValid = simpleValidator.current.allValid();
+    if (isValid) {
+      onValidationStatusChange(isValid,1); 
+    }
+    else{
+      simpleValidator.current.showMessages();
+      setForceUpdate(v=>++v)
+    }
+    return isValid;
+  };
   useEffect(() => {
     fetchTours();
   }, []);
@@ -231,6 +241,12 @@ const BasicDetailsForm = () => {
       }));
     }
   }, [quotFormData]);
+
+
+
+  useEffect(() => {
+    validateForm(); 
+  }, [basicDetailsObject.quotArrivalDate,basicDetailsObject.quotDepartureDate]);
   return (
     <>
       <section
@@ -392,7 +408,7 @@ const BasicDetailsForm = () => {
                 simpleValidator.current.message(
                   "client_name",
                   basicDetailsObject.quotClientName,
-                  ["required", { regex: /^[A-Za-z\s&-]+$/ }],
+                  ["required", { regex: /^(?![\. ])[a-zA-Z\. ]+(?<! )$/ }],
                   {
                     messages: {
                       required: "Please enter client name",

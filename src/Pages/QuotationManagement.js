@@ -297,6 +297,11 @@ const QuotationManagement = () => {
                                                 color="primary"
                                                 style={{ marginRight: "10px" }}
                                                 title="Edit"
+                                                onClick={() => {
+                                                  navigate(
+                                                    "/edit-quotation/" + quotation.id
+                                                  );
+                                                }}
                                               ></ion-icon>
 
                                               <ion-icon

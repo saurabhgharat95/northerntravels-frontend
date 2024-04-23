@@ -17,7 +17,7 @@ import ConfirmationDialog from "../components/ConfirmationDialog";
 import { useDispatch, useSelector } from "react-redux";
 import { setQuotationFormData } from "../utils/store";
 
-const ItineraryForm = () => {
+const ItineraryForm = ({ onValidationStatusChange }) => {
   const [locations, setLocations] = useState([]);
   const [acionObj, setActionObj] = useState({ deleteId: null, updateId: null });
   const [showConfirmation, setShowConfirmation] = useState(false);
@@ -230,6 +230,18 @@ const ItineraryForm = () => {
       behavior: "smooth",
     });
   };
+  const validateForm = () => {
+    const isValid = simpleValidator.current.allValid();
+    console.log("isValid", simpleValidator.current.errorMessages);
+    if (isValid) {
+      onValidationStatusChange(isValid, 4);
+    } else {
+      simpleValidator.current.showMessages();
+      setForceUpdate((v) => ++v);
+    }
+    return isValid;
+  };
+
   useEffect(() => {
     if (quotFormData) {
       let tourDetails = quotFormData.tourData;
@@ -344,7 +356,7 @@ const ItineraryForm = () => {
             <label>Day</label>
             <input
               type="text"
-              pattern="[0-9]+"
+              pattern="[0-9]*"
               className="form-control"
               value={itineraryObject.quotItiDay}
               onChange={(event) => {
@@ -635,7 +647,7 @@ const ItineraryForm = () => {
                 <label>Amount </label>
                 <input
                   type="text"
-                  pattern="[0-9]+"
+                  pattern="[0-9]*"
                   className="form-control"
                   placeholder="Enter Amount"
                   value={element.quotItiServiceAmount}
@@ -719,6 +731,7 @@ const ItineraryForm = () => {
           <button
             className="btn btn-success mr-3"
             onClick={() => {
+              validateForm();
               {
                 acionObj.updateId != null ? editItinerary() : addItinerary();
               }
@@ -820,6 +833,7 @@ const ItineraryForm = () => {
                                       setAddOnFormValues(
                                         itineraryObj.quotItiAddons
                                       );
+
                                       setDestFormValues(
                                         itineraryObj.quotItiDestinations
                                       );

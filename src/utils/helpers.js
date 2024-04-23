@@ -106,8 +106,10 @@ const base64ToBlob = (base64, contentType = 'application/octet-stream', sliceSiz
 // Convert base64 string to file
 const base64ToFile = (base64, filename, contentType = 'image/jpeg') => {
   console.log('blob',base64)
+  if (!base64.includes(".jpeg")) {
   const blob = base64ToBlob(base64, contentType);
   return new File([blob], filename, { type: contentType });
+  }
 }
 
 export { getDateFormatted, getFilteredDropdownOptions, toTitleCase, getDateFormattedForDB,base64ToFile,createFilename };

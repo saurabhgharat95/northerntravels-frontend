@@ -5,17 +5,16 @@ import {
   toast,
   ToastContainer,
 } from "../components/CommonImport";
-import { FETCH_BEFORE_MARKUP_AMT_API } from "../utils/constants";
+import { BASE_URL, FETCH_BEFORE_MARKUP_AMT_API } from "../utils/constants";
 import "react-toastify/dist/ReactToastify.css";
 
 // redux
 import { useDispatch, useSelector } from "react-redux";
 import { setQuotationFormData } from "../utils/store";
 
-const MarkupForm = () => {
+const MarkupForm = ({ onValidationStatusChange }) => {
   const MAX_FILE_SIZE = 1 * 1024 * 1024; // 1 MB in bytes
-  const logofileInputRef = useRef(null);
-  const companyLogofileInputRef = useRef(null);
+
   const [markupObject, setMarkupObject] = useState({
     quotBeforeMarkup: "",
     quotMarkup: "",
@@ -29,13 +28,22 @@ const MarkupForm = () => {
     quotLogo: "",
     quotCompanyLogo: "",
   });
-
+  const [logoImage, setLogoImage] = useState("");
   const [, setForceUpdate] = useState(0);
   const simpleValidator = useRef(
     new SimpleReactValidator({
       autoForceUpdate: this,
     })
   );
+  const handleCloseModal = () => {
+    document.getElementById("imageModal").classList.remove("show", "d-block");
+    document
+      .querySelectorAll(".modal-backdrop")
+      .forEach((el) => el.classList.remove("modal-backdrop"));
+  };
+  const openImageModal = (imageURL) => {
+    setLogoImage(imageURL);
+  };
 
   //redux
   const dispatch = useDispatch();
@@ -68,7 +76,7 @@ const MarkupForm = () => {
     const file = event.target.files[0];
     try {
       if (file) {
-        console.log('filesize',file.size)
+        console.log("filesize", file.size);
         // if (file.size > MAX_FILE_SIZE) {
         //   toast.error(
         //     "File size exceeds 1 MB limit. Please choose a smaller file.",
@@ -76,21 +84,21 @@ const MarkupForm = () => {
         //       position: "top-right",
         //     }
         //   );
-          
+
         //   dispatch(setQuotationFormData("quotLogo", ""));
 
         //   return;
         // } else {
-          const reader = new FileReader();
+        const reader = new FileReader();
 
-          reader.onload = (e) => {
-            if( e.target.result){
-              dispatch(setQuotationFormData("quotLogo", e.target.result));
-            }
-          };
+        reader.onload = (e) => {
+          if (e.target.result) {
+            dispatch(setQuotationFormData("quotLogo", e.target.result));
+          }
+        };
 
-          reader.readAsDataURL(file);
-        }
+        reader.readAsDataURL(file);
+      }
       // }
     } catch (e) {
       console.log("err", e);
@@ -110,16 +118,16 @@ const MarkupForm = () => {
       //   dispatch(setQuotationFormData("quotCompanyLogo", ""));
       //   return;
       // } else {
-        const reader = new FileReader();
+      const reader = new FileReader();
 
-        reader.onload = (e) => {
-          if( e.target.result){
+      reader.onload = (e) => {
+        if (e.target.result) {
           dispatch(setQuotationFormData("quotCompanyLogo", e.target.result));
-          }
-        };
+        }
+      };
 
-        reader.readAsDataURL(file);
-      }
+      reader.readAsDataURL(file);
+    }
     // }
   };
   const calculateAfterMarkup = (beforeMarkup, markup) => {
@@ -139,7 +147,19 @@ const MarkupForm = () => {
       return "";
     }
   };
-
+  const validateForm = () => {
+    const isValid = simpleValidator.current.allValid();
+    if (isValid) {
+      onValidationStatusChange(isValid, 5);
+    } else {
+      simpleValidator.current.showMessages();
+      setForceUpdate((v) => ++v);
+    }
+    return isValid;
+  };
+  useEffect(() => {
+    validateForm();
+  }, [markupObject]);
   useEffect(() => {
     const afterMarkup = calculateAfterMarkup(
       markupObject.quotBeforeMarkup,
@@ -313,8 +333,50 @@ const MarkupForm = () => {
               className="form-control"
               accept="image/*"
               onChange={handleFileChange}
-            
             />
+            {markupObject.quotLogo && (
+              <>
+                {!markupObject.quotLogo.includes("base64") && (
+                  <>
+                    <br></br>
+                    <img
+                      style={{ width: "100px" }}
+                      src={
+                        BASE_URL +
+                        "/uploads/logos/" +
+                        markupObject.quotLogo +
+                        ".jpeg"
+                      }
+                    />
+                    <span
+                      className="badge  badge-outline-primary"
+                      data-bs-toggle="modal"
+                      data-bs-target="#imageModal"
+                      onClick={() =>
+                        openImageModal(
+                          BASE_URL +
+                            "/uploads/logos/" +
+                            markupObject.quotLogo +
+                            ".jpeg"
+                        )
+                      }
+                    >
+                      View Image
+                    </span>
+                  </>
+                )}
+                {markupObject.quotLogo.includes("base64") && (
+                  <>
+                    <br></br>
+                    <img
+                      style={{ width: "100px" }}
+                      src={markupObject.quotLogo}
+                    />
+                  </>
+                )}
+              </>
+            )}
+
             {/* <p className="text-primary">Upload a logo (max 1 MB)</p> */}
           </div>
           <div className="col-sm-6">
@@ -324,8 +386,50 @@ const MarkupForm = () => {
               className="form-control"
               accept="image/*"
               onChange={handleCompanyFileChange}
-              
             />
+            {markupObject.quotCompanyLogo && (
+              <>
+                {!markupObject.quotCompanyLogo.includes("base64") && (
+                  <>
+                    <br></br>
+                    <img
+                      style={{ width: "100px" }}
+                      src={
+                        BASE_URL +
+                        "/uploads/company_logos/" +
+                        markupObject.quotCompanyLogo +
+                        ".jpeg"
+                      }
+                    />
+                    <span
+                      className="badge  badge-outline-primary"
+                      data-bs-toggle="modal"
+                      data-bs-target="#imageModal"
+                      onClick={() =>
+                        openImageModal(
+                          BASE_URL +
+                            "/uploads/company_logos/" +
+                            markupObject.quotCompanyLogo +
+                            ".jpeg"
+                        )
+                      }
+                    >
+                      View Image
+                    </span>
+                  </>
+                )}
+                {markupObject.quotCompanyLogo.includes("base64") && (
+                  <>
+                    <br></br>
+                    <img
+                      style={{ width: "100px" }}
+                      src={markupObject.quotCompanyLogo}
+                    />
+                  </>
+                )}
+              </>
+            )}
+
             {/* <p className="text-primary">Upload company logo (max 1 MB)</p> */}
           </div>
         </div>
@@ -354,7 +458,7 @@ const MarkupForm = () => {
                 simpleValidator.current.message(
                   "quotCompanyName",
                   markupObject.quotCompanyName,
-                  ["required", { regex: /^[A-Za-z\s&-]+$/ }],
+                  ["required", { regex: /^[a-zA-Z0-9\s&.,'()-]+$/ }],
                   {
                     messages: {
                       required: "Please enter company name",
@@ -365,7 +469,7 @@ const MarkupForm = () => {
             </>
           </div>
           <div className="col-sm-6 mb-3">
-            <label>Corporate Office </label>
+            <label>Corporate Office Address</label>
             <input
               type="text"
               className="form-control"
@@ -388,7 +492,7 @@ const MarkupForm = () => {
                 simpleValidator.current.message(
                   "quotCorporateOffice",
                   markupObject.quotCorporateOffice,
-                  ["required", { regex: /^[A-Za-z\s&-]+$/ }],
+                  ["required", { regex: /^[a-zA-Z0-9\s,.()-]+$/ }],
                   {
                     messages: {
                       required: "Please enter corporate office",
@@ -400,7 +504,7 @@ const MarkupForm = () => {
           </div>
 
           <div className="col-sm-6  mb-3">
-            <label>Regional Office</label>
+            <label>Regional Office Address</label>
             <input
               type="text"
               value={markupObject.quotRegionalOffice}
@@ -423,7 +527,7 @@ const MarkupForm = () => {
                 simpleValidator.current.message(
                   "quotRegionalOffice",
                   markupObject.quotRegionalOffice,
-                  ["required", { regex: /^[A-Za-z\s&-]+$/ }],
+                  ["required", { regex: /^[a-zA-Z0-9\s,.()-]+$/ }],
                   {
                     messages: {
                       required: "Please enter regional office",
@@ -534,11 +638,17 @@ const MarkupForm = () => {
                 simpleValidator.current.message(
                   "quotCompanyWebsite",
                   markupObject.quotCompanyWebsite,
-                  ["required", "url"],
+                  [
+                    "required",
+                    {
+                      regex:
+                        /^(https?:\/\/)?(www\.)?([a-zA-Z0-9_-]+\.)+[a-zA-Z]{2,}(\/.*)?$/,
+                    },
+                  ],
                   {
                     messages: {
                       required: "Please enter company website ",
-                      url: "Enter valid company website",
+                      regex: "Enter valid company website",
                     },
                   }
                 )}
@@ -552,6 +662,35 @@ const MarkupForm = () => {
 
         <div className="form-group row"></div>
         <ToastContainer />
+        <div
+          className="modal fade"
+          id="imageModal"
+          tabIndex="-1"
+          style={{ display: "none" }}
+          aria-hidden="true"
+        >
+          <div className="modal-dialog modal-md" role="document">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title" id="exampleModalLabel">
+                  Image
+                </h5>
+                <button
+                  type="button"
+                  className="close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                  onClick={handleCloseModal}
+                >
+                  <span aria-hidden="true">×</span>
+                </button>
+              </div>
+              <div className="modal-body">
+                <img src={logoImage} style={{ width: "200px" }} />
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
     </>
   );

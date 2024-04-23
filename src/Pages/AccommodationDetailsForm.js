@@ -4,7 +4,7 @@ import { SimpleReactValidator } from "../components/CommonImport";
 import { useDispatch, useSelector } from "react-redux";
 import { setQuotationFormData } from "../utils/store";
 
-const AccommodationDetailsForm = () => {
+const AccommodationDetailsForm = ({onValidationStatusChange}) => {
   const [accommodationObject, setAccommodationObject] = useState({
     quotTotalPeoples: "",
     quotRoomsReqd: "",
@@ -21,6 +21,23 @@ const AccommodationDetailsForm = () => {
   //redux
   const dispatch = useDispatch();
   const quotFormData = useSelector((state) => state.form.quotationFormData);
+
+
+  const validateForm = () => {
+    const isValid = simpleValidator.current.allValid();
+    console.log('isValid',isValid)
+    if (isValid) {
+      onValidationStatusChange(isValid,2); 
+    }
+    else{
+      simpleValidator.current.showMessages();
+      setForceUpdate(v=>++v)
+    }
+    return isValid;
+  };
+  useEffect(() => {
+    validateForm(); 
+  }, [accommodationObject]);
   useEffect(() => {
     if (quotFormData) {
       setAccommodationObject((prevState) => ({

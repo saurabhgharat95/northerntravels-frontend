@@ -6,24 +6,7 @@ const Sidebar = (props) => {
   const location = useLocation();
   const [activeItem, setActiveItem] = useState("");
 
-  // const [isSubMenuOpen, setSubMenuOpen] = useState(false);
-  // const navItems = [
-  //   { path: '/', label: 'Dashboard', icon: 'home-outline' },
-  //   { path: '/quotations', label: 'Quotation Management', icon: 'document-text-outline' },
-  //   { path: '/maintain-rooms', label: 'Hotel Room Management', icon: 'business-outline' },
-  //   { path: '/tours', label: 'Tour Management', icon: 'map-outline' },
-  //   { path: '/leads', label: 'Lead Management', icon: 'people-outline' },
-  //   { path: '/countries', label: 'Countries', icon: 'globe-outline' },
-  //   { path: '/states', label: 'State / Location', icon: 'location-outline' },
-  //   { path: '/transit-pts', label: 'Transit points', icon: 'pin-outline' },
-  //   { path: '/destinations', label: 'Destinations', icon: 'compass-outline' },
-  //   { path: '/hotel-type', label: 'Hotel Type', icon: 'bed-outline' },
-  //   { path: '/halting-dest', label: 'Halting Destinations', icon: 'car-outline' },
-  //   { path: '/hotels', label: 'Hotels', icon: 'business-outline' },
-  //   { path: '/cars', label: 'Vehicles', icon: 'car-sport-outline' },
-  //   { path: '/meal-types', label: 'Meal Type', icon: 'restaurant-outline' },
-  //   { path: '/room-types', label: 'Room Type', icon: 'bed-outline' },
-  // ];
+
   const navItems = [
     { path: "/", label: "Dashboard", icon: "home-outline" },
     {
@@ -43,23 +26,11 @@ const Sidebar = (props) => {
       icon: "list-outline",
       subItems: [
         { path: "/countries", label: "Countries", icon: "earth-outline" },
-        {
-          path: "/states",
-          label: "State / Location",
-          icon: "location-outline",
-        },
-        { path: "/transit-pts", label: "Transit points", icon: "pin-outline" },
-        {
-          path: "/destinations",
-          label: "Destinations",
-          icon: "compass-outline",
-        },
+        { path: "/states",label: "State / Location",icon: "location-outline"},
+        { path: "/transit-pts", label: "Transit points", icon: "location-outline" },
+        { path: "/destinations", label: "Destinations", icon: "compass-outline" },
         { path: "/hotel-type", label: "Hotel Type", icon: "business-outline" },
-        {
-          path: "/halting-dest",
-          label: "Halting Destinations",
-          icon: "location-outline",
-        },
+        { path: "/halting-dest", label: "Halting Destinations", icon: "location-outline" },
         { path: "/hotels", label: "Hotels", icon: "business-outline" },
         { path: "/cars", label: "Vehicles", icon: "car-sport-outline" },
         { path: "/meal-types", label: "Meal Type", icon: "restaurant-outline" },
