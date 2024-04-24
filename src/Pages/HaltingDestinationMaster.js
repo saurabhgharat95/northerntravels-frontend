@@ -56,12 +56,14 @@ const HaltingDestinationMaster = () => {
     })
   );
   const handleCloseModal = () => {
-    document
-      .getElementById("haltDestModal")
-      .classList.remove("show", "d-block");
-    document
-      .querySelectorAll(".modal-backdrop")
-      .forEach((el) => el.classList.remove("modal-backdrop"));
+    var modal = document.getElementById("haltDestModal");
+
+    if (modal) {
+      var modalInstance = bootstrap.Modal.getInstance(modal);
+      if (modalInstance) {
+        modalInstance.hide();
+      }
+    }
   };
 
   const fetchCountries = async () => {
@@ -696,7 +698,18 @@ const HaltingDestinationMaster = () => {
             </div>
           </div>
           <Footer></Footer>
-          <ToastContainer />
+          <ToastContainer
+            position="top-right"
+            autoClose={2000}
+            hideProgressBar
+            newestOnTop
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss={false}
+            draggable
+            pauseOnHover={false}
+            theme="colored"
+          />
 
           <ConfirmationDialog
             message="Are you sure you want to delete?"

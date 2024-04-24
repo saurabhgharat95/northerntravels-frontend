@@ -150,7 +150,10 @@ const BasicDetailsTourForm = () => {
   ]);
 
   let addFormFields = () => {
-    setFormValues([...formValues, { destinationName: "", destinationDesc: "" }]);
+    setFormValues([
+      ...formValues,
+      { destinationName: "", destinationDesc: "" },
+    ]);
   };
 
   let removeFormFields = (i) => {
@@ -160,9 +163,7 @@ const BasicDetailsTourForm = () => {
     dispatch(
       setTourFormData(
         "locationIds",
-        newFormValues.map(
-          ({ destinationName }) => destinationName
-        )
+        newFormValues.map(({ destinationName }) => destinationName)
       )
     );
   };
@@ -183,12 +184,14 @@ const BasicDetailsTourForm = () => {
     setFormValues(newFormValues);
   };
   const handleCloseModal = () => {
-    document
-      .getElementById("locationDescriptionModal")
-      .classList.remove("show", "d-block");
-    document
-      .querySelectorAll(".modal-backdrop")
-      .forEach((el) => el.classList.remove("modal-backdrop"));
+    var modal = document.getElementById("locationDescriptionModal");
+
+    if (modal) {
+      var modalInstance = bootstrap.Modal.getInstance(modal);
+      if (modalInstance) {
+        modalInstance.hide();
+      }
+    }
   };
   const fetchStatesByCountry = async () => {
     try {
@@ -228,27 +231,25 @@ const BasicDetailsTourForm = () => {
   }, [country]);
 
   useEffect(() => {
-    if (tourFormData){
+    if (tourFormData) {
+      setTourName(tourFormData.tourName);
+      setCountry(tourFormData.countryIds);
+      setStateId(tourFormData.stateIds);
+      setTransitPtId(tourFormData.transitPointIds);
+      let destinations = tourFormData.locationIds;
 
-    setTourName(tourFormData.tourName);
-    setCountry(tourFormData.countryIds);
-    setStateId(tourFormData.stateIds);
-    setTransitPtId(tourFormData.transitPointIds);
-    let destinations = tourFormData.locationIds;
+      if (destinations) {
+        let destFormValues = [];
 
-    if (destinations) {
-      let destFormValues = [];
-
-      for (let index = 0; index < destinations.length; index++) {
-        destFormValues.push({
-          destinationName: destinations[index],
-          destinationDesc: "",
-        });
+        for (let index = 0; index < destinations.length; index++) {
+          destFormValues.push({
+            destinationName: destinations[index],
+            destinationDesc: "",
+          });
+        }
+        setFormValues(destFormValues);
       }
-      setFormValues(destFormValues);
     }
-  }
-
   }, [tourFormData]);
 
   return (

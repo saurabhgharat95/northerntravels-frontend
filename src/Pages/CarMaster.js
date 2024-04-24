@@ -46,10 +46,14 @@ const CarMaster = () => {
     })
   );
   const handleCloseModal = () => {
-    document.getElementById("vehicleModal").classList.remove("show", "d-block");
-    document
-      .querySelectorAll(".modal-backdrop")
-      .forEach((el) => el.classList.remove("modal-backdrop"));
+    var modal = document.getElementById("vehicleModal");
+
+    if (modal) {
+      var modalInstance = bootstrap.Modal.getInstance(modal);
+      if (modalInstance) {
+        modalInstance.hide();
+      }
+    }
   };
   const fetchVehicles = async () => {
     try {
@@ -506,7 +510,18 @@ const CarMaster = () => {
             </div>
           </div>
           <Footer></Footer>
-          <ToastContainer />
+          <ToastContainer
+            position="top-right"
+            autoClose={2000}
+            hideProgressBar
+            newestOnTop
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss={false}
+            draggable
+            pauseOnHover={false}
+            theme="colored"
+          />
 
           <ConfirmationDialog
             message="Are you sure you want to delete?"

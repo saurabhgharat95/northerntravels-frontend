@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
-
+import { axios } from "../components/CommonImport";
 const Homepage = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
+
   const getTodaysDate = () => {
     var currentDate = new Date();
 
@@ -35,6 +36,8 @@ const Homepage = () => {
     var formattedDate = day + " " + monthName + ", " + year;
     return formattedDate;
   };
+
+  
 
   return (
     <div className="container-scroller">
@@ -96,17 +99,7 @@ const Homepage = () => {
                   <div className="card-people mt-auto">
                     <img src="images/dashboard/people.svg" alt="people" />
                     <div className="weather-info">
-                      <div className="d-flex">
-                        <div>
-                          <h2 className="mb-0 font-weight-normal">
-                            <i className="icon-sun mr-2"></i>31<sup>C</sup>
-                          </h2>
-                        </div>
-                        <div className="ml-2">
-                          <h4 className="location font-weight-normal">Mumbai</h4>
-                          <h6 className="font-weight-normal">India</h6>
-                        </div>
-                      </div>
+                     
                     </div>
                   </div>
                 </div>

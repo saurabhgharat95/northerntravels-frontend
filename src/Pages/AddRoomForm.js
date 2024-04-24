@@ -185,7 +185,7 @@ const AddRoomForm = ({ cancelForm, hotelId, formType, updateId }) => {
       autoForceUpdate: this,
     })
   );
- 
+
   const fetchHotelRoomDetails = async (id) => {
     try {
       let url = FETCH_HOTEL_ROOM_DETAILS_API;
@@ -722,7 +722,19 @@ const AddRoomForm = ({ cancelForm, hotelId, formType, updateId }) => {
         </button>
       </div>
       <Loader isLoading={isLoading}></Loader>
-      <ToastContainer />
+      <ToastContainer
+        position="top-right"
+        autoClose={2000}
+        hideProgressBar
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss={false}
+        draggable
+        pauseOnHover={false}
+        theme="light"
+        transition="Slide"
+      />
     </>
   );
 };

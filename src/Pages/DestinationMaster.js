@@ -84,18 +84,23 @@ const DestinationMaster = () => {
   };
 
   const handleCloseModal = () => {
-    document
-      .getElementById("locationModal")
-      .classList.remove("show", "d-block");
-    document
-      .querySelectorAll(".modal-backdrop")
-      .forEach((el) => el.classList.remove("modal-backdrop"));
-    document
-      .getElementById("locationDescriptionModal")
-      .classList.remove("show", "d-block");
-    document
-      .querySelectorAll(".modal-backdrop")
-      .forEach((el) => el.classList.remove("modal-backdrop"));
+    
+    var locationModal = document.getElementById('locationModal');
+
+    if (locationModal) {
+      var locationModalInstance = bootstrap.Modal.getInstance(locationModal);
+      if (locationModalInstance) {
+        locationModalInstance.hide();
+      }
+    }
+    var locationDescriptionModal = document.getElementById('locationModal');
+
+    if (locationDescriptionModal) {
+      var locationDescriptionModalInstance = bootstrap.Modal.getInstance(locationDescriptionModal);
+      if (locationDescriptionModalInstance) {
+        locationDescriptionModalInstance.hide();
+      }
+    }
   };
 
   const fetchCountries = async () => {
@@ -165,7 +170,7 @@ const DestinationMaster = () => {
     setLocationName("");
     setLocationDesc("");
     setLocationDesc(null);
-    setForceUpdate(v=>++v)
+    setForceUpdate((v) => ++v);
   };
   const addLocation = async () => {
     try {
@@ -366,10 +371,10 @@ const DestinationMaster = () => {
                     className="btn btn-primary btn-sm"
                     data-bs-toggle="modal"
                     data-bs-target="#locationModal"
-                    onClick={()=>{
-                      resetForm()
-                      setUpdate(false)}
-                    }
+                    onClick={() => {
+                      resetForm();
+                      setUpdate(false);
+                    }}
                   >
                     Add Destination
                   </button>
@@ -823,7 +828,18 @@ const DestinationMaster = () => {
             </div>
           </div>
           <Footer></Footer>
-          <ToastContainer />
+          <ToastContainer
+            position="top-right"
+            autoClose={2000}
+            hideProgressBar
+            newestOnTop
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss={false}
+            draggable
+            pauseOnHover={false}
+            theme="colored"
+          />
 
           <ConfirmationDialog
             message="Are you sure you want to delete?"

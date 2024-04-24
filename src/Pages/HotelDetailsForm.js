@@ -211,7 +211,6 @@ const HotelDetailsForm = ({onValidationStatusChange}) => {
         if (response.status == 200) {
           let haltingPts = response.data.data;
           let haltingPtOptionsArray = [];
-          console.log('quotFormData.stateIds',quotFormData.stateIds)
           haltingPts.forEach((point) => {
             if (quotFormData.stateIds.length > 0) {
               if (quotFormData.stateIds.includes(point.fkStateId)) {
@@ -356,7 +355,6 @@ const HotelDetailsForm = ({onValidationStatusChange}) => {
       onValidationStatusChange(isValid,3); 
     }
     else{
-      console.log('isHotelFormValid',simpleValidator.current.errorMessages)
       simpleValidator.current.showMessages();
       setForceUpdate(v=>++v)
     }
@@ -373,7 +371,6 @@ const HotelDetailsForm = ({onValidationStatusChange}) => {
   useEffect(() => {
     if (quotFormData) {
       let quotPackage = quotFormData.quotPackageData;
-      console.log('inhotelform',quotPackage)
       let quotPackageArray = [];
       for (let index = 0; index < quotPackage.length; index++) {
         quotPackageArray.push({

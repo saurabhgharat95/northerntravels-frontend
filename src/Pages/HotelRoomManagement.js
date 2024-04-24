@@ -73,7 +73,6 @@ const HotelRoomManagement = () => {
   );
   const [, setForceUpdate] = useState(0);
 
-  
   const fetchHotels = async () => {
     try {
       let url = FETCH_HOTELS_API;
@@ -833,7 +832,18 @@ const HotelRoomManagement = () => {
             </div>
           </div>
           <Footer></Footer>
-          <ToastContainer />
+          <ToastContainer
+            position="top-right"
+            autoClose={2000}
+            hideProgressBar
+            newestOnTop
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss={false}
+            draggable
+            pauseOnHover={false}
+            theme="colored"
+          />
 
           <ConfirmationDialog
             message="Are you sure you want to delete?"

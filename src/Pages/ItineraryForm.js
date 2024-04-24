@@ -184,12 +184,14 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
     }
   };
   const handleCloseModal = () => {
-    document
-      .getElementById("locationDescriptionModal")
-      .classList.remove("show", "d-block");
-    document
-      .querySelectorAll(".modal-backdrop")
-      .forEach((el) => el.classList.remove("modal-backdrop"));
+    var modal = document.getElementById("locationDescriptionModal");
+
+    if (modal) {
+      var modalInstance = bootstrap.Modal.getInstance(modal);
+      if (modalInstance) {
+        modalInstance.hide();
+      }
+    }
   };
 
   const getSetDescription = (index, locationId) => {
