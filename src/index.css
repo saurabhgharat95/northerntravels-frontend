@@ -91,7 +91,7 @@ ion-icon {
   border-radius: 6px;
 }
 .wizard > .steps .current a {
-  background: #FF9800;
+  background: #ff9800;
   cursor: pointer;
 }
 /* For small devices (phones) */
@@ -219,4 +219,40 @@ ion-icon {
 }
 .sidebar .nav.sub-menu .nav-item .nav-link {
   color: #abadb1;
+}
+.badge.hot {
+  background-color: #fddad9;
+  color: #c3515b;
+  border: 1px solid #c3515b;
+}
+
+.badge.warm {
+  background-color: #f4e3c8;
+  color: #ae6d00;
+  border: 1px solid #ae6d00;
+}
+
+.badge.cold {
+  background-color: #c7ebf2;
+  color: #0087a4;
+  border: 1px solid #0087a4;
+}
+@keyframes shimmer2 {
+  0% {
+    background-position: -1000px 0;
+  }
+
+  100% {
+    background-position: 1000px 0;
+  }
+}
+.dashboard-count-div {
+  .shimmer {
+    background: linear-gradient(to right, #ffffff 8%, #d7d7d7 18%, #ffffff 33%);
+    background-size: 1000px 100%;
+    animation: shimmer2 2.2s linear infinite forwards;
+  }
+  .shimmer-title-line {
+    height: 14px !important;
+  }
 }

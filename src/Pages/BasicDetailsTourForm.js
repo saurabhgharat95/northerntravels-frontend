@@ -33,7 +33,7 @@ const BasicDetailsTourForm = () => {
     transitPtOptions: [],
     destOptions: [],
   });
-
+  const [isDataReady, setDataReady] = useState(false);
   const [, setForceUpdate] = useState(0);
   const animatedComponents = makeAnimated();
   const simpleValidator = useRef(
@@ -116,7 +116,6 @@ const BasicDetailsTourForm = () => {
       }
     } catch (e) {
       setDataReady(true);
-      setTransitPts([]);
     }
   };
   const fetchLocations = async () => {

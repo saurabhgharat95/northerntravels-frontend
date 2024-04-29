@@ -385,8 +385,7 @@ const AddTourForm = () => {
         pauseOnFocusLoss={false}
         draggable
         pauseOnHover={false}
-        theme="light"
-        transition="Slide"
+        theme="colored"
       />
 
       <Loader isLoading={isLoading}></Loader>

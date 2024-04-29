@@ -1,10 +1,25 @@
 import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
-import { axios } from "../components/CommonImport";
+import { axios, ShimmerTitle } from "../components/CommonImport";
+import {
+  FETCH_HOTELS_API,
+  FETCH_QUOTATIONS_API,
+  FETCH_LEADS_API,
+  FETCH_TOURS_API,
+} from "../utils/constants";
 const Homepage = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
-
+  const [countObj, setCountObj] = useState({
+    quotCount: 0,
+    leadsCount: 0,
+    tourCount: 0,
+    hotelsCount: 0,
+    isQuotCountReady: false,
+    isLeadCountReady: false,
+    isTourCountReady: false,
+    isHotelCountReady: false,
+  });
   const getTodaysDate = () => {
     var currentDate = new Date();
 
@@ -36,9 +51,80 @@ const Homepage = () => {
     var formattedDate = day + " " + monthName + ", " + year;
     return formattedDate;
   };
+  const fetchQuotations = async () => {
+    try {
+      let url = FETCH_QUOTATIONS_API;
 
-  
+      let response = await axios.post(url);
+      if (response) {
+        if (response.status == 200) {
+          setCountObj((prevState) => ({
+            ...prevState,
+            quotCount: response.data.data.length,
+            isQuotCountReady: true,
+          }));
+        }
+      }
+    } catch (e) {}
+  };
+  const fetchHotels = async () => {
+    try {
+      let url = FETCH_HOTELS_API;
 
+      let response = await axios.post(url);
+      if (response) {
+        if (response.status == 200) {
+          setCountObj((prevState) => ({
+            ...prevState,
+            hotelsCount: response.data.data.length,
+            isHotelCountReady: true,
+          }));
+        }
+      }
+    } catch (e) {}
+  };
+
+  const fetchTours = async () => {
+    try {
+      let url = FETCH_TOURS_API;
+
+      let response = await axios.post(url);
+      if (response) {
+        if (response.status == 200) {
+          setCountObj((prevState) => ({
+            ...prevState,
+            tourCount: response.data.data.length,
+            isTourCountReady: true,
+          }));
+        }
+      }
+    } catch (e) {
+      setDataReady(true);
+      setTours([]);
+    }
+  };
+  const fetchLeads = async () => {
+    try {
+      let url = FETCH_LEADS_API;
+
+      let response = await axios.post(url);
+      if (response) {
+        if (response.status == 200) {
+          setCountObj((prevState) => ({
+            ...prevState,
+            leadsCount: response.data.data.length,
+            isLeadCountReady: true,
+          }));
+        }
+      }
+    } catch (e) {}
+  };
+  useEffect(() => {
+    fetchQuotations();
+    fetchHotels();
+    fetchTours();
+    fetchLeads();
+  }, []);
   return (
     <div className="container-scroller">
       <Navbar setSidebarOpen={setSidebarOpen}></Navbar>
@@ -51,10 +137,6 @@ const Homepage = () => {
                 <div className="row">
                   <div className="col-12 col-xl-8 mb-4 mb-xl-0">
                     <h3 className="font-weight-bold">Welcome Admin</h3>
-                    <h6 className="font-weight-normal mb-0">
-                      All systems are running smoothly! You have{" "}
-                      <span className="text-primary">3 unread alerts!</span>
-                    </h6>
                   </div>
                   <div className="col-12 col-xl-4">
                     <div className="justify-content-end d-flex">
@@ -98,27 +180,39 @@ const Homepage = () => {
                 <div className="card tale-bg">
                   <div className="card-people mt-auto">
                     <img src="images/dashboard/people.svg" alt="people" />
-                    <div className="weather-info">
-                     
-                    </div>
+                    <div className="weather-info"></div>
                   </div>
                 </div>
               </div>
-              <div className="col-md-6 grid-margin transparent">
+              <div className="col-md-6 grid-margin transparent dashboard-count-div">
                 <div className="row">
                   <div className="col-md-6 mb-4 stretch-card transparent">
                     <div className="card card-tale">
                       <div className="card-body">
-                        <p className="mb-4">Quotations</p>
-                        <p className="fs-30 mb-2">4006</p>
+                        {!countObj.isQuotCountReady && (
+                          <ShimmerTitle line={2} gap={10} variant="primary" />
+                        )}
+                        {countObj.isQuotCountReady && (
+                          <>
+                            <p className="mb-4">Quotations</p>
+                            <p className="fs-30 mb-2">{countObj.quotCount}</p>
+                          </>
+                        )}
                       </div>
                     </div>
                   </div>
                   <div className="col-md-6 mb-4 stretch-card transparent">
                     <div className="card card-dark-blue">
                       <div className="card-body">
-                        <p className="mb-4">Customers</p>
-                        <p className="fs-30 mb-2">61344</p>
+                        {!countObj.isHotelCountReady && (
+                          <ShimmerTitle line={2} gap={10} variant="primary" />
+                        )}
+                        {countObj.isHotelCountReady && (
+                          <>
+                            <p className="mb-4">Hotels</p>
+                            <p className="fs-30 mb-2">{countObj.hotelsCount}</p>
+                          </>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -127,16 +221,30 @@ const Homepage = () => {
                   <div className="col-md-6 mb-4 mb-lg-0 stretch-card transparent">
                     <div className="card card-light-blue">
                       <div className="card-body">
-                        <p className="mb-4">Vouchers</p>
-                        <p className="fs-30 mb-2">34040</p>
+                        {!countObj.isTourCountReady && (
+                          <ShimmerTitle line={2} gap={10} variant="primary" />
+                        )}
+                        {countObj.isTourCountReady && (
+                          <>
+                            <p className="mb-4">Tours</p>
+                            <p className="fs-30 mb-2">{countObj.tourCount}</p>
+                          </>
+                        )}
                       </div>
                     </div>
                   </div>
                   <div className="col-md-6 stretch-card transparent">
                     <div className="card card-light-danger">
                       <div className="card-body">
-                        <p className="mb-4">Hotels</p>
-                        <p className="fs-30 mb-2">47033</p>
+                        {!countObj.isLeadCountReady && (
+                          <ShimmerTitle line={2} gap={10} variant="primary" />
+                        )}
+                        {countObj.isLeadCountReady && (
+                          <>
+                            <p className="mb-4">Leads</p>
+                            <p className="fs-30 mb-2">{countObj.leadsCount}</p>
+                          </>
+                        )}
                       </div>
                     </div>
                   </div>

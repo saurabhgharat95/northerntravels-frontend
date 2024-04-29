@@ -8,7 +8,7 @@ import SimpleReactValidator from "simple-react-validator";
 import Select from "react-select";
 
 import { ColorRing } from "react-loader-spinner";
-import { ShimmerTable } from "react-shimmer-effects";
+import { ShimmerTable,ShimmerTitle } from "react-shimmer-effects";
 import ReactQuill from 'react-quill';
 
 export {
@@ -24,7 +24,6 @@ export {
   Select,
   ColorRing,
   ShimmerTable,
-  ReactQuill
- 
-
+  ReactQuill,
+  ShimmerTitle
 };

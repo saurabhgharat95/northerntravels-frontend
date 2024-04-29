@@ -313,6 +313,7 @@ const HotelMaster = () => {
       setStateId(hotelObj.fkStateId);
       setHaltDestId(hotelObj.fkHaltingPointId);
       setHotelTypeId(hotelObj.fkHotelTypeId);
+      setHotelAddress(hotelObj.hotelAddress)
       setUpdate(true);
       setUpdateId(updateId);
     }
@@ -674,7 +675,7 @@ const HotelMaster = () => {
                                         type="text"
                                         className="form-control form-control-sm"
                                         placeholder="Enter Hotel Address"
-                                        value={hotelName}
+                                        value={hotelAddress}
                                         onChange={(e) => {
                                           setHotelAddress(e.target.value);
                                         }}

@@ -6,15 +6,10 @@ import {
   CSSTransition,
   axios,
   toast,
-  ToastContainer,
-  SimpleReactValidator,
   ShimmerTable,
 } from "../components/CommonImport";
 import {
-  FETCH_VEHICLES_API,
-  ADD_VEHICLE_API,
-  UPDATE_VEHICLE_API,
-  DELETE_VEHICLE_API,
+  BASE_URL,
   FETCH_QUOTATIONS_API,
   DELETE_QUOTATION_API,
 } from "../utils/constants";
@@ -32,7 +27,6 @@ const QuotationManagement = () => {
   const [originalQuotationsList, setOriginalQuotationsList] = useState([]);
   const [isUpdate, setUpdate] = useState(false);
   const [deleteId, setDeleteId] = useState(false);
-  const [updateId, setUpdateId] = useState("");
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -279,13 +273,21 @@ const QuotationManagement = () => {
                                                 style={{ marginRight: "10px" }}
                                                 title="Approve"
                                               ></ion-icon>
-                                              <ion-icon
-                                                name="print-outline"
-                                                color="secondary"
-                                                style={{ marginRight: "10px" }}
-                                                title="Print"
-                                              ></ion-icon>
 
+                                              <a
+                                                href={`${BASE_URL}/uploads/quotations/${quotation.quotFile}`}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                              >
+                                                <ion-icon
+                                                  name="print-outline"
+                                                  color="secondary"
+                                                  style={{
+                                                    marginRight: "10px",
+                                                  }}
+                                                  title="Print"
+                                                ></ion-icon>
+                                              </a>
                                               <ion-icon
                                                 name="mail-outline"
                                                 color="tertiary"
@@ -299,7 +301,8 @@ const QuotationManagement = () => {
                                                 title="Edit"
                                                 onClick={() => {
                                                   navigate(
-                                                    "/edit-quotation/" + quotation.id
+                                                    "/edit-quotation/" +
+                                                      quotation.id
                                                   );
                                                 }}
                                               ></ion-icon>
@@ -324,12 +327,11 @@ const QuotationManagement = () => {
                             {quotations && quotations.length == 0 && (
                               <NoData></NoData>
                             )}
-                           
                           </div>
                         </div>
                         <div className="row">
                           <div className="col-sm-12 col-md-12">
-                          <div
+                            <div
                               className="dataTables_paginate paging_simple_numbers"
                               id="order-listing_paginate"
                             >

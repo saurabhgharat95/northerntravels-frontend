@@ -11,10 +11,17 @@ import "react-toastify/dist/ReactToastify.css";
 // redux
 import { useDispatch, useSelector } from "react-redux";
 import { setQuotationFormData } from "../utils/store";
-
+import { toTitleCase } from "../utils/helpers";
 const MarkupForm = ({ onValidationStatusChange }) => {
   const MAX_FILE_SIZE = 1 * 1024 * 1024; // 1 MB in bytes
-
+  const colorIndex = [
+    "primary",
+    "secondary",
+    "success",
+    "warning",
+    "info",
+    "danger",
+  ];
   const [markupObject, setMarkupObject] = useState({
     quotBeforeMarkup: 0,
     quotMarkup: "",
@@ -28,6 +35,8 @@ const MarkupForm = ({ onValidationStatusChange }) => {
     quotLogo: "",
     quotCompanyLogo: "",
   });
+  const [markupAmtObject, setMarkupAmtObject] = useState([]);
+  const [itineraryQuotAmt, setItineraryQuotAmt] = useState(0);
   const [logoImage, setLogoImage] = useState("");
   const [, setForceUpdate] = useState(0);
   const simpleValidator = useRef(
@@ -62,15 +71,10 @@ const MarkupForm = ({ onValidationStatusChange }) => {
       let response = await axios.post(url, body);
       if (response) {
         if (response.status == 200) {
-          let markup = response.data.data;
-
-          setMarkupObject((prevState) => ({
-            ...prevState,
-            quotBeforeMarkup: markup.itineraryQuotAmt,
-          }));
-          dispatch(
-            setQuotationFormData("quotBeforeMarkup", markup.itineraryQuotAmt)
-          );
+          let quotPackageArr = response.data.data.quotPackageArr;
+          let itineraryQuotAmt = response.data.data.itineraryQuotAmt;
+          setMarkupAmtObject(quotPackageArr);
+          setItineraryQuotAmt(itineraryQuotAmt);
         }
       }
     } catch (e) {}
@@ -174,7 +178,7 @@ const MarkupForm = ({ onValidationStatusChange }) => {
       quotAfterMarkup: afterMarkup,
     }));
     dispatch(setQuotationFormData("quotAfterMarkup", afterMarkup));
-  }, [markupObject.quotBeforeMarkup, markupObject.quotMarkup]);
+  }, [markupObject.quotMarkup]);
 
   useEffect(() => {
     fetchBeforeMarkupAmt();
@@ -216,44 +220,6 @@ const MarkupForm = ({ onValidationStatusChange }) => {
 
         <div className="form-group row">
           <div className="col-sm-4">
-            <label>Before Markup (Rs.)</label>
-            <input
-              type="text"
-              pattern="[0-9]+"
-              className="form-control"
-              placeholder="Enter Before Markup (Rs.)"
-              value={markupObject.quotBeforeMarkup}
-              disabled
-              onChange={(event) => {
-                const newValue = event.target.value.trim();
-                if (/^\d*$/.test(newValue)) {
-                  setMarkupObject((prevState) => ({
-                    ...prevState,
-                    quotBeforeMarkup: event.target.value,
-                  }));
-                  dispatch(
-                    setQuotationFormData("quotBeforeMarkup", event.target.value)
-                  );
-                }
-              }}
-              onBlur={() => {
-                simpleValidator.current.showMessageFor("quotBeforeMarkup");
-              }}
-            />
-            <>
-              {simpleValidator.current.message(
-                "quotBeforeMarkup",
-                markupObject.quotBeforeMarkup,
-                ["required"],
-                {
-                  messages: {
-                    required: "Please enter before markup amount",
-                  },
-                }
-              )}
-            </>
-          </div>
-          <div className="col-sm-4">
             <label>Markup (Rs.)</label>
             <input
               type="text"
@@ -290,45 +256,87 @@ const MarkupForm = ({ onValidationStatusChange }) => {
               )}
             </>
           </div>
-          <div className="col-sm-4">
-            <label>After Markup (Rs.)</label>
-            <input
-              type="text"
-              pattern="[0-9]+"
-              className="form-control"
-              disabled
-              placeholder="Enter After Markup (Rs.)"
-              value={markupObject.quotAfterMarkup}
-              onChange={(event) => {
-                const newValue = event.target.value.trim();
-                if (/^\d*$/.test(newValue)) {
-                  setMarkupObject((prevState) => ({
-                    ...prevState,
-                    quotAfterMarkup: event.target.value,
-                  }));
-                  dispatch(
-                    setQuotationFormData("quotAfterMarkup", event.target.value)
-                  );
-                }
-              }}
-              onBlur={() => {
-                simpleValidator.current.showMessageFor("quotAfterMarkup");
-              }}
-            />
-            <>
-              {simpleValidator.current.message(
-                "quotAfterMarkup",
-                markupObject.quotAfterMarkup,
-                ["required"],
-                {
-                  messages: {
-                    required: "Please enter after markup amount",
-                  },
-                }
-              )}
-            </>
-          </div>
         </div>
+
+        {markupAmtObject &&
+          markupAmtObject.length > 0 &&
+          markupAmtObject.map((pckg, index) => (
+            <>
+              <div className="form-group row">
+                <div className="col-sm-4">
+                  <label>Package Name</label>
+                  <br></br>
+                  <span
+                    className={`badge border border-${colorIndex[index]} text-${colorIndex[index]} mr-2`}
+                  >
+                    {toTitleCase(pckg.packageName)}
+                  </span>
+                </div>
+                <div className="col-sm-4">
+                  <label>Before Markup (Rs.)</label>
+                  <input
+                    type="text"
+                    pattern="[0-9]+"
+                    className="form-control"
+                    placeholder="Enter Before Markup (Rs.)"
+                    value={pckg.charges + itineraryQuotAmt}
+                    disabled
+                    onChange={(event) => {
+                      const newValue = event.target.value.trim();
+                      if (/^\d*$/.test(newValue)) {
+                        setMarkupObject((prevState) => ({
+                          ...prevState,
+                          quotBeforeMarkup: event.target.value,
+                        }));
+                        dispatch(
+                          setQuotationFormData(
+                            "quotBeforeMarkup",
+                            event.target.value
+                          )
+                        );
+                      }
+                    }}
+                    onBlur={() => {
+                      simpleValidator.current.showMessageFor(
+                        "quotBeforeMarkup"
+                      );
+                    }}
+                  />
+                </div>
+                <div className="col-sm-4">
+                  <label>After Markup (Rs.)</label>
+                  <input
+                    type="text"
+                    pattern="[0-9]+"
+                    className="form-control"
+                    disabled
+                    placeholder="Enter After Markup (Rs.)"
+                    value={calculateAfterMarkup(
+                      pckg.charges + itineraryQuotAmt,
+                      markupObject.quotMarkup
+                    )}
+                    onChange={(event) => {
+                      const newValue = event.target.value.trim();
+                      if (/^\d*$/.test(newValue)) {
+                        setMarkupObject((prevState) => ({
+                          ...prevState,
+                          quotAfterMarkup: event.target.value,
+                        }));
+                        dispatch(
+                          setQuotationFormData(
+                            "quotAfterMarkup",
+                            event.target.value
+                          )
+                        );
+                      }
+                    }}
+                   
+                  />
+                 
+                </div>
+              </div>
+            </>
+          ))}
         <div className="form-group row">
           <div className="col-sm-6">
             <label>Logo</label>
@@ -547,6 +555,7 @@ const MarkupForm = ({ onValidationStatusChange }) => {
               type="text"
               pattern="[0-9]+"
               className="form-control"
+              maxLength={10}
               value={markupObject.quotCompanyHotline}
               onChange={(event) => {
                 const newValue = event.target.value.trim();

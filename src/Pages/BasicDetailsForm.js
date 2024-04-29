@@ -98,7 +98,7 @@ const BasicDetailsForm = ({onValidationStatusChange}) => {
           let transitPtOptionsArray = [];
           transitPts.forEach((point) => {
             transitPtOptionsArray.push({
-              value: point.id,
+              value: point.fkTransitPointId,
               label: point.transitPoint.transitPointName,
             });
           });
@@ -219,7 +219,7 @@ const BasicDetailsForm = ({onValidationStatusChange}) => {
   ]);
   useEffect(() => {
     if (quotFormData) {
-      
+      console.log('quotFormDataquotFormData',quotFormData)
       setBasicDetailsObject((prevState) => ({
         ...prevState,
         quotPackage: quotFormData.quotPackage ? quotFormData.quotPackage:"1",

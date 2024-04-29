@@ -732,8 +732,7 @@ const AddRoomForm = ({ cancelForm, hotelId, formType, updateId }) => {
         pauseOnFocusLoss={false}
         draggable
         pauseOnHover={false}
-        theme="light"
-        transition="Slide"
+        theme="colored"
       />
     </>
   );

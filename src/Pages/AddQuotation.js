@@ -261,14 +261,14 @@ const AddQuotation = () => {
             let quotHotelData = [];
             quotHotelData = hotelDetails.map((element) => ({
               packageName: element.quotPackageName,
-              haltingDest: element.haltingPoint.haltingPointName,
-              hotelType: element.hotelType.hotelTypeName,
+              haltingDest: element.halting.haltingPointName,
+              hotelType: element.hotel_type.hotelTypeName,
               hotelName: element.hotel.hotelName,
               fromDate: getDateFormattedForDB(element.quotHotelFromDate),
               toDate: getDateFormattedForDB(element.quotHotelToDate),
               noOfNights: element.quotHotelToDate,
-              roomType: element.roomType.roomTypeName,
-              mealType: element.mealType.mealTypeName,
+              roomType: element.room_type.roomTypeName,
+              mealType: element.meal_type.mealTypeName,
               haltingDestId: element.fkHaltingDestId,
               hotelTypeId: element.fkHotelTypeId,
               hotelId: element.fkHotelId,
@@ -281,14 +281,14 @@ const AddQuotation = () => {
           } else {
             let quotHotelObject = {
               packageName: hotelDetails.quotPackageName,
-              haltingDest: hotelDetails.haltingPoint.haltingPointName,
-              hotelType: hotelDetails.hotelType.hotelTypeName,
+              haltingDest: hotelDetails.halting.haltingPointName,
+              hotelType: hotelDetails.hotel_type.hotelTypeName,
               hotelName: hotelDetails.hotel.hotelName,
               fromDate: getDateFormattedForDB(element.quotHotelFromDate),
               toDate: getDateFormattedForDB(element.quotHotelToDate),
               noOfNights: hotelDetails.quotHotelToDate,
-              roomType: hotelDetails.roomType.roomTypeName,
-              mealType: hotelDetails.mealType.mealTypeName,
+              roomType: hotelDetails.room_type.roomTypeName,
+              mealType: hotelDetails.meal_type.mealTypeName,
               haltingDestId: hotelDetails.fkHaltingDestId,
               hotelTypeId: hotelDetails.fkHotelTypeId,
               hotelId: hotelDetails.fkHotelId,
@@ -374,9 +374,9 @@ const AddQuotation = () => {
               quotItiDate: element.quotItiDate,
               vehicleName: element.vehicle.vehicleName,
               fkVehicleId: element.fkVehicleId,
-              pickupPt: element.pickupPoint.transitPointName,
+              pickupPt: element.pickup.transitPointName,
               quotItiPickupPtId: element.quotItiPickupPtId,
-              dropPt: element.dropPoint.transitPointName,
+              dropPt: element.drop.transitPointName,
               quotItiDropPtId: element.quotItiDropPtId,
               quotItiNoOfVehicles: element.quotItiNoOfVehicles,
               quotItiAddons: element.itiAddonData.map((addOnElement) => ({
@@ -499,9 +499,9 @@ const AddQuotation = () => {
       const formData = new FormData();
 
       formData.append("quotId", quotFormData.quotId);
-      formData.append("quotBeforeMarkup", quotFormData.quotBeforeMarkup);
+      formData.append("quotBeforeMarkup", "");
       formData.append("quotMarkup", quotFormData.quotMarkup);
-      formData.append("quotAfterMarkup", quotFormData.quotAfterMarkup);
+      formData.append("quotAfterMarkup", "");
       formData.append("quotCompanyName", quotFormData.quotCompanyName);
       formData.append("quotCorporateOffice", quotFormData.quotCorporateOffice);
       formData.append("quotRegionalOffice", quotFormData.quotRegionalOffice);
@@ -522,7 +522,7 @@ const AddQuotation = () => {
       formData.append("quotLogo", "");
       formData.append("quotCompanyLogo", "");
 
-      console.log("body", quotFormData.quotLogo);
+      // console.log("body", quotFormData.quotLogo);
       const isFormValid = componentSelectorRef.current.isMarkupFormValid();
 
       if (isFormValid) {
@@ -610,16 +610,16 @@ const AddQuotation = () => {
           quotationDetails.hotels.forEach((pkg) => {
             quotPackageData.push({
               packageName: pkg.quotPackageName,
-              haltingDest: pkg.haltingPoint.haltingPointName,
-              hotelType: pkg.hotelType.hotelTypeName,
+              haltingDest: pkg.halting.haltingPointName,
+              hotelType: pkg.hotel_type.hotelTypeName,
               hotelName: pkg.hotel.hotelName,
               fromDate: new Date(pkg.quotHotelFromDate)
                 .toISOString()
                 .split("T")[0],
               toDate: new Date(pkg.quotHotelToDate).toISOString().split("T")[0],
               noOfNights: pkg.quotHotelNoOfNights,
-              roomType: pkg.roomType.roomTypeName,
-              mealType: pkg.mealType.mealTypeName,
+              roomType: pkg.room_type.roomTypeName,
+              mealType: pkg.meal_type.mealTypeName,
               haltingDestId: pkg.fkHaltingDestId,
               hotelTypeId: pkg.fkHotelTypeId,
               hotelId: pkg.fkHotelId,
@@ -655,9 +655,9 @@ const AddQuotation = () => {
                 .split("T")[0],
               vehicleName: quotItinerary.vehicle.vehicleName,
               fkVehicleId: quotItinerary.fkVehicleId,
-              pickupPt: quotItinerary.pickupPoint.transitPointName,
+              pickupPt: quotItinerary.pickup.transitPointName,
               quotItiPickupPtId: quotItinerary.quotItiPickupPtId,
-              dropPt: quotItinerary.dropPoint.transitPointName,
+              dropPt: quotItinerary.drop.transitPointName,
               quotItiDropPtId: quotItinerary.quotItiDropPtId,
               quotItiNoOfVehicles: quotItinerary.quotItiNoOfVehicles,
               quotItiAddons: quotItiAddons,
