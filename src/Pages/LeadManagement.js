@@ -19,7 +19,10 @@ const LeadManagement = () => {
           <div className="content-wrapper">
             <div className="card">
               <div className="card-body">
-                <h4 className="card-title">Lead Management </h4>
+              <div className="flex">
+                  <ion-icon name="people-outline" color="primary"></ion-icon>
+                  <h4 className="card-title mt-1 ml-1">Lead Management</h4>
+                </div>
                 <div className="float-right">
                   <button
                     className="btn btn-primary btn-sm"
@@ -34,25 +37,25 @@ const LeadManagement = () => {
                 {isFormOpen && 
                  <SlideDown className={'my-dropdown-slidedown'}>
                 <div  className={`form-div show-box ${isFormOpen ? 'visible' : 'hidden'}`}>
-                <div class="card">
-                <div class="card-body">
+                <div className="card">
+                <div className="card-body">
                  
-                  <form class="form-sample">
+                  <form className="form-sample">
                     
-                    <div class="row">
-                      <div class="col-md-6">
-                        <div class="form-group row">
-                          <label class="col-sm-3 col-form-label">Lead Date</label>
-                          <div class="col-sm-9">
-                            <input type="date" class="form-control" min={todaysDate} value={todaysDate}/>
+                    <div className="row">
+                      <div className="col-md-6">
+                        <div className="form-group row">
+                          <label className="col-sm-3 col-form-label">Lead Date</label>
+                          <div className="col-sm-9">
+                            <input type="date" className="form-control" min={todaysDate} value={todaysDate}/>
                           </div>
                         </div>
                       </div>
-                      <div class="col-md-6">
-                        <div class="form-group row">
-                          <label class="col-sm-3 col-form-label">Customer Name</label>
-                          <div class="col-sm-9">
-                            <input type="text" class="form-control"/>
+                      <div className="col-md-6">
+                        <div className="form-group row">
+                          <label className="col-sm-3 col-form-label">Customer Name</label>
+                          <div className="col-sm-9">
+                            <input type="text" className="form-control"/>
                           </div>
                         </div>
                       </div>
@@ -60,38 +63,38 @@ const LeadManagement = () => {
                  
                  
                    
-                    <div class="row">
-                      <div class="col-md-6">
-                        <div class="form-group row">
-                          <label class="col-sm-3 col-form-label">Contact No</label>
-                          <div class="col-sm-9">
-                            <input type="number" class="form-control"/>
+                    <div className="row">
+                      <div className="col-md-6">
+                        <div className="form-group row">
+                          <label className="col-sm-3 col-form-label">Contact No</label>
+                          <div className="col-sm-9">
+                            <input type="number" className="form-control"/>
                           </div>
                         </div>
                       </div>
-                      <div class="col-md-6">
-                        <div class="form-group row">
-                          <label class="col-sm-3 col-form-label">Email</label>
-                          <div class="col-sm-9">
-                            <input type="text" class="form-control"/>
+                      <div className="col-md-6">
+                        <div className="form-group row">
+                          <label className="col-sm-3 col-form-label">Email</label>
+                          <div className="col-sm-9">
+                            <input type="text" className="form-control"/>
                           </div>
                         </div>
                       </div>
                     </div>
-                    <div class="row">
-                      <div class="col-md-6">
-                        <div class="form-group row">
-                          <label class="col-sm-3 col-form-label">Location / Address</label>
-                          <div class="col-sm-9">
-                            <input type="text" class="form-control"/>
+                    <div className="row">
+                      <div className="col-md-6">
+                        <div className="form-group row">
+                          <label className="col-sm-3 col-form-label">Location / Address</label>
+                          <div className="col-sm-9">
+                            <input type="text" className="form-control"/>
                           </div>
                         </div>
                       </div>
-                      <div class="col-md-6">
-                        <div class="form-group row">
-                          <label class="col-sm-3 col-form-label">Lead Status</label>
-                          <div class="col-sm-9">
-                            <select class="form-control">
+                      <div className="col-md-6">
+                        <div className="form-group row">
+                          <label className="col-sm-3 col-form-label">Lead Status</label>
+                          <div className="col-sm-9">
+                            <select className="form-control">
                               <option>Hot</option>
                               <option>Warm</option>
                               <option>Cold</option>
@@ -100,12 +103,12 @@ const LeadManagement = () => {
                         </div>
                       </div>
                     </div>
-                    <div class="row">
-                      <div class="col-md-6">
-                        <div class="form-group row">
-                          <label class="col-sm-3 col-form-label">Details</label>
-                          <div class="col-sm-9">
-                            <textarea type="text" class="form-control" />
+                    <div className="row">
+                      <div className="col-md-6">
+                        <div className="form-group row">
+                          <label className="col-sm-3 col-form-label">Details</label>
+                          <div className="col-sm-9">
+                            <textarea type="text" className="form-control" />
                           </div>
                         </div>
                       </div>
@@ -186,10 +189,10 @@ const LeadManagement = () => {
                                 <tr>
                                   <th
                                     className="sorting sorting_asc"
-                                    tabindex="0"
+                                    tabIndex="0"
                                     aria-controls="order-listing"
-                                    rowspan="1"
-                                    colspan="1"
+                                    rowSpan="1"
+                                    colSpan="1"
                                     aria-sort="ascending"
                                     aria-label="Order #: activate to sort column descending"
                                     style={{ width: "107.016px" }}
@@ -198,10 +201,10 @@ const LeadManagement = () => {
                                   </th>
                                   <th
                                     className="sorting"
-                                    tabindex="0"
+                                    tabIndex="0"
                                     aria-controls="order-listing"
-                                    rowspan="1"
-                                    colspan="1"
+                                    rowSpan="1"
+                                    colSpan="1"
                                     aria-label="Purchased On: activate to sort column ascending"
                                     style={{ width: "171.375px" }}
                                   >
@@ -209,10 +212,10 @@ const LeadManagement = () => {
                                   </th>
                                   <th
                                     className="sorting"
-                                    tabindex="0"
+                                    tabIndex="0"
                                     aria-controls="order-listing"
-                                    rowspan="1"
-                                    colspan="1"
+                                    rowSpan="1"
+                                    colSpan="1"
                                     aria-label="Customer: activate to sort column ascending"
                                     style={{ width: "127.391px" }}
                                   >
@@ -220,10 +223,10 @@ const LeadManagement = () => {
                                   </th>
                                   <th
                                     className="sorting"
-                                    tabindex="0"
+                                    tabIndex="0"
                                     aria-controls="order-listing"
-                                    rowspan="1"
-                                    colspan="1"
+                                    rowSpan="1"
+                                    colSpan="1"
                                     aria-label="Ship to: activate to sort column ascending"
                                     style={{ width: "116.672px" }}
                                   >
@@ -231,10 +234,10 @@ const LeadManagement = () => {
                                   </th>
                                   <th
                                     className="sorting"
-                                    tabindex="0"
+                                    tabIndex="0"
                                     aria-controls="order-listing"
-                                    rowspan="1"
-                                    colspan="1"
+                                    rowSpan="1"
+                                    colSpan="1"
                                     aria-label="Ship to: activate to sort column ascending"
                                     style={{ width: "116.672px" }}
                                   >
@@ -242,10 +245,10 @@ const LeadManagement = () => {
                                   </th>
                                   <th
                                     className="sorting"
-                                    tabindex="0"
+                                    tabIndex="0"
                                     aria-controls="order-listing"
-                                    rowspan="1"
-                                    colspan="1"
+                                    rowSpan="1"
+                                    colSpan="1"
                                     aria-label="Ship to: activate to sort column ascending"
                                     style={{ width: "116.672px" }}
                                   >
@@ -341,7 +344,7 @@ const LeadManagement = () => {
                             <div
                               className="modal fade"
                               id="countryModal"
-                              tabindex="-1"
+                              tabIndex="-1"
                               aria-labelledby="exampleModalLabel"
                               style={{ display: "none" }}
                               aria-hidden="true"
@@ -424,7 +427,7 @@ const LeadManagement = () => {
                                     aria-disabled="true"
                                     role="link"
                                     data-dt-idx="previous"
-                                    tabindex="-1"
+                                    tabIndex="-1"
                                     className="page-link"
                                   >
                                     Previous
@@ -437,7 +440,7 @@ const LeadManagement = () => {
                                     role="link"
                                     aria-current="page"
                                     data-dt-idx="0"
-                                    tabindex="0"
+                                    tabIndex="0"
                                     className="page-link"
                                   >
                                     1
@@ -452,7 +455,7 @@ const LeadManagement = () => {
                                     aria-disabled="true"
                                     role="link"
                                     data-dt-idx="next"
-                                    tabindex="-1"
+                                    tabIndex="-1"
                                     className="page-link"
                                   >
                                     Next

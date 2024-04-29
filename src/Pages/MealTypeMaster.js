@@ -1,8 +1,223 @@
-import { useState } from "react";
-import { Footer, Navbar, Sidebar } from "../components/CommonImport";
+import { useState, useEffect, useRef } from "react";
+import {
+  Footer,
+  Navbar,
+  Sidebar,
+  CSSTransition,
+  axios,
+  toast,
+  ToastContainer,
+  SimpleReactValidator,
+  ShimmerTable,
+} from "../components/CommonImport";
+import {
+  FETCH_MEAL_TYPES_API,
+  ADD_MEAL_TYPE_API,
+  UPDATE_MEAL_TYPE_API,
+  DELETE_MEAL_TYPE_API,
+} from "../utils/constants";
+import { getDateFormatted } from "../utils/helpers";
+
+import "react-toastify/dist/ReactToastify.css";
+import NoData from "../components/NoData";
+import ConfirmationDialog from "../components/ConfirmationDialog";
+import RenderPageNumbers from "./RenderPageNumbers";
+import Loader from "../components/Loader";
+
 const MealTypeMaster = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
+  const [mealType, setMealType] = useState("");
+  const [mealTypes, setMealTypes] = useState([]);
+  const [originalMealTypesList, setOriginalMealTypesList] = useState([]);
+  const [isUpdate, setUpdate] = useState(false);
+  const [deleteId, setDeleteId] = useState(false);
+  const [updateId, setUpdateId] = useState("");
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [searchValue, setSearchValue] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isDataReady, setDataReady] = useState(false);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const simpleValidator = useRef(
+    new SimpleReactValidator({
+      autoForceUpdate: this,
+    })
+  );
+  const handleCloseModal = () => {
+    document
+      .getElementById("mealTypeModal")
+      .classList.remove("show", "d-block");
+    document
+      .querySelectorAll(".modal-backdrop")
+      .forEach((el) => el.classList.remove("modal-backdrop"));
+  };
+  const fetchMealTypes = async () => {
+    try {
+      let url = FETCH_MEAL_TYPES_API;
 
+      let response = await axios.post(url);
+      if (response) {
+        if (response.status == 200) {
+          setDataReady(true);
+
+          setMealTypes(response.data.data);
+          setOriginalMealTypesList(response.data.data);
+        }
+      }
+    } catch (e) {
+      setDataReady(true);
+
+      setMealTypes([]);
+    }
+  };
+  const resetForm = () => {
+    setMealType("");
+  };
+  const addMealType = async () => {
+    try {
+      let url = ADD_MEAL_TYPE_API;
+      let body = {
+        mealTypeName: mealType,
+      };
+      setIsLoading(true);
+
+      if (simpleValidator.current.allValid()) {
+        let response = await axios.post(url, body);
+        if (response) {
+          if (response.status == 200) {
+            toast.success(response.data.message, {
+              position: "top-right",
+            });
+            handleCloseModal();
+            resetForm();
+            fetchMealTypes();
+            simpleValidator.current.hideMessages();
+            setIsLoading(false);
+          }
+        }
+      } else {
+        simpleValidator.current.showMessages();
+        setIsLoading(false);
+      }
+    } catch (e) {
+      console.log("ee", e);
+      setIsLoading(false);
+      toast.error("Something Went Wrong :(", {
+        position: "top-right",
+      });
+    }
+  };
+  const updateMealType = async () => {
+    try {
+      let url = UPDATE_MEAL_TYPE_API;
+      let body = {
+        id: updateId,
+        mealTypeName: mealType,
+      };
+      setIsLoading(true);
+      if (simpleValidator.current.allValid()) {
+        let response = await axios.post(url, body);
+        if (response) {
+          if (response.status == 200) {
+            toast.success(response.data.message, {
+              position: "top-right",
+            });
+
+            handleCloseModal();
+            resetForm();
+            fetchMealTypes();
+            simpleValidator.current.hideMessages();
+            setIsLoading(false);
+          }
+        }
+      } else {
+        simpleValidator.current.showMessages();
+        setIsLoading(false);
+      }
+    } catch (e) {
+      setIsLoading(false);
+      toast.error("Something Went Wrong :(", {
+        position: "top-right",
+      });
+    }
+  };
+  const deleteMealType = async (id) => {
+    try {
+      let url = DELETE_MEAL_TYPE_API;
+      let body = {
+        id: id,
+      };
+      let response = await axios.post(url, body);
+      if (response) {
+        if (response.status == 200) {
+          toast.success(response.data.message, {
+            position: "top-right",
+          });
+
+          setMealType("");
+          fetchMealTypes();
+        }
+      }
+    } catch (e) {
+      toast.error("Something Went Wrong :(", {
+        position: "top-right",
+      });
+    }
+  };
+
+  const openModal = (updateId) => {
+    var mealTypeObj = mealTypes.filter((mealType) => {
+      return mealType.id == updateId;
+    })[0];
+    if (mealTypeObj) {
+      setMealType(mealTypeObj.mealTypeName);
+      setUpdate(true);
+      setUpdateId(updateId);
+    }
+  };
+
+  const handleConfirm = () => {
+    deleteMealType(deleteId);
+    setShowConfirmation(false);
+  };
+
+  const handleCancel = () => {
+    setShowConfirmation(false);
+  };
+  const handlePagination = (number) => {
+    setCurrentPage(Number(number));
+  };
+
+  const totalPages = Math.ceil(mealTypes ? mealTypes.length / itemsPerPage : 1);
+  const handleNextPage = () => {
+    setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages));
+  };
+
+  const handlePrevPage = () => {
+    setCurrentPage((prevPage) => Math.max(prevPage - 1, 1));
+  };
+  const escapeRegExp = (string) => {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // Escaping special characters
+  };
+  const filterData = (searchValue) => {
+    setSearchValue(searchValue);
+    if (searchValue && searchValue.trim() !== "") {
+      var escapedSearchValue = escapeRegExp(searchValue); // Escaping searchValue
+      var filteredMealType = mealTypes?.filter((row) =>
+        row?.mealTypeName
+          ?.toLowerCase()
+          .includes(escapedSearchValue.toLowerCase())
+      );
+      setMealTypes(filteredMealType);
+    } else {
+      setMealTypes(originalMealTypesList);
+    }
+  };
+  useEffect(() => {
+    fetchMealTypes();
+  }, []);
   return (
     <div className="container-scroller">
       <Navbar setSidebarOpen={setSidebarOpen}></Navbar>
@@ -12,12 +227,19 @@ const MealTypeMaster = () => {
           <div className="content-wrapper">
             <div className="card">
               <div className="card-body">
-                <h4 className="card-title">Meal Type Master </h4>
+                <div className="flex">
+                  <ion-icon name="restaurant-outline" color="primary"></ion-icon>
+                  <h4 className="card-title mt-1 ml-1">Meal Type Master</h4>
+                </div>
                 <div className="float-right">
                   <button
                     className="btn btn-primary btn-sm"
                     data-bs-toggle="modal"
-                    data-bs-target="#countryModal"
+                    data-bs-target="#mealTypeModal"
+                    onClick={() => {
+                      setMealType("");
+                      setUpdate(false);
+                    }}
                   >
                     Add Meal Type
                   </button>
@@ -44,11 +266,13 @@ const MealTypeMaster = () => {
                                   name="order-listing_length"
                                   aria-controls="order-listing"
                                   className="form-select form-select-sm"
+                                  onChange={(e) => {
+                                    setItemsPerPage(e.target.value);
+                                  }}
                                 >
                                   <option value="5">5</option>
                                   <option value="10">10</option>
                                   <option value="15">15</option>
-                                  <option value="-1">All</option>
                                 </select>{" "}
                                 entries
                               </label>
@@ -65,139 +289,108 @@ const MealTypeMaster = () => {
                                   className="form-control"
                                   placeholder="Search"
                                   aria-controls="order-listing"
+                                  value={searchValue}
+                                  onChange={(e) => filterData(e.target.value)}
                                 />
                               </label>
                             </div>
                           </div>
                         </div>
+                        {isDataReady == false && <ShimmerTable row={10} />}
                         <div className="row dt-row">
                           <div className="col-sm-12">
-                            <table
-                              id="order-listing"
-                              className="table dataTable no-footer"
-                              aria-describedby="order-listing_info"
-                            >
-                              <thead>
-                                <tr>
-                                  <th
-                                    className="sorting sorting_asc"
-                                    tabindex="0"
-                                    aria-controls="order-listing"
-                                    rowspan="1"
-                                    colspan="1"
-                                    aria-sort="ascending"
-                                    aria-label="Order #: activate to sort column descending"
-                                    style={{ width: "107.016px" }}
-                                  >
-                                    Sr. No.
-                                  </th>
-                                  <th
-                                    className="sorting"
-                                    tabindex="0"
-                                    aria-controls="order-listing"
-                                    rowspan="1"
-                                    colspan="1"
-                                    aria-label="Purchased On: activate to sort column ascending"
-                                    style={{ width: "171.375px" }}
-                                  >
-                                    Meal Type
-                                  </th>
-
-                                  <th
-                                    className="sorting"
-                                    tabindex="0"
-                                    aria-controls="order-listing"
-                                    rowspan="1"
-                                    colspan="1"
-                                    aria-label="Customer: activate to sort column ascending"
-                                    style={{ width: "127.391px" }}
-                                  >
-                                    Status
-                                  </th>
-                                  <th
-                                    className="sorting"
-                                    tabindex="0"
-                                    aria-controls="order-listing"
-                                    rowspan="1"
-                                    colspan="1"
-                                    aria-label="Ship to: activate to sort column ascending"
-                                    style={{ width: "116.672px" }}
-                                  >
-                                    Action
-                                  </th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                <tr className="odd">
-                                  <td className="sorting_1">1</td>
-                                  <td>Breakfast + Dinner</td>
-
-                                  <td>
-                                    <label className="badge badge-success">
-                                      Active
-                                    </label>
-                                  </td>
-                                  <td>
-                                    <ion-icon
-                                      name="trash-outline"
-                                      color="danger"
-                                      style={{ marginRight: "10px" }}
-                                    ></ion-icon>
-                                    <ion-icon
-                                      name="create-outline"
-                                      color="primary"
-                                    ></ion-icon>
-                                  </td>
-                                </tr>
-                                <tr className="odd">
-                                  <td className="sorting_1">2</td>
-                                  <td>Breakfast </td>
-
-                                  <td>
-                                    <label className="badge badge-success">
-                                      Active
-                                    </label>
-                                  </td>
-                                  <td>
-                                    <ion-icon
-                                      name="trash-outline"
-                                      color="danger"
-                                      style={{ marginRight: "10px" }}
-                                    ></ion-icon>
-                                    <ion-icon
-                                      name="create-outline"
-                                      color="primary"
-                                    ></ion-icon>
-                                  </td>
-                                </tr>
-                                <tr className="odd">
-                                  <td className="sorting_1">3</td>
-                                  <td>Dinner</td>
-
-                                  <td>
-                                    <label className="badge badge-success">
-                                      Active
-                                    </label>
-                                  </td>
-                                  <td>
-                                    <ion-icon
-                                      name="trash-outline"
-                                      color="danger"
-                                      style={{ marginRight: "10px" }}
-                                    ></ion-icon>
-                                    <ion-icon
-                                      name="create-outline"
-                                      color="primary"
-                                    ></ion-icon>
-                                  </td>
-                                </tr>
-                              </tbody>
-                            </table>
-
+                            {mealTypes && mealTypes.length > 0 && (
+                              <table
+                                id="order-listing"
+                                className="table dataTable no-footer"
+                                aria-describedby="order-listing_info"
+                              >
+                                <thead>
+                                  <tr>
+                                    <th style={{ width: "107.016px" }}>
+                                      Sr. No.
+                                    </th>
+                                    <th style={{ width: "171.375px" }}>
+                                      Meal Type
+                                    </th>
+                                    <th style={{ width: "127.391px" }}>
+                                      Created
+                                    </th>
+                                    <th style={{ width: "127.391px" }}>
+                                      Status
+                                    </th>
+                                    <th style={{ width: "116.672px" }}>
+                                      Action
+                                    </th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {mealTypes &&
+                                    mealTypes
+                                      .slice(startIndex, endIndex)
+                                      .map((mealType, index) => (
+                                        <CSSTransition
+                                          key={mealType.id}
+                                          timeout={500}
+                                          classNames="item elementdiv"
+                                        >
+                                          <tr className="odd" key={index}>
+                                            <td className="sorting_1">
+                                              {" "}
+                                              {startIndex + index + 1}
+                                            </td>
+                                            <td>{mealType.mealTypeName}</td>
+                                            <td>
+                                              {getDateFormatted(
+                                                mealType.createdAt
+                                              )}
+                                            </td>
+                                            <td>
+                                              <label
+                                                className={`badge ${
+                                                  mealType.status == "1"
+                                                    ? "badge-success"
+                                                    : "badge-danger"
+                                                }`}
+                                              >
+                                                {mealType.status == "1"
+                                                  ? "Active"
+                                                  : "Inactive"}
+                                              </label>
+                                            </td>
+                                            <td>
+                                              <ion-icon
+                                                onClick={() =>
+                                                  openModal(mealType.id)
+                                                }
+                                                name="create-outline"
+                                                color="primary"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#mealTypeModal"
+                                              ></ion-icon>
+                                              <ion-icon
+                                                name="trash-outline"
+                                                color="danger"
+                                                style={{ marginRight: "10px" }}
+                                                onClick={() => {
+                                                  setShowConfirmation(true);
+                                                  setDeleteId(mealType.id);
+                                                }}
+                                              ></ion-icon>
+                                            </td>
+                                          </tr>
+                                        </CSSTransition>
+                                      ))}
+                                </tbody>
+                              </table>
+                            )}
+                            {mealTypes && mealTypes.length == 0 && (
+                              <NoData></NoData>
+                            )}
                             <div
                               className="modal fade"
-                              id="countryModal"
-                              tabindex="-1"
+                              id="mealTypeModal"
+                              tabIndex="-1"
                               aria-labelledby="exampleModalLabel"
                               style={{ display: "none" }}
                               aria-hidden="true"
@@ -212,7 +405,7 @@ const MealTypeMaster = () => {
                                       className="modal-title"
                                       id="exampleModalLabel"
                                     >
-                                      Add Meal Type
+                                      {isUpdate ? "Edit" : "Add"} Meal Type
                                     </h5>
                                     <button
                                       type="button"
@@ -230,13 +423,48 @@ const MealTypeMaster = () => {
                                         type="text"
                                         className="form-control form-control-sm"
                                         placeholder="Enter Meal Type"
+                                        value={mealType}
+                                        onChange={(e) => {
+                                          setMealType(e.target.value);
+                                        }}
+                                        onBlur={() => {
+                                          simpleValidator.current.showMessageFor(
+                                            "meal_type"
+                                          );
+                                        }}
                                       />
+                                      <>
+                                        {simpleValidator.current.element
+                                          .length > 0 &&
+                                          simpleValidator.current.message(
+                                            "meal_type",
+                                            mealType,
+                                            [
+                                              "required",
+                                              { regex: /^[A-Za-z\s&-]+$/ },
+                                            ],
+                                            {
+                                              messages: {
+                                                required:
+                                                  "Please enter meal type",
+                                                regex: "Enter valid meal type",
+                                              },
+                                            }
+                                          )}
+                                      </>
                                     </div>
                                   </div>
                                   <div className="modal-footer">
                                     <button
                                       type="button"
                                       className="btn btn-success"
+                                      onClick={() => {
+                                        {
+                                          isUpdate
+                                            ? updateMealType()
+                                            : addMealType();
+                                        }
+                                      }}
                                     >
                                       Submit
                                     </button>
@@ -254,66 +482,19 @@ const MealTypeMaster = () => {
                           </div>
                         </div>
                         <div className="row">
-                          <div className="col-sm-12 col-md-5">
-                            <div
-                              className="dataTables_info"
-                              id="order-listing_info"
-                              role="status"
-                              aria-live="polite"
-                            >
-                              Showing 1 to 10 of 10 entries
-                            </div>
-                          </div>
-                          <div className="col-sm-12 col-md-7">
+                          <div className="col-sm-12 col-md-12">
                             <div
                               className="dataTables_paginate paging_simple_numbers"
                               id="order-listing_paginate"
                             >
-                              <ul className="pagination">
-                                <li
-                                  className="paginate_button page-item previous disabled"
-                                  id="order-listing_previous"
-                                >
-                                  <a
-                                    aria-controls="order-listing"
-                                    aria-disabled="true"
-                                    role="link"
-                                    data-dt-idx="previous"
-                                    tabindex="-1"
-                                    className="page-link"
-                                  >
-                                    Previous
-                                  </a>
-                                </li>
-                                <li className="paginate_button page-item active">
-                                  <a
-                                    href="https://demo.bootstrapdash.com/skydash/themes/vertical-default-light/pages/tables/data-table.html#"
-                                    aria-controls="order-listing"
-                                    role="link"
-                                    aria-current="page"
-                                    data-dt-idx="0"
-                                    tabindex="0"
-                                    className="page-link"
-                                  >
-                                    1
-                                  </a>
-                                </li>
-                                <li
-                                  className="paginate_button page-item next disabled"
-                                  id="order-listing_next"
-                                >
-                                  <a
-                                    aria-controls="order-listing"
-                                    aria-disabled="true"
-                                    role="link"
-                                    data-dt-idx="next"
-                                    tabindex="-1"
-                                    className="page-link"
-                                  >
-                                    Next
-                                  </a>
-                                </li>
-                              </ul>
+                              <RenderPageNumbers
+                                data={mealTypes}
+                                currentPage={currentPage}
+                                handlePagination={handlePagination}
+                                handlePrevPage={handlePrevPage}
+                                handleNextPage={handleNextPage}
+                                totalPages={totalPages}
+                              ></RenderPageNumbers>
                             </div>
                           </div>
                         </div>
@@ -325,6 +506,15 @@ const MealTypeMaster = () => {
             </div>
           </div>
           <Footer></Footer>
+          <ToastContainer />
+
+          <ConfirmationDialog
+            message="Are you sure you want to delete?"
+            onConfirm={handleConfirm}
+            onCancel={handleCancel}
+            show={showConfirmation}
+          />
+          <Loader isLoading={isLoading}></Loader>
         </div>
       </div>
     </div>

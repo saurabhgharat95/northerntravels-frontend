@@ -81,10 +81,10 @@ const TransportationMaster = () => {
                                 <tr>
                                   <th
                                     className="sorting sorting_asc"
-                                    tabindex="0"
+                                    tabIndex="0"
                                     aria-controls="order-listing"
-                                    rowspan="1"
-                                    colspan="1"
+                                    rowSpan="1"
+                                    colSpan="1"
                                     aria-sort="ascending"
                                     aria-label="Order #: activate to sort column descending"
                                     style={{ width: "107.016px" }}
@@ -93,21 +93,21 @@ const TransportationMaster = () => {
                                   </th>
                                   <th
                                     className="sorting"
-                                    tabindex="0"
+                                    tabIndex="0"
                                     aria-controls="order-listing"
-                                    rowspan="1"
-                                    colspan="1"
+                                    rowSpan="1"
+                                    colSpan="1"
                                     aria-label="Purchased On: activate to sort column ascending"
                                     style={{ width: "171.375px" }}
                                   >
-                                    Car Name
+                                    Vehicle Name
                                   </th>
                                   <th
                                     className="sorting"
-                                    tabindex="0"
+                                    tabIndex="0"
                                     aria-controls="order-listing"
-                                    rowspan="1"
-                                    colspan="1"
+                                    rowSpan="1"
+                                    colSpan="1"
                                     aria-label="Purchased On: activate to sort column ascending"
                                     style={{ width: "171.375px" }}
                                   >
@@ -115,10 +115,10 @@ const TransportationMaster = () => {
                                   </th>
                                   <th
                                     className="sorting"
-                                    tabindex="0"
+                                    tabIndex="0"
                                     aria-controls="order-listing"
-                                    rowspan="1"
-                                    colspan="1"
+                                    rowSpan="1"
+                                    colSpan="1"
                                     aria-label="Purchased On: activate to sort column ascending"
                                     style={{ width: "171.375px" }}
                                   >
@@ -126,10 +126,10 @@ const TransportationMaster = () => {
                                   </th>
                                   <th
                                     className="sorting"
-                                    tabindex="0"
+                                    tabIndex="0"
                                     aria-controls="order-listing"
-                                    rowspan="1"
-                                    colspan="1"
+                                    rowSpan="1"
+                                    colSpan="1"
                                     aria-label="Purchased On: activate to sort column ascending"
                                     style={{ width: "171.375px" }}
                                   >
@@ -137,10 +137,10 @@ const TransportationMaster = () => {
                                   </th>
                                   <th
                                     className="sorting"
-                                    tabindex="0"
+                                    tabIndex="0"
                                     aria-controls="order-listing"
-                                    rowspan="1"
-                                    colspan="1"
+                                    rowSpan="1"
+                                    colSpan="1"
                                     aria-label="Purchased On: activate to sort column ascending"
                                     style={{ width: "171.375px" }}
                                   >
@@ -148,10 +148,10 @@ const TransportationMaster = () => {
                                   </th>
                                   <th
                                     className="sorting"
-                                    tabindex="0"
+                                    tabIndex="0"
                                     aria-controls="order-listing"
-                                    rowspan="1"
-                                    colspan="1"
+                                    rowSpan="1"
+                                    colSpan="1"
                                     aria-label="Purchased On: activate to sort column ascending"
                                     style={{ width: "171.375px" }}
                                   >
@@ -159,10 +159,10 @@ const TransportationMaster = () => {
                                   </th>
                                   <th
                                     className="sorting"
-                                    tabindex="0"
+                                    tabIndex="0"
                                     aria-controls="order-listing"
-                                    rowspan="1"
-                                    colspan="1"
+                                    rowSpan="1"
+                                    colSpan="1"
                                     aria-label="Purchased On: activate to sort column ascending"
                                     style={{ width: "171.375px" }}
                                   >
@@ -171,10 +171,10 @@ const TransportationMaster = () => {
 
                                   <th
                                     className="sorting"
-                                    tabindex="0"
+                                    tabIndex="0"
                                     aria-controls="order-listing"
-                                    rowspan="1"
-                                    colspan="1"
+                                    rowSpan="1"
+                                    colSpan="1"
                                     aria-label="Customer: activate to sort column ascending"
                                     style={{ width: "127.391px" }}
                                   >
@@ -182,10 +182,10 @@ const TransportationMaster = () => {
                                   </th>
                                   <th
                                     className="sorting"
-                                    tabindex="0"
+                                    tabIndex="0"
                                     aria-controls="order-listing"
-                                    rowspan="1"
-                                    colspan="1"
+                                    rowSpan="1"
+                                    colSpan="1"
                                     aria-label="Ship to: activate to sort column ascending"
                                     style={{ width: "116.672px" }}
                                   >
@@ -211,13 +211,13 @@ const TransportationMaster = () => {
                                   </td>
                                   <td>
                                     <ion-icon
+                                      name="create-outline"
+                                      color="primary"
+                                    ></ion-icon>
+                                    <ion-icon
                                       name="trash-outline"
                                       color="danger"
                                       style={{ marginRight: "10px" }}
-                                    ></ion-icon>
-                                    <ion-icon
-                                      name="create-outline"
-                                      color="primary"
                                     ></ion-icon>
                                   </td>
                                 </tr>
@@ -240,13 +240,13 @@ const TransportationMaster = () => {
                                   </td>
                                   <td>
                                     <ion-icon
+                                      name="create-outline"
+                                      color="primary"
+                                    ></ion-icon>
+                                    <ion-icon
                                       name="trash-outline"
                                       color="danger"
                                       style={{ marginRight: "10px" }}
-                                    ></ion-icon>
-                                    <ion-icon
-                                      name="create-outline"
-                                      color="primary"
                                     ></ion-icon>
                                   </td>
                                 </tr>
@@ -267,13 +267,13 @@ const TransportationMaster = () => {
                                   </td>
                                   <td>
                                     <ion-icon
+                                      name="create-outline"
+                                      color="primary"
+                                    ></ion-icon>
+                                    <ion-icon
                                       name="trash-outline"
                                       color="danger"
                                       style={{ marginRight: "10px" }}
-                                    ></ion-icon>
-                                    <ion-icon
-                                      name="create-outline"
-                                      color="primary"
                                     ></ion-icon>
                                   </td>
                                 </tr>
@@ -283,7 +283,7 @@ const TransportationMaster = () => {
                             <div
                               className="modal fade"
                               id="countryModal"
-                              tabindex="-1"
+                              tabIndex="-1"
                               aria-labelledby="exampleModalLabel"
                               style={{ display: "none" }}
                               aria-hidden="true"
@@ -315,7 +315,7 @@ const TransportationMaster = () => {
                                       <select
                                         className="js-example-basic-single w-100 select2-hidden-accessible"
                                         data-select2-id="1"
-                                        tabindex="-1"
+                                        tabIndex="-1"
                                         aria-hidden="true"
                                       >
                                         <option value="in" data-select2-id="3">
@@ -340,7 +340,7 @@ const TransportationMaster = () => {
                                       <select
                                         className="js-example-basic-single w-100 select2-hidden-accessible"
                                         data-select2-id="1"
-                                        tabindex="-1"
+                                        tabIndex="-1"
                                         aria-hidden="true"
                                       >
                                         <option value="in" data-select2-id="3">
@@ -365,7 +365,7 @@ const TransportationMaster = () => {
                                       <select
                                         className="js-example-basic-single w-100 select2-hidden-accessible"
                                         data-select2-id="1"
-                                        tabindex="-1"
+                                        tabIndex="-1"
                                         aria-hidden="true"
                                       >
                                         <option value="in" data-select2-id="3">
@@ -406,7 +406,7 @@ const TransportationMaster = () => {
                                       <select
                                         className="js-example-basic-single w-100 select2-hidden-accessible"
                                         data-select2-id="1"
-                                        tabindex="-1"
+                                        tabIndex="-1"
                                         aria-hidden="true"
                                       >
                                         <option value="in" data-select2-id="3">
@@ -431,7 +431,7 @@ const TransportationMaster = () => {
                                       <select
                                         className="js-example-basic-single w-100 select2-hidden-accessible"
                                         data-select2-id="1"
-                                        tabindex="-1"
+                                        tabIndex="-1"
                                         aria-hidden="true"
                                       >
                                         <option value="in" data-select2-id="3">
@@ -498,7 +498,7 @@ const TransportationMaster = () => {
                                     aria-disabled="true"
                                     role="link"
                                     data-dt-idx="previous"
-                                    tabindex="-1"
+                                    tabIndex="-1"
                                     className="page-link"
                                   >
                                     Previous
@@ -511,7 +511,7 @@ const TransportationMaster = () => {
                                     role="link"
                                     aria-current="page"
                                     data-dt-idx="0"
-                                    tabindex="0"
+                                    tabIndex="0"
                                     className="page-link"
                                   >
                                     1
@@ -526,7 +526,7 @@ const TransportationMaster = () => {
                                     aria-disabled="true"
                                     role="link"
                                     data-dt-idx="next"
-                                    tabindex="-1"
+                                    tabIndex="-1"
                                     className="page-link"
                                   >
                                     Next
