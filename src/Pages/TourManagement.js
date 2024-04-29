@@ -326,7 +326,18 @@ const TourManagement = () => {
             </div>
           </div>
           <Footer></Footer>
-          <ToastContainer />
+          <ToastContainer
+            position="top-right"
+            autoClose={2000}
+            hideProgressBar
+            newestOnTop
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss={false}
+            draggable
+            pauseOnHover={false}
+            theme="colored"
+          />
 
           <ConfirmationDialog
             message="Are you sure you want to delete?"

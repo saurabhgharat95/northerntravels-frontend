@@ -47,12 +47,16 @@ const RoomTypeMaster = () => {
     })
   );
   const handleCloseModal = () => {
-    document
-      .getElementById("roomTypeModal")
-      .classList.remove("show", "d-block");
-    document
-      .querySelectorAll(".modal-backdrop")
-      .forEach((el) => el.classList.remove("modal-backdrop"));
+
+
+      var modal = document.getElementById("roomTypeModal");
+
+    if (modal) {
+      var modalInstance = bootstrap.Modal.getInstance(modal);
+      if (modalInstance) {
+        modalInstance.hide();
+      }
+    }
   };
   const fetchRoomTypes = async () => {
     try {
@@ -228,10 +232,7 @@ const RoomTypeMaster = () => {
             <div className="card">
               <div className="card-body">
                 <div className="flex">
-                  <ion-icon
-                    name="bed-outline"
-                    color="primary"
-                  ></ion-icon>
+                  <ion-icon name="bed-outline" color="primary"></ion-icon>
                   <h4 className="card-title mt-1 ml-1">Room Type Master</h4>
                 </div>
                 <div className="float-right">
@@ -509,7 +510,18 @@ const RoomTypeMaster = () => {
             </div>
           </div>
           <Footer></Footer>
-          <ToastContainer />
+          <ToastContainer
+            position="top-right"
+            autoClose={2000}
+            hideProgressBar
+            newestOnTop
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss={false}
+            draggable
+            pauseOnHover={false}
+            theme="colored"
+          />
 
           <ConfirmationDialog
             message="Are you sure you want to delete?"

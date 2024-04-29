@@ -1,4 +1,4 @@
-import { useState, useRef,useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   Footer,
   Navbar,
@@ -22,7 +22,7 @@ import {
   UPDATE_QUOTATION_ITINERARY_API,
   UPDATE_QUOTATION_MARKUP_API,
   FETCH_QUOTATION_DETAILS_API,
-  FETCH_TOUR_DETAILS_API
+  FETCH_TOUR_DETAILS_API,
 } from "../utils/constants";
 import { setQuotationFormData, resetFormData } from "../utils/store";
 import {
@@ -54,7 +54,6 @@ const AddQuotation = () => {
     }
   };
   const setTabDisabledFalse = (tabId) => {
-    console.log('isd2',tabId)
     const updatedTabNames = tabNames.map((tab) => {
       if (tab.id === tabId) {
         return { ...tab, isDisabled: false };
@@ -63,9 +62,6 @@ const AddQuotation = () => {
     });
 
     setTabNames(updatedTabNames);
-    setTimeout(() => {
-      console.log('tabNames after update:', tabNames);
-    }, 100);
   };
   const setTabsDisabledFalseArray = (tabIds) => {
     const updatedTabNames = tabNames.map((tab) => {
@@ -369,7 +365,6 @@ const AddQuotation = () => {
       if (response) {
         if (response.status == 200) {
           let itineraryDetails = response.data.data;
-          console.log("itineraryDetails", itineraryDetails);
           if (Array.isArray(itineraryDetails)) {
             let itineraryData = [];
 
@@ -450,7 +445,6 @@ const AddQuotation = () => {
       let quotItinerarydetails = quotFormData.quotItineraryData;
 
       if (quotItinerarydetails.length > 0) {
-        console.log("quotItinerarydetails", quotItinerarydetails);
         quotItineraryData = quotItinerarydetails.map((element) => ({
           quotItiId: element.quotItiId,
           quotItiDay: element.quotItiDay,
@@ -483,9 +477,10 @@ const AddQuotation = () => {
               position: "top-right",
             });
             setIsLoading(false);
-            getQuotationItineraryDetails();
             setSelectedTab(5);
             setTabDisabledFalse(5);
+            getQuotationItineraryDetails();
+
           }
         }
       }
@@ -513,17 +508,19 @@ const AddQuotation = () => {
       formData.append("quotCompanyHotline", quotFormData.quotCompanyHotline);
       formData.append("quotCompanyEmail", quotFormData.quotCompanyEmail);
       formData.append("quotCompanyWebsite", quotFormData.quotCompanyWebsite);
-      formData.append(
-        "quotLogo",
-        base64ToFile(quotFormData.quotLogo, createFilename("logo", "jpeg"))
-      );
-      formData.append(
-        "quotCompanyLogo",
-        base64ToFile(
-          quotFormData.quotCompanyLogo,
-          createFilename("companylogo", "jpeg")
-        )
-      );
+      // formData.append(
+      //   "quotLogo",
+      //   base64ToFile(quotFormData.quotLogo, createFilename("logo", "jpeg"))
+      // );
+      // formData.append(
+      //   "quotCompanyLogo",
+      //   base64ToFile(
+      //     quotFormData.quotCompanyLogo,
+      //     createFilename("companylogo", "jpeg")
+      //   )
+      // );
+      formData.append("quotLogo", "");
+      formData.append("quotCompanyLogo", "");
 
       console.log("body", quotFormData.quotLogo);
       const isFormValid = componentSelectorRef.current.isMarkupFormValid();
@@ -567,7 +564,7 @@ const AddQuotation = () => {
           states.forEach((state) => {
             stateIds.push(state.fkLocationId);
           });
-          console.log('fetchTourDetails',stateIds)
+          console.log("fetchTourDetails", stateIds);
           dispatch(setQuotationFormData("stateIds", stateIds));
           dispatch(setQuotationFormData("tourData", response.data.data));
         }
@@ -593,32 +590,32 @@ const AddQuotation = () => {
           if (quotationDetails.quotTotalPeoples) {
             tabsToEnable.push(2);
           }
-          
+
           if (quotationDetails?.hotels?.length > 0) {
             tabsToEnable.push(3);
-            console.log("Updated tabNames:", tabNames);
           }
-          
+
           if (quotationDetails?.itinerary?.length > 0) {
             tabsToEnable.push(4);
           }
-          
+
           if (quotationDetails.quotMarkup) {
             tabsToEnable.push(5);
           }
           setTabsDisabledFalseArray(tabsToEnable);
           fetchTourDetails(quotationDetails.fkTourId);
           const uniquePackageNames = new Set();
-          const quotPackageData = []
-          const quotItineraryData = []
+          const quotPackageData = [];
+          const quotItineraryData = [];
           quotationDetails.hotels.forEach((pkg) => {
-            quotPackageData.push(
-            {
+            quotPackageData.push({
               packageName: pkg.quotPackageName,
               haltingDest: pkg.haltingPoint.haltingPointName,
               hotelType: pkg.hotelType.hotelTypeName,
               hotelName: pkg.hotel.hotelName,
-              fromDate: new Date(pkg.quotHotelFromDate).toISOString().split("T")[0],
+              fromDate: new Date(pkg.quotHotelFromDate)
+                .toISOString()
+                .split("T")[0],
               toDate: new Date(pkg.quotHotelToDate).toISOString().split("T")[0],
               noOfNights: pkg.quotHotelNoOfNights,
               roomType: pkg.roomType.roomTypeName,
@@ -629,33 +626,33 @@ const AddQuotation = () => {
               roomTypeId: pkg.fkRoomTypeId,
               mealTypeId: pkg.fkMealTypeId,
               quotHotelId: pkg.id,
-            })
+            });
             uniquePackageNames.add(pkg.quotPackageName);
           });
           quotationDetails.itinerary.forEach((quotItinerary) => {
-            let quotItiAddons = []
-            let quotItiDestinations = []
-            quotItinerary.itiAddonData.forEach((addOn)=>{
-              quotItiAddons.push(
-                {
-                  quotItiAddonId: addOn.id,
-                  quotItiService: addOn.quotItiService,
-                  quotItiServicePayable: addOn.quotItiServicePayable,
-                  quotItiServiceAmount:addOn.quotItiServiceAmount,
-                  quotItiServiceRemark: addOn.quotItiServiceRemark,
-                }
-              )
-            })
-            quotItinerary.quotItiDestinations.split(",").forEach((dest)=>{
+            let quotItiAddons = [];
+            let quotItiDestinations = [];
+            quotItinerary.itiAddonData.forEach((addOn) => {
+              quotItiAddons.push({
+                quotItiAddonId: addOn.id,
+                quotItiService: addOn.quotItiService,
+                quotItiServicePayable: addOn.quotItiServicePayable,
+                quotItiServiceAmount: addOn.quotItiServiceAmount,
+                quotItiServiceRemark: addOn.quotItiServiceRemark,
+              });
+            });
+            quotItinerary.quotItiDestinations.split(",").forEach((dest) => {
               quotItiDestinations.push({
-                 destinationName: Number(dest), destinationDesc: "" 
-              })
-            })
-            quotItineraryData.push(
-            {
+                destinationName: Number(dest),
+                destinationDesc: "",
+              });
+            });
+            quotItineraryData.push({
               quotItiId: quotItinerary.id,
               quotItiDay: quotItinerary.quotItiDay,
-              quotItiDate: new Date(quotItinerary.quotItiDate).toISOString().split("T")[0],
+              quotItiDate: new Date(quotItinerary.quotItiDate)
+                .toISOString()
+                .split("T")[0],
               vehicleName: quotItinerary.vehicle.vehicleName,
               fkVehicleId: quotItinerary.fkVehicleId,
               pickupPt: quotItinerary.pickupPoint.transitPointName,
@@ -665,7 +662,7 @@ const AddQuotation = () => {
               quotItiNoOfVehicles: quotItinerary.quotItiNoOfVehicles,
               quotItiAddons: quotItiAddons,
               quotItiDestinations: quotItiDestinations,
-            })
+            });
           });
 
           const uniquePackageNamesArray = Array.from(uniquePackageNames);
@@ -681,8 +678,12 @@ const AddQuotation = () => {
             quotEmail: quotationDetails.quotEmail,
             quotStartPointId: quotationDetails.quotStartPointId,
             quotEndPointId: quotationDetails.quotEndPointId,
-            quotArrivalDate: new Date(quotationDetails.quotArrivalDate).toISOString().split("T")[0],
-            quotDepartureDate: new Date(quotationDetails.quotDepartureDate).toISOString().split("T")[0],
+            quotArrivalDate: new Date(quotationDetails.quotArrivalDate)
+              .toISOString()
+              .split("T")[0],
+            quotDepartureDate: new Date(quotationDetails.quotDepartureDate)
+              .toISOString()
+              .split("T")[0],
             quotDays: quotationDetails.quotDays,
             quotNights: quotationDetails.quotNights,
             quotTotalPeoples: quotationDetails.quotTotalPeoples,
@@ -692,7 +693,7 @@ const AddQuotation = () => {
             quotBlw5: quotationDetails.quotBlw5,
             quotPackageNameArray: uniquePackageNamesArray,
             quotPackageData: quotPackageData,
-            quotItineraryData:quotItineraryData,
+            quotItineraryData: quotItineraryData,
             quotBeforeMarkup: quotationDetails.quotBeforeMarkup,
             quotMarkup: quotationDetails.quotMarkup,
             quotAfterMarkup: quotationDetails.quotAfterMarkup,
@@ -705,7 +706,7 @@ const AddQuotation = () => {
             quotLogo: quotationDetails.quotLogo,
             quotCompanyLogo: quotationDetails.quotCompanyLogo,
           };
-          console.log('formdata',formData)
+          console.log("formdata", formData);
           Object.entries(formData).forEach(([field, value]) => {
             dispatch(setQuotationFormData(field, value));
           });
@@ -798,16 +799,16 @@ const AddQuotation = () => {
                     </div>
                     <div className="actions clearfix">
                       <ul role="menu" aria-label="Pagination">
-                      <li>
-                            <button
-                              className="btn btn-danger"
-                              onClick={() => {
-                                navigate('/quotations');
-                              }}
-                            >
-                              Cancel
-                            </button>
-                          </li>
+                        <li>
+                          <button
+                            className="btn btn-danger"
+                            onClick={() => {
+                              navigate("/quotations");
+                            }}
+                          >
+                            Cancel
+                          </button>
+                        </li>
                         <li aria-disabled="true">
                           <button
                             className="btn text-light btn-secondary"
@@ -842,9 +843,6 @@ const AddQuotation = () => {
                             </button>
                           </li>
                         )}
-                      
-                         
-                     
                       </ul>
                     </div>
                   </div>
@@ -855,7 +853,18 @@ const AddQuotation = () => {
         </div>
       </div>
       <Footer></Footer>
-      <ToastContainer />
+      <ToastContainer
+        position="top-right"
+        autoClose={2000}
+        hideProgressBar
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss={false}
+        draggable
+        pauseOnHover={false}
+        theme="colored"
+      />
 
       <Loader isLoading={isLoading}></Loader>
     </>

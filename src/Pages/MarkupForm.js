@@ -16,9 +16,9 @@ const MarkupForm = ({ onValidationStatusChange }) => {
   const MAX_FILE_SIZE = 1 * 1024 * 1024; // 1 MB in bytes
 
   const [markupObject, setMarkupObject] = useState({
-    quotBeforeMarkup: "",
+    quotBeforeMarkup: 0,
     quotMarkup: "",
-    quotAfterMarkup: "",
+    quotAfterMarkup: 0,
     quotCompanyName: "",
     quotCorporateOffice: "",
     quotRegionalOffice: "",
@@ -36,10 +36,14 @@ const MarkupForm = ({ onValidationStatusChange }) => {
     })
   );
   const handleCloseModal = () => {
-    document.getElementById("imageModal").classList.remove("show", "d-block");
-    document
-      .querySelectorAll(".modal-backdrop")
-      .forEach((el) => el.classList.remove("modal-backdrop"));
+    var modal = document.getElementById("imageModal");
+
+    if (modal) {
+      var modalInstance = bootstrap.Modal.getInstance(modal);
+      if (modalInstance) {
+        modalInstance.hide();
+      }
+    }
   };
   const openImageModal = (imageURL) => {
     setLogoImage(imageURL);
@@ -661,7 +665,18 @@ const MarkupForm = ({ onValidationStatusChange }) => {
         <div className="form-group row"></div>
 
         <div className="form-group row"></div>
-        <ToastContainer />
+        <ToastContainer
+          position="top-right"
+          autoClose={2000}
+          hideProgressBar
+          newestOnTop
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss={false}
+          draggable
+          pauseOnHover={false}
+          theme="colored"
+        />
         <div
           className="modal fade"
           id="imageModal"

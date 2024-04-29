@@ -45,19 +45,16 @@ const CountryMaster = () => {
     new SimpleReactValidator({ autoForceUpdate: this })
   );
   const handleCloseModal = () => {
-    document.getElementById("countryModal").classList.remove("show","d-block");
-    document
-      .querySelectorAll(".modal-backdrop")
-      .forEach((el) => el.classList.remove("modal-backdrop"));
-      var elementToRemove = document.querySelector('.fade.show');
+    var modal = document.getElementById('countryModal');
 
-      // Check if the element exists before removing it
-      if (elementToRemove) {
-          elementToRemove.parentNode.removeChild(elementToRemove);
+    // Use the Bootstrap Modal class to hide the modal
+    if (modal) {
+      var modalInstance = bootstrap.Modal.getInstance(modal);
+      if (modalInstance) {
+        modalInstance.hide();
       }
-      document.body.classList.remove('modal-open');
-      document.body.removeAttribute('style');
-      
+    }
+    
   };
 
   const fetchCountries = async () => {
@@ -523,7 +520,18 @@ const CountryMaster = () => {
             </div>
           </div>
           <Footer></Footer>
-          <ToastContainer />
+          <ToastContainer
+            position="top-right"
+            autoClose={2000}
+            hideProgressBar
+            newestOnTop
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss={false}
+            draggable
+            pauseOnHover={false}
+            theme="colored"
+          />
 
           <ConfirmationDialog
             message="Are you sure you want to delete?"
