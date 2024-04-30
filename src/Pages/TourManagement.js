@@ -12,7 +12,7 @@ import {
   ShimmerTable,
 } from "../components/CommonImport";
 import { FETCH_TOURS_API, DELETE_TOUR_API } from "../utils/constants";
-import { getDateFormatted } from "../utils/helpers";
+import { getDateFormatted,toTitleCase } from "../utils/helpers";
 import "react-toastify/dist/ReactToastify.css";
 import NoData from "../components/NoData";
 import ConfirmationDialog from "../components/ConfirmationDialog";
@@ -245,9 +245,9 @@ const TourManagement = () => {
                                               {" "}
                                               {startIndex + index + 1}
                                             </td>
-                                            <td>{tour.tourName}</td>
-                                            <td>{tour.countryNames}</td>
-                                            <td>{tour.stateNames} </td>
+                                            <td>{toTitleCase(tour.tourName)}</td>
+                                            <td>{toTitleCase(tour.countryNames)}</td>
+                                            <td>{toTitleCase(tour.stateNames)} </td>
                                             <td>
                                               {getDateFormatted(tour.createdAt)}
                                             </td>

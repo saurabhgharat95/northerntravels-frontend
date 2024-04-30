@@ -92,14 +92,22 @@ const AddTourForm = () => {
       let response = await axios.post(url, body);
       if (response) {
         if (response.status == 200) {
-          toast.success(response.data.message, {
-            position: "top-right",
-          });
-          dispatch(resetFormData());
           setIsLoading(false);
-          setTimeout(() => {
-            navigate("/tours");
-          }, 1000);
+
+          if (response.data.data.status == false) {
+            toast.error(response.data.message, {
+              position: "top-right",
+            });
+          } else {
+            toast.success(response.data.message, {
+              position: "top-right",
+            });
+            dispatch(resetFormData());
+            setIsLoading(false);
+            setTimeout(() => {
+              navigate("/tours");
+            }, 1000);
+          }
         }
       }
     } catch (e) {
@@ -152,13 +160,21 @@ const AddTourForm = () => {
       let response = await axios.post(url, body);
       if (response) {
         if (response.status == 200) {
-          toast.success(response.data.message, {
-            position: "top-right",
-          });
-          setTimeout(() => {
-            window.location.reload();
-          }, 1000);
           setIsLoading(false);
+
+          if (response.data.data.status == false) {
+            toast.error(response.data.message, {
+              position: "top-right",
+            });
+          } else {
+            toast.success(response.data.message, {
+              position: "top-right",
+            });
+            setTimeout(() => {
+              window.location.reload();
+            }, 1000);
+            setIsLoading(false);
+          }
         }
       }
     } catch (e) {

@@ -8,6 +8,9 @@ import {
   FETCH_LEADS_API,
   FETCH_TOURS_API,
 } from "../utils/constants";
+import { useNavigate } from "react-router-dom";
+
+
 const Homepage = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
   const [countObj, setCountObj] = useState({
@@ -20,6 +23,7 @@ const Homepage = () => {
     isTourCountReady: false,
     isHotelCountReady: false,
   });
+  const navigate = useNavigate();
   const getTodaysDate = () => {
     var currentDate = new Date();
 
@@ -99,8 +103,6 @@ const Homepage = () => {
         }
       }
     } catch (e) {
-      setDataReady(true);
-      setTours([]);
     }
   };
   const fetchLeads = async () => {
@@ -138,7 +140,7 @@ const Homepage = () => {
                   <div className="col-12 col-xl-8 mb-4 mb-xl-0">
                     <h3 className="font-weight-bold">Welcome Admin</h3>
                   </div>
-                  <div className="col-12 col-xl-4">
+                  {/* <div className="col-12 col-xl-4">
                     <div className="justify-content-end d-flex">
                       <div className="dropdown flex-md-grow-1 flex-xl-grow-0">
                         <button
@@ -171,7 +173,7 @@ const Homepage = () => {
                         </div>
                       </div>
                     </div>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </div>
@@ -188,7 +190,7 @@ const Homepage = () => {
                 <div className="row">
                   <div className="col-md-6 mb-4 stretch-card transparent">
                     <div className="card card-tale">
-                      <div className="card-body">
+                      <div className="card-body" onClick={()=>navigate('/quotations')}>
                         {!countObj.isQuotCountReady && (
                           <ShimmerTitle line={2} gap={10} variant="primary" />
                         )}
@@ -202,7 +204,7 @@ const Homepage = () => {
                     </div>
                   </div>
                   <div className="col-md-6 mb-4 stretch-card transparent">
-                    <div className="card card-dark-blue">
+                    <div className="card card-dark-blue" onClick={()=>navigate('/hotels')}>
                       <div className="card-body">
                         {!countObj.isHotelCountReady && (
                           <ShimmerTitle line={2} gap={10} variant="primary" />
@@ -219,7 +221,7 @@ const Homepage = () => {
                 </div>
                 <div className="row">
                   <div className="col-md-6 mb-4 mb-lg-0 stretch-card transparent">
-                    <div className="card card-light-blue">
+                    <div className="card card-light-blue" onClick={()=>navigate('/tours')}>
                       <div className="card-body">
                         {!countObj.isTourCountReady && (
                           <ShimmerTitle line={2} gap={10} variant="primary" />
@@ -234,7 +236,7 @@ const Homepage = () => {
                     </div>
                   </div>
                   <div className="col-md-6 stretch-card transparent">
-                    <div className="card card-light-danger">
+                    <div className="card card-light-danger" onClick={()=>navigate('/leads')}>
                       <div className="card-body">
                         {!countObj.isLeadCountReady && (
                           <ShimmerTitle line={2} gap={10} variant="primary" />

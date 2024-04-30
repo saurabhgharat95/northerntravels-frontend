@@ -22,7 +22,7 @@ import {
   DELETE_LEAD_API,
 } from "../utils/constants";
 import { useNavigate } from "react-router-dom";
-import { getDateFormatted } from "../utils/helpers";
+import { getDateFormatted,toTitleCase } from "../utils/helpers";
 
 import "react-toastify/dist/ReactToastify.css";
 import NoData from "../components/NoData";
@@ -740,7 +740,7 @@ const LeadManagement = () => {
                                                 lead.leadDateTime
                                               )}
                                             </td>
-                                            <td>{lead.leadCustomerName}</td>
+                                            <td>{toTitleCase(lead.leadCustomerName)}</td>
                                             <td>
                                               <span
                                                 className={`badge ${lead.leadstatus.leadStatusName.toLowerCase()}`}

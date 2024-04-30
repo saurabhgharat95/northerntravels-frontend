@@ -619,8 +619,8 @@ const HotelRoomManagement = () => {
                                                   <label
                                                     className={`badge ${
                                                       hotelRoom.status == "1"
-                                                        ? "badge-success"
-                                                        : "badge-danger"
+                                                        ? "badge-outline-success"
+                                                        : "badge-outline-danger"
                                                     }`}
                                                   >
                                                     {hotelRoom.status == "1"

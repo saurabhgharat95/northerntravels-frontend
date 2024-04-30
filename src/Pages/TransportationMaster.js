@@ -205,7 +205,7 @@ const TransportationMaster = () => {
                                   <td>India</td>
 
                                   <td>
-                                    <label className="badge badge-success">
+                                    <label className="badge badge-outline-success">
                                       Active
                                     </label>
                                   </td>
@@ -234,7 +234,7 @@ const TransportationMaster = () => {
                                   <td>India</td>
 
                                   <td>
-                                    <label className="badge badge-success">
+                                    <label className="badge badge-outline-success">
                                       Active
                                     </label>
                                   </td>
@@ -261,7 +261,7 @@ const TransportationMaster = () => {
                                   <td>India</td>
 
                                   <td>
-                                    <label className="badge badge-success">
+                                    <label className="badge badge-outline-success">
                                       Active
                                     </label>
                                   </td>

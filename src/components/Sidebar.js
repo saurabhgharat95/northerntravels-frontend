@@ -33,7 +33,7 @@ const Sidebar = (props) => {
         { path: "/halting-dest", label: "Halting Destinations", icon: "location-outline" },
         { path: "/hotels", label: "Hotels", icon: "business-outline" },
         { path: "/cars", label: "Vehicles", icon: "car-sport-outline" },
-        { path: "/meal-types", label: "Meal Type", icon: "restaurant-outline" },
+        // { path: "/meal-types", label: "Meal Type", icon: "restaurant-outline" },
         { path: "/room-types", label: "Room Type", icon: "business-outline" },
       ],
     },
@@ -48,7 +48,7 @@ const Sidebar = (props) => {
     "/halting-dest",
     "/hotels",
     "/cars",
-    "/meal-types",
+    // "/meal-types",
     "/room-types",
   ];
   useEffect(() => {

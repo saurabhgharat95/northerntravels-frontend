@@ -21,7 +21,7 @@ import {
   UPDATE_HOTEL_API,
   DELETE_HOTEL_API,
 } from "../utils/constants";
-import { getDateFormatted, getFilteredDropdownOptions } from "../utils/helpers";
+import { getDateFormatted, getFilteredDropdownOptions,toTitleCase } from "../utils/helpers";
 import "react-toastify/dist/ReactToastify.css";
 import NoData from "../components/NoData";
 import ConfirmationDialog from "../components/ConfirmationDialog";
@@ -32,6 +32,7 @@ const HotelMaster = () => {
 
   const [hotelName, setHotelName] = useState("");
   const [hotelContact, setHotelContact] = useState("");
+  const [hotelEmail, setHotelEmail] = useState("");
   const [hotelAddress, setHotelAddress] = useState("");
   const [hotels, setHotels] = useState([]);
   const [originalHotelsList, setOriginalHotelsList] = useState([]);
@@ -207,6 +208,8 @@ const HotelMaster = () => {
       let body = {
         hotelName: hotelName,
         hotelAddress: hotelAddress,
+        hotelEmail: hotelEmail,
+        hotelContactNo: hotelContact,
         fkHotelTypeId: hotelTypeId,
         fkHaltingPointId: haltDestId,
         fkStateId: stateId,
@@ -217,14 +220,22 @@ const HotelMaster = () => {
         let response = await axios.post(url, body);
         if (response) {
           if (response.status == 200) {
-            toast.success(response.data.message, {
-              position: "top-right",
-            });
-            handleCloseModal();
-            resetForm();
-            fetchHotels();
-            simpleValidator.current.hideMessages();
             setIsLoading(false);
+
+            if (response.data.data.status == false) {
+              toast.error(response.data.message, {
+                position: "top-right",
+              });
+            } else {
+              toast.success(response.data.message, {
+                position: "top-right",
+              });
+              handleCloseModal();
+              resetForm();
+              fetchHotels();
+              simpleValidator.current.hideMessages();
+              setIsLoading(false);
+            }
           }
         }
       } else {
@@ -246,6 +257,8 @@ const HotelMaster = () => {
         id: updateId,
         hotelName: hotelName,
         hotelAddress: hotelAddress,
+        hotelEmail: hotelEmail,
+        hotelContactNo: hotelContact,
         fkHotelTypeId: hotelTypeId,
         fkHaltingPointId: haltDestId,
         fkStateId: stateId,
@@ -256,15 +269,23 @@ const HotelMaster = () => {
         let response = await axios.post(url, body);
         if (response) {
           if (response.status == 200) {
-            toast.success(response.data.message, {
-              position: "top-right",
-            });
-
-            handleCloseModal();
-            resetForm();
-            fetchHotels();
-            simpleValidator.current.hideMessages();
             setIsLoading(false);
+
+            if (response.data.data.status == false) {
+              toast.error(response.data.message, {
+                position: "top-right",
+              });
+            } else {
+              toast.success(response.data.message, {
+                position: "top-right",
+              });
+
+              handleCloseModal();
+              resetForm();
+              fetchHotels();
+              simpleValidator.current.hideMessages();
+              setIsLoading(false);
+            }
           }
         }
       } else {
@@ -313,7 +334,7 @@ const HotelMaster = () => {
       setStateId(hotelObj.fkStateId);
       setHaltDestId(hotelObj.fkHaltingPointId);
       setHotelTypeId(hotelObj.fkHotelTypeId);
-      setHotelAddress(hotelObj.hotelAddress)
+      setHotelAddress(hotelObj.hotelAddress);
       setUpdate(true);
       setUpdateId(updateId);
     }
@@ -520,6 +541,9 @@ const HotelMaster = () => {
                                       Contact Number
                                     </th>
                                     <th style={{ width: "171.375px" }}>
+                                      Email
+                                    </th>
+                                    <th style={{ width: "171.375px" }}>
                                       Address
                                     </th>
                                     <th style={{ width: "127.391px" }}>
@@ -548,25 +572,37 @@ const HotelMaster = () => {
                                               {" "}
                                               {startIndex + index + 1}
                                             </td>
-                                            <td>{hotel.hotelName}</td>
-                                            <td>{hotel.hotelTypeName}</td>
-                                            <td>{hotel.haltingPointName}</td>
-                                            <td>{hotel.stateName}</td>
-                                            <td>{hotel.countryName}</td>
-                                            <td>N.A</td>
-                                            <td>{hotel.hotelAddress}</td>
+                                            <td>{toTitleCase(hotel.hotelName)}</td>
+                                            <td>{toTitleCase(hotel.hotelTypeName)}</td>
+                                            <td>{toTitleCase(hotel.haltingPointName)}</td>
+                                            <td>{toTitleCase(hotel.stateName)}</td>
+                                            <td>{toTitleCase(hotel.countryName)}</td>
+                                            <td>
+                                              {hotel.hotelContactNo
+                                                ? hotel.hotelContactNo
+                                                : "N.A."}
+                                            </td>
+                                            <td>
+                                              {hotel.hotelEmail
+                                                ? hotel.hotelEmail
+                                                : "N.A."}
+                                            </td>
+                                            <td>
+                                              {hotel.hotelAddress
+                                                ? hotel.hotelAddress
+                                                : "N.A."}
+                                            </td>
                                             <td>
                                               {getDateFormatted(
                                                 hotel.createdAt
                                               )}
                                             </td>
-
                                             <td>
                                               <label
                                                 className={`badge ${
                                                   hotel.status == "1"
-                                                    ? "badge-success"
-                                                    : "badge-danger"
+                                                    ? "badge-outline-success"
+                                                    : "badge-outline-danger"
                                                 }`}
                                               >
                                                 {hotel.status == "1"
@@ -669,42 +705,84 @@ const HotelMaster = () => {
                                           )}
                                       </>
                                     </div>
-                                    <div className="form-group">
-                                      <label>Hotel Address</label>
-                                      <input
-                                        type="text"
-                                        className="form-control form-control-sm"
-                                        placeholder="Enter Hotel Address"
-                                        value={hotelAddress}
-                                        onChange={(e) => {
-                                          setHotelAddress(e.target.value);
-                                        }}
-                                        onBlur={() => {
-                                          simpleValidator.current.showMessageFor(
-                                            "hotel_address"
-                                          );
-                                        }}
-                                      />
-                                      <>
-                                        {simpleValidator.current.element
-                                          .length > 0 &&
-                                          simpleValidator.current.message(
-                                            "hotel_address",
-                                            hotelAddress,
-                                            [
-                                              "required",
-                                              { regex: /^[A-Za-z\s&-]+$/ },
-                                            ],
-                                            {
-                                              messages: {
-                                                required:
-                                                  "Please enter hotel address ",
-                                                regex:
-                                                  "Enter valid  hotel address",
-                                              },
+                                    <div className="form-group row">
+                                      <div className="col-sm-6">
+                                        <label>Hotel Contact No.</label>
+                                        <input
+                                          type="text"
+                                          pattern="[0-9]{10}"
+                                          className="form-control form-control-sm"
+                                          placeholder="Enter Hotel Contact No."
+                                          value={hotelContact}
+                                          onBlur={() => {
+                                            simpleValidator.current.showMessageFor(
+                                              "hotelContact"
+                                            );
+                                          }}
+                                          onChange={(event) => {
+                                            const newValue =
+                                              event.target.value.trim();
+                                            if (/^\d*$/.test(newValue)) {
+                                              setHotelContact(
+                                                event.target.value
+                                              );
                                             }
-                                          )}
-                                      </>
+                                          }}
+                                        />
+                                        <>
+                                          {simpleValidator.current.element
+                                            .length > 0 &&
+                                            simpleValidator.current.message(
+                                              "hotelContact",
+                                              hotelContact,
+                                              [
+                                                "required",
+                                                { regex: /^[0-9]+$/ },
+                                              ],
+                                              {
+                                                messages: {
+                                                  required:
+                                                    "Please enter hotel contact number ",
+                                                  regex:
+                                                    "Enter valid hotel contact number",
+                                                },
+                                              }
+                                            )}
+                                        </>
+                                      </div>
+                                      <div className="col-sm-6">
+                                        <label>Hotel Email</label>
+                                        <input
+                                          type="text"
+                                          className="form-control form-control-sm"
+                                          placeholder="Enter Hotel Email"
+                                          value={hotelEmail}
+                                          onChange={(e) => {
+                                            setHotelEmail(e.target.value);
+                                          }}
+                                          onBlur={() => {
+                                            simpleValidator.current.showMessageFor(
+                                              "hotelEmail"
+                                            );
+                                          }}
+                                        />
+                                        <>
+                                          {simpleValidator.current.element
+                                            .length > 0 &&
+                                            simpleValidator.current.message(
+                                              "hotelEmail",
+                                              hotelEmail,
+                                              ["required", "email"],
+                                              {
+                                                messages: {
+                                                  required:
+                                                    "Please enter  email",
+                                                  email: "Enter valid  email",
+                                                },
+                                              }
+                                            )}
+                                        </>
+                                      </div>
                                     </div>
                                     <div className="form-group">
                                       <label>Hotel Type</label>

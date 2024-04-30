@@ -317,12 +317,19 @@ const AddRoomForm = ({ cancelForm, hotelId, formType, updateId }) => {
         let response = await axios.post(url, body);
         if (response) {
           if (response.status == 200) {
-            toast.success(response.data.message, {
-              position: "top-right",
-            });
-            cancelForm();
-            simpleValidator.current.hideMessages();
             setIsLoading(false);
+
+            if (response.data.data.status == false) {
+              toast.error(response.data.message, {
+                position: "top-right",
+              });
+            } else {
+              toast.success(response.data.message, {
+                position: "top-right",
+              });
+              cancelForm();
+              simpleValidator.current.hideMessages();
+            }
           }
         }
       } else {
@@ -354,13 +361,21 @@ const AddRoomForm = ({ cancelForm, hotelId, formType, updateId }) => {
         let response = await axios.post(url, body);
         if (response) {
           if (response.status == 200) {
-            toast.success(response.data.message, {
-              position: "top-right",
-            });
-            // cancelForm();
-            simpleValidator.current.hideMessages();
             setIsLoading(false);
-            fetchHotelRoomDetails(updateId);
+
+            if (response.data.data.status == false) {
+              toast.error(response.data.message, {
+                position: "top-right",
+              });
+            } else {
+              toast.success(response.data.message, {
+                position: "top-right",
+              });
+              // cancelForm();
+              simpleValidator.current.hideMessages();
+
+              fetchHotelRoomDetails(updateId);
+            }
           }
         }
       } else {

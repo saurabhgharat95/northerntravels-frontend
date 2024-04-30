@@ -17,7 +17,7 @@ import {
   DELETE_COUNTRY_API,
   UPDATE_COUNTRY_API,
 } from "../utils/constants";
-import { getDateFormatted } from "../utils/helpers";
+import { getDateFormatted,toTitleCase } from "../utils/helpers";
 import "react-toastify/dist/ReactToastify.css";
 import NoData from "../components/NoData";
 import ConfirmationDialog from "../components/ConfirmationDialog";
@@ -90,13 +90,21 @@ const CountryMaster = () => {
           setIsLoading(false);
 
           if (response.status == 200) {
-            toast.success(response.data.message, {
-              position: "top-right",
-            });
-            handleCloseModal();
-            setCountryName("");
-            fetchCountries();
-            simpleValidator.current.hideMessages();
+            if(response.data.data.status==false){
+              toast.error(response.data.message, {
+                position: "top-right",
+              });
+            }
+            else{
+              toast.success(response.data.message, {
+                position: "top-right",
+              });
+              handleCloseModal();
+              setCountryName("");
+              fetchCountries();
+              simpleValidator.current.hideMessages();
+            }
+            
           }
         }
       } else {
@@ -126,6 +134,14 @@ const CountryMaster = () => {
         let response = await axios.post(url, body);
         if (response) {
           if (response.status == 200) {
+            setIsLoading(false);
+
+            if(response.data.data.status==false){
+              toast.error(response.data.message, {
+                position: "top-right",
+              });
+            }
+            else{
             toast.success(response.data.message, {
               position: "top-right",
             });
@@ -134,6 +150,7 @@ const CountryMaster = () => {
             setCountryName("");
             fetchCountries();
             simpleValidator.current.hideMessages();
+          }
           }
         }
       } else {
@@ -347,7 +364,7 @@ const CountryMaster = () => {
                                             <td className="sorting_1">
                                               {startIndex + index + 1}
                                             </td>
-                                            <td>{country.countryName}</td>
+                                            <td>{toTitleCase(country.countryName)}</td>
                                             <td>
                                               {getDateFormatted(
                                                 country.createdAt
@@ -357,8 +374,8 @@ const CountryMaster = () => {
                                               <label
                                                 className={`badge ${
                                                   country.status == "1"
-                                                    ? "badge-success"
-                                                    : "badge-danger"
+                                                    ? "badge-outline-success"
+                                                    : "badge-outline-danger"
                                                 }`}
                                               >
                                                 {country.status == "1"

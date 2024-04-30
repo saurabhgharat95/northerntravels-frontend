@@ -14,7 +14,7 @@ import {
   DELETE_QUOTATION_API,
 } from "../utils/constants";
 import { useNavigate } from "react-router-dom";
-import { getDateFormatted } from "../utils/helpers";
+import { getDateFormatted,toTitleCase } from "../utils/helpers";
 
 import "react-toastify/dist/ReactToastify.css";
 import NoData from "../components/NoData";
@@ -252,13 +252,13 @@ const QuotationManagement = () => {
                                                 quotation.quotDate
                                               )}
                                             </td>
-                                            <td>{quotation.quotClientName}</td>
+                                            <td>{toTitleCase(quotation.quotClientName)}</td>
                                             <td>
                                               <label
                                                 className={`badge ${
                                                   quotation.status == "1"
-                                                    ? "badge-success"
-                                                    : "badge-danger"
+                                                    ? "badge-outline-success"
+                                                    : "badge-outline-danger"
                                                 }`}
                                               >
                                                 {quotation.status == "1"

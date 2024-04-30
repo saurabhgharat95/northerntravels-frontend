@@ -17,7 +17,7 @@ import {
   UPDATE_HOTEL_TYPE_API,
   DELETE_HOTEL_TYPE_API,
 } from "../utils/constants";
-import { getDateFormatted } from "../utils/helpers";
+import { getDateFormatted,toTitleCase } from "../utils/helpers";
 
 import "react-toastify/dist/ReactToastify.css";
 import NoData from "../components/NoData";
@@ -89,14 +89,22 @@ const HotelTypeMaster = () => {
         let response = await axios.post(url, body);
         if (response) {
           if (response.status == 200) {
-            toast.success(response.data.message, {
-              position: "top-right",
-            });
-            handleCloseModal();
-            resetForm();
-            fetchHotelTypes();
-            simpleValidator.current.hideMessages();
             setIsLoading(false);
+
+            if (response.data.data.status == false) {
+              toast.error(response.data.message, {
+                position: "top-right",
+              });
+            } else {
+              toast.success(response.data.message, {
+                position: "top-right",
+              });
+              handleCloseModal();
+              resetForm();
+              fetchHotelTypes();
+              simpleValidator.current.hideMessages();
+              setIsLoading(false);
+            }
           }
         }
       } else {
@@ -124,15 +132,22 @@ const HotelTypeMaster = () => {
         let response = await axios.post(url, body);
         if (response) {
           if (response.status == 200) {
-            toast.success(response.data.message, {
-              position: "top-right",
-            });
-
-            handleCloseModal();
-            resetForm();
-            fetchHotelTypes();
-            simpleValidator.current.hideMessages();
             setIsLoading(false);
+
+            if (response.data.data.status == false) {
+              toast.error(response.data.message, {
+                position: "top-right",
+              });
+            } else {
+              toast.success(response.data.message, {
+                position: "top-right",
+              });
+
+              handleCloseModal();
+              resetForm();
+              fetchHotelTypes();
+              simpleValidator.current.hideMessages();
+            }
           }
         }
       } else {
@@ -346,7 +361,7 @@ const HotelTypeMaster = () => {
                                               {" "}
                                               {index + 1}
                                             </td>
-                                            <td>{hotelType.hotelTypeName}</td>
+                                            <td>{toTitleCase(hotelType.hotelTypeName)}</td>
                                             <td>
                                               {getDateFormatted(
                                                 hotelType.createdAt
@@ -356,8 +371,8 @@ const HotelTypeMaster = () => {
                                               <label
                                                 className={`badge ${
                                                   hotelType.status == "1"
-                                                    ? "badge-success"
-                                                    : "badge-danger"
+                                                    ? "badge-outline-success"
+                                                    : "badge-outline-danger"
                                                 }`}
                                               >
                                                 {hotelType.status == "1"

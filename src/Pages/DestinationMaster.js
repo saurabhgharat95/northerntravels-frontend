@@ -21,7 +21,7 @@ import {
   UPDATE_LOCATION_API,
   DELETE_LOCATION_API,
 } from "../utils/constants";
-import { getDateFormatted, getFilteredDropdownOptions } from "../utils/helpers";
+import { getDateFormatted, getFilteredDropdownOptions,toTitleCase } from "../utils/helpers";
 import "react-toastify/dist/ReactToastify.css";
 import "react-quill/dist/quill.snow.css";
 import NoData from "../components/NoData";
@@ -84,8 +84,7 @@ const DestinationMaster = () => {
   };
 
   const handleCloseModal = () => {
-    
-    var locationModal = document.getElementById('locationModal');
+    var locationModal = document.getElementById("locationModal");
 
     if (locationModal) {
       var locationModalInstance = bootstrap.Modal.getInstance(locationModal);
@@ -93,10 +92,12 @@ const DestinationMaster = () => {
         locationModalInstance.hide();
       }
     }
-    var locationDescriptionModal = document.getElementById('locationModal');
+    var locationDescriptionModal = document.getElementById("locationModal");
 
     if (locationDescriptionModal) {
-      var locationDescriptionModalInstance = bootstrap.Modal.getInstance(locationDescriptionModal);
+      var locationDescriptionModalInstance = bootstrap.Modal.getInstance(
+        locationDescriptionModal
+      );
       if (locationDescriptionModalInstance) {
         locationDescriptionModalInstance.hide();
       }
@@ -186,14 +187,22 @@ const DestinationMaster = () => {
         let response = await axios.post(url, body);
         if (response) {
           if (response.status == 200) {
-            toast.success(response.data.message, {
-              position: "top-right",
-            });
-            handleCloseModal();
-            resetForm();
-            fetchLocations();
-            simpleValidator.current.hideMessages();
             setIsLoading(false);
+
+            if (response.data.data.status == false) {
+              toast.error(response.data.message, {
+                position: "top-right",
+              });
+            } else {
+              toast.success(response.data.message, {
+                position: "top-right",
+              });
+              handleCloseModal();
+              resetForm();
+              fetchLocations();
+              simpleValidator.current.hideMessages();
+              setIsLoading(false);
+            }
           }
         }
       } else {
@@ -224,15 +233,23 @@ const DestinationMaster = () => {
         let response = await axios.post(url, body);
         if (response) {
           if (response.status == 200) {
-            toast.success(response.data.message, {
-              position: "top-right",
-            });
-
-            handleCloseModal();
-            resetForm();
-            fetchLocations();
-            simpleValidator.current.hideMessages();
             setIsLoading(false);
+
+            if (response.data.data.status == false) {
+              toast.error(response.data.message, {
+                position: "top-right",
+              });
+            } else {
+              toast.success(response.data.message, {
+                position: "top-right",
+              });
+
+              handleCloseModal();
+              resetForm();
+              fetchLocations();
+              simpleValidator.current.hideMessages();
+              setIsLoading(false);
+            }
           }
         }
       } else {
@@ -483,7 +500,7 @@ const DestinationMaster = () => {
                                               {" "}
                                               {startIndex + index + 1}
                                             </td>
-                                            <td>{location.locationName}</td>
+                                            <td>{toTitleCase(location.locationName)}</td>
                                             <td>
                                               <button
                                                 data-bs-toggle="modal"
@@ -499,9 +516,9 @@ const DestinationMaster = () => {
                                               </button>
                                             </td>
 
-                                            <td>{location.state.stateName}</td>
+                                            <td>{toTitleCase(location.state.stateName)}</td>
                                             <td>
-                                              {location.country.countryName}
+                                              {toTitleCase(location.country.countryName)}
                                             </td>
                                             <td>
                                               {getDateFormatted(
@@ -512,8 +529,8 @@ const DestinationMaster = () => {
                                               <label
                                                 className={`badge ${
                                                   location.status == "1"
-                                                    ? "badge-success"
-                                                    : "badge-danger"
+                                                    ? "badge-outline-success"
+                                                    : "badge-outline-danger"
                                                 }`}
                                               >
                                                 {location.status == "1"

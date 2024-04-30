@@ -354,8 +354,8 @@ const MealTypeMaster = () => {
                                               <label
                                                 className={`badge ${
                                                   mealType.status == "1"
-                                                    ? "badge-success"
-                                                    : "badge-danger"
+                                                    ? "badge-outline-success"
+                                                    : "badge-outline-danger"
                                                 }`}
                                               >
                                                 {mealType.status == "1"

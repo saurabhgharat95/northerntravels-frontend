@@ -19,7 +19,7 @@ import {
   DELETE_STATE_API,
   UPDATE_STATE_API,
 } from "../utils/constants";
-import { getDateFormatted } from "../utils/helpers";
+import { getDateFormatted,toTitleCase } from "../utils/helpers";
 
 import "react-toastify/dist/ReactToastify.css";
 import NoData from "../components/NoData";
@@ -124,6 +124,14 @@ const StateMaster = () => {
         console.log("response", response);
         if (response) {
           if (response.status == 200) {
+            setIsLoading(false);
+
+            if(response.data.data.status==false){
+              toast.error(response.data.message, {
+                position: "top-right",
+              });
+            }
+            else{
             toast.success(response.data.message, {
               position: "top-right",
             });
@@ -132,6 +140,7 @@ const StateMaster = () => {
             fetchStates();
             simpleValidator.current.hideMessages();
             setIsLoading(false);
+          }
           }
         }
       } else {
@@ -160,6 +169,14 @@ const StateMaster = () => {
         let response = await axios.post(url, body);
         if (response) {
           if (response.status == 200) {
+            setIsLoading(false);
+
+            if(response.data.data.status==false){
+              toast.error(response.data.message, {
+                position: "top-right",
+              });
+            }
+            else{
             toast.success(response.data.message, {
               position: "top-right",
             });
@@ -169,6 +186,7 @@ const StateMaster = () => {
             fetchStates();
             simpleValidator.current.hideMessages();
             setIsLoading(false);
+          }
           }
         }
       } else {
@@ -391,8 +409,8 @@ const StateMaster = () => {
                                             <td className="sorting_1">
                                               {startIndex + index + 1}
                                             </td>
-                                            <td>{state.stateName}</td>
-                                            <td>{state.countryName}</td>
+                                            <td>{toTitleCase(state.stateName)}</td>
+                                            <td>{toTitleCase(state.countryName)}</td>
 
                                             <td>
                                               {getDateFormatted(
@@ -403,8 +421,8 @@ const StateMaster = () => {
                                               <label
                                                 className={`badge ${
                                                   state.status == "1"
-                                                    ? "badge-success"
-                                                    : "badge-danger"
+                                                    ? "badge-outline-success"
+                                                    : "badge-outline-danger"
                                                 }`}
                                               >
                                                 {state.status == "1"
