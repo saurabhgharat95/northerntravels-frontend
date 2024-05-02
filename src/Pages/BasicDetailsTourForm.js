@@ -298,6 +298,7 @@ const BasicDetailsTourForm = () => {
           <div className="col-sm-6">
             <label>Country</label>
             <Select
+              classNamePrefix="an-simple-select"
               options={optionsObj.countryOptions}
               placeholder="Select Country"
               isMulti
@@ -336,6 +337,7 @@ const BasicDetailsTourForm = () => {
           <div className="col-sm-6">
             <label>State / Location</label>
             <Select
+              classNamePrefix="an-simple-select"
               options={optionsObj.stateOptions}
               placeholder="Select State"
               required
@@ -384,6 +386,7 @@ const BasicDetailsTourForm = () => {
             <br></br>
 
             <Select
+              classNamePrefix="an-simple-select"
               options={optionsObj.transitPtOptions}
               placeholder="Select Transit Points"
               required

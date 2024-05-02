@@ -268,3 +268,11 @@ ion-icon {
   }
   
 } */
+.an-simple-select__multi-value__label  {
+  background: #cddfff;
+  color: #fff;
+}
+.an-simple-select__multi-value__remove{
+  background: #cddfff;
+  color: #000;
+}
