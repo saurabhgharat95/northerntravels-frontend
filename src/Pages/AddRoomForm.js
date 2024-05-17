@@ -102,6 +102,24 @@ const AddRoomForm = ({ cancelForm, hotelId, formType, updateId }) => {
               charges: 0,
             },
           ],
+          5: [
+            {
+              meal_plan: 1,
+              charges: 0,
+            },
+            {
+              meal_plan: 2,
+              charges: 0,
+            },
+            {
+              meal_plan: 3,
+              charges: 0,
+            },
+            {
+              meal_plan: 4,
+              charges: 0,
+            },
+          ],
         },
         off_season: {
           1: [
@@ -159,6 +177,24 @@ const AddRoomForm = ({ cancelForm, hotelId, formType, updateId }) => {
             },
           ],
           4: [
+            {
+              meal_plan: 1,
+              charges: 0,
+            },
+            {
+              meal_plan: 2,
+              charges: 0,
+            },
+            {
+              meal_plan: 3,
+              charges: 0,
+            },
+            {
+              meal_plan: 4,
+              charges: 0,
+            },
+          ],
+          5: [
             {
               meal_plan: 1,
               charges: 0,
@@ -706,6 +742,37 @@ const AddRoomForm = ({ cancelForm, hotelId, formType, updateId }) => {
                             parseInt(newValue) || 0,
                             i < 4 ? "on_season" : "off_season",
                             4,
+                            i < 4 ? i : i - 4
+                          );
+                        }
+                      }}
+                    />
+                  </td>
+                ))}
+              </tr>
+              <tr className="odd">
+                <th style={{ width: "171.375px" }}>Single Occupancy</th>
+                {Array.from({ length: 8 }, (_, i) => (
+                  <td key={i}>
+                    <input
+                      type="text"
+                      pattern="[0-9]+"
+                      value={
+                        i < 4
+                          ? roomObject.chargesData[0]["on_season"]["5"][i][
+                              "charges"
+                            ]
+                          : roomObject.chargesData[0]["off_season"]["5"][i - 4][
+                              "charges"
+                            ]
+                      }
+                      onChange={(e) => {
+                        const newValue = e.target.value.trim();
+                        if (/^\d*$/.test(newValue)) {
+                          handleInputChange(
+                            parseInt(newValue) || 0,
+                            i < 4 ? "on_season" : "off_season",
+                            5,
                             i < 4 ? i : i - 4
                           );
                         }

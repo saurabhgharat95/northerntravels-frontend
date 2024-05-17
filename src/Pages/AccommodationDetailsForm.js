@@ -4,14 +4,30 @@ import { SimpleReactValidator } from "../components/CommonImport";
 import { useDispatch, useSelector } from "react-redux";
 import { setQuotationFormData } from "../utils/store";
 
-const AccommodationDetailsForm = ({onValidationStatusChange}) => {
+const AccommodationDetailsForm = ({ onValidationStatusChange }) => {
+  // const [accommodationObject, setAccommodationObject] = useState({
+  //   quotTotalPeoples: "",
+  //   quotRoomsReqd: "",
+  //   quotChildAbove9: "",
+  //   quotChildBtwn8And9: "",
+  //   quotBlw5: "",
+  // });
   const [accommodationObject, setAccommodationObject] = useState({
     quotTotalPeoples: "",
     quotRoomsReqd: "",
-    quotChildAbove9: "",
-    quotChildBtwn8And9: "",
-    quotBlw5: "",
+    quotTotalExtraBeds: 0,
   });
+  const [roomObject, setRoomObject] = useState([
+    {
+      id: null,
+      isSingleOccupancy: false,
+      totalPersonsRoom: 0,
+      childAbove9: "",
+      noExtraBeds: "",
+      freeBeds: "",
+      extraBeds: "",
+    },
+  ]);
   const [, setForceUpdate] = useState(0);
   const simpleValidator = useRef(
     new SimpleReactValidator({
@@ -22,21 +38,105 @@ const AccommodationDetailsForm = ({onValidationStatusChange}) => {
   const dispatch = useDispatch();
   const quotFormData = useSelector((state) => state.form.quotationFormData);
 
-
   const validateForm = () => {
     const isValid = simpleValidator.current.allValid();
-    console.log('isValid',isValid)
     if (isValid) {
-      onValidationStatusChange(isValid,2); 
-    }
-    else{
+      onValidationStatusChange(isValid, 2);
+    } else {
       simpleValidator.current.showMessages();
-      setForceUpdate(v=>++v)
+      setForceUpdate((v) => ++v);
     }
     return isValid;
   };
+  let addRoom = () => {
+    setRoomObject([
+      ...roomObject,
+      {
+        id: null,
+        isSingleOccupancy: false,
+        childAbove9: "",
+        totalPersonsRoom: 0,
+        noExtraBeds: "",
+        freeBeds: "",
+        extraBeds: "",
+      },
+    ]);
+  };
+
+  let removeRoom = (i) => {
+    let newFormValues = [...roomObject];
+    let removedRoomExtraBeds = Number(roomObject[i].extraBeds);
+
+    // Remove the room from the array
+    newFormValues.splice(i, 1);
+
+    // Update the roomObject state
+    setRoomObject(newFormValues);
+
+    // Update the accommodationObject state
+    setAccommodationObject((prevState) => ({
+      ...prevState,
+      quotTotalExtraBeds: prevState.quotTotalExtraBeds - removedRoomExtraBeds,
+    }));
+
+    // Update the global state using dispatch
+    dispatch(
+      setQuotationFormData(
+        "quotTotalExtraBeds",
+        Number(quotFormData.quotTotalExtraBeds) - removedRoomExtraBeds
+      )
+    );
+  };
+
+  const generateRoomForms = (noOfRooms) => {
+    let rooms = [];
+    for (let index = 0; index < noOfRooms; index++) {
+      rooms.push({
+        id: null,
+        isSingleOccupancy: false,
+        childAbove9: "",
+        totalPersonsRoom: 0,
+        noExtraBeds: "",
+        freeBeds: "",
+        extraBeds: "",
+      });
+    }
+
+    setRoomObject(rooms);
+  };
+  const handleCheckboxChange = (event, index) => {
+    let value;
+    if (event.target.checked) {
+      value = true;
+    } else {
+      value = false;
+    }
+    const newFormValues = [...roomObject];
+    newFormValues[index].isSingleOccupancy = value ? value : "";
+    newFormValues[index].childAbove9 = "";
+    newFormValues[index].totalPersonsRoom = "";
+    newFormValues[index].noExtraBeds = "";
+    newFormValues[index].freeBeds = "";
+    newFormValues[index].extraBeds = "";
+    countTotalExtraBeds();
+    setRoomObject(newFormValues);
+    dispatch(setQuotationFormData("roomData", newFormValues));
+    setForceUpdate((v) => ++v);
+  };
+  const countTotalExtraBeds = () => {
+    let noOfExtraBeds = 0;
+    roomObject.forEach((room) => {
+      noOfExtraBeds += room.extraBeds ? Number(room.extraBeds) : 0;
+    });
+    // console.log("roomObject", roomObject,noOfExtraBeds);
+    setAccommodationObject((prevState) => ({
+      ...prevState,
+      quotTotalExtraBeds: noOfExtraBeds,
+    }));
+    dispatch(setQuotationFormData("quotTotalExtraBeds", noOfExtraBeds));
+  };
   useEffect(() => {
-    validateForm(); 
+    validateForm();
   }, [accommodationObject]);
   useEffect(() => {
     if (quotFormData) {
@@ -44,12 +144,64 @@ const AccommodationDetailsForm = ({onValidationStatusChange}) => {
         ...prevState,
         quotTotalPeoples: quotFormData.quotTotalPeoples,
         quotRoomsReqd: quotFormData.quotRoomsReqd,
-        quotChildAbove9: quotFormData.quotChildAbove9,
-        quotChildBtwn8And9: quotFormData.quotChildBtwn8And9,
-        quotBlw5: quotFormData.quotBlw5,
+        quotTotalExtraBeds: quotFormData.quotTotalExtraBeds,
       }));
+
+      let roomData = quotFormData.roomData;
+      let roomArray = [];
+
+      if (roomData && roomData.length > 0) {
+        roomData.forEach((element) => {
+          roomArray.push({
+            id: element.id,
+            isSingleOccupancy: element.isSingleOccupancy === 1,
+            childAbove9: element.extraBeds,
+            totalPersonsRoom: element.totalPersonsRoom,
+            noExtraBeds: element.noExtraBeds,
+            freeBeds: element.freeBeds,
+            extraBeds: element.extraBeds,
+          });
+        });
+
+        if (roomArray.length > 0) {
+          setRoomObject(roomArray);
+        }
+      }
     }
-  }, [quotFormData]);
+  }, []);
+
+  // useEffect(() => {
+  //   if (quotFormData) {
+  //     setAccommodationObject((prevState) => ({
+  //       ...prevState,
+  //       quotTotalPeoples: quotFormData.quotTotalPeoples,
+  //       quotRoomsReqd: quotFormData.quotRoomsReqd,
+  //       // childAbove9: quotFormData.childAbove9,
+  //       quotTotalExtraBeds: quotFormData.quotTotalExtraBeds,
+  //     }));
+  //     let roomData = quotFormData.roomData;
+  //     // console.log('roomData',roomData)
+  //     let roomArray = [];
+  //     if (roomData) {
+  //       if (roomData && roomData.length > 0 && ( roomData[0].fkQuotId || roomData[0].extraBeds)) {
+  //         roomData.forEach((element) => {
+  //           roomArray.push({
+  //             id: element.id,
+  //             isSingleOccupancy: element.isSingleOccupancy == 1 ? true : false,
+  //             childAbove9: element.extraBeds,
+  //             noExtraBeds: element.noExtraBeds,
+  //             freeBeds: element.freeBeds,
+  //             extraBeds: element.extraBeds,
+  //           });
+  //         });
+  //         console.log('roomArray',roomArray)
+  //         if (roomArray.length > 0 && roomArray[0].extraBeds) {
+  //           setRoomObject(roomArray);
+  //         }
+  //       }
+  //     }
+  //   }
+  // }, [quotFormData]);
   return (
     <>
       <section
@@ -104,7 +256,7 @@ const AccommodationDetailsForm = ({onValidationStatusChange}) => {
         </div>
         <div className="form-group row">
           <div className="col-sm-6">
-            <label>Room Required</label>
+            <label>Room(s) Required</label>
             <input
               type="text"
               pattern="[0-9]+"
@@ -121,6 +273,7 @@ const AccommodationDetailsForm = ({onValidationStatusChange}) => {
                   dispatch(
                     setQuotationFormData("quotRoomsReqd", event.target.value)
                   );
+                  // generateRoomForms(event.target.value);
                 }
               }}
               onBlur={() => {
@@ -141,124 +294,324 @@ const AccommodationDetailsForm = ({onValidationStatusChange}) => {
             </>
           </div>
         </div>
-        <div className="form-group row">
-          <div className="col-sm-6">
-            <label>Children Above 9 years ( Extra bed required )</label>
-            <input
-              type="number"
-              className="form-control"
-              value={accommodationObject.quotChildAbove9}
-              onChange={(event) => {
-                const newValue = event.target.value.trim();
-                if (/^\d*$/.test(newValue)) {
-                  setAccommodationObject((prevState) => ({
-                    ...prevState,
-                    quotChildAbove9: event.target.value,
-                  }));
-                  dispatch(
-                    setQuotationFormData("quotChildAbove9", event.target.value)
-                  );
-                }
-              }}
-              onBlur={() => {
-                simpleValidator.current.showMessageFor("quotChildAbove9");
-              }}
-            />
-            <>
-              {simpleValidator.current.message(
-                "quotChildAbove9",
-                accommodationObject.quotChildAbove9,
-                ["required"],
-                {
-                  messages: {
-                    required: "Please enter childrens above 9 years",
-                  },
-                }
-              )}
-            </>
-          </div>
-        </div>
-        <div className="form-group row">
-          <div className="col-sm-6">
-            <label>Children between 6 - 8 years</label>
-            <small> ( No extra bed )</small>
-            <br></br>
+        <button
+          className="btn btn-sm btn-primary"
+          onClick={() => {
+            addRoom();
+          }}
+        >
+          Add Room
+        </button>
+        <br></br>
+        <br></br>
+        <div className="row">
+          {roomObject &&
+            roomObject.map((element, index) => (
+              <>
+                <div className="col-md-4 mb-4">
+                  <div className="card  room-card">
+                    <h4 className="room-heading">
+                      {" "}
+                      Room #{index + 1}{" "}
+                      {index != 0 && (
+                        <ion-icon
+                          onClick={() => {
+                            removeRoom(index);
+                          }}
+                          style={{ float: "right" }}
+                          name="close-circle"
+                        ></ion-icon>
+                      )}{" "}
+                    </h4>
 
-            <input
-              type="number"
-              className="form-control"
-              value={accommodationObject.quotChildBtwn8And9}
-              onChange={(event) => {
-                const newValue = event.target.value.trim();
-                if (/^\d*$/.test(newValue)) {
-                  setAccommodationObject((prevState) => ({
-                    ...prevState,
-                    quotChildBtwn8And9: event.target.value,
-                  }));
-                  dispatch(
-                    setQuotationFormData(
-                      "quotChildBtwn8And9",
-                      event.target.value
-                    )
-                  );
-                }
-              }}
-              onBlur={() => {
-                simpleValidator.current.showMessageFor("quotChildBtwn8And9");
-              }}
-            />
-            <>
-              {simpleValidator.current.message(
-                "quotChildBtwn8And9",
-                accommodationObject.quotChildBtwn8And9,
-                ["required"],
-                {
-                  messages: {
-                    required: "Please enter childrens between age 6 and 8",
-                  },
-                }
-              )}
-            </>
-          </div>
+                    <div className="p-3">
+                      <div className="form-group row mb-2">
+                        <div className="col-sm-12">
+                          <div class="form-check">
+                            <label class="form-check-label">
+                              <input
+                                type="checkbox"
+                                id="isSingleOccupancy"
+                                name="isSingleOccupancy"
+                                onChange={(e) => handleCheckboxChange(e, index)}
+                                checked={element.isSingleOccupancy}
+                              />
+                              Single Occupancy
+                              <i class="input-helper"></i>
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="form-group row">
+                        <div className="col-sm-12">
+                          <label>Total No. of People in Room</label>
+                          <input
+                            type="text"
+                            pattern="[0-9]+"
+                            className="form-control"
+                            value={element.totalPersonsRoom}
+                            readOnly={element.isSingleOccupancy}
+                            onChange={(event) => {
+                              const newValue = event.target.value.trim();
+                              if (/^\d*$/.test(newValue)) {
+                                const newFormValues = [...roomObject];
+                                newFormValues[index].totalPersonsRoom = newValue
+                                  ? newValue
+                                  : "";
+                                setRoomObject(newFormValues);
+                                dispatch(
+                                  setQuotationFormData(
+                                    "roomData",
+                                    newFormValues
+                                  )
+                                );
+                              }
+                            }}
+                            onBlur={() => {
+                              simpleValidator.current.showMessageFor(
+                                "totalPersonsRoom"
+                              );
+                            }}
+                          />
+                          {!element.isSingleOccupancy && (
+                            <>
+                              {simpleValidator.current.message(
+                                "totalPersonsRoom",
+                                element.totalPersonsRoom,
+                                ["required"],
+                                {
+                                  messages: {
+                                    required:
+                                      "Please enter total persons in a room",
+                                  },
+                                }
+                              )}
+                            </>
+                          )}
+                        </div>
+                      </div>
+                      <div className="form-group row">
+                        <div className="col-sm-12">
+                          <label>
+                            Children Above 9 years ( Extra bed required )
+                          </label>
+                          <input
+                            type="text"
+                            pattern="[0-9]+"
+                            className="form-control"
+                            value={element.childAbove9}
+                            readOnly={element.isSingleOccupancy}
+                            onChange={(event) => {
+                              const newValue = event.target.value.trim();
+                              if (/^\d*$/.test(newValue)) {
+                                const newFormValues = [...roomObject];
+                                newFormValues[index].childAbove9 = newValue
+                                  ? newValue
+                                  : "";
+                                setRoomObject(newFormValues);
+                                dispatch(
+                                  setQuotationFormData(
+                                    "roomData",
+                                    newFormValues
+                                  )
+                                );
+                              }
+                            }}
+                            onBlur={() => {
+                              simpleValidator.current.showMessageFor(
+                                "childAbove9"
+                              );
+                            }}
+                          />
+                          {!element.isSingleOccupancy && (
+                            <>
+                              {simpleValidator.current.message(
+                                "childAbove9",
+                                element.childAbove9,
+                                ["required"],
+                                {
+                                  messages: {
+                                    required:
+                                      "Please enter childrens above 9 years",
+                                  },
+                                }
+                              )}
+                            </>
+                          )}
+                        </div>
+                      </div>
+                      <div className="form-group row">
+                        <div className="col-sm-12">
+                          <label>Children between 6 - 8 years</label>
+                          <small> ( No extra bed )</small>
+                          <br></br>
+
+                          <input
+                            type="text"
+                            pattern="[0-9]+"
+                            className="form-control"
+                            value={element.noExtraBeds}
+                            readOnly={element.isSingleOccupancy}
+                            onChange={(event) => {
+                              const newValue = event.target.value.trim();
+                              if (/^\d*$/.test(newValue)) {
+                                const newFormValues = [...roomObject];
+                                newFormValues[index].noExtraBeds = newValue
+                                  ? newValue
+                                  : "";
+                                setRoomObject(newFormValues);
+                                dispatch(
+                                  setQuotationFormData(
+                                    "roomData",
+                                    newFormValues
+                                  )
+                                );
+                              }
+                            }}
+                            onBlur={() => {
+                              simpleValidator.current.showMessageFor(
+                                "noExtraBeds"
+                              );
+                            }}
+                          />
+                          {!element.isSingleOccupancy && (
+                            <>
+                              {simpleValidator.current.message(
+                                "noExtraBeds",
+                                element.noExtraBeds,
+                                ["required"],
+                                {
+                                  messages: {
+                                    required:
+                                      "Please enter childrens between age 6 and 8",
+                                  },
+                                }
+                              )}
+                            </>
+                          )}
+                        </div>
+                      </div>
+                      <div className="form-group row">
+                        <div className="col-sm-12">
+                          <label> Children below 5 years</label>
+                          <small>( Free )</small>
+                          <input
+                            type="text"
+                            pattern="[0-9]+"
+                            className="form-control"
+                            value={element.freeBeds}
+                            readOnly={element.isSingleOccupancy}
+                            onChange={(event) => {
+                              const newValue = event.target.value.trim();
+                              if (/^\d*$/.test(newValue)) {
+                                const newFormValues = [...roomObject];
+                                newFormValues[index].freeBeds = newValue
+                                  ? newValue
+                                  : "";
+                                setRoomObject(newFormValues);
+                                dispatch(
+                                  setQuotationFormData(
+                                    "roomData",
+                                    newFormValues
+                                  )
+                                );
+                              }
+                            }}
+                            onBlur={() => {
+                              simpleValidator.current.showMessageFor(
+                                "freeBeds"
+                              );
+                            }}
+                          />
+                          {!element.isSingleOccupancy && (
+                            <>
+                              {simpleValidator.current.message(
+                                "freeBeds",
+                                element.freeBeds,
+                                ["required"],
+                                {
+                                  messages: {
+                                    required:
+                                      "Please enter children below age 5",
+                                  },
+                                }
+                              )}
+                            </>
+                          )}
+                        </div>
+                      </div>
+                      <div className="form-group row">
+                        <div className="col-sm-12">
+                          <label> Extra Beds</label>
+                          <input
+                            type="text"
+                            pattern="[0-9]+"
+                            className="form-control"
+                            value={element.extraBeds}
+                            readOnly={element.isSingleOccupancy}
+                            onChange={(event) => {
+                              const newValue = event.target.value.trim();
+                              if (/^\d*$/.test(newValue)) {
+                                const newFormValues = [...roomObject];
+                                newFormValues[index].extraBeds = newValue
+                                  ? newValue
+                                  : "";
+                                setRoomObject(newFormValues);
+                                dispatch(
+                                  setQuotationFormData(
+                                    "roomData",
+                                    newFormValues
+                                  )
+                                );
+                                countTotalExtraBeds();
+                              }
+                            }}
+                            onBlur={() => {
+                              simpleValidator.current.showMessageFor(
+                                "extraBeds"
+                              );
+                            }}
+                          />
+                          {!element.isSingleOccupancy && (
+                            <>
+                              {simpleValidator.current.message(
+                                "extraBeds",
+                                element.extraBeds,
+                                ["required"],
+                                {
+                                  messages: {
+                                    required: "Please enter no. of extra beds",
+                                  },
+                                }
+                              )}
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </>
+            ))}
         </div>
+
         <div className="form-group row">
           <div className="col-sm-6">
-            <label> Children below 5 years</label>
-            <small>( Free )</small>
+            <label>Total Extra Beds</label>
             <input
-              type="number"
+              type="text"
+              pattern="[0-9]+"
               className="form-control"
-              value={accommodationObject.quotBlw5}
-              onChange={(event) => {
-                const newValue = event.target.value.trim();
-                if (/^\d*$/.test(newValue)) {
-                  setAccommodationObject((prevState) => ({
-                    ...prevState,
-                    quotBlw5: event.target.value,
-                  }));
-                  dispatch(
-                    setQuotationFormData("quotBlw5", event.target.value)
-                  );
-                }
-              }}
+              placeholder="Enter No. of Rooms Required"
+              value={accommodationObject.quotTotalExtraBeds}
+              readOnly
               onBlur={() => {
-                simpleValidator.current.showMessageFor("quotBlw5");
+                simpleValidator.current.showMessageFor("quotTotalExtraBeds");
               }}
             />
-            <>
-              {simpleValidator.current.message(
-                "quotBlw5",
-                accommodationObject.quotBlw5,
-                ["required"],
-                {
-                  messages: {
-                    required: "Please enter children below age 5",
-                  },
-                }
-              )}
-            </>
           </div>
         </div>
+        <br></br>
       </section>
     </>
   );

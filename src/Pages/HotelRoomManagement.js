@@ -16,6 +16,7 @@ import {
   FETCH_HOTEL_ROOMS_API,
   DELETE_HOTEL_ROOM_API,
   FETCH_HOTEL_ROOM_DETAILS_API,
+  FETCH_MEAL_TYPES_API
 } from "../utils/constants";
 import { getDateFormatted } from "../utils/helpers";
 import "react-toastify/dist/ReactToastify.css";
@@ -30,6 +31,7 @@ const HotelRoomManagement = () => {
 
   const [hotels, setHotels] = useState([]);
   const [originalHotelsList, setOriginalHotelsList] = useState([]);
+  const [thElements, setThElements] = useState([]);
 
   const [selectedHotel, setSelectHotel] = useState({
     id: null,
@@ -63,6 +65,7 @@ const HotelRoomManagement = () => {
     2: "Extra Bed",
     3: "Child Without Bed Charge",
     4: "Extra Child Below 5 Yrs Charge",
+    5: "Single Occupancy"
   };
   const simpleValidator = useRef(
     new SimpleReactValidator({
@@ -235,9 +238,47 @@ const HotelRoomManagement = () => {
       }
     }
   };
+  const fetchMealTypes = async () => {
+    try {
+      let url = FETCH_MEAL_TYPES_API;
+
+      let response = await axios.post(url);
+      if (response) {
+        if (response.status == 200) {
+          let mealTypes = response.data.data;
+          let mealTypesOptionsArray = [];
+          mealTypes.forEach((type) => {
+            mealTypesOptionsArray.push({
+              value: type.id,
+              label: type.mealTypeName,
+            });
+          });
+          let elements = []
+          for(let i=0;i<2;i++){
+            for (let j=0;j<mealTypesOptionsArray.length;j++){
+              elements.push(
+              <th
+              key={`${mealTypesOptionsArray[j].value}-1`}
+              style={{ width: "107.016px" }}
+              scope="col"
+            >
+              {mealTypesOptionsArray[j].label}
+            </th>
+              )
+            }
+          }
+          setThElements(elements)
+        }
+      }
+    } catch (e) {
+      console.log('err',e)
+    }
+  };
   useEffect(() => {
     fetchHotels();
+    fetchMealTypes();
   }, []);
+
 
   return (
     <div className="container-scroller">
@@ -748,54 +789,7 @@ const HotelRoomManagement = () => {
                                   </tr>
                                   <tr>
                                     <th></th>
-                                    <th
-                                      style={{ width: "107.016px" }}
-                                      scope="col"
-                                    >
-                                      EP
-                                    </th>
-                                    <th
-                                      style={{ width: "107.016px" }}
-                                      scope="col"
-                                    >
-                                      CP
-                                    </th>
-                                    <th
-                                      style={{ width: "107.016px" }}
-                                      scope="col"
-                                    >
-                                      MAP
-                                    </th>
-                                    <th
-                                      style={{ width: "107.016px" }}
-                                      scope="col"
-                                    >
-                                      AP
-                                    </th>
-                                    <th
-                                      style={{ width: "107.016px" }}
-                                      scope="col"
-                                    >
-                                      EP
-                                    </th>
-                                    <th
-                                      style={{ width: "107.016px" }}
-                                      scope="col"
-                                    >
-                                      CP
-                                    </th>
-                                    <th
-                                      style={{ width: "107.016px" }}
-                                      scope="col"
-                                    >
-                                      MAP
-                                    </th>
-                                    <th
-                                      style={{ width: "107.016px" }}
-                                      scope="col"
-                                    >
-                                      AP
-                                    </th>
+                                    {thElements}
                                   </tr>
                                   {hotelRoomDetails &&
                                     Object.entries(hotelRoomDetails).map(

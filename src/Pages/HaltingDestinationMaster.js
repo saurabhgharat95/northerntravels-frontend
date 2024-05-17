@@ -571,7 +571,7 @@ const HaltingDestinationMaster = () => {
                                             haltDestName,
                                             [
                                               "required",
-                                              { regex: /^[A-Za-z\s&-]+$/ },
+                                              { regex: /^[A-Za-z\s&-()]+$/ },
                                             ],
                                             {
                                               messages: {

@@ -262,7 +262,7 @@ const CarMaster = () => {
                       setUpdate(false);
                     }}
                   >
-                    Add Car
+                    Add Vehicle
                   </button>
                 </div>
                 <br></br>
@@ -426,7 +426,7 @@ const CarMaster = () => {
                                       className="modal-title"
                                       id="exampleModalLabel"
                                     >
-                                      {isUpdate ? "Edit" : "Add"} Car
+                                      {isUpdate ? "Edit" : "Add"} Vehicle
                                     </h5>
                                     <button
                                       type="button"
@@ -463,7 +463,7 @@ const CarMaster = () => {
                                             vehicleName,
                                             [
                                               "required",
-                                              { regex: /^[A-Za-z\s&-]+$/ },
+                                              { regex: /^[A-Za-z\s&-()]+$/ },
                                             ],
                                             {
                                               messages: {

@@ -71,7 +71,8 @@ const MarkupForm = ({ onValidationStatusChange }) => {
       let response = await axios.post(url, body);
       if (response) {
         if (response.status == 200) {
-          let quotPackageArr = response.data.data.quotPackageArr;
+          let quotPackageArr = response.data.data.mergedPackagesArr;
+          
           let itineraryQuotAmt = response.data.data.itineraryQuotAmt;
           setMarkupAmtObject(quotPackageArr);
           setItineraryQuotAmt(itineraryQuotAmt);
@@ -273,7 +274,7 @@ const MarkupForm = ({ onValidationStatusChange }) => {
                   </span>
                 </div>
                 <div className="col-sm-4">
-                  <label>Before Markup (Rs.)</label>
+                  <label>Before Markup (Rs.) </label>
                   <input
                     type="text"
                     pattern="[0-9]+"

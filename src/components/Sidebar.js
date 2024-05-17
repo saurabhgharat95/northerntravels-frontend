@@ -1,11 +1,10 @@
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 
 const Sidebar = (props) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [activeItem, setActiveItem] = useState("");
-
 
   const navItems = [
     { path: "/", label: "Dashboard", icon: "home-outline" },
@@ -26,11 +25,27 @@ const Sidebar = (props) => {
       icon: "list-outline",
       subItems: [
         { path: "/countries", label: "Countries", icon: "earth-outline" },
-        { path: "/states",label: "State / Location",icon: "location-outline"},
-        { path: "/transit-pts", label: "Transit points", icon: "location-outline" },
-        { path: "/destinations", label: "Destinations", icon: "compass-outline" },
+        {
+          path: "/states",
+          label: "State / Location",
+          icon: "location-outline",
+        },
+        {
+          path: "/transit-pts",
+          label: "Transit points",
+          icon: "location-outline",
+        },
+        // {
+        //   path: "/destinations",
+        //   label: "Destinations",
+        //   icon: "compass-outline",
+        // },
         { path: "/hotel-type", label: "Hotel Type", icon: "business-outline" },
-        { path: "/halting-dest", label: "Halting Destinations", icon: "location-outline" },
+        {
+          path: "/halting-dest",
+          label: "Halting Destinations",
+          icon: "location-outline",
+        },
         { path: "/hotels", label: "Hotels", icon: "business-outline" },
         { path: "/cars", label: "Vehicles", icon: "car-sport-outline" },
         // { path: "/meal-types", label: "Meal Type", icon: "restaurant-outline" },
@@ -138,12 +153,11 @@ const Sidebar = (props) => {
         id="sidebar"
         style={{ width: props.isSidebarOpen ? "260px" : "86px" }}
       >
-        <ul className="nav" >
+        <ul className="nav">
           {navItems.map((item, index) => (
             <li
               key={index}
               className={`nav-item ${activeItem === item.path ? "active" : ""}`}
-              
             >
               {item.subItems ? (
                 <>
@@ -176,44 +190,35 @@ const Sidebar = (props) => {
                     }`}
                     id={item.label.replace(/\s/g, "-")}
                   >
-                    <ul className="nav flex-column sub-menu" >
+                    <ul className="nav flex-column sub-menu">
                       {item.subItems.map((subItem, subIndex) => (
                         <li key={subIndex} className="nav-item">
-                          <a
+                          <Link
                             className={`nav-link ${
                               activeItem === subItem.path ? "active" : ""
                             }`}
-                            onClick={(event) => {
-                              event.preventDefault();
-                              event.stopPropagation();
-                              navigate(subItem.path);
-                            }}
-                            href=""
+                            to={subItem.path}
                           >
-                            <ion-icon  name={subItem.icon}></ion-icon>
-                           <span className="ml-2">{subItem.label}</span> 
-                          </a>
+                            <ion-icon name={subItem.icon}></ion-icon>
+                            <span className="ml-2">{subItem.label}</span>
+                          </Link>
                         </li>
                       ))}
                     </ul>
                   </div>
                 </>
               ) : (
-                <a
+                <Link
                   className={`nav-link ${
                     activeItem === item.path ? "active" : ""
                   }`}
-                  onClick={(e) => {
-                    navigate(item.path);
-                    e.preventDefault();
-                  }}
-                  href="#"
+                  to={item.path}
                 >
                   <i className="menu-icon">
                     <ion-icon name={item.icon}></ion-icon>
                   </i>
                   <span className="menu-title">{item.label}</span>
-                </a>
+                </Link>
               )}
             </li>
           ))}

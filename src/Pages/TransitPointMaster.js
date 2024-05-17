@@ -561,7 +561,7 @@ const TransitPointMaster = () => {
                                             transitPtName,
                                             [
                                               "required",
-                                              { regex: /^[A-Za-z\s&-]+$/ },
+                                              { regex: /^[A-Za-z][\w\s&-()'.]*$/ },
                                             ],
                                             {
                                               messages: {

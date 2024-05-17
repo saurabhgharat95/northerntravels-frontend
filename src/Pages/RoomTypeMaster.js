@@ -462,7 +462,7 @@ const RoomTypeMaster = () => {
                                             roomType,
                                             [
                                               "required",
-                                              { regex: /^[A-Za-z\s&-]+$/ },
+                                              { regex: /^[A-Za-z\s&-()]+$/ },
                                             ],
                                             {
                                               messages: {

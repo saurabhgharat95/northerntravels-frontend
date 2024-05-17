@@ -23,6 +23,7 @@ import {
   UPDATE_QUOTATION_MARKUP_API,
   FETCH_QUOTATION_DETAILS_API,
   FETCH_TOUR_DETAILS_API,
+  GENERATE_QUOTATION_PDF_API,
 } from "../utils/constants";
 import { setQuotationFormData, resetFormData } from "../utils/store";
 import {
@@ -197,6 +198,7 @@ const AddQuotation = () => {
             toast.success(response.data.message, {
               position: "top-right",
             });
+            setTabDisabledFalse(2);
             setIsLoading(false);
             setSelectedTab(2);
           }
@@ -213,14 +215,44 @@ const AddQuotation = () => {
   const updateAccommodationDetails = async () => {
     try {
       let url = UPDATE_QUOTATION_ACCOMMODATION_API;
+      let quotRoomData = [];
 
+      let roomData = quotFormData.roomData;
+      if (roomData.length > 0) {
+        roomData.forEach((element) => {
+          if(element.isSingleOccupancy){
+            quotRoomData.push({
+              id: element.id,
+              isSingleOccupancy: element.isSingleOccupancy ? "1" : "0",
+              totalPersonsRoom: 1,
+              childAbove9: 0,
+              extraBeds: 0,
+              noExtraBeds: 0,
+              freeBeds: 0,
+            });
+          }
+          else{
+            quotRoomData.push({
+              id: element.id,
+              isSingleOccupancy: element.isSingleOccupancy ? "1" : "0",
+              totalPersonsRoom: element.totalPersonsRoom,
+              childAbove9: element.childAbove9,
+              extraBeds: element.extraBeds,
+              noExtraBeds: element.noExtraBeds,
+              freeBeds: element.freeBeds,
+            });
+          }
+         
+        });
+      }
       let body = {
         quotId: quotFormData.quotId,
         quotTotalPeoples: quotFormData.quotTotalPeoples,
         quotRoomsReqd: quotFormData.quotRoomsReqd,
-        quotChildAbove9: quotFormData.quotChildAbove9,
+        quotChildAbove9: quotFormData.quotTotalExtraBeds,
         quotChildBtwn8And9: quotFormData.quotChildBtwn8And9,
         quotBlw5: quotFormData.quotBlw5,
+        roomData: quotRoomData,
       };
       console.log("body", body);
       const isFormValid = componentSelectorRef.current.isAccomFormValid();
@@ -367,33 +399,63 @@ const AddQuotation = () => {
           let itineraryDetails = response.data.data;
           if (Array.isArray(itineraryDetails)) {
             let itineraryData = [];
-
-            itineraryData = itineraryDetails.map((element) => ({
-              quotItiId: element.id,
-              quotItiDay: element.quotItiDay,
-              quotItiDate: element.quotItiDate,
-              vehicleName: element.vehicle.vehicleName,
-              fkVehicleId: element.fkVehicleId,
-              pickupPt: element.pickup.transitPointName,
-              quotItiPickupPtId: element.quotItiPickupPtId,
-              dropPt: element.drop.transitPointName,
-              quotItiDropPtId: element.quotItiDropPtId,
-              quotItiNoOfVehicles: element.quotItiNoOfVehicles,
-              quotItiAddons: element.itiAddonData.map((addOnElement) => ({
-                quotItiAddonId: addOnElement.id,
-                quotItiService: addOnElement.quotItiService,
-                quotItiServicePayable: addOnElement.quotItiServicePayable,
-                quotItiServiceAmount: addOnElement.quotItiServiceAmount,
-                quotItiServiceRemark: addOnElement.quotItiServiceRemark,
-              })),
-              quotItiDestinations: element.quotItiDestinations
-                .split(",")
-                .map((name) => ({
-                  destinationName: parseInt(name, 10),
-                  destinationDesc: "",
+            itineraryDetails.forEach((element) => {
+              itineraryData.push({
+                quotItiId: element.id,
+                quotItiDay: element.quotItiDay,
+                quotItiDate: element.quotItiDate,
+                vehicleName: element.vehicle.vehicleName,
+                fkVehicleId: element.fkVehicleId,
+                pickupPt: element.pickup.transitPointName,
+                quotItiPickupPtId: element.quotItiPickupPtId,
+                dropPt: element.drop.transitPointName,
+                quotItiDropPtId: element.quotItiDropPtId,
+                quotItiNoOfVehicles: element.quotItiNoOfVehicles,
+                quotItiAmount: element.quotItiAmount
+                  ? element.quotItiAmount
+                  : 0,
+                quotItiAddons: element.itiAddonData.map((addOnElement) => ({
+                  quotItiAddonId: addOnElement.id,
+                  quotItiService: addOnElement.quotItiService,
+                  quotItiServicePayable: addOnElement.quotItiServicePayable,
+                  quotItiServiceAmount: addOnElement.quotItiServiceAmount,
+                  quotItiServiceRemark: addOnElement.quotItiServiceRemark,
                 })),
-            }));
-
+                quotItiDestinations: element.quotItiDestinations
+                  .split(",")
+                  .map((name) => ({
+                    destinationName: parseInt(name, 10),
+                    destinationDesc: "",
+                  })),
+              });
+            });
+            // itineraryData = itineraryDetails.map((element) => ({
+            //   quotItiId: element.id,
+            //   quotItiDay: element.quotItiDay,
+            //   quotItiDate: element.quotItiDate,
+            //   vehicleName: element.vehicle.vehicleName,
+            //   fkVehicleId: element.fkVehicleId,
+            //   pickupPt: element.pickup.transitPointName,
+            //   quotItiPickupPtId: element.quotItiPickupPtId,
+            //   dropPt: element.drop.transitPointName,
+            //   quotItiDropPtId: element.quotItiDropPtId,
+            //   quotItiNoOfVehicles: element.quotItiNoOfVehicles,
+            //   quotItiAmount: element.quotItiAmount ? element.quotItiAmount : 0,
+            //   quotItiAddons: element.itiAddonData.map((addOnElement) => ({
+            //     quotItiAddonId: addOnElement.id,
+            //     quotItiService: addOnElement.quotItiService,
+            //     quotItiServicePayable: addOnElement.quotItiServicePayable,
+            //     quotItiServiceAmount: addOnElement.quotItiServiceAmount,
+            //     quotItiServiceRemark: addOnElement.quotItiServiceRemark,
+            //   })),
+            //   quotItiDestinations: element.quotItiDestinations
+            //     .split(",")
+            //     .map((name) => ({
+            //       destinationName: parseInt(name, 10),
+            //       destinationDesc: "",
+            //     })),
+            // }));
+            console.log("quotItineraryData22", itineraryData);
             dispatch(setQuotationFormData("quotItineraryData", itineraryData));
           } else {
             itiAddonData = element.itiAddonData.map((element) => ({
@@ -414,6 +476,7 @@ const AddQuotation = () => {
               dropPt: element.dropPoint.transitPointName,
               quotItiDropPtId: element.quotItiDropPtId,
               quotItiNoOfVehicles: element.quotItiNoOfVehicles,
+              quotItiAmount: element.quotItiAmount,
               quotItiAddons: element.itiAddonData.map((addOnElement) => ({
                 quotItiAddonId: addOnElement.id,
                 quotItiService: addOnElement.quotItiService,
@@ -443,23 +506,36 @@ const AddQuotation = () => {
       let url = UPDATE_QUOTATION_ITINERARY_API;
       let quotItineraryData = [];
       let quotItinerarydetails = quotFormData.quotItineraryData;
-
+      let quotItiAddons = [];
       if (quotItinerarydetails.length > 0) {
-        quotItineraryData = quotItinerarydetails.map((element) => ({
-          quotItiId: element.quotItiId,
-          quotItiDay: element.quotItiDay,
-          quotItiDate: getDateFormattedForDB(element.quotItiDate),
-          fkVehicleId: element.fkVehicleId,
-          quotItiNoOfVehicles: element.quotItiNoOfVehicles,
-          quotItiPickupPtId: element.quotItiPickupPtId,
-          quotItiDropPtId: element.quotItiDropPtId,
-          quotItiDestinations: element.quotItiDestinations
-            ? element.quotItiDestinations
-                .map((dest) => dest.destinationName)
-                .join(",")
-            : "",
-          quotItiAddons: element.quotItiAddons,
-        }));
+        console.log("quotItinerarydetails", quotItinerarydetails);
+        quotItinerarydetails.forEach((element) => {
+          if (element.quotItiAddons && element.quotItiAddons.length > 0) {
+            if (
+              element.quotItiAddons[0].quotItiService != "" ||
+              element.quotItiAddons[0].quotItiAddonId
+            ) {
+              quotItiAddons = element.quotItiAddons;
+            }
+          }
+          console.log("quotItiAmount", element.quotItiAmount, quotItiAddons);
+          quotItineraryData.push({
+            quotItiId: element.quotItiId,
+            quotItiDay: element.quotItiDay,
+            quotItiDate: getDateFormattedForDB(element.quotItiDate),
+            fkVehicleId: element.fkVehicleId,
+            quotItiNoOfVehicles: element.quotItiNoOfVehicles,
+            quotItiPickupPtId: element.quotItiPickupPtId,
+            quotItiDropPtId: element.quotItiDropPtId,
+            quotItiAmount: element.quotItiAmount ? element.quotItiAmount : 0,
+            quotItiDestinations: element.quotItiDestinations
+              ? element.quotItiDestinations
+                  .map((dest) => dest.destinationName)
+                  .join(",")
+              : "",
+            quotItiAddons: quotItiAddons,
+          });
+        });
       }
       let body = {
         quotId: quotFormData.quotId,
@@ -480,7 +556,6 @@ const AddQuotation = () => {
             setSelectedTab(5);
             setTabDisabledFalse(5);
             getQuotationItineraryDetails();
-
           }
         }
       }
@@ -533,11 +608,11 @@ const AddQuotation = () => {
             toast.success(response.data.message, {
               position: "top-right",
             });
-
+            generateQuotationPDF(quotFormData.quotId);
             dispatch(resetFormData());
             setIsLoading(false);
             setTimeout(() => {
-              navigate("/quotations");
+              window.location.href = "/quotations";
             }, 1000);
           }
         }
@@ -548,6 +623,24 @@ const AddQuotation = () => {
       toast.error("Something Went Wrong :(", {
         position: "top-right",
       });
+    }
+  };
+  const generateQuotationPDF = async (quotId) => {
+    try {
+      let url = GENERATE_QUOTATION_PDF_API;
+
+      let body = {
+        id: quotId,
+      };
+
+      let response = await axios.post(url, body);
+      if (response) {
+        if (response.status == 200) {
+          console.log("success");
+        }
+      }
+    } catch (e) {
+      console.log(e);
     }
   };
   const fetchTourDetails = async (tourId) => {
@@ -564,7 +657,6 @@ const AddQuotation = () => {
           states.forEach((state) => {
             stateIds.push(state.fkLocationId);
           });
-          console.log("fetchTourDetails", stateIds);
           dispatch(setQuotationFormData("stateIds", stateIds));
           dispatch(setQuotationFormData("tourData", response.data.data));
         }
@@ -660,6 +752,7 @@ const AddQuotation = () => {
               dropPt: quotItinerary.drop.transitPointName,
               quotItiDropPtId: quotItinerary.quotItiDropPtId,
               quotItiNoOfVehicles: quotItinerary.quotItiNoOfVehicles,
+              quotItiAmount: quotItinerary.quotItiAmount,
               quotItiAddons: quotItiAddons,
               quotItiDestinations: quotItiDestinations,
             });
@@ -691,6 +784,8 @@ const AddQuotation = () => {
             quotChildAbove9: quotationDetails.quotChildAbove9,
             quotChildBtwn8And9: quotationDetails.quotChildBtwn8And9,
             quotBlw5: quotationDetails.quotBlw5,
+            quotTotalExtraBeds: quotationDetails.quotChildAbove9,
+            roomData: quotationDetails.rooms,
             quotPackageNameArray: uniquePackageNamesArray,
             quotPackageData: quotPackageData,
             quotItineraryData: quotItineraryData,
@@ -706,7 +801,6 @@ const AddQuotation = () => {
             quotLogo: quotationDetails.quotLogo,
             quotCompanyLogo: quotationDetails.quotCompanyLogo,
           };
-          console.log("formdata", formData);
           Object.entries(formData).forEach(([field, value]) => {
             dispatch(setQuotationFormData(field, value));
           });
@@ -717,6 +811,12 @@ const AddQuotation = () => {
       console.log("ee", e);
       setIsLoading(false);
     }
+  };
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
   };
   useEffect(() => {
     if (id) {
@@ -753,13 +853,14 @@ const AddQuotation = () => {
                   <h4 className="card-title ml-1">
                     {id ? "Edit" : "Add"} Quotation{" "}
                   </h4>
+
                   <div
                     role="application"
                     className="wizard clearfix"
                     id="steps-uid-0"
                   >
                     <div className="steps clearfix">
-                      <ul role="tablist">
+                      <ul role="tablist" className="tab-list">
                         {tabNames &&
                           tabNames.map((tab) => (
                             <li
@@ -791,12 +892,63 @@ const AddQuotation = () => {
                           ))}
                       </ul>
                     </div>
+                    <div className="actions pt-2 clearfix">
+                      <ul role="menu" aria-label="Pagination">
+                        <li>
+                          <button
+                            className="btn btn-danger"
+                            onClick={() => {
+                              navigate("/quotations");
+                            }}
+                          >
+                            Cancel
+                          </button>
+                        </li>
+                        <li aria-disabled="true">
+                          <button
+                            className="btn text-light btn-secondary"
+                            onClick={() => {
+                              selectForm("prev", selectedTab);
+                              scrollToTop();
+                            }}
+                          >
+                            Previous
+                          </button>
+                        </li>
+                        {selectedTab != 5 && (
+                          <li aria-hidden="false" aria-disabled="false">
+                            <button
+                              className="btn btn-primary"
+                              onClick={() => {
+                                selectForm("next", selectedTab);
+                                scrollToTop();
+                              }}
+                            >
+                              Next
+                            </button>
+                          </li>
+                        )}
+                        {selectedTab == 5 && (
+                          <li>
+                            <button
+                              className="btn btn-success"
+                              onClick={() => {
+                                updateMarkup();
+                              }}
+                            >
+                              Submit
+                            </button>
+                          </li>
+                        )}
+                      </ul>
+                    </div>
                     <div className="content clearfix">
                       <ComponentSelector
                         selectedTab={selectedTab}
                         ref={componentSelectorRef}
                       />
                     </div>
+
                     <div className="actions clearfix">
                       <ul role="menu" aria-label="Pagination">
                         <li>

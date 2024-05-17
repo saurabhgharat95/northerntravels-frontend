@@ -133,7 +133,7 @@ const QuotationManagement = () => {
           <div className="content-wrapper">
             <div className="card">
               <div className="card-body">
-                <div className="flex">
+                <div className="flex ">
                   <ion-icon
                     name="document-text-outline"
                     color="primary"

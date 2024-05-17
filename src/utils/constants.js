@@ -74,6 +74,8 @@ export const FETCH_QUOTATION_DETAILS_API = BASE_API_URL + "/get-quotation-detail
 export const FETCH_QUOTATION_HOTELS_DETAILS_API = BASE_API_URL + "/get-quotation-hotels";
 export const FETCH_QUOTATION_ITINERARY_DETAILS_API = BASE_API_URL + "/get-quotation-itinerary";
 
+export const GENERATE_QUOTATION_PDF_API = BASE_API_URL + "/generate-quotation-pdf";
+
 export const ADD_QUOTATION_API = BASE_API_URL + "/add-quotation";
 export const DELETE_QUOTATION_API = BASE_API_URL + "/delete-quotation";  
 

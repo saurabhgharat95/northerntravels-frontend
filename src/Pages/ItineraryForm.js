@@ -10,13 +10,13 @@ import {
   FETCH_TRANSIT_PT_BY_TOUR_API,
   FETCH_TOUR_DETAILS_API,
   FETCH_LOCATIONS_API,
+  FETCH_TRANSIT_POINTS_API,
 } from "../utils/constants";
 import ConfirmationDialog from "../components/ConfirmationDialog";
-
 // redux
 import { useDispatch, useSelector } from "react-redux";
 import { setQuotationFormData } from "../utils/store";
-
+import { getMultipleFilteredDropdownOptions } from "../utils/helpers";
 const ItineraryForm = ({ onValidationStatusChange }) => {
   const [locations, setLocations] = useState([]);
   const [acionObj, setActionObj] = useState({ deleteId: null, updateId: null });
@@ -39,11 +39,13 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
     quotItiNoOfVehicles: "",
     quotItiAddons: [],
     quotItiDestinations: [],
+    quotItiAmount: "",
   });
 
   const [optionsObj, setOptionsObj] = useState({
     vehicleOptions: [],
-    transitPtOptions: [],
+    pickupPtOptions: [],
+    dropPtOptions: [],
     destOptions: [],
     addOnServiceOptions: [],
   });
@@ -59,7 +61,7 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
     {
       quotItiAddonId: null,
       quotItiService: "",
-      quotItiServicePayable: "",
+      quotItiServicePayable: "1",
       quotItiServiceAmount: "",
       quotItiServiceRemark: "",
     },
@@ -77,7 +79,7 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
       {
         quotItiAddonId: null,
         quotItiService: "",
-        quotItiServicePayable: "",
+        quotItiServicePayable: "1",
         quotItiServiceAmount: "",
         quotItiServiceRemark: "",
       },
@@ -101,61 +103,85 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
     newFormValues.splice(i, 1);
     setDestFormValues(newFormValues);
   };
+  const resetAddOn = (i) => {
+    try {
+      let newFormValues = [...addOnformValues];
+      newFormValues[i].quotItiAddonId = newFormValues[i].quotItiAddonId
+        ? newFormValues[i].quotItiAddonId
+        : null;
+      newFormValues[i].quotItiService = "";
+      newFormValues[i].quotItiServicePayable = "1";
+      newFormValues[i].quotItiServiceAmount = "";
+      newFormValues[i].quotItiServiceRemark = "";
+
+      setAddOnFormValues(newFormValues);
+    } catch (e) {
+      console.log("eee", e);
+    }
+  };
   const addItinerary = () => {
-    if (simpleValidator.current.allValid()) {
-      itineraryObject.quotItiAddons = addOnformValues;
-      itineraryObject.quotItiDestinations = destFormValues;
-      setItineraryData((prevState) => [...prevState, itineraryObject]);
-      dispatch(
-        setQuotationFormData("quotItineraryData", [
-          ...quotFormData.quotItineraryData,
-          itineraryObject,
-        ])
-      );
-      setItineraryObject((prevState) => ({
-        ...prevState,
-        quotItiId: null,
-        quotItiDay: prevState.quotItiDay + 1,
-        quotItiDate: "",
-        vehicleName: null,
-        fkVehicleId: "",
-        pickupPt: "",
-        quotItiPickupPtId: "",
-        dropPt: "",
-        quotItiDropPtId: "",
-        quotItiNoOfVehicles: "",
-        quotItiAddons: [],
-        quotItiDestinations: [],
-      }));
-      setDestFormValues([{ destinationName: "", destinationDesc: "" }]);
-      setAddOnFormValues([
-        {
-          quotItiAddonId: null,
-          quotItiService: "",
-          quotItiServicePayable: "",
-          quotItiServiceAmount: "",
-          quotItiServiceRemark: "",
-        },
-      ]);
-      setActionObj((prevState) => ({ ...prevState, updateId: null }));
-    } else {
-      setForceUpdate((v) => ++v);
-      simpleValidator.current.showMessages();
+    try {
+      if (simpleValidator.current.allValid()) {
+        itineraryObject.quotItiAddons = addOnformValues;
+        itineraryObject.quotItiDestinations = destFormValues;
+        setItineraryData((prevState) => [...prevState, itineraryObject]);
+        dispatch(
+          setQuotationFormData("quotItineraryData", [
+            ...quotFormData.quotItineraryData,
+            itineraryObject,
+          ])
+        );
+        console.log("itine", itineraryObject);
+        setItineraryObject((prevState) => ({
+          ...prevState,
+          quotItiId: null,
+          quotItiDay: parseInt(prevState.quotItiDay) + 1,
+          quotItiDate: "",
+          vehicleName: null,
+          fkVehicleId: "",
+          pickupPt: "",
+          quotItiPickupPtId: "",
+          dropPt: "",
+          quotItiDropPtId: "",
+          quotItiNoOfVehicles: "",
+          quotItiAddons: [],
+          quotItiDestinations: [],
+          quotItiAmount: "",
+        }));
+        setDestFormValues([{ destinationName: "", destinationDesc: "" }]);
+        setAddOnFormValues([
+          {
+            quotItiAddonId: null,
+            quotItiService: "",
+            quotItiServicePayable: "1",
+            quotItiServiceAmount: "",
+            quotItiServiceRemark: "",
+          },
+        ]);
+        setActionObj((prevState) => ({ ...prevState, updateId: null }));
+      } else {
+        setForceUpdate((v) => ++v);
+        simpleValidator.current.showMessages();
+      }
+    } catch (e) {
+      console.log("err", e);
     }
   };
   const editItinerary = () => {
     if (simpleValidator.current.allValid()) {
+      console.log("addOnformValues", addOnformValues);
       itineraryObject.quotItiAddons = addOnformValues;
       itineraryObject.quotItiDestinations = destFormValues;
       const updatedItineraryData = [...itineraryData];
       updatedItineraryData[acionObj.updateId] = itineraryObject;
+      console.log("updatedItineraryData", updatedItineraryData);
       setItineraryData(updatedItineraryData);
       setOriginalItineraryData(updatedItineraryData);
       dispatch(setQuotationFormData("quotItineraryData", updatedItineraryData));
       setItineraryObject((prevState) => ({
         ...prevState,
         quotItiId: null,
-        quotItiDay: prevState.quotItiDay + 1,
+        quotItiDay: parseInt(prevState.quotItiDay) + 1,
         quotItiDate: "",
         vehicleName: null,
         fkVehicleId: "",
@@ -166,13 +192,14 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
         quotItiNoOfVehicles: "",
         quotItiAddons: [],
         quotItiDestinations: [],
+        quotItiAmount: "",
       }));
       setDestFormValues([{ destinationName: "", destinationDesc: "" }]);
       setAddOnFormValues([
         {
           quotItiAddonId: null,
           quotItiService: "",
-          quotItiServicePayable: "",
+          quotItiServicePayable: "1",
           quotItiServiceAmount: "",
           quotItiServiceRemark: "",
         },
@@ -243,40 +270,160 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
     }
     return isValid;
   };
+  const fetchVehicles = async () => {
+    try {
+      let url = FETCH_VEHICLES_API;
 
+      let response = await axios.post(url);
+      if (response) {
+        if (response.status == 200) {
+          let vehicles = response.data.data;
+          let vehiclesOptionsArray = [];
+          vehicles.forEach((vehicle) => {
+            vehiclesOptionsArray.push({
+              value: vehicle.id,
+              label: vehicle.vehicleName,
+            });
+          });
+          setOptionsObj((prevState) => ({
+            ...prevState,
+            vehicleOptions: vehiclesOptionsArray,
+          }));
+        }
+      }
+    } catch (e) {}
+  };
+  const fetchTransitPts = async (tourPoints) => {
+    try {
+      let url = FETCH_TRANSIT_POINTS_API;
+
+      let response = await axios.post(url);
+      if (response) {
+        if (response.status == 200) {
+          let trasitPts = response.data.data;
+          let pickupPtsOptionsArray = [];
+          let dropPtsOptionsArray = [];
+          const startPointIds = tourPoints.map((obj) => obj.startPointId);
+          const endPointIds = tourPoints.map((obj) => obj.endPointId);
+
+          trasitPts.forEach((trasitPt) => {
+            if (startPointIds.includes(trasitPt.id)) {
+              pickupPtsOptionsArray.push({
+                value: trasitPt.id,
+                label: trasitPt.transitPointName,
+              });
+            }
+            if (endPointIds.includes(trasitPt.id)) {
+              dropPtsOptionsArray.push({
+                value: trasitPt.id,
+                label: trasitPt.transitPointName,
+              });
+            }
+          });
+          setOptionsObj((prevState) => ({
+            ...prevState,
+            pickupPtOptions: pickupPtsOptionsArray,
+            dropPtOptions: dropPtsOptionsArray,
+          }));
+        }
+      }
+    } catch (e) {
+      console.log("err", e);
+    }
+  };
+  const getAddonAmount = (addOns) => {
+    let addOnTotalAmt = 0;
+    if (addOns) {
+      if (addOns.length > 0) {
+        addOns.forEach((element) => {
+          addOnTotalAmt += element.quotItiServiceAmount
+            ? Number(element.quotItiServiceAmount)
+            : 0;
+        });
+      }
+    }
+    return addOnTotalAmt;
+  };
+  const getAmount = (type, resultType) => {
+    let addOnTotalAmt = 0;
+    let itineraryAmt = 0;
+    if (itineraryData) {
+      if (itineraryData.length > 0) {
+        itineraryData.forEach((element) => {
+          itineraryAmt += element.quotItiAmount
+            ? Number(element.quotItiAmount)
+            : 0;
+          element.quotItiAddons.forEach((element2) => {
+            addOnTotalAmt += element2.quotItiServiceAmount
+              ? Number(element2.quotItiServiceAmount)
+              : 0;
+          });
+        });
+      }
+    }
+    if (type == "vehicle" ) {
+      if (resultType == "total") {
+        return "Rs."+itineraryAmt.toFixed(2);
+      } else {
+        return "Rs."+(itineraryAmt / quotFormData.quotTotalPeoples).toFixed(2);
+      }
+    } else if (type == "addon") {
+      if (resultType == "total") {
+        return "Rs."+addOnTotalAmt.toFixed(2);
+      } else {
+        return "Rs."+(addOnTotalAmt / quotFormData.quotTotalPeoples).toFixed(2);
+      }
+    }
+  };
+  useEffect(() => {
+    fetchVehicles();
+  }, []);
   useEffect(() => {
     if (quotFormData) {
       let tourDetails = quotFormData.tourData;
-      let vehiclesOptionsArray = [];
-      let vehicles = tourDetails.transportations;
-      if (vehicles && vehicles.length > 0) {
-        vehicles.forEach((vehicle) => {
-          vehiclesOptionsArray.push({
-            value: vehicle.fkVehicleId,
-            label: vehicle.vehicle.vehicleName,
-          });
-        });
-        setOptionsObj((prevState) => ({
-          ...prevState,
-          vehicleOptions: vehiclesOptionsArray,
-        }));
-      }
 
-      let transitPtOptionsArray = [];
-      let transitPoints = tourDetails.transitPoints;
+      fetchTransitPts(tourDetails.transportations);
 
-      if (transitPoints && transitPoints.length > 0) {
-        transitPoints.forEach((point) => {
-          transitPtOptionsArray.push({
-            value: point.fkTransitPointId,
-            label: point.transitPoint.transitPointName,
-          });
-        });
-        setOptionsObj((prevState) => ({
-          ...prevState,
-          transitPtOptions: transitPtOptionsArray,
-        }));
-      }
+      // if (quotFormData.quotArrivalDate && quotFormData.quotArrivalDate!=''){
+      //   setItineraryObject(prevState=>({
+      //     ...prevState,
+      //     quotItiDate:quotFormData.quotArrivalDate
+      //   }))
+      // }
+      // let vehicles = tourDetails.transportations;
+      // if (vehicles && vehicles.length > 0) {
+      //   const vehicleMap = new Map();
+
+      //   vehicles.forEach((vehicle) => {
+      //     vehicleMap.set(vehicle.fkVehicleId, {
+      //       value: vehicle.fkVehicleId,
+      //       label: vehicle.vehicle.vehicleName,
+      //     });
+      //   });
+
+      //   const vehiclesOptionsArray = Array.from(vehicleMap.values());
+      //   setOptionsObj((prevState) => ({
+      //     ...prevState,
+      //     vehicleOptions: vehiclesOptionsArray,
+      //   }));
+      // }
+
+      // let pickupPtOptionsArray = [];
+      // let transitPoints = tourDetails.transitPoints;
+
+      // if (transitPoints && transitPoints.length > 0) {
+      //   transitPoints.forEach((point) => {
+      //     pickupPtOptionsArray.push({
+      //       value: point.fkTransitPointId,
+      //       label: point.transitPoint.transitPointName,
+      //     });
+      //   });
+      //   setOptionsObj((prevState) => ({
+      //     ...prevState,
+      //     pickupPtOptions: pickupPtOptionsArray,
+      //     dropPtOptions: pickupPtOptionsArray,
+      //   }));
+      // }
       let destOptionsArray = [];
       let visitingLocations = tourDetails.visitingLocations;
       setLocations(visitingLocations);
@@ -307,6 +454,18 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
           addOnServiceOptions: addOnOptionsArray,
         }));
       }
+      if (tourAddOnServices && addOnformValues.length == 0) {
+        setAddOnFormValues([
+          {
+            quotItiAddonId: null,
+            quotItiService: "",
+            quotItiServicePayable: "1",
+            quotItiServiceAmount: "",
+            quotItiServiceRemark: "",
+          },
+        ]);
+      }
+
       let quotItineraryData = quotFormData.quotItineraryData;
       let quotItineraryArray = [];
       for (let index = 0; index < quotItineraryData.length; index++) {
@@ -321,26 +480,76 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
           dropPt: quotItineraryData[index].dropPt,
           quotItiDropPtId: quotItineraryData[index].quotItiDropPtId,
           quotItiNoOfVehicles: quotItineraryData[index].quotItiNoOfVehicles,
+          quotItiAmount: quotItineraryData[index].quotItiAmount,
           quotItiAddons: quotItineraryData[index].quotItiAddons,
           quotItiDestinations: quotItineraryData[index].quotItiDestinations,
+          quotItiAmount: quotItineraryData[index].quotItiAmount
+            ? quotItineraryData[index].quotItiAmount
+            : 0,
         });
       }
       setItineraryData(quotItineraryArray);
       setOriginalItineraryData(quotItineraryArray);
     }
   }, [quotFormData]);
-  // useEffect(()=>{
-  //   transitPoints.forEach((point) => {
-  //     transitPtOptionsArray.push({
-  //       value: point.fkTransitPointId,
-  //       label: point.transitPoint.transitPointName,
-  //     });
-  //   });
-  //   setOptionsObj((prevState) => ({
-  //     ...prevState,
-  //     transitPtOptions: transitPtOptionsArray,
-  //   }));
-  // },[itineraryObject.fkVehicleId])
+  useEffect(() => {
+    let tourDetails = quotFormData.tourData;
+    console.log("tourDetails", tourDetails);
+    let vehicles = tourDetails.transportations;
+    let transitPoints = tourDetails.transitPoints;
+    const filteredEntries = vehicles.filter(
+      (item) => item.startPointId === itineraryObject.quotItiPickupPtId
+    );
+
+    const uniqueEndPointsSet = new Set(
+      filteredEntries.map((item) => item.endPointId)
+    );
+
+    const uniqueEndPoints = Array.from(uniqueEndPointsSet);
+    const filteredTransitPoints = transitPoints.filter((item) =>
+      uniqueEndPoints.includes(item.fkTransitPointId)
+    );
+
+    const uniqueTransitPointsSet = new Set(
+      filteredTransitPoints.map((item) => item.fkTransitPointId)
+    );
+
+    const dropPointOptions = Array.from(uniqueTransitPointsSet).map(
+      (fkTransitPointId) => {
+        const transitPoint = filteredTransitPoints.find(
+          (item) => item.fkTransitPointId === fkTransitPointId
+        );
+
+        return {
+          value: fkTransitPointId,
+          label: transitPoint.transitPoint.transitPointName,
+        };
+      }
+    );
+    setOptionsObj((prevState) => ({
+      ...prevState,
+      dropPtOptions: dropPointOptions,
+    }));
+  }, [itineraryObject.quotItiPickupPtId]);
+
+  useEffect(() => {
+    let tourDetails = quotFormData.tourData;
+
+    let vehicles = tourDetails.transportations;
+    let tourItiDescription = vehicles.filter((vehicle) => {
+      return (
+        vehicle.startPointId === itineraryObject.quotItiPickupPtId &&
+        vehicle.endPointId === itineraryObject.quotItiDropPtId
+      );
+    });
+    if (tourItiDescription.length > 0) {
+      setSelectedLocationDescription(
+        tourItiDescription[0].tourItiDescription
+          ? tourItiDescription[0].tourItiDescription
+          : ""
+      );
+    }
+  }, [itineraryObject.quotItiPickupPtId, itineraryObject.quotItiDropPtId]);
   return (
     <>
       <section
@@ -450,11 +659,11 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
           <div className="col-sm-4 mb-3">
             <label>Pick up point </label>
             <Select
-              options={optionsObj.transitPtOptions}
+              options={optionsObj.pickupPtOptions}
               placeholder="Select Pick up point"
               value={
                 itineraryObject.pickupPt
-                  ? optionsObj.transitPtOptions.find(
+                  ? optionsObj.pickupPtOptions.find(
                       (option) => option.label === itineraryObject.pickupPt
                     )
                   : null
@@ -473,11 +682,11 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
           <div className="col-sm-4 mb-3">
             <label>Drop point </label>
             <Select
-              options={optionsObj.transitPtOptions}
+              options={optionsObj.dropPtOptions}
               placeholder="Select Drop point"
               value={
                 itineraryObject.dropPt
-                  ? optionsObj.transitPtOptions.find(
+                  ? optionsObj.dropPtOptions.find(
                       (option) => option.label === itineraryObject.dropPt
                     )
                   : null
@@ -491,8 +700,53 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
               }}
             />
           </div>
+          <div className="col-sm-4 mb-3">
+            <label>Amount</label>
+            <input
+              type="text"
+              pattern="[0-9]*"
+              className="form-control"
+              placeholder="Enter Amount"
+              value={itineraryObject.quotItiAmount}
+              onChange={(event) => {
+                const newValue = event.target.value.trim();
+                if (/^\d*$/.test(newValue)) {
+                  setItineraryObject((prevState) => ({
+                    ...prevState,
+                    quotItiAmount: event.target.value,
+                  }));
+                }
+              }}
+              onBlur={() => {
+                simpleValidator.current.showMessageFor("quotItiAmount");
+              }}
+            />
+            <>
+              {simpleValidator.current.message(
+                "quotItiAmount",
+                itineraryObject.quotItiAmount,
+                ["required"],
+                {
+                  messages: {
+                    required: "Please enter amount",
+                  },
+                }
+              )}
+            </>
+          </div>
+          <div className="col-sm-4 mb-3">
+            <label>Description</label>
+            <br></br>
+            <span
+              data-bs-toggle="modal"
+              data-bs-target="#locationDescriptionModal"
+              className="badge badge-outline-info mt-2"
+            >
+              View Description
+            </span>
+          </div>
         </div>
-        <div className="form-group row border p-3">
+        {/* <div className="form-group row border p-3">
           {destFormValues.map((element, index) => (
             <>
               <div className="col-sm-4 mb-3">
@@ -574,13 +828,165 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
               </div>
             </>
           ))}
-        </div>
+        </div> */}
         <div className="col-sm-12 mb-3">
           <br></br>
 
           <h4>Add On Services</h4>
         </div>
         <div className="form-group row border p-3">
+          {/* {addOnformValues && addOnformValues.length == 0 && 
+          (
+            <>
+            <div className="col-sm-4 mb-3">
+              <label>Service </label>
+              <Select
+                options={optionsObj.addOnServiceOptions}
+                placeholder="Select Service"
+                value={
+                  element.quotItiService
+                    ? optionsObj.addOnServiceOptions.find(
+                        (option) => option.value === element.quotItiService
+                      )
+                    : null
+                }
+                onChange={(selectedOption) => {
+                  const newFormValues = [...addOnformValues];
+                  newFormValues[index].quotItiService = selectedOption
+                    ? selectedOption.value
+                    : "";
+                  setAddOnFormValues(newFormValues);
+                }}
+              />
+            </div>
+            <div className="col-sm-4 mb-3">
+              <label className=" col-form-label pb-0 mb-0">
+                Service Payable
+              </label>
+              <div className="row">
+                <div className="col-sm-6">
+                  <div className="form-check">
+                    <label className="form-check-label">
+                      <input
+                        type="radio"
+                        className="form-check-input"
+                        name={`serviceRadio-${index}`}
+                        id={`serviceRadio-${index}-1`}
+                        value={1}
+                        checked={element.quotItiServicePayable == "1"}
+                        onChange={(e) => handleServicePayableChange(e, index)}
+                      />
+                      Inclusion
+                      <i className="input-helper"></i>
+                    </label>
+                  </div>
+                </div>
+                <div className="col-sm-6">
+                  <div className="form-check">
+                    <label className="form-check-label">
+                      <input
+                        type="radio"
+                        className="form-check-input"
+                        name={`serviceRadio-${index}`}
+                        id={`serviceRadio-${index}-2`}
+                        value={2}
+                        checked={element.quotItiServicePayable == "2"}
+                        onChange={(e) => handleServicePayableChange(e, index)}
+                      />
+                      Exclusion
+                      <i className="input-helper"></i>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {element.quotItiServicePayable == "1" && (
+              <div className="col-sm-4 mb-3">
+                <label>Amount </label>
+                <input
+                  type="text"
+                  pattern="[0-9]*"
+                  className="form-control"
+                  placeholder="Enter Amount"
+                  value={element.quotItiServiceAmount}
+                  onChange={(event) => {
+                    const newValue = event.target.value.trim();
+                    if (/^\d*$/.test(newValue)) {
+                      const newFormValues = [...addOnformValues];
+                      newFormValues[index].quotItiServiceAmount = newValue
+                        ? newValue
+                        : "";
+                      setAddOnFormValues(newFormValues);
+                    }
+                  }}
+                  onBlur={() => {
+                    simpleValidator.current.showMessageFor(
+                      "quotItiServiceAmount"
+                    );
+                  }}
+                />
+                <>
+                  {simpleValidator.current.message(
+                    "quotItiAmount",
+                    itineraryObject.quotItiAmount,
+                    ["required"],
+                    {
+                      messages: {
+                        required: "Please enter amount",
+                      },
+                    }
+                  )}
+                </>
+              </div>
+            )}
+
+            <div className="col-sm-11 mb-3">
+              <label>Remark </label>
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Enter Remark"
+                value={element.quotItiServiceRemark}
+                onChange={(event) => {
+                  const newValue = event.target.value;
+                  const newFormValues = [...addOnformValues];
+                  newFormValues[index].quotItiServiceRemark = newValue
+                    ? newValue
+                    : "";
+                  setAddOnFormValues(newFormValues);
+                }}
+              />
+            </div>
+
+            <div className="col-sm-1 mb-3">
+              <ion-icon
+                style={{ marginTop: "40%" }}
+                name="add-circle-outline"
+                color="success"
+                size="large"
+                onClick={() => addAddOnServicesFormFields()}
+              ></ion-icon>
+              {index ? (
+                <ion-icon
+                  style={{ marginTop: "40%" }}
+                  name="close-circle-outline"
+                  color="danger"
+                  size="large"
+                  onClick={() => removeAddOnServicesFormFields(index)}
+                ></ion-icon>
+              ) : null}
+            </div>
+            <div className="col-sm-12 mb-3">
+              <h1
+                style={{
+                  borderStyle: "double",
+                  border: "1px dotted lightgrey",
+                }}
+              ></h1>
+            </div>
+          </>
+          )
+          } */}
           {addOnformValues.map((element, index) => (
             <>
               <div className="col-sm-4 mb-3">
@@ -621,7 +1027,7 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
                           checked={element.quotItiServicePayable == "1"}
                           onChange={(e) => handleServicePayableChange(e, index)}
                         />
-                        Free
+                        Inclusion
                         <i className="input-helper"></i>
                       </label>
                     </div>
@@ -638,51 +1044,54 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
                           checked={element.quotItiServicePayable == "2"}
                           onChange={(e) => handleServicePayableChange(e, index)}
                         />
-                        Payable
+                        Exclusion
                         <i className="input-helper"></i>
                       </label>
                     </div>
                   </div>
                 </div>
               </div>
-              <div className="col-sm-4 mb-3">
-                <label>Amount </label>
-                <input
-                  type="text"
-                  pattern="[0-9]*"
-                  className="form-control"
-                  placeholder="Enter Amount"
-                  value={element.quotItiServiceAmount}
-                  onChange={(event) => {
-                    const newValue = event.target.value.trim();
-                    if (/^\d*$/.test(newValue)) {
-                      const newFormValues = [...addOnformValues];
-                      newFormValues[index].quotItiServiceAmount = newValue
-                        ? newValue
-                        : "0";
-                      setAddOnFormValues(newFormValues);
-                    }
-                  }}
-                  onBlur={() => {
-                    simpleValidator.current.showMessageFor(
-                      "quotItiServiceAmount"
-                    );
-                  }}
-                />
-                <>
-                  {simpleValidator.current.message(
-                    "quotItiServiceAmount",
-                    element.quotItiServiceAmount,
-                    ["required"],
-                    {
-                      messages: {
-                        required: "Please enter amount",
-                      },
-                    }
-                  )}
-                </>
-              </div>
-              <div className="col-sm-11 mb-3">
+              {element.quotItiServicePayable == "1" && (
+                <div className="col-sm-4 mb-3">
+                  <label>Total Amount for Group</label>
+                  <input
+                    type="text"
+                    pattern="[0-9]*"
+                    className="form-control"
+                    placeholder="Enter Amount"
+                    value={element.quotItiServiceAmount}
+                    onChange={(event) => {
+                      const newValue = event.target.value.trim();
+                      if (/^\d*$/.test(newValue)) {
+                        const newFormValues = [...addOnformValues];
+                        newFormValues[index].quotItiServiceAmount = newValue
+                          ? newValue
+                          : "";
+                        setAddOnFormValues(newFormValues);
+                      }
+                    }}
+                    onBlur={() => {
+                      simpleValidator.current.showMessageFor(
+                        "quotItiServiceAmount"
+                      );
+                    }}
+                  />
+                  <>
+                    {simpleValidator.current.message(
+                      "quotItiAmount",
+                      itineraryObject.quotItiAmount,
+                      ["required"],
+                      {
+                        messages: {
+                          required: "Please enter amount",
+                        },
+                      }
+                    )}
+                  </>
+                </div>
+              )}
+
+              <div className="col-sm-10 mb-3">
                 <label>Remark </label>
                 <input
                   type="text"
@@ -690,7 +1099,7 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
                   placeholder="Enter Remark"
                   value={element.quotItiServiceRemark}
                   onChange={(event) => {
-                    const newValue = event.target.value.trim();
+                    const newValue = event.target.value;
                     const newFormValues = [...addOnformValues];
                     newFormValues[index].quotItiServiceRemark = newValue
                       ? newValue
@@ -700,23 +1109,33 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
                 />
               </div>
 
-              <div className="col-sm-1 mb-3">
+              <div className="col-sm-2 mb-3">
                 <ion-icon
-                  style={{ marginTop: "40%" }}
+                  style={{ marginTop: "20%" }}
                   name="add-circle-outline"
                   color="success"
                   size="large"
+                  title="Add"
                   onClick={() => addAddOnServicesFormFields()}
                 ></ion-icon>
+
                 {index ? (
                   <ion-icon
-                    style={{ marginTop: "40%" }}
+                    style={{ marginTop: "20%" }}
                     name="close-circle-outline"
                     color="danger"
                     size="large"
+                    title="Remove"
                     onClick={() => removeAddOnServicesFormFields(index)}
                   ></ion-icon>
                 ) : null}
+                <ion-icon
+                  name="refresh-outline"
+                  color="tertiary"
+                  size="large"
+                  title="Clear"
+                  onClick={() => resetAddOn(index)}
+                ></ion-icon>
               </div>
               <div className="col-sm-12 mb-3">
                 <h1
@@ -752,39 +1171,58 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
                 className="dataTables_wrapper dt-bootstrap5 no-footer"
               >
                 <div className="row">
-                  <div className="col-sm-12 col-md-6">
-                    <div
-                      className="dataTables_length"
-                      id="order-listing_length"
-                    >
-                      <label>
-                        Show{" "}
-                        <select
-                          name="order-listing_length"
-                          aria-controls="order-listing"
-                          className="form-select form-select-sm"
-                        >
-                          <option value="5">5</option>
-                          <option value="10">10</option>
-                          <option value="15">15</option>
-                        </select>{" "}
-                        entries
-                      </label>
+                  <div className="col-md-4 grid-margin stretch-card">
+                    <div className="card border border-primary">
+                      <div className="card-body">
+                        <div className="media">
+                          <ion-icon
+                            style={{ marginTop: "5px" }}
+                            color="primary"
+                            name="cash-outline"
+                            size="large"
+                          ></ion-icon>
+                          <div className="media-body ml-2">
+                            <p
+                              className="card-text"
+                              style={{ marginBottom: 0 }}
+                            >
+                              Total Vehicle Amount :{" "}
+                              <b> {getAmount("vehicle", "total")}</b>
+                            </p>
+                            <p className="card-text">
+                              Total Add On Service Amount :{" "}
+                              <b> {getAmount("addon", "total")}</b>
+                            </p>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                  <div className="col-sm-12 col-md-6">
-                    <div
-                      id="order-listing_filter"
-                      className="dataTables_filter"
-                    >
-                      <label>
-                        <input
-                          type="search"
-                          className="form-control"
-                          placeholder="Search"
-                          aria-controls="order-listing"
-                        />
-                      </label>
+                  <div className="col-md-4 grid-margin stretch-card">
+                    <div className="card border border-primary">
+                      <div className="card-body">
+                        <div className="media">
+                          <ion-icon
+                            style={{ marginTop: "5px" }}
+                            color="primary"
+                            name="cash-outline"
+                            size="large"
+                          ></ion-icon>
+                          <div className="media-body ml-2">
+                            <p
+                              className="card-text"
+                              style={{ marginBottom: 0 }}
+                            >
+                              Per Person Vehicle Amount :{" "}
+                              <b> {getAmount("vehicle", "pax")}</b>
+                            </p>
+                            <p className="card-text">
+                              Per Person Add On Service Amount :{" "}
+                              <b> {getAmount("addon", "pax")}</b>
+                            </p>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -798,8 +1236,8 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
                       >
                         <thead>
                           <tr>
-                            <th style={{ width: "107.016px" }}>Sr. No.</th>
                             <th style={{ width: "171.375px" }}>Day</th>
+                            <th style={{ width: "171.375px" }}>Date</th>
                             <th style={{ width: "127.391px" }}>Vehicle</th>
                             <th style={{ width: "116.672px" }}>
                               Pick Up Point
@@ -808,7 +1246,12 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
                             <th style={{ width: "116.672px" }}>
                               No of Vehicles
                             </th>
-
+                            <th style={{ width: "116.672px" }}>
+                              Vehicle Amount
+                            </th>
+                            <th style={{ width: "116.672px" }}>
+                              Add On Amount
+                            </th>
                             <th style={{ width: "116.672px" }}>Action</th>
                           </tr>
                         </thead>
@@ -817,12 +1260,21 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
                             itineraryData?.length > 0 &&
                             itineraryData.map((itineraryObj, index) => (
                               <tr className="odd" key={index}>
-                                <td className="sorting_1">{index + 1}</td>
+                              
                                 <td>{itineraryObj.quotItiDay}</td>
+                                <td>
+                                  {itineraryObj.quotItiDate
+                                    ? itineraryObj.quotItiDate.split("T")[0]
+                                    : "N.A"}
+                                </td>
                                 <td>{itineraryObj.vehicleName}</td>
                                 <td>{itineraryObj.pickupPt}</td>
                                 <td>{itineraryObj.dropPt}</td>
                                 <td>{itineraryObj.quotItiNoOfVehicles}</td>
+                                <td>{itineraryObj.quotItiAmount}</td>
+                                <td>
+                                  {getAddonAmount(itineraryObj.quotItiAddons)}
+                                </td>
 
                                 <td>
                                   <ion-icon

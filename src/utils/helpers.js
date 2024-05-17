@@ -1,19 +1,5 @@
 // Get date in format month date,year hour:minute am/pm e.g. Mar 25, 2024, 10:35 PM
 const getDateFormatted = (dateString) => {
-  // const options = { year: "numeric", month: "short", day: "2-digit" };
-  // const date = new Date(dateString);
-
-  // const istOffset = 5.5 * 60 * 60 * 1000;
-  // date.setTime(date.getTime() + istOffset);
-
-  // const formattedDate = date.toLocaleDateString("en-US", options);
-
-  // const hours = date.getHours();
-  // const minutes = date.getMinutes();
-  // const period = hours >= 12 ? "PM" : "AM";
-  // const formattedTime = `${hours % 12 || 12}:${minutes
-  //   .toString()
-  //   .padStart(2, "0")} ${period}`;
   if (dateString) {
     if (dateString.includes(".000Z")) {
       dateString = dateString.replace(".000Z", "");
@@ -33,10 +19,41 @@ const getDateFormatted = (dateString) => {
     return formattedDate;
   }
   return "N.A.";
+  // if (dateString) {
+  //   const givenTime = new Date(dateString);
+
+  //   // Define hours and minutes to add
+  //   const hoursToAdd = 5; // 5 hours
+  //   const minutesToAdd = 30; // 30 minutes
+
+  //   // Create a new Date object to avoid modifying the original
+  //   const newTime = new Date(givenTime);
+
+  //   // Add hours and minutes
+  //   givenTime.setHours(newTime.getHours() + hoursToAdd);
+  //   givenTime.setMinutes(newTime.getMinutes() + minutesToAdd);
+  //   const options = { year: "numeric", month: "short", day: "2-digit" };
+  //   const date = newTime;
+  //   console.log("data", date);
+  //   // const istOffset = 5.5 * 60 * 60 * 1000;
+  //   // date.setTime(date.getTime() + istOffset);
+
+  //   const formattedDate = date.toLocaleDateString("en-US", options);
+
+  //   const hours = date.getHours();
+  //   const minutes = date.getMinutes();
+  //   const period = hours >= 12 ? "PM" : "AM";
+  //   const formattedTime = `${hours % 12 || 12}:${minutes
+  //     .toString()
+  //     .padStart(2, "0")} ${period}`;
+
+  //   return `${formattedDate}, ${formattedTime}`;
+  // } else {
+  //   return "N.A.";
+  // }
 };
 
 // Get dependent dropdown
-
 const getFilteredDropdownOptions = (id, optionsArray, filterType) => {
   let filteredOptionsArray = [];
   if (filterType == "country") {
@@ -51,8 +68,26 @@ const getFilteredDropdownOptions = (id, optionsArray, filterType) => {
   return filteredOptionsArray;
 };
 
-// Convert string to titlecase
+// Get dependent dropdown based on idArray
+const getMultipleFilteredDropdownOptions = (
+  idArray,
+  optionsArray,
+  filterType
+) => {
+  let filteredOptionsArray = [];
+  if (filterType === "country") {
+    filteredOptionsArray = optionsArray.filter((option) => {
+      return idArray.includes(option.fkCountryId);
+    });
+  } else if (filterType === "state") {
+    filteredOptionsArray = optionsArray.filter((option) => {
+      return idArray.includes(option.fkStateId);
+    });
+  }
+  return filteredOptionsArray;
+};
 
+// Convert string to titlecase
 const toTitleCase = (str) => {
   if (!str || !/[a-zA-Z]/.test(str)) {
     return "";
@@ -138,6 +173,7 @@ const base64ToFile = (base64, filename, contentType = "image/jpeg") => {
 export {
   getDateFormatted,
   getFilteredDropdownOptions,
+  getMultipleFilteredDropdownOptions,
   toTitleCase,
   getDateFormattedForDB,
   base64ToFile,

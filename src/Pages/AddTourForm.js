@@ -32,7 +32,7 @@ const AddTourForm = () => {
 
   const tabNames = [
     { id: 1, name: "Basic Details" },
-    { id: 2, name: "Transportation" },
+    { id: 2, name: "Itinerary" },
   ];
   const openFormTab = (tabId) => {
     setSelectedTab(tabId);
@@ -67,14 +67,16 @@ const AddTourForm = () => {
       let url = ADD_TOUR_API;
       console.log("formData", formData);
       let transportationData = [];
-      let vehicleArray = formData.tourVehicle;
+      let vehicleArray = formData.tourStartPt;
+      console.log("vehicleArray", vehicleArray);
       for (let index = 0; index < vehicleArray.length; index++) {
         transportationData.push({
-          fkVehicleId: vehicleArray[index],
+          fkVehicleId: "",
           startPointId: formData.tourStartPt[index],
           endPointId: formData.tourEndPt[index],
-          onSeasonRate: formData.tourOnSeason[index],
-          offSeasonRate: formData.tourOffSeason[index],
+          onSeasonRate: 0,
+          offSeasonRate: 0,
+          tourItiDescription: formData.tourItiDescription[index],
         });
       }
       let body = {
@@ -84,7 +86,7 @@ const AddTourForm = () => {
         countryIds: formData.countryIds,
         stateIds: formData.stateIds,
         transitPointIds: formData.transitPointIds,
-        locationIds: formData.locationIds.join(","),
+        locationIds: "",
         transportationData: transportationData,
       };
       console.log("body", body);
@@ -93,7 +95,6 @@ const AddTourForm = () => {
       if (response) {
         if (response.status == 200) {
           setIsLoading(false);
-
           if (response.data.data.status == false) {
             toast.error(response.data.message, {
               position: "top-right",
@@ -122,14 +123,15 @@ const AddTourForm = () => {
     try {
       let url = UPDATE_TOUR_API;
       let transportationData = [];
-      let vehicleArray = formData.tourVehicle;
-      for (let index = 0; index < vehicleArray.length; index++) {
+      let tourStartPtArray = formData.tourStartPt;
+      for (let index = 0; index < tourStartPtArray.length; index++) {
         transportationData.push({
-          fkVehicleId: vehicleArray[index],
+          fkVehicleId: "",
           startPointId: formData.tourStartPt[index],
           endPointId: formData.tourEndPt[index],
           onSeasonRate: formData.tourOnSeason[index],
           offSeasonRate: formData.tourOffSeason[index],
+          tourItiDescription: formData.tourItiDescription[index],
         });
       }
       let body = {
@@ -149,10 +151,11 @@ const AddTourForm = () => {
           typeof formData.transitPointIds === "string"
             ? formData.transitPointIds
             : formData.transitPointIds.join(","),
-        locationIds:
-          typeof formData.locationIds === "string"
-            ? formData.locationIds
-            : formData.locationIds.join(","),
+        locationIds: "",
+        // locationIds:
+        //   typeof formData.locationIds === "string"
+        //     ? formData.locationIds
+        //     : formData.locationIds.join(","),
         transportationData: transportationData,
       };
       setIsLoading(true);
@@ -276,6 +279,13 @@ const AddTourForm = () => {
                     .split(",")
                     .map(Number)
                 : "",
+            tourItiDescription:
+              tourDetails.transportations &&
+              tourDetails.transportations.length > 0
+                ? tourDetails.transportations.map(
+                    (transport) => transport.tourItiDescription
+                  )
+                : "",
           };
           Object.entries(formData).forEach(([field, value]) => {
             dispatch(setTourFormData(field, value));
@@ -296,11 +306,11 @@ const AddTourForm = () => {
       fetchTourDetails(id);
     }
   }, [id]);
-  useEffect(() => {
-    if (!id) {
-      dispatch(resetFormData());
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (!id) {
+  //     dispatch(resetFormData());
+  //   }
+  // }, []);
   return (
     <>
       <div className="container-scroller">

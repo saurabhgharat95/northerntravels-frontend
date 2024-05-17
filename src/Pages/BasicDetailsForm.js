@@ -7,15 +7,16 @@ import {
 import {
   FETCH_TOURS_API,
   FETCH_TRANSIT_PT_BY_TOUR_API,
-  FETCH_TOUR_DETAILS_API
+  FETCH_TOUR_DETAILS_API,
+  FETCH_TRANSIT_POINTS_API,
 } from "../utils/constants";
 import makeAnimated from "react-select/animated";
-
 // redux
 import { useDispatch, useSelector } from "react-redux";
 import { setQuotationFormData } from "../utils/store";
+import { getMultipleFilteredDropdownOptions } from "../utils/helpers";
 
-const BasicDetailsForm = ({onValidationStatusChange}) => {
+const BasicDetailsForm = ({ onValidationStatusChange }) => {
   const [optionsId, setOptionsId] = useState({
     tourId: 0,
     startPtId: 0,
@@ -84,32 +85,112 @@ const BasicDetailsForm = ({onValidationStatusChange}) => {
       }
     } catch (e) {}
   };
+  const fetchToursByPackage = async () => {
 
-  const fetchTransitPtsByTour = async () => {
     try {
-      let url = FETCH_TRANSIT_PT_BY_TOUR_API;
-      let body = {
-        id: optionsId.tourId ? optionsId.tourId : 0,
-      };
-      let response = await axios.post(url, body);
+      let url = FETCH_TOURS_API;
+
+      let response = await axios.post(url);
       if (response) {
         if (response.status == 200) {
-          let transitPts = response.data.data;
-          let transitPtOptionsArray = [];
-          transitPts.forEach((point) => {
-            transitPtOptionsArray.push({
-              value: point.fkTransitPointId,
-              label: point.transitPoint.transitPointName,
+          let tours = response.data.data;
+          let tourOptionsArray = [];
+          if (basicDetailsObject.quotPackage == "1") {
+            setOptionsObj((prevState) => ({
+              ...prevState,
+              tourOptions: [],
+            }));
+            tours.forEach((tour) => {
+              if (tour.countryNames.split(",").length == 1) {
+
+                tourOptionsArray.push({
+                  value: tour.id,
+                  label: tour.tourName,
+                });
+                setOptionsObj((prevState) => ({
+                  ...prevState,
+                  tourOptions: tourOptionsArray,
+                }));
+              }
+            });
+          } else {
+            setOptionsObj((prevState) => ({
+              ...prevState,
+              tourOptions: [],
+            }));
+            tours.forEach((tour) => {
+              if (tour.countryNames.split(",").length > 1) {
+                tourOptionsArray.push({
+                  value: tour.id,
+                  label: tour.tourName,
+                });
+                setOptionsObj((prevState) => ({
+                  ...prevState,
+                  tourOptions: tourOptionsArray,
+                }));
+              }
+
+            });
+          }
+        }
+      }
+    } catch (e) {
+      console.log('eee',e)
+    }
+  };
+  const fetchTransitPts = async (stateIds) => {
+    try {
+      let url = FETCH_TRANSIT_POINTS_API;
+
+      let response = await axios.post(url);
+      if (response) {
+        if (response.status == 200) {
+          let trasitPts = response.data.data;
+          let trasitPtsOptionsArray = [];
+          let filteredTransitPoints = getMultipleFilteredDropdownOptions(
+            stateIds,
+            trasitPts,
+            "state"
+          );
+          filteredTransitPoints.forEach((trasitPt) => {
+            trasitPtsOptionsArray.push({
+              value: trasitPt.id,
+              label: trasitPt.transitPointName,
             });
           });
           setOptionsObj((prevState) => ({
             ...prevState,
-            transitPtOptions: transitPtOptionsArray,
+            transitPtOptions: trasitPtsOptionsArray,
           }));
         }
       }
     } catch (e) {}
   };
+  // const fetchTransitPtsByTour = async () => {
+  //   try {
+  //     let url = FETCH_TRANSIT_PT_BY_TOUR_API;
+  //     let body = {
+  //       id: optionsId.tourId ? optionsId.tourId : 0,
+  //     };
+  //     let response = await axios.post(url, body);
+  //     if (response) {
+  //       if (response.status == 200) {
+  //         let transitPts = response.data.data;
+  //         let transitPtOptionsArray = [];
+  //         transitPts.forEach((point) => {
+  //           transitPtOptionsArray.push({
+  //             value: point.fkTransitPointId,
+  //             label: point.transitPoint.transitPointName,
+  //           });
+  //         });
+  //         setOptionsObj((prevState) => ({
+  //           ...prevState,
+  //           transitPtOptions: transitPtOptionsArray,
+  //         }));
+  //       }
+  //     }
+  //   } catch (e) {}
+  // };
   const handlePackageChange = (event) => {
     const value = event.target.value;
     console.log(value);
@@ -150,34 +231,35 @@ const BasicDetailsForm = ({onValidationStatusChange}) => {
     try {
       let url = FETCH_TOUR_DETAILS_API;
       let body = {
-        id:tourId
-      }
-      let response = await axios.post(url,body);
+        id: tourId,
+      };
+      let response = await axios.post(url, body);
       if (response) {
         if (response.status == 200) {
-          let stateIds = []
+          let stateIds = [];
+
           let states = response.data.data.states;
-          states.forEach(state => {
-            stateIds.push(state.fkLocationId)
-          });
-          dispatch(
-            setQuotationFormData("stateIds", stateIds)
-          );
-          dispatch(
-            setQuotationFormData("tourData", response.data.data)
-          );
+          if (states) {
+            states.forEach((state) => {
+              stateIds.push(state.fkLocationId);
+            });
+          }
+          fetchTransitPts(stateIds);
+          dispatch(setQuotationFormData("stateIds", stateIds));
+          dispatch(setQuotationFormData("tourData", response.data.data));
         }
       }
-    } catch (e) {}
-  }
+    } catch (e) {
+      console.log("err", e);
+    }
+  };
   const validateForm = () => {
     const isValid = simpleValidator.current.allValid();
     if (isValid) {
-      onValidationStatusChange(isValid,1); 
-    }
-    else{
+      onValidationStatusChange(isValid, 1);
+    } else {
       simpleValidator.current.showMessages();
-      setForceUpdate(v=>++v)
+      setForceUpdate((v) => ++v);
     }
     return isValid;
   };
@@ -185,9 +267,12 @@ const BasicDetailsForm = ({onValidationStatusChange}) => {
     fetchTours();
   }, []);
 
+  // useEffect(() => {
+  //   fetchTransitPtsByTour();
+  // }, [optionsId.tourId]);
   useEffect(() => {
-    fetchTransitPtsByTour();
-  }, [optionsId.tourId]);
+    fetchToursByPackage()
+  }, [basicDetailsObject.quotPackage]);
 
   useEffect(() => {
     if (
@@ -219,11 +304,10 @@ const BasicDetailsForm = ({onValidationStatusChange}) => {
   ]);
   useEffect(() => {
     if (quotFormData) {
-      console.log('quotFormDataquotFormData',quotFormData)
       setBasicDetailsObject((prevState) => ({
         ...prevState,
-        quotPackage: quotFormData.quotPackage ? quotFormData.quotPackage:"1",
-        quotSeason: quotFormData.quotSeason ? quotFormData.quotSeason:"1",
+        quotPackage: quotFormData.quotPackage ? quotFormData.quotPackage : "1",
+        quotSeason: quotFormData.quotSeason ? quotFormData.quotSeason : "1",
         quotClientName: quotFormData.quotClientName,
         quotMobileNo: quotFormData.quotMobileNo,
         quotWhatsAppNo: quotFormData.quotWhatsAppNo,
@@ -242,11 +326,16 @@ const BasicDetailsForm = ({onValidationStatusChange}) => {
     }
   }, [quotFormData]);
 
-
+  useEffect(() => {
+    fetchTourDetails(optionsId.tourId);
+  }, [optionsId.tourId]);
 
   useEffect(() => {
-    validateForm(); 
-  }, [basicDetailsObject.quotArrivalDate,basicDetailsObject.quotDepartureDate]);
+    validateForm();
+  }, [
+    basicDetailsObject.quotArrivalDate,
+    basicDetailsObject.quotDepartureDate,
+  ]);
   return (
     <>
       <section
@@ -361,8 +450,7 @@ const BasicDetailsForm = ({onValidationStatusChange}) => {
                 dispatch(
                   setQuotationFormData("fkTourId", selectedOption.value)
                 );
-                fetchTourDetails(selectedOption.value)
-
+                fetchTourDetails(selectedOption.value);
               }}
               onBlur={() => {
                 simpleValidator.current.showMessageFor("tour_name");
