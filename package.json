@@ -2,7 +2,7 @@
   "name": "northerntravelsfrontend",
   "version": "0.1.0",
   "private": true,
-  "homepage": "http://35.154.42.3/",
+  "homepage": "/build",
   "dependencies": {
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
