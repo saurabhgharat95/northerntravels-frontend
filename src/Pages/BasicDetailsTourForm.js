@@ -392,7 +392,7 @@ const BasicDetailsTourForm = () => {
                   : [];
                 setStateId(selectedIds);
                 dispatch(setTourFormData("stateIds", selectedIds.join(",")));
-                console.log("state-selectedIds", selectedIds);
+                
               }}
               onBlur={() => {
                 simpleValidator.current.showMessageFor("state_name");
@@ -443,7 +443,7 @@ const BasicDetailsTourForm = () => {
                 dispatch(
                   setTourFormData("transitPointIds", selectedIds.join(","))
                 );
-                console.log("selectedIds", selectedIds);
+                
               }}
               onBlur={() => {
                 simpleValidator.current.showMessageFor("transit_pt");

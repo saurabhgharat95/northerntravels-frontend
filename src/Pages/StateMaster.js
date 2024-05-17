@@ -69,7 +69,7 @@ const StateMaster = () => {
       let url = FETCH_COUNTRIES_API;
 
       let response = await axios.post(url);
-      console.log("response", response.data.data);
+      
       if (response) {
         if (response.status == 200) {
           let countries = response.data.data;
@@ -93,7 +93,7 @@ const StateMaster = () => {
       let url = FETCH_STATES_API;
 
       let response = await axios.post(url);
-      console.log("response", response.data.data);
+      
       if (response) {
         if (response.status == 200) {
           setDataReady(true);
@@ -121,7 +121,7 @@ const StateMaster = () => {
 
       if (simpleValidator.current.allValid()) {
         let response = await axios.post(url, body);
-        console.log("response", response);
+        
         if (response) {
           if (response.status == 200) {
             setIsLoading(false);
@@ -147,7 +147,7 @@ const StateMaster = () => {
         setIsLoading(false);
       }
     } catch (e) {
-      console.log("ee", e);
+      
       setIsLoading(false);
       toast.error("Something Went Wrong :(", {
         position: "top-right",
@@ -207,7 +207,7 @@ const StateMaster = () => {
       };
       setIsLoading(true);
       let response = await axios.post(url, body);
-      console.log("response", response);
+      
       if (response) {
         setIsLoading(false);
         if (response.status == 200) {
@@ -245,7 +245,7 @@ const StateMaster = () => {
   };
 
   const handleCancel = () => {
-    console.log("Cancelled");
+    
     setShowConfirmation(false);
   };
 

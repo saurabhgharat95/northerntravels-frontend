@@ -85,7 +85,7 @@ const MarkupForm = ({ onValidationStatusChange }) => {
     const file = event.target.files[0];
     try {
       if (file) {
-        console.log("filesize", file.size);
+        
         // if (file.size > MAX_FILE_SIZE) {
         //   toast.error(
         //     "File size exceeds 1 MB limit. Please choose a smaller file.",
@@ -110,7 +110,7 @@ const MarkupForm = ({ onValidationStatusChange }) => {
       }
       // }
     } catch (e) {
-      console.log("err", e);
+      
     }
   };
   const handleCompanyFileChange = (event) => {

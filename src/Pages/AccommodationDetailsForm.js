@@ -128,7 +128,7 @@ const AccommodationDetailsForm = ({ onValidationStatusChange }) => {
     roomObject.forEach((room) => {
       noOfExtraBeds += room.extraBeds ? Number(room.extraBeds) : 0;
     });
-    // console.log("roomObject", roomObject,noOfExtraBeds);
+    // 
     setAccommodationObject((prevState) => ({
       ...prevState,
       quotTotalExtraBeds: noOfExtraBeds,
@@ -180,7 +180,7 @@ const AccommodationDetailsForm = ({ onValidationStatusChange }) => {
   //       quotTotalExtraBeds: quotFormData.quotTotalExtraBeds,
   //     }));
   //     let roomData = quotFormData.roomData;
-  //     // console.log('roomData',roomData)
+  //     // 
   //     let roomArray = [];
   //     if (roomData) {
   //       if (roomData && roomData.length > 0 && ( roomData[0].fkQuotId || roomData[0].extraBeds)) {
@@ -194,7 +194,7 @@ const AccommodationDetailsForm = ({ onValidationStatusChange }) => {
   //             extraBeds: element.extraBeds,
   //           });
   //         });
-  //         console.log('roomArray',roomArray)
+  //         
   //         if (roomArray.length > 0 && roomArray[0].extraBeds) {
   //           setRoomObject(roomArray);
   //         }

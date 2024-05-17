@@ -70,7 +70,7 @@ const TourManagement = () => {
       };
       setIsLoading(true);
       let response = await axios.post(url, body);
-      console.log("response", response);
+      
       if (response) {
         setIsLoading(false);
         if (response.status == 200) {

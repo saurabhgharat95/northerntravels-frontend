@@ -170,7 +170,7 @@ const TourTransportationForm = () => {
       fetchTransitPts(stateIds)
     }
     let itiFormValue = [];
-    console.log('tourFormData',tourFormData)
+    
     if (tourStartPt) {
       for (let index = 0; index < tourStartPt.length; index++) {
         itiFormValue.push({

@@ -208,7 +208,7 @@ const LeadManagement = () => {
         setIsLoading(false);
       }
     } catch (e) {
-      console.log("ee", e);
+      
       setIsLoading(false);
 
       toast.error("Something Went Wrong :(", {
@@ -248,7 +248,7 @@ const LeadManagement = () => {
         setIsLoading(false);
       }
     } catch (e) {
-      console.log("ee", e);
+      
 
       setIsLoading(false);
 

@@ -133,7 +133,7 @@ const HotelRoomManagement = () => {
         if (response.status == 200) {
           if (response.data.data) {
             if (response.data.data.roomChargesData.length > 0) {
-              console.log("roomDetails", response.data.data.roomChargesData);
+              
 
               let roomDetails = groupedData(response.data.data.roomChargesData);
 
@@ -271,7 +271,7 @@ const HotelRoomManagement = () => {
         }
       }
     } catch (e) {
-      console.log('err',e)
+      
     }
   };
   useEffect(() => {
@@ -613,7 +613,7 @@ const HotelRoomManagement = () => {
                                       </tr>
                                     </thead>
                                     <tbody>
-                                      {console.log("hotel", hotelRooms)}
+                                      {}
                                       {hotelRooms &&
                                         hotelRooms
                                           .slice(startIndex, endIndex)

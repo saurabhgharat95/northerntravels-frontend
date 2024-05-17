@@ -140,7 +140,7 @@ const AddQuotation = () => {
         quotDays: quotFormData.quotDays,
         quotNights: quotFormData.quotNights,
       };
-      console.log("body", body);
+      
       const isFormValid =
         componentSelectorRef.current.isBasicDetailsFormValid();
       if (isFormValid) {
@@ -159,7 +159,7 @@ const AddQuotation = () => {
         }
       }
     } catch (e) {
-      console.log("ee", e);
+      
       setIsLoading(false);
       toast.error("Something Went Wrong :(", {
         position: "top-right",
@@ -187,7 +187,7 @@ const AddQuotation = () => {
         quotDays: quotFormData.quotDays,
         quotNights: quotFormData.quotNights,
       };
-      console.log("body", body);
+      
       const isFormValid =
         componentSelectorRef.current.isBasicDetailsFormValid();
       if (isFormValid) {
@@ -205,7 +205,7 @@ const AddQuotation = () => {
         }
       }
     } catch (e) {
-      console.log("ee", e);
+      
       setIsLoading(false);
       toast.error("Something Went Wrong :(", {
         position: "top-right",
@@ -254,7 +254,7 @@ const AddQuotation = () => {
         quotBlw5: quotFormData.quotBlw5,
         roomData: quotRoomData,
       };
-      console.log("body", body);
+      
       const isFormValid = componentSelectorRef.current.isAccomFormValid();
 
       if (isFormValid) {
@@ -272,7 +272,7 @@ const AddQuotation = () => {
         }
       }
     } catch (e) {
-      console.log("ee", e);
+      
       setIsLoading(false);
       toast.error("Something Went Wrong :(", {
         position: "top-right",
@@ -334,7 +334,7 @@ const AddQuotation = () => {
         }
       }
     } catch (e) {
-      console.error("An error occurred:", e);
+      ;
     }
   };
   const updateHotelDetails = async () => {
@@ -362,7 +362,7 @@ const AddQuotation = () => {
         quotId: quotFormData.quotId,
         quotHotelData: quotHotelData,
       };
-      console.log("body", body);
+      
       const isFormValid = componentSelectorRef.current.isHotelFormValid();
       if (isFormValid) {
         setIsLoading(true);
@@ -380,7 +380,7 @@ const AddQuotation = () => {
         }
       }
     } catch (e) {
-      console.log("ee", e);
+      
       setIsLoading(false);
       toast.error("Something Went Wrong :(", {
         position: "top-right",
@@ -455,7 +455,7 @@ const AddQuotation = () => {
             //       destinationDesc: "",
             //     })),
             // }));
-            console.log("quotItineraryData22", itineraryData);
+            
             dispatch(setQuotationFormData("quotItineraryData", itineraryData));
           } else {
             itiAddonData = element.itiAddonData.map((element) => ({
@@ -498,7 +498,7 @@ const AddQuotation = () => {
         }
       }
     } catch (e) {
-      console.error("An error occurred:", e);
+      ;
     }
   };
   const updateItinerary = async () => {
@@ -508,7 +508,7 @@ const AddQuotation = () => {
       let quotItinerarydetails = quotFormData.quotItineraryData;
       let quotItiAddons = [];
       if (quotItinerarydetails.length > 0) {
-        console.log("quotItinerarydetails", quotItinerarydetails);
+        
         quotItinerarydetails.forEach((element) => {
           if (element.quotItiAddons && element.quotItiAddons.length > 0) {
             if (
@@ -518,7 +518,7 @@ const AddQuotation = () => {
               quotItiAddons = element.quotItiAddons;
             }
           }
-          console.log("quotItiAmount", element.quotItiAmount, quotItiAddons);
+          
           quotItineraryData.push({
             quotItiId: element.quotItiId,
             quotItiDay: element.quotItiDay,
@@ -541,7 +541,7 @@ const AddQuotation = () => {
         quotId: quotFormData.quotId,
         quotItineraryData: quotItineraryData,
       };
-      console.log("body", body);
+      
       const isFormValid = componentSelectorRef.current.isItineraryFormValid();
 
       if (isFormValid) {
@@ -560,7 +560,7 @@ const AddQuotation = () => {
         }
       }
     } catch (e) {
-      console.log("ee", e);
+      
       setIsLoading(false);
       toast.error("Something Went Wrong :(", {
         position: "top-right",
@@ -597,7 +597,7 @@ const AddQuotation = () => {
       formData.append("quotLogo", "");
       formData.append("quotCompanyLogo", "");
 
-      // console.log("body", quotFormData.quotLogo);
+      // 
       const isFormValid = componentSelectorRef.current.isMarkupFormValid();
 
       if (isFormValid) {
@@ -618,7 +618,7 @@ const AddQuotation = () => {
         }
       }
     } catch (e) {
-      console.log("ee", e);
+      
       setIsLoading(false);
       toast.error("Something Went Wrong :(", {
         position: "top-right",
@@ -636,11 +636,11 @@ const AddQuotation = () => {
       let response = await axios.post(url, body);
       if (response) {
         if (response.status == 200) {
-          console.log("success");
+          
         }
       }
     } catch (e) {
-      console.log(e);
+      
     }
   };
   const fetchTourDetails = async (tourId) => {
@@ -808,7 +808,7 @@ const AddQuotation = () => {
         }
       }
     } catch (e) {
-      console.log("ee", e);
+      
       setIsLoading(false);
     }
   };

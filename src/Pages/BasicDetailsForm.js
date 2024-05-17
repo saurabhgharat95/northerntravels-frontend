@@ -135,7 +135,7 @@ const BasicDetailsForm = ({ onValidationStatusChange }) => {
         }
       }
     } catch (e) {
-      console.log('eee',e)
+      
     }
   };
   const fetchTransitPts = async (stateIds) => {
@@ -193,7 +193,7 @@ const BasicDetailsForm = ({ onValidationStatusChange }) => {
   // };
   const handlePackageChange = (event) => {
     const value = event.target.value;
-    console.log(value);
+    
     setBasicDetailsObject((prevState) => ({
       ...prevState,
       quotPackage: value,
@@ -250,7 +250,7 @@ const BasicDetailsForm = ({ onValidationStatusChange }) => {
         }
       }
     } catch (e) {
-      console.log("err", e);
+      
     }
   };
   const validateForm = () => {

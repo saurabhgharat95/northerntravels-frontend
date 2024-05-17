@@ -110,7 +110,7 @@ const RoomTypeMaster = () => {
         setIsLoading(false);
       }
     } catch (e) {
-      console.log("ee", e);
+      
       setIsLoading(false);
       toast.error("Something Went Wrong :(", {
         position: "top-right",

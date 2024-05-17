@@ -116,7 +116,7 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
 
       setAddOnFormValues(newFormValues);
     } catch (e) {
-      console.log("eee", e);
+      
     }
   };
   const addItinerary = () => {
@@ -131,7 +131,7 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
             itineraryObject,
           ])
         );
-        console.log("itine", itineraryObject);
+        
         setItineraryObject((prevState) => ({
           ...prevState,
           quotItiId: null,
@@ -164,17 +164,17 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
         simpleValidator.current.showMessages();
       }
     } catch (e) {
-      console.log("err", e);
+      
     }
   };
   const editItinerary = () => {
     if (simpleValidator.current.allValid()) {
-      console.log("addOnformValues", addOnformValues);
+      
       itineraryObject.quotItiAddons = addOnformValues;
       itineraryObject.quotItiDestinations = destFormValues;
       const updatedItineraryData = [...itineraryData];
       updatedItineraryData[acionObj.updateId] = itineraryObject;
-      console.log("updatedItineraryData", updatedItineraryData);
+      
       setItineraryData(updatedItineraryData);
       setOriginalItineraryData(updatedItineraryData);
       dispatch(setQuotationFormData("quotItineraryData", updatedItineraryData));
@@ -237,7 +237,7 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
 
     const newFormValues = [...addOnformValues];
     newFormValues[index].quotItiServicePayable = value ? value : "";
-    console.log("addon", addOnformValues);
+    
     setAddOnFormValues(newFormValues);
     setForceUpdate((v) => ++v);
   };
@@ -261,7 +261,7 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
   };
   const validateForm = () => {
     const isValid = simpleValidator.current.allValid();
-    console.log("isValid", simpleValidator.current.errorMessages);
+    
     if (isValid) {
       onValidationStatusChange(isValid, 4);
     } else {
@@ -328,7 +328,7 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
         }
       }
     } catch (e) {
-      console.log("err", e);
+      
     }
   };
   const getAddonAmount = (addOns) => {
@@ -494,7 +494,7 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
   }, [quotFormData]);
   useEffect(() => {
     let tourDetails = quotFormData.tourData;
-    console.log("tourDetails", tourDetails);
+    
     let vehicles = tourDetails.transportations;
     let transitPoints = tourDetails.transitPoints;
     const filteredEntries = vehicles.filter(

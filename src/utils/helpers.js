@@ -34,7 +34,7 @@ const getDateFormatted = (dateString) => {
   //   givenTime.setMinutes(newTime.getMinutes() + minutesToAdd);
   //   const options = { year: "numeric", month: "short", day: "2-digit" };
   //   const date = newTime;
-  //   console.log("data", date);
+  //   
   //   // const istOffset = 5.5 * 60 * 60 * 1000;
   //   // date.setTime(date.getTime() + istOffset);
 
@@ -108,7 +108,7 @@ const getDateFormattedForDB = (dateString) => {
 
   // Format into yyyy-mm-dd
   const formattedDate = `${year}-${month}-${day}`;
-  console.log("formattedDate", formattedDate);
+  
   return formattedDate;
 };
 
@@ -142,7 +142,7 @@ const base64ToBlob = (
     /^data:image\/[a-zA-Z]+;base64,/,
     ""
   );
-  console.log("base64WithoutPrefix", base64WithoutPrefix);
+  
   const byteCharacters = atob(base64WithoutPrefix); // Decode Base64
   const byteArrays = [];
 
@@ -163,7 +163,7 @@ const base64ToBlob = (
 
 // Convert base64 string to file
 const base64ToFile = (base64, filename, contentType = "image/jpeg") => {
-  console.log("blob", base64);
+  
   if (!base64.includes(".jpeg")) {
     const blob = base64ToBlob(base64, contentType);
     return new File([blob], filename, { type: contentType });

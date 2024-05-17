@@ -65,10 +65,10 @@ const AddTourForm = () => {
   const addTour = async () => {
     try {
       let url = ADD_TOUR_API;
-      console.log("formData", formData);
+      
       let transportationData = [];
       let vehicleArray = formData.tourStartPt;
-      console.log("vehicleArray", vehicleArray);
+      
       for (let index = 0; index < vehicleArray.length; index++) {
         transportationData.push({
           fkVehicleId: "",
@@ -89,7 +89,7 @@ const AddTourForm = () => {
         locationIds: "",
         transportationData: transportationData,
       };
-      console.log("body", body);
+      
       setIsLoading(true);
       let response = await axios.post(url, body);
       if (response) {
@@ -112,7 +112,7 @@ const AddTourForm = () => {
         }
       }
     } catch (e) {
-      console.log("ee", e);
+      
       setIsLoading(false);
       toast.error("Something Went Wrong :(", {
         position: "top-right",

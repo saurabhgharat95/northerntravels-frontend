@@ -347,7 +347,7 @@ const AddRoomForm = ({ cancelForm, hotelId, formType, updateId }) => {
         hasAC: roomObject.hasAC,
         chargesData: roomObject.chargesData,
       };
-      console.log("boo", body);
+      
       setIsLoading(true);
       if (simpleValidator.current.allValid()) {
         let response = await axios.post(url, body);
@@ -374,7 +374,7 @@ const AddRoomForm = ({ cancelForm, hotelId, formType, updateId }) => {
         setIsLoading(false);
       }
     } catch (e) {
-      console.log("ee", e);
+      
       toast.error("Something Went Wrong :(", {
         position: "top-right",
       });
@@ -391,7 +391,7 @@ const AddRoomForm = ({ cancelForm, hotelId, formType, updateId }) => {
         hasAC: roomObject.hasAC,
         chargesData: roomObject.chargesData,
       };
-      console.log("boo", body);
+      
       setIsLoading(true);
       if (simpleValidator.current.allValid()) {
         let response = await axios.post(url, body);
@@ -420,7 +420,7 @@ const AddRoomForm = ({ cancelForm, hotelId, formType, updateId }) => {
         setIsLoading(false);
       }
     } catch (e) {
-      console.log("ee", e);
+      
       toast.error("Something Went Wrong :(", {
         position: "top-right",
       });
