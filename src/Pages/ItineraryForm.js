@@ -19,6 +19,7 @@ import { setQuotationFormData } from "../utils/store";
 import { getMultipleFilteredDropdownOptions } from "../utils/helpers";
 const ItineraryForm = ({ onValidationStatusChange }) => {
   const [locations, setLocations] = useState([]);
+  const [transitPts, setTransitPtList] = useState([]);
   const [acionObj, setActionObj] = useState({ deleteId: null, updateId: null });
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [, setForceUpdate] = useState(0);
@@ -301,6 +302,7 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
       if (response) {
         if (response.status == 200) {
           let trasitPts = response.data.data;
+          setTransitPtList(trasitPts)
           let pickupPtsOptionsArray = [];
           let dropPtsOptionsArray = [];
           const startPointIds = tourPoints.map((obj) => obj.startPointId);
@@ -494,42 +496,43 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
   }, [quotFormData]);
   useEffect(() => {
     let tourDetails = quotFormData.tourData;
-    console.log("tourDetails", tourDetails);
     let vehicles = tourDetails.transportations;
-    let transitPoints = tourDetails.transitPoints;
-    const filteredEntries = vehicles.filter(
-      (item) => item.startPointId === itineraryObject.quotItiPickupPtId
-    );
+    let transitPoints = transitPts;
+    // const filteredEntries = vehicles.filter(
+    //   (item) => item.startPointId === itineraryObject.quotItiPickupPtId
+    // );
 
-    const uniqueEndPointsSet = new Set(
-      filteredEntries.map((item) => item.endPointId)
-    );
+    // const uniqueEndPointsSet = new Set(
+    //   filteredEntries.map((item) => item.endPointId)
+    // );
 
-    const uniqueEndPoints = Array.from(uniqueEndPointsSet);
-    const filteredTransitPoints = transitPoints.filter((item) =>
-      uniqueEndPoints.includes(item.fkTransitPointId)
-    );
+    // const uniqueEndPoints = Array.from(uniqueEndPointsSet);
+    // const filteredTransitPoints = transitPoints.filter((item) =>
+    //   uniqueEndPoints.includes(item.id)
+    // );
 
-    const uniqueTransitPointsSet = new Set(
-      filteredTransitPoints.map((item) => item.fkTransitPointId)
-    );
+    // const uniqueTransitPointsSet = new Set(
+    //   filteredTransitPoints.map((item) => item.id)
+    // );
 
-    const dropPointOptions = Array.from(uniqueTransitPointsSet).map(
-      (fkTransitPointId) => {
-        const transitPoint = filteredTransitPoints.find(
-          (item) => item.fkTransitPointId === fkTransitPointId
-        );
+    // const dropPointOptions = Array.from(uniqueTransitPointsSet).map(
+    //   (fkTransitPointId) => {
+    //     const transitPoint = filteredTransitPoints.find(
+    //       (item) => item.fkTransitPointId === fkTransitPointId
+    //     );
 
-        return {
-          value: fkTransitPointId,
-          label: transitPoint.transitPoint.transitPointName,
-        };
-      }
-    );
-    setOptionsObj((prevState) => ({
-      ...prevState,
-      dropPtOptions: dropPointOptions,
-    }));
+    //     return {
+    //       value: fkTransitPointId,
+    //       label: transitPoint.transitPointName,
+    //     };
+    //   }
+    // );
+    // console.log("filteredEntries", dropPointOptions,uniqueTransitPointsSet,filteredTransitPoints,uniqueEndPointsSet,uniqueEndPoints,transitPoints);
+
+    // setOptionsObj((prevState) => ({
+    //   ...prevState,
+    //   dropPtOptions: dropPointOptions,
+    // }));
   }, [itineraryObject.quotItiPickupPtId]);
 
   useEffect(() => {
