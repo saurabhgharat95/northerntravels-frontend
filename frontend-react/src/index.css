@@ -1,0 +1,285 @@
+@font-face {
+  font-family: Poppins;
+  src: url("../public/fonts/Poppins-Regular.ttf") format("truetype");
+}
+@font-face {
+  font-family: Product_Regular;
+  src: url("../public/fonts/Product_Regular.ttf") format("truetype");
+}
+
+body {
+  margin: 0;
+  font-family: "Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+
+ion-icon {
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.confirmation-popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0; /* Initially invisible */
+  pointer-events: none; /* Prevent interaction before animation */
+  transition: opacity 0.3s ease; /* Fade-in animation */
+}
+
+.confirmation-popup.show {
+  opacity: 1; /* Visible when show class is added */
+  pointer-events: auto; /* Allow interaction after animation */
+}
+
+.popup-content {
+  z-index: 1;
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease; /* Scale animation */
+  transform: scale(0.8); /* Initially smaller size */
+}
+
+.confirmation-popup.show .popup-content {
+  transform: scale(1); /* Full size when show class is added */
+}
+
+.backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
+  opacity: 0; /* Initially invisible */
+  pointer-events: none; /* Prevent interaction before animation */
+  transition: opacity 0.3s ease; /* Fade-in animation */
+}
+
+.confirmation-popup.show .backdrop {
+  opacity: 1; /* Visible when show class is added */
+  pointer-events: auto; /* Allow interaction after animation */
+}
+.cancel-txt {
+  background-color: transparent;
+  color: #2656ab;
+  border-color: transparent;
+}
+.confirm-btn {
+  color: #ffffff;
+  background: #2656ab;
+  border: 1px solid #2656ab;
+  padding: 0.55rem 1rem;
+  font-size: 1rem;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s,
+    box-shadow 0.2s;
+  border-radius: 6px;
+}
+.wizard > .steps .current a {
+  background: #ff9800;
+  cursor: pointer;
+}
+/* For small devices (phones) */
+@media only screen and (max-width: 576px) {
+  .wizard > .steps > ul > li {
+    width: 100%; /* Adjust as needed for smaller screens */
+  }
+}
+
+/* For medium devices (tablets) */
+@media only screen and (min-width: 577px) and (max-width: 992px) {
+  .wizard > .steps > ul > li {
+    width: 50%; /* Adjust as needed for medium screens */
+  }
+}
+
+/* For large devices (desktops) */
+@media only screen and (min-width: 993px) {
+  .wizard > .steps > ul > li {
+    width: 20%; /* Adjust as needed for larger screens */
+  }
+}
+.sidebar .nav.sub-menu .nav-item::before {
+  background: none;
+}
+.sidebar .nav.sub-menu {
+  padding: 0.25rem 0 1rem 1.07rem;
+}
+
+.wizard > .content {
+  height: 75em;
+}
+.css-13cymwt-control {
+  height: 46px;
+}
+.slide-enter {
+  opacity: 0;
+  transform: translateX(100%);
+}
+
+.slide-enter-active {
+  opacity: 1;
+  transform: translateX(0);
+  transition: opacity 300ms, transform 300ms;
+}
+
+.slide-exit {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.slide-exit-active {
+  opacity: 0;
+  transform: translateX(-100%);
+  transition: opacity 300ms, transform 300ms;
+}
+.breadcrumb {
+  border-radius: 8px;
+}
+
+.custom-table td {
+  width: 10%;
+}
+
+.custom-table input[type="text"] {
+  width: 100px;
+  box-sizing: border-box;
+  height: 42px;
+  padding-left: 8px;
+  border: 1px solid #ccc;
+}
+
+.item-enter {
+  opacity: 0;
+}
+.item-enter-active {
+  opacity: 1;
+  transition: opacity 700ms ease-in;
+}
+.item-exit {
+  opacity: 1;
+}
+.item-exit-active {
+  opacity: 0;
+  transition: opacity 700ms ease-in;
+}
+.srv-validation-message {
+  color: red;
+  font-size: 12px;
+  margin-top: 8px;
+}
+.loader {
+  text-align: center;
+  height: 100vh;
+  width: 100vw;
+  position: fixed;
+  background: #ffffffeb;
+  top: 0;
+  left: 0;
+  z-index: 99999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.primary {
+  background: #2656ab;
+}
+.secondary {
+  background: #fbaa31;
+}
+.tertiary {
+  background: #a4bc3d;
+}
+.quarternary {
+  background: #3596d5;
+}
+.quinary {
+  background: #0273bc;
+}
+.breadcrumb-item,
+.badge {
+  cursor: pointer;
+}
+.sidebar .nav.sub-menu .nav-item .nav-link {
+  color: #abadb1;
+}
+.badge.hot {
+  background-color: #fddad9;
+  color: #c3515b;
+  border: 1px solid #c3515b;
+}
+
+.badge.warm {
+  background-color: #f4e3c8;
+  color: #ae6d00;
+  border: 1px solid #ae6d00;
+}
+
+.badge.cold {
+  background-color: #c7ebf2;
+  color: #0087a4;
+  border: 1px solid #0087a4;
+}
+@keyframes shimmer2 {
+  0% {
+    background-position: -1000px 0;
+  }
+
+  100% {
+    background-position: 1000px 0;
+  }
+}
+.dashboard-count-div {
+  .shimmer {
+    background: linear-gradient(to right, #ffffff 8%, #d7d7d7 18%, #ffffff 33%);
+    background-size: 1000px 100%;
+    animation: shimmer2 2.2s linear infinite forwards;
+  }
+  .shimmer-title-line {
+    height: 14px !important;
+  }
+}
+.card {
+  /* box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px; */
+  box-shadow: rgba(0, 0, 0, 0.07) 0px 1px 1px, rgba(0, 0, 0, 0.07) 0px 2px 2px, rgba(0, 0, 0, 0.07) 0px 4px 4px, rgba(0, 0, 0, 0.07) 0px 8px 8px, rgba(0, 0, 0, 0.07) 0px 16px 16px;
+}
+/* table{
+  border: 1px solid;
+  thead{
+    background: #2656ab;
+    color: #fff;
+  }
+  
+} */
+.form-div {
+  padding: 16px;
+  box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+}
+.an-simple-select__control{
+  height: auto !important;
+}
+.an-simple-select__multi-value__label  {
+  background: #cddfff;
+  color: #fff;
+}
+.an-simple-select__multi-value__remove{
+  background: #cddfff;
+  color: #000;
+}

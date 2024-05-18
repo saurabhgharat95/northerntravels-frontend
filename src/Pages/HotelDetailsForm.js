@@ -268,7 +268,7 @@ const HotelDetailsForm = ({onValidationStatusChange}) => {
             ) {
               hotelOptionsArray.push({
                 value: hotel.id,
-                label: hotel.hotelName,
+                label: `${hotel.hotelName}${hotel.isSpecialRate==1?" ⭐":""}`,
               });
             }
           });
@@ -360,7 +360,32 @@ const HotelDetailsForm = ({onValidationStatusChange}) => {
     }
     return isValid;
   };
-  
+  useEffect(() => {
+    if (
+      packageObject.fromDate &&
+      packageObject.toDate
+    ) {
+      const fromDate = new Date(packageObject.fromDate);
+      const toDate = new Date(packageObject.toDate);
+      if (toDate >= fromDate) {
+        fromDate.setHours(0, 0, 0, 0);
+        toDate.setHours(0, 0, 0, 0);
+
+        const timeDiff = toDate.getTime() - fromDate.getTime();
+        const days = Math.ceil(timeDiff / (1000 * 3600 * 24)) + 1;
+        const nights = days - 1;
+        setPackageObject((prevState) => ({
+          ...prevState,
+          noOfNights: nights,
+        }));
+        
+      }
+    }
+    setForceUpdate((v) => ++v);
+  }, [
+    packageObject.fromDate,
+    packageObject.toDate,
+  ]);
   useEffect(() => {
     fetchHaltingPoints();
     fetchHotelType();
@@ -371,6 +396,13 @@ const HotelDetailsForm = ({onValidationStatusChange}) => {
   useEffect(() => {
     if (quotFormData) {
       let quotPackage = quotFormData.quotPackageData;
+      if (quotFormData.quotArrivalDate && quotFormData.quotArrivalDate!=''){
+        setPackageObject(prevState=>({
+          ...prevState,
+          fromDate:quotFormData.quotArrivalDate,
+          toDate:quotFormData.quotArrivalDate
+        }))
+      }
       let quotPackageArray = [];
       for (let index = 0; index < quotPackage.length; index++) {
         quotPackageArray.push({
@@ -394,6 +426,7 @@ const HotelDetailsForm = ({onValidationStatusChange}) => {
       setPackageData(quotPackageArray);
       setOriginalPackageData(quotPackageArray);
       setPackageNameArray(quotFormData.quotPackageNameArray);
+
       setForceUpdate((v) => ++v);
     }
   }, [quotFormData]);
@@ -534,7 +567,7 @@ const HotelDetailsForm = ({onValidationStatusChange}) => {
                 value={
                   packageObject.hotelName
                     ? optionsObj.hotelOptions.find(
-                        (option) => option.label === packageObject.hotelName
+                        (option) => option.label === packageObject.hotelName || option.label === packageObject.hotelName+" ⭐"
                       )
                     : null
                 }
@@ -639,6 +672,7 @@ const HotelDetailsForm = ({onValidationStatusChange}) => {
                 pattern="[0-9]+"
                 className="form-control"
                 placeholder="Enter Number of Nights"
+                readOnly
                 value={packageObject.noOfNights}
                 onChange={(event) => {
                   const newValue = event.target.value.trim();

@@ -10,6 +10,7 @@ import {
   SimpleReactValidator,
   Select,
   ShimmerTable,
+  SlideDown,
 } from "../components/CommonImport";
 import {
   FETCH_HOTELS_API,
@@ -21,7 +22,13 @@ import {
   UPDATE_HOTEL_API,
   DELETE_HOTEL_API,
 } from "../utils/constants";
-import { getDateFormatted, getFilteredDropdownOptions } from "../utils/helpers";
+import {
+  getDateFormatted,
+  getFilteredDropdownOptions,
+  toTitleCase,
+} from "../utils/helpers";
+
+import "react-slidedown/lib/slidedown.css";
 import "react-toastify/dist/ReactToastify.css";
 import NoData from "../components/NoData";
 import ConfirmationDialog from "../components/ConfirmationDialog";
@@ -32,8 +39,15 @@ const HotelMaster = () => {
 
   const [hotelName, setHotelName] = useState("");
   const [hotelContact, setHotelContact] = useState("");
+  const [hotelEmail, setHotelEmail] = useState("");
   const [hotelAddress, setHotelAddress] = useState("");
   const [hotels, setHotels] = useState([]);
+  const [isSpecialRate, setIsSpecialRate] = useState(false);
+  const [specialRateDate, setSpecialRateDate] = useState({
+    spFromDate: null,
+    spToDate: null,
+  });
+
   const [originalHotelsList, setOriginalHotelsList] = useState([]);
 
   const [stateId, setStateId] = useState(null);
@@ -56,6 +70,7 @@ const HotelMaster = () => {
   const [deleteId, setDeleteId] = useState(false);
   const [updateId, setUpdateId] = useState("");
   const [showConfirmation, setShowConfirmation] = useState(false);
+  const [isFormOpen, setFormOpen] = useState(false);
 
   const [searchValue, setSearchValue] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -70,6 +85,14 @@ const HotelMaster = () => {
   const simpleValidator = useRef(
     new SimpleReactValidator({
       autoForceUpdate: this,
+      validators: {
+        isDateAfter: {
+          message: "To date should be greater than from date.",
+          rule: (val, params, validator) => {
+            return val >= params[0];
+          },
+        },
+      },
     })
   );
   const handleCloseModal = () => {
@@ -200,6 +223,13 @@ const HotelMaster = () => {
     setHotelTypeId(null);
     setHotelAddress("");
     setHotelName("");
+    setHotelEmail("");
+    setHotelContact("");
+    setIsSpecialRate(false);
+    setSpecialRateDate({
+      spFromDate: null,
+      spToDate: null,
+    });
   };
   const addHotel = async () => {
     try {
@@ -207,6 +237,11 @@ const HotelMaster = () => {
       let body = {
         hotelName: hotelName,
         hotelAddress: hotelAddress,
+        hotelEmail: hotelEmail,
+        isSpecialRate: isSpecialRate ? 1 : 0,
+        spFromDate: specialRateDate.spFromDate,
+        spToDate: specialRateDate.spToDate,
+        hotelContactNo: hotelContact,
         fkHotelTypeId: hotelTypeId,
         fkHaltingPointId: haltDestId,
         fkStateId: stateId,
@@ -217,14 +252,23 @@ const HotelMaster = () => {
         let response = await axios.post(url, body);
         if (response) {
           if (response.status == 200) {
-            toast.success(response.data.message, {
-              position: "top-right",
-            });
-            handleCloseModal();
-            resetForm();
-            fetchHotels();
-            simpleValidator.current.hideMessages();
             setIsLoading(false);
+
+            if (response.data.data.status == false) {
+              toast.error(response.data.message, {
+                position: "top-right",
+              });
+            } else {
+              toast.success(response.data.message, {
+                position: "top-right",
+              });
+              handleCloseModal();
+              resetForm();
+              fetchHotels();
+              simpleValidator.current.hideMessages();
+              setIsLoading(false);
+              openForm()
+            }
           }
         }
       } else {
@@ -246,6 +290,11 @@ const HotelMaster = () => {
         id: updateId,
         hotelName: hotelName,
         hotelAddress: hotelAddress,
+        hotelEmail: hotelEmail,
+        hotelContactNo: hotelContact,
+        isSpecialRate: isSpecialRate ? 1 : 0,
+        spFromDate: specialRateDate.spFromDate,
+        spToDate: specialRateDate.spToDate,
         fkHotelTypeId: hotelTypeId,
         fkHaltingPointId: haltDestId,
         fkStateId: stateId,
@@ -256,15 +305,24 @@ const HotelMaster = () => {
         let response = await axios.post(url, body);
         if (response) {
           if (response.status == 200) {
-            toast.success(response.data.message, {
-              position: "top-right",
-            });
-
-            handleCloseModal();
-            resetForm();
-            fetchHotels();
-            simpleValidator.current.hideMessages();
             setIsLoading(false);
+
+            if (response.data.data.status == false) {
+              toast.error(response.data.message, {
+                position: "top-right",
+              });
+            } else {
+              toast.success(response.data.message, {
+                position: "top-right",
+              });
+
+              handleCloseModal();
+              resetForm();
+              fetchHotels();
+              simpleValidator.current.hideMessages();
+              setIsLoading(false);
+              openForm()
+            }
           }
         }
       } else {
@@ -284,9 +342,11 @@ const HotelMaster = () => {
       let body = {
         id: id,
       };
+      setIsLoading(true);
       let response = await axios.post(url, body);
       console.log("response", response);
       if (response) {
+        setIsLoading(false);
         if (response.status == 200) {
           toast.success(response.data.message, {
             position: "top-right",
@@ -297,6 +357,7 @@ const HotelMaster = () => {
         }
       }
     } catch (e) {
+      setIsLoading(false);
       toast.error("Something Went Wrong :(", {
         position: "top-right",
       });
@@ -313,8 +374,18 @@ const HotelMaster = () => {
       setStateId(hotelObj.fkStateId);
       setHaltDestId(hotelObj.fkHaltingPointId);
       setHotelTypeId(hotelObj.fkHotelTypeId);
+      setHotelAddress(hotelObj.hotelAddress);
+      setHotelContact(hotelObj.hotelContactNo);
+      setIsSpecialRate(hotelObj.isSpecialRate == 1 ? true : false);
+      setSpecialRateDate((prevState) => ({
+        ...prevState,
+        spFromDate: hotelObj.spFromDate,
+        spToDate: hotelObj.spToDate,
+      }));
+      setHotelEmail(hotelObj.hotelEmail);
       setUpdate(true);
       setUpdateId(updateId);
+      openForm();
     }
   };
 
@@ -369,7 +440,16 @@ const HotelMaster = () => {
       setHotels(originalHotelsList);
     }
   };
-
+  const handleCheckboxChange = (event) => {
+    if (event.target.checked) {
+      setIsSpecialRate(true);
+    } else {
+      setIsSpecialRate(false);
+    }
+  };
+  const openForm = () => {
+    setFormOpen(!isFormOpen);
+  };
   useEffect(() => {
     fetchCountries();
     fetchStates();
@@ -424,17 +504,447 @@ const HotelMaster = () => {
                 <div className="float-right">
                   <button
                     className="btn btn-primary btn-sm"
-                    data-bs-toggle="modal"
-                    data-bs-target="#hotelModal"
                     onClick={() => {
                       resetForm();
                       setUpdate(false);
+                      openForm();
+                      setUpdateId(null);
                     }}
                   >
                     Add Hotel
                   </button>
                 </div>
                 <br></br>
+                <br></br>
+                <br></br>
+
+                {isFormOpen && (
+                  <SlideDown className={"my-dropdown-slidedown"}>
+                    <div
+                      className={`form-div show-box hotel-form-div ${
+                        isFormOpen ? "visible" : "hidden"
+                      }`}
+                    >
+                      <div >
+                        <h4><b>{isUpdate ? "Edit" : "Add"} Hotel</b></h4>
+                      </div>
+                      <br></br>
+                      <br></br>
+                      <form className="form-sample">
+                        <div className="form-group row">
+                          <div className="col-sm-6">
+                            <label>Hotel Name</label>
+                            <input
+                              type="text"
+                              className="form-control form-control-sm"
+                              placeholder="Enter Hotel Name"
+                              value={hotelName}
+                              onChange={(e) => {
+                                setHotelName(e.target.value);
+                              }}
+                              onBlur={() => {
+                                simpleValidator.current.showMessageFor(
+                                  "hotel_name"
+                                );
+                              }}
+                            />
+                            <>
+                              {simpleValidator.current.element.length > 0 &&
+                                simpleValidator.current.message(
+                                  "hotel_name",
+                                  hotelName,
+                                  ["required", { regex: /^[A-Za-z\s&-]+$/ }],
+                                  {
+                                    messages: {
+                                      required: "Please enter hotel name",
+                                      regex: "Enter valid hotel name",
+                                    },
+                                  }
+                                )}
+                            </>
+                          </div>
+                          <div className="col-sm-6">
+                            <label>Hotel Address</label>
+                            <input
+                              type="text"
+                              className="form-control form-control-sm"
+                              placeholder="Enter Hotel Address"
+                              value={hotelAddress}
+                              onBlur={() => {
+                                simpleValidator.current.showMessageFor(
+                                  "hotelAddress"
+                                );
+                              }}
+                              onChange={(e) => {
+                                setHotelAddress(e.target.value);
+                              }}
+                            />
+                            <>
+                              {simpleValidator.current.element.length > 0 &&
+                                simpleValidator.current.message(
+                                  "hotelAddress",
+                                  hotelAddress,
+                                  ["required"],
+                                  {
+                                    messages: {
+                                      required: "Please enter hotel address",
+                                    },
+                                  }
+                                )}
+                            </>
+                          </div>
+                        </div>
+
+                        <div className="form-group row mb-2">
+                          <div className="col-sm-12">
+                            <div class="form-check">
+                              <label class="form-check-label">
+                                <input
+                                  type="checkbox"
+                                  id="isSpecialRate"
+                                  name="isSpecialRate"
+                                  onChange={handleCheckboxChange}
+                                  checked={isSpecialRate}
+                                />
+                                Special Rate
+                                <i class="input-helper"></i>
+                              </label>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="form-group row">
+                          {isSpecialRate && (
+                            <>
+                              <div className="col-sm-3">
+                                <label>From Date</label>
+                                <input
+                                  type="date"
+                                  className="form-control"
+                                  placeholder="Select From Date"
+                                  min={new Date().toISOString().split("T")[0]}
+                                  value={specialRateDate.spFromDate}
+                                  onChange={(event) =>
+                                    setSpecialRateDate((prevState) => ({
+                                      ...prevState,
+                                      spFromDate: event.target.value,
+                                    }))
+                                  }
+                                  onBlur={() => {
+                                    simpleValidator.current.showMessageFor(
+                                      "spFromDate"
+                                    );
+                                  }}
+                                />
+                                <>
+                                  {simpleValidator.current.element.length > 0 &&
+                                    simpleValidator.current.message(
+                                      "spFromDate",
+                                      specialRateDate.spFromDate,
+                                      ["required"],
+                                      {
+                                        messages: {
+                                          required: "Please select from date",
+                                        },
+                                      }
+                                    )}
+                                </>
+                              </div>
+                              <div className="col-sm-3">
+                                <label>To Date</label>
+                                <input
+                                  type="date"
+                                  className="form-control"
+                                  placeholder="Select To Date"
+                                  min={new Date().toISOString().split("T")[0]}
+                                  value={specialRateDate.spToDate}
+                                  onChange={(event) =>
+                                    setSpecialRateDate((prevState) => ({
+                                      ...prevState,
+                                      spToDate: event.target.value,
+                                    }))
+                                  }
+                                  onBlur={() => {
+                                    simpleValidator.current.showMessageFor(
+                                      "spToDate"
+                                    );
+                                  }}
+                                />
+                                <>
+                                  {simpleValidator.current.element.length > 0 &&
+                                    simpleValidator.current.message(
+                                      "spToDate",
+                                      specialRateDate.spToDate,
+                                      "required|isDateAfter:" +
+                                        specialRateDate.spFromDate,
+
+                                      {
+                                        messages: {
+                                          required: "Please select to date",
+                                        },
+                                      }
+                                    )}
+                                </>
+                              </div>
+                            </>
+                          )}
+                          <div className="col-sm-3">
+                            <label>Hotel Contact No.</label>
+                            <input
+                              type="text"
+                              pattern="[0-9]{10}"
+                              maxLength={10}
+                              className="form-control form-control-sm"
+                              placeholder="Enter Hotel Contact No."
+                              value={hotelContact}
+                              onBlur={() => {
+                                simpleValidator.current.showMessageFor(
+                                  "hotelContact"
+                                );
+                              }}
+                              onChange={(event) => {
+                                const newValue = event.target.value.trim();
+                                if (/^\d*$/.test(newValue)) {
+                                  setHotelContact(event.target.value);
+                                }
+                              }}
+                            />
+                            <>
+                              {simpleValidator.current.element.length > 0 &&
+                                simpleValidator.current.message(
+                                  "hotelContact",
+                                  hotelContact,
+                                  ["required", { regex: /^[0-9]+$/ }],
+                                  {
+                                    messages: {
+                                      required:
+                                        "Please enter hotel contact number ",
+                                      regex: "Enter valid hotel contact number",
+                                    },
+                                  }
+                                )}
+                            </>
+                          </div>
+                          <div className="col-sm-3">
+                            <label>Hotel Email</label>
+                            <input
+                              type="text"
+                              className="form-control form-control-sm"
+                              placeholder="Enter Hotel Email"
+                              value={hotelEmail}
+                              onChange={(e) => {
+                                setHotelEmail(e.target.value);
+                              }}
+                              onBlur={() => {
+                                simpleValidator.current.showMessageFor(
+                                  "hotelEmail"
+                                );
+                              }}
+                            />
+                            <>
+                              {simpleValidator.current.element.length > 0 &&
+                                simpleValidator.current.message(
+                                  "hotelEmail",
+                                  hotelEmail,
+                                  ["required", "email"],
+                                  {
+                                    messages: {
+                                      required: "Please enter  email",
+                                      email: "Enter valid  email",
+                                    },
+                                  }
+                                )}
+                            </>
+                          </div>
+                          <div className="col-sm-3">
+                            <label className={`${isSpecialRate ? "mt-3" : ""}`}>
+                              Hotel Type
+                            </label>
+                            <Select
+                              options={hotelTypeOptions}
+                              placeholder="Select Hotel Type"
+                              name="hotel_type"
+                              value={
+                                hotelTypeId
+                                  ? hotelTypeOptions.find(
+                                      (option) => option.value === hotelTypeId
+                                    )
+                                  : null
+                              }
+                              onChange={(selectedOption) => {
+                                setHotelTypeId(
+                                  selectedOption ? selectedOption.value : ""
+                                );
+                              }}
+                              onBlur={() => {
+                                simpleValidator.current.showMessageFor(
+                                  "hotel_type"
+                                );
+                              }}
+                            />
+                            <>
+                              {simpleValidator.current.message(
+                                "hotel_type",
+                                country,
+                                ["required"],
+                                {
+                                  messages: {
+                                    required: "Please select hotel type",
+                                  },
+                                }
+                              )}
+                            </>
+                          </div>
+                          <div className="col-sm-3">
+                            <div className="mt-1">
+                              <label
+                                className={`${isSpecialRate ? "mt-3" : ""}`}
+                              >
+                                Country
+                              </label>
+                              <Select
+                                options={countryOptions}
+                                placeholder="Select Country"
+                                value={
+                                  country
+                                    ? countryOptions.find(
+                                        (option) => option.value === country
+                                      )
+                                    : null
+                                }
+                                onChange={(selectedOption) => {
+                                  setCountry(
+                                    selectedOption ? selectedOption.value : null
+                                  );
+                                }}
+                                onBlur={() => {
+                                  simpleValidator.current.showMessageFor(
+                                    "country_name"
+                                  );
+                                }}
+                              />
+                              <>
+                                {simpleValidator.current.message(
+                                  "country_name",
+                                  country,
+                                  ["required"],
+                                  {
+                                    messages: {
+                                      required: "Please select country",
+                                    },
+                                  }
+                                )}
+                              </>
+                            </div>
+                          </div>
+                          <div className="col-sm-3">
+                            <div className="mt-1">
+                              <label className="mt-3">State / Location</label>
+                              <Select
+                                options={stateOptions}
+                                placeholder="Select State"
+                                name="state_name"
+                                value={
+                                  stateId
+                                    ? stateOptions.find(
+                                        (option) => option.value === stateId
+                                      )
+                                    : null
+                                }
+                                onChange={(selectedOption) => {
+                                  setStateId(
+                                    selectedOption ? selectedOption.value : ""
+                                  );
+                                }}
+                                onBlur={() => {
+                                  simpleValidator.current.showMessageFor(
+                                    "state_name"
+                                  );
+                                }}
+                              />
+                              <>
+                                {simpleValidator.current.message(
+                                  "state_name",
+                                  stateId,
+                                  ["required"],
+                                  {
+                                    messages: {
+                                      required: "Please select state",
+                                    },
+                                  }
+                                )}
+                              </>
+                            </div>
+                          </div>
+                          <div className="col-sm-3">
+                            <div className="mt-1">
+                              <label className="mt-3">
+                                Halting Destination
+                              </label>
+                              <Select
+                                options={haltDestOptions}
+                                placeholder="Select Halting Destination"
+                                name="halt_dest"
+                                value={
+                                  haltDestId
+                                    ? haltDestOptions.find(
+                                        (option) => option.value === haltDestId
+                                      )
+                                    : null
+                                }
+                                onChange={(selectedOption) => {
+                                  setHaltDestId(
+                                    selectedOption ? selectedOption.value : ""
+                                  );
+                                }}
+                                onBlur={() => {
+                                  simpleValidator.current.showMessageFor(
+                                    "halt_dest"
+                                  );
+                                }}
+                              />
+                              <>
+                                {simpleValidator.current.message(
+                                  "halt_dest",
+                                  country,
+                                  ["required"],
+                                  {
+                                    messages: {
+                                      required:
+                                        "Please select halting destination",
+                                    },
+                                  }
+                                )}
+                              </>
+                            </div>
+                          </div>
+                        </div>
+                      </form>
+                      <br></br>
+                      <br></br>
+                      <div className="text-center">
+                        <button
+                          type="button"
+                          className="btn btn-success mr-2"
+                          onClick={() => {
+                            isUpdate ? updateHotel() : addHotel();
+                          }}
+                        >
+                          {isUpdate ? "Update" : "Submit"}
+                        </button>
+                        <button
+                          type="button"
+                          className="btn btn-light"
+                          onClick={() => {
+                            openForm();
+                          }}
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+                  </SlideDown>
+                )}
                 <br></br>
                 <br></br>
                 <div className="row">
@@ -519,6 +1029,9 @@ const HotelMaster = () => {
                                       Contact Number
                                     </th>
                                     <th style={{ width: "171.375px" }}>
+                                      Email
+                                    </th>
+                                    <th style={{ width: "171.375px" }}>
                                       Address
                                     </th>
                                     <th style={{ width: "127.391px" }}>
@@ -542,30 +1055,54 @@ const HotelMaster = () => {
                                           timeout={500}
                                           classNames="item elementdiv"
                                         >
-                                          <tr className="odd" key={index}>
+                                          <tr className="odd" key={index} style={{background:hotel.isSpecialRate==1?"#c8ffd4":"none"}}>
                                             <td className="sorting_1">
                                               {" "}
                                               {startIndex + index + 1}
                                             </td>
-                                            <td>{hotel.hotelName}</td>
-                                            <td>{hotel.hotelTypeName}</td>
-                                            <td>{hotel.haltingPointName}</td>
-                                            <td>{hotel.stateName}</td>
-                                            <td>{hotel.countryName}</td>
-                                            <td>N.A</td>
-                                            <td>{hotel.hotelAddress}</td>
+                                            <td>
+                                              {toTitleCase(hotel.hotelName)}
+                                            </td>
+                                            <td>
+                                              {toTitleCase(hotel.hotelTypeName)}
+                                            </td>
+                                            <td>
+                                              {toTitleCase(
+                                                hotel.haltingPointName
+                                              )}
+                                            </td>
+                                            <td>
+                                              {toTitleCase(hotel.stateName)}
+                                            </td>
+                                            <td>
+                                              {toTitleCase(hotel.countryName)}
+                                            </td>
+                                            <td>
+                                              {hotel.hotelContactNo
+                                                ? hotel.hotelContactNo
+                                                : "N.A."}
+                                            </td>
+                                            <td>
+                                              {hotel.hotelEmail
+                                                ? hotel.hotelEmail
+                                                : "N.A."}
+                                            </td>
+                                            <td>
+                                              {hotel.hotelAddress
+                                                ? hotel.hotelAddress
+                                                : "N.A."}
+                                            </td>
                                             <td>
                                               {getDateFormatted(
                                                 hotel.createdAt
                                               )}
                                             </td>
-
                                             <td>
                                               <label
                                                 className={`badge ${
                                                   hotel.status == "1"
-                                                    ? "badge-success"
-                                                    : "badge-danger"
+                                                    ? "badge-outline-success"
+                                                    : "badge-outline-danger"
                                                 }`}
                                               >
                                                 {hotel.status == "1"
@@ -580,8 +1117,6 @@ const HotelMaster = () => {
                                                 }
                                                 name="create-outline"
                                                 color="primary"
-                                                data-bs-toggle="modal"
-                                                data-bs-target="#hotelModal"
                                               ></ion-icon>
                                               <ion-icon
                                                 name="trash-outline"
@@ -655,55 +1190,237 @@ const HotelMaster = () => {
                                             hotelName,
                                             [
                                               "required",
-                                              { regex: /^[A-Za-z\s&-]+$/ },
+                                              { regex: /^[A-Za-z\s&-()]+$/ },
                                             ],
                                             {
                                               messages: {
                                                 required:
-                                                  "Please enter halting destination",
-                                                regex:
-                                                  "Enter valid halting destination",
+                                                  "Please enter hotel name",
+                                                regex: "Enter valid hotel name",
                                               },
                                             }
                                           )}
                                       </>
                                     </div>
-                                    <div className="form-group">
-                                      <label>Hotel Address</label>
-                                      <input
-                                        type="text"
-                                        className="form-control form-control-sm"
-                                        placeholder="Enter Hotel Address"
-                                        value={hotelName}
-                                        onChange={(e) => {
-                                          setHotelAddress(e.target.value);
-                                        }}
-                                        onBlur={() => {
-                                          simpleValidator.current.showMessageFor(
-                                            "hotel_address"
-                                          );
-                                        }}
-                                      />
-                                      <>
-                                        {simpleValidator.current.element
-                                          .length > 0 &&
-                                          simpleValidator.current.message(
-                                            "hotel_address",
-                                            hotelAddress,
-                                            [
-                                              "required",
-                                              { regex: /^[A-Za-z\s&-]+$/ },
-                                            ],
-                                            {
-                                              messages: {
-                                                required:
-                                                  "Please enter hotel address ",
-                                                regex:
-                                                  "Enter valid  hotel address",
-                                              },
+                                    <div className="form-group row">
+                                      <div className="col-sm-12">
+                                        <label>Hotel Address</label>
+                                        <input
+                                          type="text"
+                                          className="form-control form-control-sm"
+                                          placeholder="Enter Hotel Address"
+                                          value={hotelAddress}
+                                          onBlur={() => {
+                                            simpleValidator.current.showMessageFor(
+                                              "hotelAddress"
+                                            );
+                                          }}
+                                          onChange={(e) => {
+                                            setHotelAddress(e.target.value);
+                                          }}
+                                        />
+                                        <>
+                                          {simpleValidator.current.element
+                                            .length > 0 &&
+                                            simpleValidator.current.message(
+                                              "hotelAddress",
+                                              hotelAddress,
+                                              ["required"],
+                                              {
+                                                messages: {
+                                                  required:
+                                                    "Please enter hotel address",
+                                                },
+                                              }
+                                            )}
+                                        </>
+                                      </div>
+                                    </div>
+                                    <div className="form-group row">
+                                      <div className="col-sm-12">
+                                        <div class="form-check">
+                                          <label class="form-check-label">
+                                            <input
+                                              type="checkbox"
+                                              id="isSpecialRate"
+                                              name="isSpecialRate"
+                                              onChange={handleCheckboxChange}
+                                            />
+                                            Special Rate
+                                            <i class="input-helper"></i>
+                                          </label>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    {isSpecialRate && (
+                                      <div className="form-group row">
+                                        <div className="col-sm-6">
+                                          <label>From Date</label>
+                                          <input
+                                            type="date"
+                                            className="form-control"
+                                            placeholder="Select From Date"
+                                            min={
+                                              new Date()
+                                                .toISOString()
+                                                .split("T")[0]
                                             }
-                                          )}
-                                      </>
+                                            value={specialRateDate.spFromDate}
+                                            onChange={(event) =>
+                                              setSpecialRateDate(
+                                                (prevState) => ({
+                                                  ...prevState,
+                                                  spFromDate:
+                                                    event.target.value,
+                                                })
+                                              )
+                                            }
+                                            onBlur={() => {
+                                              simpleValidator.current.showMessageFor(
+                                                "spFromDate"
+                                              );
+                                            }}
+                                          />
+                                          <>
+                                            {simpleValidator.current.element
+                                              .length > 0 &&
+                                              simpleValidator.current.message(
+                                                "spFromDate",
+                                                specialRateDate.spFromDate,
+                                                ["required"],
+                                                {
+                                                  messages: {
+                                                    required:
+                                                      "Please select from date",
+                                                  },
+                                                }
+                                              )}
+                                          </>
+                                        </div>
+                                        <div className="col-sm-6">
+                                          <label>To Date</label>
+                                          <input
+                                            type="date"
+                                            className="form-control"
+                                            placeholder="Select To Date"
+                                            min={
+                                              new Date()
+                                                .toISOString()
+                                                .split("T")[0]
+                                            }
+                                            value={specialRateDate.spToDate}
+                                            onChange={(event) =>
+                                              setSpecialRateDate(
+                                                (prevState) => ({
+                                                  ...prevState,
+                                                  spToDate: event.target.value,
+                                                })
+                                              )
+                                            }
+                                            onBlur={() => {
+                                              simpleValidator.current.showMessageFor(
+                                                "spToDate"
+                                              );
+                                            }}
+                                          />
+                                          <>
+                                            {simpleValidator.current.element
+                                              .length > 0 &&
+                                              simpleValidator.current.message(
+                                                "spToDate",
+                                                specialRateDate.spToDate,
+                                                "required|isDateAfter:" +
+                                                  specialRateDate.spFromDate,
+
+                                                {
+                                                  messages: {
+                                                    required:
+                                                      "Please select to date",
+                                                  },
+                                                }
+                                              )}
+                                          </>
+                                        </div>
+                                      </div>
+                                    )}
+                                    <div className="form-group row">
+                                      <div className="col-sm-6">
+                                        <label>Hotel Contact No.</label>
+                                        <input
+                                          type="text"
+                                          pattern="[0-9]{10}"
+                                          className="form-control form-control-sm"
+                                          placeholder="Enter Hotel Contact No."
+                                          value={hotelContact}
+                                          onBlur={() => {
+                                            simpleValidator.current.showMessageFor(
+                                              "hotelContact"
+                                            );
+                                          }}
+                                          onChange={(event) => {
+                                            const newValue =
+                                              event.target.value.trim();
+                                            if (/^\d*$/.test(newValue)) {
+                                              setHotelContact(
+                                                event.target.value
+                                              );
+                                            }
+                                          }}
+                                        />
+                                        <>
+                                          {simpleValidator.current.element
+                                            .length > 0 &&
+                                            simpleValidator.current.message(
+                                              "hotelContact",
+                                              hotelContact,
+                                              [
+                                                "required",
+                                                { regex: /^[0-9]+$/ },
+                                              ],
+                                              {
+                                                messages: {
+                                                  required:
+                                                    "Please enter hotel contact number ",
+                                                  regex:
+                                                    "Enter valid hotel contact number",
+                                                },
+                                              }
+                                            )}
+                                        </>
+                                      </div>
+                                      <div className="col-sm-6">
+                                        <label>Hotel Email</label>
+                                        <input
+                                          type="text"
+                                          className="form-control form-control-sm"
+                                          placeholder="Enter Hotel Email"
+                                          value={hotelEmail}
+                                          onChange={(e) => {
+                                            setHotelEmail(e.target.value);
+                                          }}
+                                          onBlur={() => {
+                                            simpleValidator.current.showMessageFor(
+                                              "hotelEmail"
+                                            );
+                                          }}
+                                        />
+                                        <>
+                                          {simpleValidator.current.element
+                                            .length > 0 &&
+                                            simpleValidator.current.message(
+                                              "hotelEmail",
+                                              hotelEmail,
+                                              ["required", "email"],
+                                              {
+                                                messages: {
+                                                  required:
+                                                    "Please enter  email",
+                                                  email: "Enter valid  email",
+                                                },
+                                              }
+                                            )}
+                                        </>
+                                      </div>
                                     </div>
                                     <div className="form-group">
                                       <label>Hotel Type</label>

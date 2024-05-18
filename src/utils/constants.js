@@ -74,6 +74,8 @@ export const FETCH_QUOTATION_DETAILS_API = BASE_API_URL + "/get-quotation-detail
 export const FETCH_QUOTATION_HOTELS_DETAILS_API = BASE_API_URL + "/get-quotation-hotels";
 export const FETCH_QUOTATION_ITINERARY_DETAILS_API = BASE_API_URL + "/get-quotation-itinerary";
 
+export const GENERATE_QUOTATION_PDF_API = BASE_API_URL + "/generate-quotation-pdf";
+
 export const ADD_QUOTATION_API = BASE_API_URL + "/add-quotation";
 export const DELETE_QUOTATION_API = BASE_API_URL + "/delete-quotation";  
 
@@ -84,3 +86,10 @@ export const UPDATE_QUOTATION_HOTEL_API = BASE_API_URL + "/update-quotation-hote
 export const UPDATE_QUOTATION_ITINERARY_API = BASE_API_URL + "/update-quotation-itinerary";
 
 export const FETCH_BEFORE_MARKUP_AMT_API = BASE_API_URL + "/get-quotation-before-markup-amt";
+
+
+export const FETCH_LEADS_API = BASE_API_URL + "/get-leads";
+export const FETCH_LEAD_STATUSES_API = BASE_API_URL + "/get-lead-statuses";
+export const ADD_LEAD_API = BASE_API_URL + "/add-lead";
+export const UPDATE_LEAD_API = BASE_API_URL + "/update-lead";
+export const DELETE_LEAD_API = BASE_API_URL + "/delete-lead";

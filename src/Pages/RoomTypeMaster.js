@@ -16,7 +16,7 @@ import {
   UPDATE_ROOM_TYPE_API,
   DELETE_ROOM_TYPE_API,
 } from "../utils/constants";
-import { getDateFormatted } from "../utils/helpers";
+import { getDateFormatted,toTitleCase } from "../utils/helpers";
 
 import "react-toastify/dist/ReactToastify.css";
 import NoData from "../components/NoData";
@@ -47,9 +47,7 @@ const RoomTypeMaster = () => {
     })
   );
   const handleCloseModal = () => {
-
-
-      var modal = document.getElementById("roomTypeModal");
+    var modal = document.getElementById("roomTypeModal");
 
     if (modal) {
       var modalInstance = bootstrap.Modal.getInstance(modal);
@@ -89,14 +87,22 @@ const RoomTypeMaster = () => {
         let response = await axios.post(url, body);
         if (response) {
           if (response.status == 200) {
-            toast.success(response.data.message, {
-              position: "top-right",
-            });
-            handleCloseModal();
-            resetForm();
-            fetchRoomTypes();
-            simpleValidator.current.hideMessages();
             setIsLoading(false);
+
+            if (response.data.data.status == false) {
+              toast.error(response.data.message, {
+                position: "top-right",
+              });
+            } else {
+              toast.success(response.data.message, {
+                position: "top-right",
+              });
+              handleCloseModal();
+              resetForm();
+              fetchRoomTypes();
+              simpleValidator.current.hideMessages();
+              setIsLoading(false);
+            }
           }
         }
       } else {
@@ -124,15 +130,23 @@ const RoomTypeMaster = () => {
         let response = await axios.post(url, body);
         if (response) {
           if (response.status == 200) {
-            toast.success(response.data.message, {
-              position: "top-right",
-            });
-
-            handleCloseModal();
-            resetForm();
-            fetchRoomTypes();
-            simpleValidator.current.hideMessages();
             setIsLoading(false);
+
+            if (response.data.data.status == false) {
+              toast.error(response.data.message, {
+                position: "top-right",
+              });
+            } else {
+              toast.success(response.data.message, {
+                position: "top-right",
+              });
+
+              handleCloseModal();
+              resetForm();
+              fetchRoomTypes();
+              simpleValidator.current.hideMessages();
+              setIsLoading(false);
+            }
           }
         }
       } else {
@@ -153,8 +167,10 @@ const RoomTypeMaster = () => {
       let body = {
         id: id,
       };
+      setIsLoading(true);
       let response = await axios.post(url, body);
       if (response) {
+        setIsLoading(false);
         if (response.status == 200) {
           toast.success(response.data.message, {
             position: "top-right",
@@ -165,6 +181,7 @@ const RoomTypeMaster = () => {
         }
       }
     } catch (e) {
+      setIsLoading(false);
       toast.error("Something Went Wrong :(", {
         position: "top-right",
       });
@@ -342,7 +359,7 @@ const RoomTypeMaster = () => {
                                             <td className="sorting_1">
                                               {startIndex + index + 1}
                                             </td>
-                                            <td>{roomType.roomTypeName}</td>
+                                            <td>{toTitleCase(roomType.roomTypeName)}</td>
                                             <td>
                                               {getDateFormatted(
                                                 roomType.createdAt
@@ -352,8 +369,8 @@ const RoomTypeMaster = () => {
                                               <label
                                                 className={`badge ${
                                                   roomType.status == "1"
-                                                    ? "badge-success"
-                                                    : "badge-danger"
+                                                    ? "badge-outline-success"
+                                                    : "badge-outline-danger"
                                                 }`}
                                               >
                                                 {roomType.status == "1"
@@ -445,7 +462,7 @@ const RoomTypeMaster = () => {
                                             roomType,
                                             [
                                               "required",
-                                              { regex: /^[A-Za-z\s&-]+$/ },
+                                              { regex: /^[A-Za-z\s&-()]+$/ },
                                             ],
                                             {
                                               messages: {

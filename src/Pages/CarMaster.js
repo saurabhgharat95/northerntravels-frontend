@@ -16,7 +16,7 @@ import {
   UPDATE_VEHICLE_API,
   DELETE_VEHICLE_API,
 } from "../utils/constants";
-import { getDateFormatted } from "../utils/helpers";
+import { getDateFormatted,toTitleCase } from "../utils/helpers";
 
 import "react-toastify/dist/ReactToastify.css";
 import NoData from "../components/NoData";
@@ -86,14 +86,22 @@ const CarMaster = () => {
         let response = await axios.post(url, body);
         if (response) {
           if (response.status == 200) {
-            toast.success(response.data.message, {
-              position: "top-right",
-            });
-            handleCloseModal();
-            resetForm();
-            fetchVehicles();
-            simpleValidator.current.hideMessages();
             setIsLoading(false);
+
+            if (response.data.data.status == false) {
+              toast.error(response.data.message, {
+                position: "top-right",
+              });
+            } else {
+              toast.success(response.data.message, {
+                position: "top-right",
+              });
+              handleCloseModal();
+              resetForm();
+              fetchVehicles();
+              simpleValidator.current.hideMessages();
+              setIsLoading(false);
+            }
           }
         }
       } else {
@@ -121,15 +129,23 @@ const CarMaster = () => {
         let response = await axios.post(url, body);
         if (response) {
           if (response.status == 200) {
-            toast.success(response.data.message, {
-              position: "top-right",
-            });
-
-            handleCloseModal();
-            resetForm();
-            fetchVehicles();
-            simpleValidator.current.hideMessages();
             setIsLoading(false);
+
+            if (response.data.data.status == false) {
+              toast.error(response.data.message, {
+                position: "top-right",
+              });
+            } else {
+              toast.success(response.data.message, {
+                position: "top-right",
+              });
+
+              handleCloseModal();
+              resetForm();
+              fetchVehicles();
+              simpleValidator.current.hideMessages();
+              setIsLoading(false);
+            }
           }
         }
       } else {
@@ -150,8 +166,10 @@ const CarMaster = () => {
       let body = {
         id: id,
       };
+      setIsLoading(true);
       let response = await axios.post(url, body);
       if (response) {
+        setIsLoading(false);
         if (response.status == 200) {
           toast.success(response.data.message, {
             position: "top-right",
@@ -162,6 +180,7 @@ const CarMaster = () => {
         }
       }
     } catch (e) {
+      setIsLoading(false);
       toast.error("Something Went Wrong :(", {
         position: "top-right",
       });
@@ -243,7 +262,7 @@ const CarMaster = () => {
                       setUpdate(false);
                     }}
                   >
-                    Add Car
+                    Add Vehicle
                   </button>
                 </div>
                 <br></br>
@@ -341,7 +360,7 @@ const CarMaster = () => {
                                               {" "}
                                               {startIndex + index + 1}
                                             </td>
-                                            <td>{vehicle.vehicleName}</td>
+                                            <td>{toTitleCase(vehicle.vehicleName)}</td>
                                             <td>
                                               {getDateFormatted(
                                                 vehicle.createdAt
@@ -351,8 +370,8 @@ const CarMaster = () => {
                                               <label
                                                 className={`badge ${
                                                   vehicle.status == "1"
-                                                    ? "badge-success"
-                                                    : "badge-danger"
+                                                    ? "badge-outline-success"
+                                                    : "badge-outline-danger"
                                                 }`}
                                               >
                                                 {vehicle.status == "1"
@@ -407,7 +426,7 @@ const CarMaster = () => {
                                       className="modal-title"
                                       id="exampleModalLabel"
                                     >
-                                      {isUpdate ? "Edit" : "Add"} Car
+                                      {isUpdate ? "Edit" : "Add"} Vehicle
                                     </h5>
                                     <button
                                       type="button"
@@ -444,7 +463,7 @@ const CarMaster = () => {
                                             vehicleName,
                                             [
                                               "required",
-                                              { regex: /^[A-Za-z\s&-]+$/ },
+                                              { regex: /^[A-Za-z\s&-()]+$/ },
                                             ],
                                             {
                                               messages: {

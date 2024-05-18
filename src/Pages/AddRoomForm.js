@@ -102,6 +102,24 @@ const AddRoomForm = ({ cancelForm, hotelId, formType, updateId }) => {
               charges: 0,
             },
           ],
+          5: [
+            {
+              meal_plan: 1,
+              charges: 0,
+            },
+            {
+              meal_plan: 2,
+              charges: 0,
+            },
+            {
+              meal_plan: 3,
+              charges: 0,
+            },
+            {
+              meal_plan: 4,
+              charges: 0,
+            },
+          ],
         },
         off_season: {
           1: [
@@ -159,6 +177,24 @@ const AddRoomForm = ({ cancelForm, hotelId, formType, updateId }) => {
             },
           ],
           4: [
+            {
+              meal_plan: 1,
+              charges: 0,
+            },
+            {
+              meal_plan: 2,
+              charges: 0,
+            },
+            {
+              meal_plan: 3,
+              charges: 0,
+            },
+            {
+              meal_plan: 4,
+              charges: 0,
+            },
+          ],
+          5: [
             {
               meal_plan: 1,
               charges: 0,
@@ -317,12 +353,19 @@ const AddRoomForm = ({ cancelForm, hotelId, formType, updateId }) => {
         let response = await axios.post(url, body);
         if (response) {
           if (response.status == 200) {
-            toast.success(response.data.message, {
-              position: "top-right",
-            });
-            cancelForm();
-            simpleValidator.current.hideMessages();
             setIsLoading(false);
+
+            if (response.data.data.status == false) {
+              toast.error(response.data.message, {
+                position: "top-right",
+              });
+            } else {
+              toast.success(response.data.message, {
+                position: "top-right",
+              });
+              cancelForm();
+              simpleValidator.current.hideMessages();
+            }
           }
         }
       } else {
@@ -354,13 +397,21 @@ const AddRoomForm = ({ cancelForm, hotelId, formType, updateId }) => {
         let response = await axios.post(url, body);
         if (response) {
           if (response.status == 200) {
-            toast.success(response.data.message, {
-              position: "top-right",
-            });
-            // cancelForm();
-            simpleValidator.current.hideMessages();
             setIsLoading(false);
-            fetchHotelRoomDetails(updateId);
+
+            if (response.data.data.status == false) {
+              toast.error(response.data.message, {
+                position: "top-right",
+              });
+            } else {
+              toast.success(response.data.message, {
+                position: "top-right",
+              });
+              // cancelForm();
+              simpleValidator.current.hideMessages();
+
+              fetchHotelRoomDetails(updateId);
+            }
           }
         }
       } else {
@@ -699,6 +750,37 @@ const AddRoomForm = ({ cancelForm, hotelId, formType, updateId }) => {
                   </td>
                 ))}
               </tr>
+              <tr className="odd">
+                <th style={{ width: "171.375px" }}>Single Occupancy</th>
+                {Array.from({ length: 8 }, (_, i) => (
+                  <td key={i}>
+                    <input
+                      type="text"
+                      pattern="[0-9]+"
+                      value={
+                        i < 4
+                          ? roomObject.chargesData[0]["on_season"]["5"][i][
+                              "charges"
+                            ]
+                          : roomObject.chargesData[0]["off_season"]["5"][i - 4][
+                              "charges"
+                            ]
+                      }
+                      onChange={(e) => {
+                        const newValue = e.target.value.trim();
+                        if (/^\d*$/.test(newValue)) {
+                          handleInputChange(
+                            parseInt(newValue) || 0,
+                            i < 4 ? "on_season" : "off_season",
+                            5,
+                            i < 4 ? i : i - 4
+                          );
+                        }
+                      }}
+                    />
+                  </td>
+                ))}
+              </tr>
             </table>
           </div>
         </div>
@@ -732,8 +814,7 @@ const AddRoomForm = ({ cancelForm, hotelId, formType, updateId }) => {
         pauseOnFocusLoss={false}
         draggable
         pauseOnHover={false}
-        theme="light"
-        transition="Slide"
+        theme="colored"
       />
     </>
   );

@@ -16,24 +16,25 @@ import makeAnimated from "react-select/animated";
 
 // redux
 import { useDispatch, useSelector } from "react-redux";
-import { setTourFormData } from "../utils/store";
-
+import { resetFormData, setTourFormData } from "../utils/store";
+import { getFilteredDropdownOptions } from "../utils/helpers";
 const BasicDetailsTourForm = () => {
   const [country, setCountry] = useState([]);
   const [locations, setLocations] = useState([]);
   const [statesList, setStatesList] = useState([]);
+  const [transitPtList, setTransitPtList] = useState([]);
   const [selectedLocationDescription, setSelectedLocationDescription] =
     useState("");
   const [tourName, setTourName] = useState("");
   const [stateId, setStateId] = useState(null);
-  const [transitPtId, setTransitPtId] = useState([]);
+  const [transitPtId, setTransitPtId] = useState(null);
   const [optionsObj, setOptionsObj] = useState({
     countryOptions: [],
     stateOptions: [],
     transitPtOptions: [],
     destOptions: [],
   });
-
+  const [isDataReady, setDataReady] = useState(false);
   const [, setForceUpdate] = useState(0);
   const animatedComponents = makeAnimated();
   const simpleValidator = useRef(
@@ -101,6 +102,7 @@ const BasicDetailsTourForm = () => {
       if (response) {
         if (response.status == 200) {
           let trasitPts = response.data.data;
+
           let trasitPtsOptionsArray = [];
           trasitPts.forEach((trasitPt) => {
             trasitPtsOptionsArray.push({
@@ -112,11 +114,11 @@ const BasicDetailsTourForm = () => {
             ...prevState,
             transitPtOptions: trasitPtsOptionsArray,
           }));
+          setTransitPtList(trasitPts);
         }
       }
     } catch (e) {
       setDataReady(true);
-      setTransitPts([]);
     }
   };
   const fetchLocations = async () => {
@@ -229,26 +231,58 @@ const BasicDetailsTourForm = () => {
   useEffect(() => {
     fetchStatesByCountry();
   }, [country]);
-
+  useEffect(() => {
+    let filteredTransitPoints = getFilteredDropdownOptions(
+      stateId,
+      transitPtList,
+      "state"
+    );
+    let transitPointsOptionsArray = [];
+    filteredTransitPoints.forEach((point) => {
+      transitPointsOptionsArray.push({
+        value: point.id,
+        label: point.transitPointName,
+      });
+    });
+    setOptionsObj((prevState) => ({
+      ...prevState,
+      transitPtOptions: transitPointsOptionsArray,
+    }));
+  }, [stateId]);
   useEffect(() => {
     if (tourFormData) {
       setTourName(tourFormData.tourName);
-      setCountry(tourFormData.countryIds);
-      setStateId(tourFormData.stateIds);
-      setTransitPtId(tourFormData.transitPointIds);
-      let destinations = tourFormData.locationIds;
+      setCountry(
+        tourFormData.countryIds != ""
+          ? ( Array.isArray(tourFormData.countryIds) ? tourFormData.countryIds : tourFormData.countryIds.split(",").map(Number))
+          : null
+      );
+      setStateId(
+        tourFormData.stateIds != ""
+          ? ( Array.isArray(tourFormData.stateIds) ? tourFormData.stateIds : tourFormData.stateIds.split(",").map(Number))
+          : null
+      );
+      setTransitPtId(
+        tourFormData.transitPointIds != ""
+          ? ( Array.isArray(tourFormData.transitPointIds) ? tourFormData.transitPointIds : tourFormData.transitPointIds.split(",").map(Number))
+          : null
+      );
+      
+     
 
-      if (destinations) {
-        let destFormValues = [];
+      // let destinations = tourFormData.locationIds;
 
-        for (let index = 0; index < destinations.length; index++) {
-          destFormValues.push({
-            destinationName: destinations[index],
-            destinationDesc: "",
-          });
-        }
-        setFormValues(destFormValues);
-      }
+      // if (destinations) {
+      //   let destFormValues = [];
+
+      //   for (let index = 0; index < destinations.length; index++) {
+      //     destFormValues.push({
+      //       destinationName: destinations[index],
+      //       destinationDesc: "",
+      //     });
+      //   }
+      //   setFormValues(destFormValues);
+      // }
     }
   }, [tourFormData]);
 
@@ -284,7 +318,7 @@ const BasicDetailsTourForm = () => {
                 simpleValidator.current.message(
                   "tour_name",
                   tourName,
-                  ["required", { regex: /^[A-Za-z\s&-]+$/ }],
+                  ["required", { regex: /^[A-Za-z0-9\s&-()]+$/ }],
                   {
                     messages: {
                       required: "Please enter tour name ",
@@ -299,6 +333,7 @@ const BasicDetailsTourForm = () => {
           <div className="col-sm-6">
             <label>Country</label>
             <Select
+              classNamePrefix="an-simple-select"
               options={optionsObj.countryOptions}
               placeholder="Select Country"
               isMulti
@@ -337,6 +372,7 @@ const BasicDetailsTourForm = () => {
           <div className="col-sm-6">
             <label>State / Location</label>
             <Select
+              classNamePrefix="an-simple-select"
               options={optionsObj.stateOptions}
               placeholder="Select State"
               required
@@ -356,6 +392,7 @@ const BasicDetailsTourForm = () => {
                   : [];
                 setStateId(selectedIds);
                 dispatch(setTourFormData("stateIds", selectedIds.join(",")));
+                console.log("state-selectedIds", selectedIds);
               }}
               onBlur={() => {
                 simpleValidator.current.showMessageFor("state_name");
@@ -375,7 +412,7 @@ const BasicDetailsTourForm = () => {
             </>
           </div>
         </div>
-        <div className="form-group row">
+        {/* <div className="form-group row">
           <div className="col-sm-6">
             <label className="mb-0">Transit Points</label>
             <br></br>
@@ -383,12 +420,14 @@ const BasicDetailsTourForm = () => {
               Note :- Select multiple start and end points
             </small>
             <br></br>
-
             <Select
+              classNamePrefix="an-simple-select"
               options={optionsObj.transitPtOptions}
               placeholder="Select Transit Points"
               required
               name="transit_pt"
+              isMulti
+              components={animatedComponents}
               value={
                 transitPtId
                   ? optionsObj.transitPtOptions.filter((option) =>
@@ -404,12 +443,11 @@ const BasicDetailsTourForm = () => {
                 dispatch(
                   setTourFormData("transitPointIds", selectedIds.join(","))
                 );
+                console.log("selectedIds", selectedIds);
               }}
               onBlur={() => {
                 simpleValidator.current.showMessageFor("transit_pt");
               }}
-              isMulti
-              components={animatedComponents}
             />
             <>
               {simpleValidator.current.message(
@@ -424,8 +462,8 @@ const BasicDetailsTourForm = () => {
               )}
             </>
           </div>
-        </div>
-        <h4>Visiting Locations</h4>
+        </div> */}
+        {/* <h4>Visiting Locations</h4>
         <br></br>
 
         <div className="form-group row ">
@@ -502,7 +540,7 @@ const BasicDetailsTourForm = () => {
                         },
                       }
                     )}
-                </> */}
+                </> 
               </div>
               <div className="col-sm-5 mb-3" key={index}>
                 <label>Description</label>
@@ -525,7 +563,7 @@ const BasicDetailsTourForm = () => {
                                       dangerouslySetInnerHTML={{
                                         __html: element.destinationDesc,
                                       }}
-                                    ></div> */}
+                                    ></div> 
                 {!element.destinationName && (
                   <>
                     <input
@@ -582,7 +620,7 @@ const BasicDetailsTourForm = () => {
               <br></br>
             </>
           ))}
-        </div>
+        </div> */}
         <AddOnServicesForm />
         <div
           className="modal fade"

@@ -91,7 +91,7 @@ ion-icon {
   border-radius: 6px;
 }
 .wizard > .steps .current a {
-  background: #FF9800;
+  background: #ff9800;
   cursor: pointer;
 }
 /* For small devices (phones) */
@@ -219,4 +219,86 @@ ion-icon {
 }
 .sidebar .nav.sub-menu .nav-item .nav-link {
   color: #abadb1;
+}
+.badge.hot {
+  background-color: #fddad9;
+  color: #c3515b;
+  border: 1px solid #c3515b;
+}
+
+.badge.warm {
+  background-color: #f4e3c8;
+  color: #ae6d00;
+  border: 1px solid #ae6d00;
+}
+
+.badge.cold {
+  background-color: #c7ebf2;
+  color: #0087a4;
+  border: 1px solid #0087a4;
+}
+@keyframes shimmer2 {
+  0% {
+    background-position: -1000px 0;
+  }
+
+  100% {
+    background-position: 1000px 0;
+  }
+}
+.dashboard-count-div {
+  .shimmer {
+    background: linear-gradient(to right, #ffffff 8%, #d7d7d7 18%, #ffffff 33%);
+    background-size: 1000px 100%;
+    animation: shimmer2 2.2s linear infinite forwards;
+  }
+  .shimmer-title-line {
+    height: 14px !important;
+  }
+}
+.card {
+  /* box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px; */
+  box-shadow: rgba(0, 0, 0, 0.07) 0px 1px 1px, rgba(0, 0, 0, 0.07) 0px 2px 2px, rgba(0, 0, 0, 0.07) 0px 4px 4px, rgba(0, 0, 0, 0.07) 0px 8px 8px, rgba(0, 0, 0, 0.07) 0px 16px 16px;
+}
+/* table{
+  border: 1px solid;
+  thead{
+    background: #2656ab;
+    color: #fff;
+  }
+  
+} */
+.form-div {
+  padding: 16px;
+  box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+}
+.an-simple-select__control{
+  height: auto !important;
+}
+.an-simple-select__multi-value__label  {
+  background: #cddfff;
+  color: #fff;
+}
+.an-simple-select__multi-value__remove{
+  background: #cddfff;
+  color: #000;
+}
+.hotel-form-div {
+  border-radius: 8px;
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 0.0625em 0.0625em, rgba(0, 0, 0, 0.25) 0px 0.125em 0.5em, rgba(255, 255, 255, 0.1) 0px 0px 0px 1px inset;
+}
+.room-heading {
+  text-align: center;
+  padding: 12px;
+  margin-bottom: 0;
+  background: #009688;
+  color: #fff;
+  border-top-left-radius: 9px;
+  border-top-right-radius: 9px;
+}
+.room-card {
+  box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+  border-bottom-left-radius: 9px;
+  border-bottom-right-radius: 9px;
+ 
 }

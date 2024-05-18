@@ -6,20 +6,15 @@ import {
   CSSTransition,
   axios,
   toast,
-  ToastContainer,
-  SimpleReactValidator,
   ShimmerTable,
 } from "../components/CommonImport";
 import {
-  FETCH_VEHICLES_API,
-  ADD_VEHICLE_API,
-  UPDATE_VEHICLE_API,
-  DELETE_VEHICLE_API,
+  BASE_URL,
   FETCH_QUOTATIONS_API,
   DELETE_QUOTATION_API,
 } from "../utils/constants";
 import { useNavigate } from "react-router-dom";
-import { getDateFormatted } from "../utils/helpers";
+import { getDateFormatted,toTitleCase } from "../utils/helpers";
 
 import "react-toastify/dist/ReactToastify.css";
 import NoData from "../components/NoData";
@@ -32,7 +27,6 @@ const QuotationManagement = () => {
   const [originalQuotationsList, setOriginalQuotationsList] = useState([]);
   const [isUpdate, setUpdate] = useState(false);
   const [deleteId, setDeleteId] = useState(false);
-  const [updateId, setUpdateId] = useState("");
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -66,8 +60,10 @@ const QuotationManagement = () => {
       let body = {
         id: id,
       };
+      setIsLoading(true);
       let response = await axios.post(url, body);
       if (response) {
+        setIsLoading(false);
         if (response.status == 200) {
           toast.success(response.data.message, {
             position: "top-right",
@@ -77,6 +73,7 @@ const QuotationManagement = () => {
         }
       }
     } catch (e) {
+      setIsLoading(false);
       toast.error("Something Went Wrong :(", {
         position: "top-right",
       });
@@ -136,7 +133,7 @@ const QuotationManagement = () => {
           <div className="content-wrapper">
             <div className="card">
               <div className="card-body">
-                <div className="flex">
+                <div className="flex ">
                   <ion-icon
                     name="document-text-outline"
                     color="primary"
@@ -258,13 +255,13 @@ const QuotationManagement = () => {
                                                 quotation.quotDate
                                               )}
                                             </td>
-                                            <td>{quotation.quotClientName}</td>
+                                            <td>{toTitleCase(quotation.quotClientName)}</td>
                                             <td>
                                               <label
                                                 className={`badge ${
                                                   quotation.status == "1"
-                                                    ? "badge-success"
-                                                    : "badge-danger"
+                                                    ? "badge-outline-success"
+                                                    : "badge-outline-danger"
                                                 }`}
                                               >
                                                 {quotation.status == "1"
@@ -279,13 +276,21 @@ const QuotationManagement = () => {
                                                 style={{ marginRight: "10px" }}
                                                 title="Approve"
                                               ></ion-icon>
-                                              <ion-icon
-                                                name="print-outline"
-                                                color="secondary"
-                                                style={{ marginRight: "10px" }}
-                                                title="Print"
-                                              ></ion-icon>
 
+                                              <a
+                                                href={`${BASE_URL}/uploads/quotations/${quotation.quotFile}`}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                              >
+                                                <ion-icon
+                                                  name="print-outline"
+                                                  color="secondary"
+                                                  style={{
+                                                    marginRight: "10px",
+                                                  }}
+                                                  title="Print"
+                                                ></ion-icon>
+                                              </a>
                                               <ion-icon
                                                 name="mail-outline"
                                                 color="tertiary"
@@ -299,7 +304,8 @@ const QuotationManagement = () => {
                                                 title="Edit"
                                                 onClick={() => {
                                                   navigate(
-                                                    "/edit-quotation/" + quotation.id
+                                                    "/edit-quotation/" +
+                                                      quotation.id
                                                   );
                                                 }}
                                               ></ion-icon>
@@ -324,12 +330,11 @@ const QuotationManagement = () => {
                             {quotations && quotations.length == 0 && (
                               <NoData></NoData>
                             )}
-                           
                           </div>
                         </div>
                         <div className="row">
                           <div className="col-sm-12 col-md-12">
-                          <div
+                            <div
                               className="dataTables_paginate paging_simple_numbers"
                               id="order-listing_paginate"
                             >

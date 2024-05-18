@@ -19,7 +19,7 @@ import {
   UPDATE_HALTING_POINT_API,
   DELETE_HALTING_POINT_API,
 } from "../utils/constants";
-import { getDateFormatted, getFilteredDropdownOptions } from "../utils/helpers";
+import { getDateFormatted, getFilteredDropdownOptions,toTitleCase } from "../utils/helpers";
 
 import "react-toastify/dist/ReactToastify.css";
 import NoData from "../components/NoData";
@@ -151,14 +151,21 @@ const HaltingDestinationMaster = () => {
         let response = await axios.post(url, body);
         if (response) {
           if (response.status == 200) {
-            toast.success(response.data.message, {
-              position: "top-right",
-            });
-            handleCloseModal();
-            resetForm();
-            fetchHaltDestinations();
-            simpleValidator.current.hideMessages();
             setIsLoading(false);
+
+            if (response.data.data.status == false) {
+              toast.error(response.data.message, {
+                position: "top-right",
+              });
+            } else {
+              toast.success(response.data.message, {
+                position: "top-right",
+              });
+              handleCloseModal();
+              resetForm();
+              fetchHaltDestinations();
+              simpleValidator.current.hideMessages();
+            }
           }
         }
       } else {
@@ -190,15 +197,22 @@ const HaltingDestinationMaster = () => {
         let response = await axios.post(url, body);
         if (response) {
           if (response.status == 200) {
-            toast.success(response.data.message, {
-              position: "top-right",
-            });
-
-            handleCloseModal();
-            resetForm();
-            fetchHaltDestinations();
-            simpleValidator.current.hideMessages();
             setIsLoading(false);
+
+            if (response.data.data.status == false) {
+              toast.error(response.data.message, {
+                position: "top-right",
+              });
+            } else {
+              toast.success(response.data.message, {
+                position: "top-right",
+              });
+
+              handleCloseModal();
+              resetForm();
+              fetchHaltDestinations();
+              simpleValidator.current.hideMessages();
+            }
           }
         }
       } else {
@@ -220,9 +234,11 @@ const HaltingDestinationMaster = () => {
       let body = {
         id: id,
       };
+      setIsLoading(true);
       let response = await axios.post(url, body);
       console.log("response", response);
       if (response) {
+        setIsLoading(false);
         if (response.status == 200) {
           toast.success(response.data.message, {
             position: "top-right",
@@ -233,6 +249,7 @@ const HaltingDestinationMaster = () => {
         }
       }
     } catch (e) {
+      setIsLoading(false);
       toast.error("Something Went Wrong :(", {
         position: "top-right",
       });
@@ -447,10 +464,10 @@ const HaltingDestinationMaster = () => {
                                               {" "}
                                               {startIndex + index + 1}
                                             </td>
-                                            <td>{point.haltingPointName}</td>
+                                            <td>{toTitleCase(point.haltingPointName)}</td>
 
-                                            <td>{point.stateName}</td>
-                                            <td>{point.countryName}</td>
+                                            <td>{toTitleCase(point.stateName)}</td>
+                                            <td>{toTitleCase(point.countryName)}</td>
                                             <td>
                                               {getDateFormatted(
                                                 point.createdAt
@@ -460,8 +477,8 @@ const HaltingDestinationMaster = () => {
                                               <label
                                                 className={`badge ${
                                                   point.status == "1"
-                                                    ? "badge-success"
-                                                    : "badge-danger"
+                                                    ? "badge-outline-success"
+                                                    : "badge-outline-danger"
                                                 }`}
                                               >
                                                 {point.status == "1"
@@ -554,7 +571,7 @@ const HaltingDestinationMaster = () => {
                                             haltDestName,
                                             [
                                               "required",
-                                              { regex: /^[A-Za-z\s&-]+$/ },
+                                              { regex: /^[A-Za-z\s&-()]+$/ },
                                             ],
                                             {
                                               messages: {

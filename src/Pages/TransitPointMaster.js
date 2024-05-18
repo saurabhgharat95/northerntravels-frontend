@@ -19,7 +19,7 @@ import {
   UPDATE_TRANSIT_POINT_API,
   DELETE_TRANSIT_POINT_API,
 } from "../utils/constants";
-import { getDateFormatted, getFilteredDropdownOptions } from "../utils/helpers";
+import { getDateFormatted, getFilteredDropdownOptions,toTitleCase } from "../utils/helpers";
 
 import "react-toastify/dist/ReactToastify.css";
 import NoData from "../components/NoData";
@@ -149,14 +149,21 @@ const TransitPointMaster = () => {
         let response = await axios.post(url, body);
         if (response) {
           if (response.status == 200) {
-            toast.success(response.data.message, {
-              position: "top-right",
-            });
-            handleCloseModal();
-            resetForm();
-            fetchTransitPts();
-            simpleValidator.current.hideMessages();
             setIsLoading(false);
+
+            if (response.data.data.status == false) {
+              toast.error(response.data.message, {
+                position: "top-right",
+              });
+            } else {
+              toast.success(response.data.message, {
+                position: "top-right",
+              });
+              handleCloseModal();
+              resetForm();
+              fetchTransitPts();
+              simpleValidator.current.hideMessages();
+            }
           }
         }
       } else {
@@ -186,15 +193,23 @@ const TransitPointMaster = () => {
         let response = await axios.post(url, body);
         if (response) {
           if (response.status == 200) {
-            toast.success(response.data.message, {
-              position: "top-right",
-            });
-
-            handleCloseModal();
-            resetForm();
-            fetchTransitPts();
-            simpleValidator.current.hideMessages();
             setIsLoading(false);
+
+            if (response.data.data.status == false) {
+              toast.error(response.data.message, {
+                position: "top-right",
+              });
+            } else {
+              toast.success(response.data.message, {
+                position: "top-right",
+              });
+
+              handleCloseModal();
+              resetForm();
+              fetchTransitPts();
+              simpleValidator.current.hideMessages();
+              setIsLoading(false);
+            }
           }
         }
       } else {
@@ -214,9 +229,11 @@ const TransitPointMaster = () => {
       let body = {
         id: id,
       };
+      setIsLoading(true);
       let response = await axios.post(url, body);
       console.log("response", response);
       if (response) {
+        setIsLoading(false);
         if (response.status == 200) {
           toast.success(response.data.message, {
             position: "top-right",
@@ -227,6 +244,7 @@ const TransitPointMaster = () => {
         }
       }
     } catch (e) {
+      setIsLoading(false);
       toast.error("Something Went Wrong :(", {
         position: "top-right",
       });
@@ -438,9 +456,9 @@ const TransitPointMaster = () => {
                                               {" "}
                                               {startIndex + index + 1}
                                             </td>
-                                            <td>{point.transitPointName}</td>
-                                            <td>{point.stateName}</td>
-                                            <td>{point.countryName}</td>
+                                            <td>{toTitleCase(point.transitPointName)}</td>
+                                            <td>{toTitleCase(point.stateName)}</td>
+                                            <td>{toTitleCase(point.countryName)}</td>
                                             <td>
                                               {getDateFormatted(
                                                 point.createdAt
@@ -450,8 +468,8 @@ const TransitPointMaster = () => {
                                               <label
                                                 className={`badge ${
                                                   point.status == "1"
-                                                    ? "badge-success"
-                                                    : "badge-danger"
+                                                    ? "badge-outline-success"
+                                                    : "badge-outline-danger"
                                                 }`}
                                               >
                                                 {point.status == "1"
@@ -543,7 +561,7 @@ const TransitPointMaster = () => {
                                             transitPtName,
                                             [
                                               "required",
-                                              { regex: /^[A-Za-z\s&-]+$/ },
+                                              { regex: /^[A-Za-z][\w\s&-()'.]*$/ },
                                             ],
                                             {
                                               messages: {
