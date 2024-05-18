@@ -71,6 +71,7 @@ const HotelMaster = () => {
   const [updateId, setUpdateId] = useState("");
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [isFormOpen, setFormOpen] = useState(false);
+  const [, setForceUpdate] = useState(0);
 
   const [searchValue, setSearchValue] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -236,7 +237,7 @@ const HotelMaster = () => {
       let url = ADD_HOTEL_API;
       let body = {
         hotelName: hotelName,
-        hotelAddress: hotelAddress,
+        hotelAddress: hotelAddress ? hotelAddress : "",
         hotelEmail: hotelEmail,
         isSpecialRate: isSpecialRate ? 1 : 0,
         spFromDate: specialRateDate.spFromDate,
@@ -267,7 +268,7 @@ const HotelMaster = () => {
               fetchHotels();
               simpleValidator.current.hideMessages();
               setIsLoading(false);
-              openForm()
+              openForm();
             }
           }
         }
@@ -321,7 +322,7 @@ const HotelMaster = () => {
               fetchHotels();
               simpleValidator.current.hideMessages();
               setIsLoading(false);
-              openForm()
+              openForm();
             }
           }
         }
@@ -525,8 +526,10 @@ const HotelMaster = () => {
                         isFormOpen ? "visible" : "hidden"
                       }`}
                     >
-                      <div >
-                        <h4><b>{isUpdate ? "Edit" : "Add"} Hotel</b></h4>
+                      <div>
+                        <h4>
+                          <b>{isUpdate ? "Edit" : "Add"} Hotel</b>
+                        </h4>
                       </div>
                       <br></br>
                       <br></br>
@@ -1055,7 +1058,16 @@ const HotelMaster = () => {
                                           timeout={500}
                                           classNames="item elementdiv"
                                         >
-                                          <tr className="odd" key={index} style={{background:hotel.isSpecialRate==1?"#c8ffd4":"none"}}>
+                                          <tr
+                                            className="odd"
+                                            key={index}
+                                            style={{
+                                              background:
+                                                hotel.isSpecialRate == 1
+                                                  ? "#c8ffd4"
+                                                  : "none",
+                                            }}
+                                          >
                                             <td className="sorting_1">
                                               {" "}
                                               {startIndex + index + 1}

@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from "react";
-import { SimpleReactValidator } from "../components/CommonImport";
+import { toast,SimpleReactValidator } from "../components/CommonImport";
+import "react-toastify/dist/ReactToastify.css";
 //redux
 import { useDispatch, useSelector } from "react-redux";
 import { setQuotationFormData } from "../utils/store";
@@ -16,9 +17,9 @@ const AccommodationDetailsForm = ({ onValidationStatusChange }) => {
     quotTotalPeoples: "",
     quotRoomsReqd: "",
     quotTotalExtraBeds: 0,
-    quotTotalSingleOccupancy: 0,
-    quotTotalChildNoBed: 0,
-    quotTotalChildComplimentary: 0,
+    quotSingleOccupy: 0,
+    quotChildBtwn8And9: 0,
+    quotBlw5: 0,
   });
   const [roomObject, setRoomObject] = useState([
     {
@@ -52,18 +53,24 @@ const AccommodationDetailsForm = ({ onValidationStatusChange }) => {
     return isValid;
   };
   let addRoom = () => {
-    setRoomObject([
-      ...roomObject,
-      {
-        id: null,
-        isSingleOccupancy: false,
-        childAbove9: "",
-        totalPersonsRoom: 0,
-        noExtraBeds: "",
-        freeBeds: "",
-        extraBeds: "",
-      },
-    ]);
+    if (roomObject.length < accommodationObject.quotRoomsReqd) {
+      setRoomObject([
+        ...roomObject,
+        {
+          id: null,
+          isSingleOccupancy: false,
+          childAbove9: "",
+          totalPersonsRoom: 0,
+          noExtraBeds: "",
+          freeBeds: "",
+          extraBeds: "",
+        },
+      ]);
+    } else {
+      toast.error("Rooms cannot exceed required room", {
+        position: "top-right",
+      });
+    }
   };
 
   let removeRoom = (i) => {
@@ -140,16 +147,16 @@ const AccommodationDetailsForm = ({ onValidationStatusChange }) => {
     setAccommodationObject((prevState) => ({
       ...prevState,
       quotTotalExtraBeds: noOfExtraBeds,
-      quotTotalSingleOccupancy: noOfSingleOccupancy,
-      quotTotalChildNoBed: noOfCNB,
-      quotTotalChildComplimentary: noOfCMP,
+      quotSingleOccupy: noOfSingleOccupancy,
+      quotChildBtwn8And9: noOfCNB,
+      quotBlw5: noOfCMP,
     }));
     dispatch(setQuotationFormData("quotTotalExtraBeds", noOfExtraBeds));
     dispatch(
-      setQuotationFormData("quotTotalSingleOccupancy", noOfSingleOccupancy)
+      setQuotationFormData("quotSingleOccupy", noOfSingleOccupancy)
     );
-    dispatch(setQuotationFormData("quotTotalChildNoBed", noOfCNB));
-    dispatch(setQuotationFormData("quotTotalChildComplimentary", noOfCMP));
+    dispatch(setQuotationFormData("quotChildBtwn8And9", noOfCNB));
+    dispatch(setQuotationFormData("quotBlw5", noOfCMP));
   };
   useEffect(() => {
     validateForm();
@@ -161,9 +168,9 @@ const AccommodationDetailsForm = ({ onValidationStatusChange }) => {
         quotTotalPeoples: quotFormData.quotTotalPeoples,
         quotRoomsReqd: quotFormData.quotRoomsReqd,
         quotTotalExtraBeds: quotFormData.quotTotalExtraBeds,
-        quotTotalSingleOccupancy: quotFormData.quotTotalSingleOccupancy,
-        quotTotalChildNoBed: quotFormData.quotTotalChildNoBed,
-        quotTotalChildComplimentary: quotFormData.quotTotalChildComplimentary,
+        quotSingleOccupy: quotFormData.quotSingleOccupy,
+        quotChildBtwn8And9: quotFormData.quotChildBtwn8And9,
+        quotBlw5: quotFormData.quotBlw5,
       }));
 
       let roomData = quotFormData.roomData;
@@ -184,6 +191,7 @@ const AccommodationDetailsForm = ({ onValidationStatusChange }) => {
 
         if (roomArray.length > 0) {
           setRoomObject(roomArray);
+          countTotal()
         }
       }
     }
@@ -434,7 +442,6 @@ const AccommodationDetailsForm = ({ onValidationStatusChange }) => {
                                   )
                                 );
                                 countTotal();
-
                               }
                             }}
                             onBlur={() => {
@@ -487,7 +494,6 @@ const AccommodationDetailsForm = ({ onValidationStatusChange }) => {
                                   )
                                 );
                                 countTotal();
-
                               }
                             }}
                             onBlur={() => {
@@ -538,9 +544,7 @@ const AccommodationDetailsForm = ({ onValidationStatusChange }) => {
                                   )
                                 );
                                 countTotal();
-
                               }
-
                             }}
                             onBlur={() => {
                               simpleValidator.current.showMessageFor(
@@ -642,10 +646,12 @@ const AccommodationDetailsForm = ({ onValidationStatusChange }) => {
               pattern="[0-9]+"
               className="form-control"
               placeholder="Enter No. of Single Occupancy"
-              value={accommodationObject.quotTotalSingleOccupancy}
+              value={accommodationObject.quotSingleOccupy}
               readOnly
               onBlur={() => {
-                simpleValidator.current.showMessageFor("quotTotalSingleOccupancy");
+                simpleValidator.current.showMessageFor(
+                  "quotSingleOccupy"
+                );
               }}
             />
           </div>
@@ -658,10 +664,10 @@ const AccommodationDetailsForm = ({ onValidationStatusChange }) => {
               pattern="[0-9]+"
               className="form-control"
               placeholder="Enter Total No. of CNB"
-              value={accommodationObject.quotTotalChildNoBed}
+              value={accommodationObject.quotChildBtwn8And9}
               readOnly
               onBlur={() => {
-                simpleValidator.current.showMessageFor("quotTotalChildNoBed");
+                simpleValidator.current.showMessageFor("quotChildBtwn8And9");
               }}
             />
           </div>
@@ -672,16 +678,21 @@ const AccommodationDetailsForm = ({ onValidationStatusChange }) => {
               pattern="[0-9]+"
               className="form-control"
               placeholder="Enter Total No. of CMP"
-              value={accommodationObject.quotTotalChildComplimentary}
+              value={accommodationObject.quotBlw5}
               readOnly
               onBlur={() => {
-                simpleValidator.current.showMessageFor("quotTotalChildComplimentary");
+                simpleValidator.current.showMessageFor(
+                  "quotBlw5"
+                );
               }}
             />
           </div>
         </div>
+       
         <br></br>
+       
       </section>
+     
     </>
   );
 };

@@ -36,6 +36,11 @@ const MarkupForm = ({ onValidationStatusChange }) => {
     quotCompanyLogo: "",
   });
   const [markupAmtObject, setMarkupAmtObject] = useState([]);
+  const [ppAmtObj, setPPAmtObj] = useState({
+    itineraryPPAmt: 0,
+    addOnPPAMt: 0,
+    markupPPAmt: 0,
+  });
   const [itineraryQuotAmt, setItineraryQuotAmt] = useState(0);
   const [logoImage, setLogoImage] = useState("");
   const [, setForceUpdate] = useState(0);
@@ -72,10 +77,15 @@ const MarkupForm = ({ onValidationStatusChange }) => {
       if (response) {
         if (response.status == 200) {
           let quotPackageArr = response.data.data.mergedPackagesArr;
-
-          let itineraryQuotAmt = response.data.data.itineraryQuotAmt;
+          let amtObj = response.data.data;
+          let itineraryQuotAmt = amtObj.itineraryQuotAmt;
           setMarkupAmtObject(quotPackageArr);
           setItineraryQuotAmt(itineraryQuotAmt);
+          setPPAmtObj((prevState) => ({
+            ...prevState,
+            itineraryPPAmt: amtObj.itineraryPPAmt,
+            addOnPPAMt: amtObj.addOnPPAMt,
+          }));
         }
       }
     } catch (e) {}
@@ -247,37 +257,10 @@ const MarkupForm = ({ onValidationStatusChange }) => {
               type="text"
               pattern="[0-9]+"
               className="form-control"
-              placeholder="Enter Markup (Rs.)"
+              placeholder="Enter Vehicle Per Person Amount (Rs.)"
               readOnly
-              value={markupObject.quotMarkup}
-              onChange={(event) => {
-                const newValue = event.target.value.trim();
-                if (/^\d*$/.test(newValue)) {
-                  setMarkupObject((prevState) => ({
-                    ...prevState,
-                    quotMarkup: event.target.value,
-                  }));
-                  dispatch(
-                    setQuotationFormData("quotMarkup", event.target.value)
-                  );
-                }
-              }}
-              onBlur={() => {
-                simpleValidator.current.showMessageFor("quotMarkup");
-              }}
+              value={ppAmtObj.itineraryPPAmt}
             />
-            <>
-              {simpleValidator.current.message(
-                "quotMarkup",
-                markupObject.quotMarkup,
-                ["required"],
-                {
-                  messages: {
-                    required: "Please enter  markup amount",
-                  },
-                }
-              )}
-            </>
           </div>
           <div className="col-sm-4">
             <label>Add On Per Person (Rs.)</label>
@@ -285,37 +268,10 @@ const MarkupForm = ({ onValidationStatusChange }) => {
               type="text"
               pattern="[0-9]+"
               className="form-control"
-              placeholder="Enter Markup (Rs.)"
+              placeholder="Enter Add On Per Person (Rs.)"
               readOnly
-              value={markupObject.quotMarkup}
-              onChange={(event) => {
-                const newValue = event.target.value.trim();
-                if (/^\d*$/.test(newValue)) {
-                  setMarkupObject((prevState) => ({
-                    ...prevState,
-                    quotMarkup: event.target.value,
-                  }));
-                  dispatch(
-                    setQuotationFormData("quotMarkup", event.target.value)
-                  );
-                }
-              }}
-              onBlur={() => {
-                simpleValidator.current.showMessageFor("quotMarkup");
-              }}
+              value={ppAmtObj.addOnPPAMt}
             />
-            <>
-              {simpleValidator.current.message(
-                "quotMarkup",
-                markupObject.quotMarkup,
-                ["required"],
-                {
-                  messages: {
-                    required: "Please enter  markup amount",
-                  },
-                }
-              )}
-            </>
           </div>
           <div className="col-sm-4">
             <label>Markup (Rs.)</label>
@@ -335,6 +291,18 @@ const MarkupForm = ({ onValidationStatusChange }) => {
                   dispatch(
                     setQuotationFormData("quotMarkup", event.target.value)
                   );
+                  setPPAmtObj((prevState) => ({
+                    ...prevState,
+                    markupPPAmt:
+                      newValue && newValue != 0
+                        ? (
+                            Number(newValue) /
+                            (quotFormData.quotTotalPeoples
+                              ? quotFormData.quotTotalPeoples
+                              : 1)
+                          ).toFixed(0)
+                        : 0,
+                  }));
                 }
               }}
               onBlur={() => {
@@ -348,7 +316,7 @@ const MarkupForm = ({ onValidationStatusChange }) => {
                 ["required"],
                 {
                   messages: {
-                    required: "Please enter  markup amount",
+                    required: "Please enter markup amount",
                   },
                 }
               )}
@@ -409,7 +377,6 @@ const MarkupForm = ({ onValidationStatusChange }) => {
                       }}
                     />
                   </div>
-                 
                 </div>
                 <div className="form-group row">
                   <div className="col-sm-4">
@@ -419,7 +386,7 @@ const MarkupForm = ({ onValidationStatusChange }) => {
                       pattern="[0-9]+"
                       className="form-control"
                       placeholder="Enter Before Markup (Rs.)"
-                      value={pckg.charges + itineraryQuotAmt}
+                      value={pckg.hotelRoomPPAmt}
                       disabled
                       onChange={(event) => {
                         const newValue = event.target.value.trim();
@@ -451,79 +418,22 @@ const MarkupForm = ({ onValidationStatusChange }) => {
                       className="form-control"
                       placeholder="Enter Markup (Rs.)"
                       readOnly
-                      value={markupObject.quotMarkup}
-                      onChange={(event) => {
-                        const newValue = event.target.value.trim();
-                        if (/^\d*$/.test(newValue)) {
-                          setMarkupObject((prevState) => ({
-                            ...prevState,
-                            quotMarkup: event.target.value,
-                          }));
-                          dispatch(
-                            setQuotationFormData(
-                              "quotMarkup",
-                              event.target.value
-                            )
-                          );
-                        }
-                      }}
-                      onBlur={() => {
-                        simpleValidator.current.showMessageFor("quotMarkup");
-                      }}
+                      value={ppAmtObj.markupPPAmt}
                     />
-                    <>
-                      {simpleValidator.current.message(
-                        "quotMarkup",
-                        markupObject.quotMarkup,
-                        ["required"],
-                        {
-                          messages: {
-                            required: "Please enter  markup amount",
-                          },
-                        }
-                      )}
-                    </>
                   </div>
                   <div className="col-sm-4">
-                  <label>Amount Per Person (Rs.)</label>
+                    <label>Amount Per Person (Rs.)</label>
                     <input
                       type="text"
                       pattern="[0-9]+"
                       className="form-control"
-                      placeholder="Enter Markup (Rs.)"
+                      placeholder="Enter Amount Per Person (Rs.)"
                       readOnly
-                      value={markupObject.quotMarkup}
-                      onChange={(event) => {
-                        const newValue = event.target.value.trim();
-                        if (/^\d*$/.test(newValue)) {
-                          setMarkupObject((prevState) => ({
-                            ...prevState,
-                            quotMarkup: event.target.value,
-                          }));
-                          dispatch(
-                            setQuotationFormData(
-                              "quotMarkup",
-                              event.target.value
-                            )
-                          );
-                        }
-                      }}
-                      onBlur={() => {
-                        simpleValidator.current.showMessageFor("quotMarkup");
-                      }}
+                      value={
+                        Number(pckg.hotelRoomPPAmt) +
+                        Number(ppAmtObj.markupPPAmt)
+                      }
                     />
-                    <>
-                      {simpleValidator.current.message(
-                        "quotMarkup",
-                        markupObject.quotMarkup,
-                        ["required"],
-                        {
-                          messages: {
-                            required: "Please enter  markup amount",
-                          },
-                        }
-                      )}
-                    </>
                   </div>
                 </div>
                 <div className="form-group row">
@@ -533,29 +443,9 @@ const MarkupForm = ({ onValidationStatusChange }) => {
                       type="text"
                       pattern="[0-9]+"
                       className="form-control"
-                      placeholder="Enter Before Markup (Rs.)"
-                      value={pckg.charges + itineraryQuotAmt}
+                      placeholder="Enter Single occupancy (Rs.)"
+                      value={pckg.singleOccupyPPAmt}
                       disabled
-                      onChange={(event) => {
-                        const newValue = event.target.value.trim();
-                        if (/^\d*$/.test(newValue)) {
-                          setMarkupObject((prevState) => ({
-                            ...prevState,
-                            quotBeforeMarkup: event.target.value,
-                          }));
-                          dispatch(
-                            setQuotationFormData(
-                              "quotBeforeMarkup",
-                              event.target.value
-                            )
-                          );
-                        }
-                      }}
-                      onBlur={() => {
-                        simpleValidator.current.showMessageFor(
-                          "quotBeforeMarkup"
-                        );
-                      }}
                     />
                   </div>
                   <div className="col-sm-4">
@@ -566,79 +456,22 @@ const MarkupForm = ({ onValidationStatusChange }) => {
                       className="form-control"
                       placeholder="Enter Markup (Rs.)"
                       readOnly
-                      value={markupObject.quotMarkup}
-                      onChange={(event) => {
-                        const newValue = event.target.value.trim();
-                        if (/^\d*$/.test(newValue)) {
-                          setMarkupObject((prevState) => ({
-                            ...prevState,
-                            quotMarkup: event.target.value,
-                          }));
-                          dispatch(
-                            setQuotationFormData(
-                              "quotMarkup",
-                              event.target.value
-                            )
-                          );
-                        }
-                      }}
-                      onBlur={() => {
-                        simpleValidator.current.showMessageFor("quotMarkup");
-                      }}
+                      value={ppAmtObj.markupPPAmt}
                     />
-                    <>
-                      {simpleValidator.current.message(
-                        "quotMarkup",
-                        markupObject.quotMarkup,
-                        ["required"],
-                        {
-                          messages: {
-                            required: "Please enter  markup amount",
-                          },
-                        }
-                      )}
-                    </>
                   </div>
                   <div className="col-sm-4">
-                  <label>Amount Per Person (Rs.)</label>
+                    <label>Amount Per Person (Rs.)</label>
                     <input
                       type="text"
                       pattern="[0-9]+"
                       className="form-control"
                       placeholder="Enter Markup (Rs.)"
                       readOnly
-                      value={markupObject.quotMarkup}
-                      onChange={(event) => {
-                        const newValue = event.target.value.trim();
-                        if (/^\d*$/.test(newValue)) {
-                          setMarkupObject((prevState) => ({
-                            ...prevState,
-                            quotMarkup: event.target.value,
-                          }));
-                          dispatch(
-                            setQuotationFormData(
-                              "quotMarkup",
-                              event.target.value
-                            )
-                          );
-                        }
-                      }}
-                      onBlur={() => {
-                        simpleValidator.current.showMessageFor("quotMarkup");
-                      }}
+                      value={
+                        Number(pckg.singleOccupyPPAmt) +
+                        Number(ppAmtObj.markupPPAmt)
+                      }
                     />
-                    <>
-                      {simpleValidator.current.message(
-                        "quotMarkup",
-                        markupObject.quotMarkup,
-                        ["required"],
-                        {
-                          messages: {
-                            required: "Please enter  markup amount",
-                          },
-                        }
-                      )}
-                    </>
                   </div>
                 </div>
                 <div className="form-group row">
@@ -648,29 +481,9 @@ const MarkupForm = ({ onValidationStatusChange }) => {
                       type="text"
                       pattern="[0-9]+"
                       className="form-control"
-                      placeholder="Enter Before Markup (Rs.)"
-                      value={pckg.charges + itineraryQuotAmt}
+                      placeholder="Enter Extra bed per person Amount (Rs.)"
+                      value={pckg.extraBedPPAmt}
                       disabled
-                      onChange={(event) => {
-                        const newValue = event.target.value.trim();
-                        if (/^\d*$/.test(newValue)) {
-                          setMarkupObject((prevState) => ({
-                            ...prevState,
-                            quotBeforeMarkup: event.target.value,
-                          }));
-                          dispatch(
-                            setQuotationFormData(
-                              "quotBeforeMarkup",
-                              event.target.value
-                            )
-                          );
-                        }
-                      }}
-                      onBlur={() => {
-                        simpleValidator.current.showMessageFor(
-                          "quotBeforeMarkup"
-                        );
-                      }}
                     />
                   </div>
                   <div className="col-sm-4">
@@ -681,79 +494,22 @@ const MarkupForm = ({ onValidationStatusChange }) => {
                       className="form-control"
                       placeholder="Enter Markup (Rs.)"
                       readOnly
-                      value={markupObject.quotMarkup}
-                      onChange={(event) => {
-                        const newValue = event.target.value.trim();
-                        if (/^\d*$/.test(newValue)) {
-                          setMarkupObject((prevState) => ({
-                            ...prevState,
-                            quotMarkup: event.target.value,
-                          }));
-                          dispatch(
-                            setQuotationFormData(
-                              "quotMarkup",
-                              event.target.value
-                            )
-                          );
-                        }
-                      }}
-                      onBlur={() => {
-                        simpleValidator.current.showMessageFor("quotMarkup");
-                      }}
+                      value={ppAmtObj.markupPPAmt}
                     />
-                    <>
-                      {simpleValidator.current.message(
-                        "quotMarkup",
-                        markupObject.quotMarkup,
-                        ["required"],
-                        {
-                          messages: {
-                            required: "Please enter  markup amount",
-                          },
-                        }
-                      )}
-                    </>
                   </div>
                   <div className="col-sm-4">
-                  <label>Amount Per Person (Rs.)</label>
+                    <label>Amount Per Person (Rs.)</label>
                     <input
                       type="text"
                       pattern="[0-9]+"
                       className="form-control"
                       placeholder="Enter Markup (Rs.)"
                       readOnly
-                      value={markupObject.quotMarkup}
-                      onChange={(event) => {
-                        const newValue = event.target.value.trim();
-                        if (/^\d*$/.test(newValue)) {
-                          setMarkupObject((prevState) => ({
-                            ...prevState,
-                            quotMarkup: event.target.value,
-                          }));
-                          dispatch(
-                            setQuotationFormData(
-                              "quotMarkup",
-                              event.target.value
-                            )
-                          );
-                        }
-                      }}
-                      onBlur={() => {
-                        simpleValidator.current.showMessageFor("quotMarkup");
-                      }}
+                      value={
+                        Number(pckg.extraBedPPAmt) +
+                        Number(ppAmtObj.markupPPAmt)
+                      }
                     />
-                    <>
-                      {simpleValidator.current.message(
-                        "quotMarkup",
-                        markupObject.quotMarkup,
-                        ["required"],
-                        {
-                          messages: {
-                            required: "Please enter  markup amount",
-                          },
-                        }
-                      )}
-                    </>
                   </div>
                 </div>
                 <div className="form-group row">
@@ -764,28 +520,8 @@ const MarkupForm = ({ onValidationStatusChange }) => {
                       pattern="[0-9]+"
                       className="form-control"
                       placeholder="Enter Before Markup (Rs.)"
-                      value={pckg.charges + itineraryQuotAmt}
+                      value={pckg.cnbPPAmt}
                       disabled
-                      onChange={(event) => {
-                        const newValue = event.target.value.trim();
-                        if (/^\d*$/.test(newValue)) {
-                          setMarkupObject((prevState) => ({
-                            ...prevState,
-                            quotBeforeMarkup: event.target.value,
-                          }));
-                          dispatch(
-                            setQuotationFormData(
-                              "quotBeforeMarkup",
-                              event.target.value
-                            )
-                          );
-                        }
-                      }}
-                      onBlur={() => {
-                        simpleValidator.current.showMessageFor(
-                          "quotBeforeMarkup"
-                        );
-                      }}
                     />
                   </div>
                   <div className="col-sm-4">
@@ -796,38 +532,8 @@ const MarkupForm = ({ onValidationStatusChange }) => {
                       className="form-control"
                       placeholder="Enter Markup (Rs.)"
                       readOnly
-                      value={markupObject.quotMarkup}
-                      onChange={(event) => {
-                        const newValue = event.target.value.trim();
-                        if (/^\d*$/.test(newValue)) {
-                          setMarkupObject((prevState) => ({
-                            ...prevState,
-                            quotMarkup: event.target.value,
-                          }));
-                          dispatch(
-                            setQuotationFormData(
-                              "quotMarkup",
-                              event.target.value
-                            )
-                          );
-                        }
-                      }}
-                      onBlur={() => {
-                        simpleValidator.current.showMessageFor("quotMarkup");
-                      }}
+                      value={ppAmtObj.markupPPAmt}
                     />
-                    <>
-                      {simpleValidator.current.message(
-                        "quotMarkup",
-                        markupObject.quotMarkup,
-                        ["required"],
-                        {
-                          messages: {
-                            required: "Please enter  markup amount",
-                          },
-                        }
-                      )}
-                    </>
                   </div>
                   <div className="col-sm-4">
                     <label>Amount Per Person (Rs.)</label>
@@ -837,38 +543,10 @@ const MarkupForm = ({ onValidationStatusChange }) => {
                       className="form-control"
                       placeholder="Enter Markup (Rs.)"
                       readOnly
-                      value={markupObject.quotMarkup}
-                      onChange={(event) => {
-                        const newValue = event.target.value.trim();
-                        if (/^\d*$/.test(newValue)) {
-                          setMarkupObject((prevState) => ({
-                            ...prevState,
-                            quotMarkup: event.target.value,
-                          }));
-                          dispatch(
-                            setQuotationFormData(
-                              "quotMarkup",
-                              event.target.value
-                            )
-                          );
-                        }
-                      }}
-                      onBlur={() => {
-                        simpleValidator.current.showMessageFor("quotMarkup");
-                      }}
+                      value={
+                        Number(pckg.cnbPPAmt) + Number(ppAmtObj.markupPPAmt)
+                      }
                     />
-                    <>
-                      {simpleValidator.current.message(
-                        "quotMarkup",
-                        markupObject.quotMarkup,
-                        ["required"],
-                        {
-                          messages: {
-                            required: "Please enter  markup amount",
-                          },
-                        }
-                      )}
-                    </>
                   </div>
                 </div>
                 <div className="form-group row">
@@ -878,29 +556,9 @@ const MarkupForm = ({ onValidationStatusChange }) => {
                       type="text"
                       pattern="[0-9]+"
                       className="form-control"
-                      placeholder="Enter Before Markup (Rs.)"
-                      value={pckg.charges + itineraryQuotAmt}
+                      placeholder="Enter CMP per person Amount (Rs.)"
+                      value={pckg.cmpPPAmt}
                       disabled
-                      onChange={(event) => {
-                        const newValue = event.target.value.trim();
-                        if (/^\d*$/.test(newValue)) {
-                          setMarkupObject((prevState) => ({
-                            ...prevState,
-                            quotBeforeMarkup: event.target.value,
-                          }));
-                          dispatch(
-                            setQuotationFormData(
-                              "quotBeforeMarkup",
-                              event.target.value
-                            )
-                          );
-                        }
-                      }}
-                      onBlur={() => {
-                        simpleValidator.current.showMessageFor(
-                          "quotBeforeMarkup"
-                        );
-                      }}
                     />
                   </div>
                   <div className="col-sm-4">
@@ -911,38 +569,8 @@ const MarkupForm = ({ onValidationStatusChange }) => {
                       className="form-control"
                       placeholder="Enter Markup (Rs.)"
                       readOnly
-                      value={markupObject.quotMarkup}
-                      onChange={(event) => {
-                        const newValue = event.target.value.trim();
-                        if (/^\d*$/.test(newValue)) {
-                          setMarkupObject((prevState) => ({
-                            ...prevState,
-                            quotMarkup: event.target.value,
-                          }));
-                          dispatch(
-                            setQuotationFormData(
-                              "quotMarkup",
-                              event.target.value
-                            )
-                          );
-                        }
-                      }}
-                      onBlur={() => {
-                        simpleValidator.current.showMessageFor("quotMarkup");
-                      }}
+                      value={ppAmtObj.markupPPAmt}
                     />
-                    <>
-                      {simpleValidator.current.message(
-                        "quotMarkup",
-                        markupObject.quotMarkup,
-                        ["required"],
-                        {
-                          messages: {
-                            required: "Please enter  markup amount",
-                          },
-                        }
-                      )}
-                    </>
                   </div>
                   <div className="col-sm-4">
                     <label>Amount Per Person (Rs.)</label>
@@ -952,38 +580,10 @@ const MarkupForm = ({ onValidationStatusChange }) => {
                       className="form-control"
                       placeholder="Enter Markup (Rs.)"
                       readOnly
-                      value={markupObject.quotMarkup}
-                      onChange={(event) => {
-                        const newValue = event.target.value.trim();
-                        if (/^\d*$/.test(newValue)) {
-                          setMarkupObject((prevState) => ({
-                            ...prevState,
-                            quotMarkup: event.target.value,
-                          }));
-                          dispatch(
-                            setQuotationFormData(
-                              "quotMarkup",
-                              event.target.value
-                            )
-                          );
-                        }
-                      }}
-                      onBlur={() => {
-                        simpleValidator.current.showMessageFor("quotMarkup");
-                      }}
+                      value={
+                        Number(pckg.cmpPPAmt) + Number(ppAmtObj.markupPPAmt)
+                      }
                     />
-                    <>
-                      {simpleValidator.current.message(
-                        "quotMarkup",
-                        markupObject.quotMarkup,
-                        ["required"],
-                        {
-                          messages: {
-                            required: "Please enter  markup amount",
-                          },
-                        }
-                      )}
-                    </>
                   </div>
                 </div>
                 <div className="form-group row">
@@ -996,38 +596,12 @@ const MarkupForm = ({ onValidationStatusChange }) => {
                       className="form-control"
                       placeholder="Enter Markup (Rs.)"
                       readOnly
-                      value={markupObject.quotMarkup}
-                      onChange={(event) => {
-                        const newValue = event.target.value.trim();
-                        if (/^\d*$/.test(newValue)) {
-                          setMarkupObject((prevState) => ({
-                            ...prevState,
-                            quotMarkup: event.target.value,
-                          }));
-                          dispatch(
-                            setQuotationFormData(
-                              "quotMarkup",
-                              event.target.value
-                            )
-                          );
-                        }
-                      }}
-                      onBlur={() => {
-                        simpleValidator.current.showMessageFor("quotMarkup");
-                      }}
+                      value={
+                        Number(pckg.charges) +
+                        itineraryQuotAmt +
+                        Number(markupObject.quotMarkup)
+                      }
                     />
-                    <>
-                      {simpleValidator.current.message(
-                        "quotMarkup",
-                        markupObject.quotMarkup,
-                        ["required"],
-                        {
-                          messages: {
-                            required: "Please enter  markup amount",
-                          },
-                        }
-                      )}
-                    </>
                   </div>
                 </div>
               </div>

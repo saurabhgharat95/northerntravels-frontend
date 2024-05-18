@@ -302,7 +302,7 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
       if (response) {
         if (response.status == 200) {
           let trasitPts = response.data.data;
-          setTransitPtList(trasitPts)
+          setTransitPtList(trasitPts);
           let pickupPtsOptionsArray = [];
           let dropPtsOptionsArray = [];
           const startPointIds = tourPoints.map((obj) => obj.startPointId);
@@ -363,17 +363,21 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
         });
       }
     }
-    if (type == "vehicle" ) {
+    if (type == "vehicle") {
       if (resultType == "total") {
-        return "Rs."+itineraryAmt.toFixed(2);
+        return "Rs." + itineraryAmt.toFixed(2);
       } else {
-        return "Rs."+(itineraryAmt / quotFormData.quotTotalPeoples).toFixed(2);
+        return (
+          "Rs." + (itineraryAmt / quotFormData.quotTotalPeoples).toFixed(2)
+        );
       }
     } else if (type == "addon") {
       if (resultType == "total") {
-        return "Rs."+addOnTotalAmt.toFixed(2);
+        return "Rs." + addOnTotalAmt.toFixed(2);
       } else {
-        return "Rs."+(addOnTotalAmt / quotFormData.quotTotalPeoples).toFixed(2);
+        return (
+          "Rs." + (addOnTotalAmt / quotFormData.quotTotalPeoples).toFixed(2)
+        );
       }
     }
   };
@@ -496,43 +500,38 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
   }, [quotFormData]);
   useEffect(() => {
     let tourDetails = quotFormData.tourData;
+    console.log("tourDetails", tourDetails);
     let vehicles = tourDetails.transportations;
     let transitPoints = transitPts;
-    // const filteredEntries = vehicles.filter(
-    //   (item) => item.startPointId === itineraryObject.quotItiPickupPtId
-    // );
+    const filteredEntries = vehicles.filter(
+      (item) => item.startPointId === itineraryObject.quotItiPickupPtId
+    );
 
-    // const uniqueEndPointsSet = new Set(
-    //   filteredEntries.map((item) => item.endPointId)
-    // );
+    const uniqueEndPointsSet = new Set(
+      filteredEntries.map((item) => item.endPointId)
+    );
 
-    // const uniqueEndPoints = Array.from(uniqueEndPointsSet);
-    // const filteredTransitPoints = transitPoints.filter((item) =>
-    //   uniqueEndPoints.includes(item.id)
-    // );
+    const uniqueEndPoints = Array.from(uniqueEndPointsSet);
+    const filteredTransitPoints = transitPoints.filter((item) =>
+      uniqueEndPoints.includes(item.id)
+    );
 
-    // const uniqueTransitPointsSet = new Set(
-    //   filteredTransitPoints.map((item) => item.id)
-    // );
+    const uniqueTransitPointsSet = new Set(
+      filteredTransitPoints.map((item) => item.id)
+    );
 
-    // const dropPointOptions = Array.from(uniqueTransitPointsSet).map(
-    //   (fkTransitPointId) => {
-    //     const transitPoint = filteredTransitPoints.find(
-    //       (item) => item.fkTransitPointId === fkTransitPointId
-    //     );
+    const dropPointOptions = Array.from(uniqueTransitPointsSet).map((id) => {
+      const transitPoint = filteredTransitPoints.find((item) => item.id === id);
 
-    //     return {
-    //       value: fkTransitPointId,
-    //       label: transitPoint.transitPointName,
-    //     };
-    //   }
-    // );
-    // console.log("filteredEntries", dropPointOptions,uniqueTransitPointsSet,filteredTransitPoints,uniqueEndPointsSet,uniqueEndPoints,transitPoints);
-
-    // setOptionsObj((prevState) => ({
-    //   ...prevState,
-    //   dropPtOptions: dropPointOptions,
-    // }));
+      return {
+        value: id,
+        label: transitPoint.transitPointName,
+      };
+    });
+    setOptionsObj((prevState) => ({
+      ...prevState,
+      dropPtOptions: dropPointOptions,
+    }));
   }, [itineraryObject.quotItiPickupPtId]);
 
   useEffect(() => {
@@ -1114,7 +1113,7 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
 
               <div className="col-sm-2 mb-3">
                 <ion-icon
-                  style={{ marginTop: "20%" }}
+                  style={{ marginTop: "17%" }}
                   name="add-circle-outline"
                   color="success"
                   size="large"
@@ -1124,7 +1123,7 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
 
                 {index ? (
                   <ion-icon
-                    style={{ marginTop: "20%" }}
+                    style={{ marginTop: "17%" }}
                     name="close-circle-outline"
                     color="danger"
                     size="large"
@@ -1263,7 +1262,6 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
                             itineraryData?.length > 0 &&
                             itineraryData.map((itineraryObj, index) => (
                               <tr className="odd" key={index}>
-                              
                                 <td>{itineraryObj.quotItiDay}</td>
                                 <td>
                                   {itineraryObj.quotItiDate
