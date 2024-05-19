@@ -305,8 +305,8 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
           setTransitPtList(trasitPts);
           let pickupPtsOptionsArray = [];
           let dropPtsOptionsArray = [];
-          const startPointIds = tourPoints.map((obj) => obj.startPointId);
-          const endPointIds = tourPoints.map((obj) => obj.endPointId);
+          const startPointIds = tourPoints &&  tourPoints.map((obj) => obj.startPointId);
+          const endPointIds =  tourPoints && tourPoints.map((obj) => obj.endPointId);
 
           trasitPts.forEach((trasitPt) => {
             if (startPointIds.includes(trasitPt.id)) {
@@ -1174,12 +1174,12 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
               >
                 <div className="row">
                   <div className="col-md-4 grid-margin stretch-card">
-                    <div className="card border border-primary">
+                    <div className="card border border-success">
                       <div className="card-body">
                         <div className="media">
                           <ion-icon
                             style={{ marginTop: "5px" }}
-                            color="primary"
+                            color="success"
                             name="cash-outline"
                             size="large"
                           ></ion-icon>
@@ -1201,12 +1201,12 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
                     </div>
                   </div>
                   <div className="col-md-4 grid-margin stretch-card">
-                    <div className="card border border-primary">
+                    <div className="card border border-success">
                       <div className="card-body">
                         <div className="media">
                           <ion-icon
                             style={{ marginTop: "5px" }}
-                            color="primary"
+                            color="success"
                             name="cash-outline"
                             size="large"
                           ></ion-icon>

@@ -4,6 +4,7 @@ import {
   SimpleReactValidator,
   toast,
   ToastContainer,
+  ShimmerBadge,
 } from "../components/CommonImport";
 import { BASE_URL, FETCH_BEFORE_MARKUP_AMT_API } from "../utils/constants";
 import "react-toastify/dist/ReactToastify.css";
@@ -35,7 +36,7 @@ const MarkupForm = ({ onValidationStatusChange }) => {
     quotLogo: "",
     quotCompanyLogo: "",
   });
-  const [markupAmtObject, setMarkupAmtObject] = useState([]);
+  const [markupAmtObject, setMarkupAmtObject] = useState(null);
   const [ppAmtObj, setPPAmtObj] = useState({
     itineraryPPAmt: 0,
     addOnPPAMt: 0,
@@ -323,7 +324,107 @@ const MarkupForm = ({ onValidationStatusChange }) => {
             </>
           </div>
         </div>
+        {!markupAmtObject  && (
+          <>
+            <div className="package-div mb-4">
+              <div className="form-group row">
+                <div className="col-sm-4">
+                  {" "}
+                  <ShimmerBadge width={100} />
+                  <ShimmerBadge width={300} />
+                </div>
+                <div className="col-sm-4">
+                  <ShimmerBadge width={100} />
+                  <ShimmerBadge width={250} />
+                </div>
+                <div className="col-sm-4">
+                  <ShimmerBadge width={100} />
+                  <ShimmerBadge width={300} />
+                </div>
+              </div>
+              <div className="form-group row">
+                <div className="col-sm-4">
+                  <ShimmerBadge width={200} />
+                  <ShimmerBadge width={300} />
+                </div>
+                <div className="col-sm-4">
+                  <ShimmerBadge width={100} />
+                  <ShimmerBadge width={300} />
+                </div>
+                <div className="col-sm-4">
+                  <ShimmerBadge width={150} />
+                  <ShimmerBadge width={300} />
+                </div>
+              </div>
+              <div className="form-group row">
+                <div className="col-sm-4">
+                  <ShimmerBadge width={150} />
+                  <ShimmerBadge width={300} />
+                </div>
+                <div className="col-sm-4">
+                  <ShimmerBadge width={100} />
+                  <ShimmerBadge width={300} />
+                </div>
+                <div className="col-sm-4">
+                  <ShimmerBadge width={150} />
+                  <ShimmerBadge width={300} />
+                </div>
+              </div>
+              <div className="form-group row">
+                <div className="col-sm-4">
+                  <ShimmerBadge width={175} />
+                  <ShimmerBadge width={300} />
+                </div>
+                <div className="col-sm-4">
+                  <ShimmerBadge width={100} />
+                  <ShimmerBadge width={300} />
+                </div>
+                <div className="col-sm-4">
+                  <ShimmerBadge width={150} />
+                  <ShimmerBadge width={300} />
+                </div>
+              </div>
+              <div className="form-group row">
+                <div className="col-sm-4">
+                  <ShimmerBadge width={120} />
+                  <ShimmerBadge width={300} />
+                </div>
+                <div className="col-sm-4">
+                  <ShimmerBadge width={100} />
+                  <ShimmerBadge width={300} />
+                </div>
+                <div className="col-sm-4">
+                  <ShimmerBadge width={150} />
+                  <ShimmerBadge width={300} />
+                </div>
+              </div>
+              <div className="form-group row">
+                <div className="col-sm-4">
+                  <ShimmerBadge width={200} />
+                  <ShimmerBadge width={300} />
+                </div>
+                <div className="col-sm-4">
+                  <ShimmerBadge width={100} />
+                  <ShimmerBadge width={300} />
+                </div>
+                <div className="col-sm-4">
+                  <ShimmerBadge width={150} />
+                  <ShimmerBadge width={300} />
+                </div>
+              </div>
 
+          
+
+              <div className="form-group row">
+                <div class="col-md-8"></div>
+                <div className="col-sm-4 ">
+                  <ShimmerBadge width={200} />
+                  <ShimmerBadge width={100} />
+                </div>
+              </div>
+            </div>
+          </>
+        )}
         {markupAmtObject &&
           markupAmtObject.length > 0 &&
           markupAmtObject.map((pckg, index) => (
