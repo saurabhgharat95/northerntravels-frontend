@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
-import { axios, ShimmerTitle } from "../components/CommonImport";
+import { axios, ShimmerTitle, Marquee } from "../components/CommonImport";
 import {
   FETCH_HOTELS_API,
   FETCH_QUOTATIONS_API,
   FETCH_LEADS_API,
   FETCH_TOURS_API,
+  FETCH_UPDATED_ROOM_RATES_API,
 } from "../utils/constants";
 import { useNavigate } from "react-router-dom";
-
 
 const Homepage = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
@@ -23,6 +23,7 @@ const Homepage = () => {
     isTourCountReady: false,
     isHotelCountReady: false,
   });
+  const [roomRateData, setRoomRateData] = useState({});
   const navigate = useNavigate();
   const getTodaysDate = () => {
     var currentDate = new Date();
@@ -102,8 +103,7 @@ const Homepage = () => {
           }));
         }
       }
-    } catch (e) {
-    }
+    } catch (e) {}
   };
   const fetchLeads = async () => {
     try {
@@ -121,11 +121,24 @@ const Homepage = () => {
       }
     } catch (e) {}
   };
+  const fetchUpdatedRoomRates = async () => {
+    try {
+      let url = FETCH_UPDATED_ROOM_RATES_API;
+
+      let response = await axios.post(url);
+      if (response) {
+        if (response.status == 200) {
+          setRoomRateData(response.data.data);
+        }
+      }
+    } catch (e) {}
+  };
   useEffect(() => {
     fetchQuotations();
     fetchHotels();
     fetchTours();
     fetchLeads();
+    fetchUpdatedRoomRates();
   }, []);
   return (
     <div className="container-scroller">
@@ -140,6 +153,43 @@ const Homepage = () => {
                   <div className="col-12 col-xl-8 mb-4 mb-xl-0">
                     <h3 className="font-weight-bold">Welcome Admin</h3>
                   </div>
+                  <br></br>
+                  <br></br>
+                  {roomRateData && roomRateData.length > 0 && (
+                    <Marquee pauseOnHover={true} className="marquee-homepage">
+                      {roomRateData.map((room) => (
+                        <>
+                          <div className="flex">
+                            <ion-icon
+                              size="small"
+                              name="star"
+                              color="warning"
+                              style={{ marginTop: "-2px", marginRight: "8px" }}
+                            >
+                              {" "}
+                            </ion-icon>
+                            <h5 className="mb-0">
+                              Price for <b>{room.hotelName} </b>{" "}
+                              {room.roomTypeName} room{" "}
+                              <b>{room.mealPlanName}</b> meal for{" "}
+                              <b>{room.rmAccmName}</b>{" "}
+                              {room.oldValue > room.newValue
+                                ? "decreased"
+                                : "increased"}{" "}
+                              from <b>Rs.{room.oldValue}</b> to{" "}
+                              <b>Rs.{room.newValue}</b>{" "}
+                            </h5>
+                            <ion-icon
+                              size="small"
+                              name="star"
+                              color="warning"
+                              style={{ marginTop: "-2px", marginLeft: "8px" }}
+                            ></ion-icon>
+                          </div>
+                        </>
+                      ))}
+                    </Marquee>
+                  )}
                   {/* <div className="col-12 col-xl-4">
                     <div className="justify-content-end d-flex">
                       <div className="dropdown flex-md-grow-1 flex-xl-grow-0">
@@ -190,7 +240,10 @@ const Homepage = () => {
                 <div className="row">
                   <div className="col-md-6 mb-4 stretch-card transparent">
                     <div className="card card-tale">
-                      <div className="card-body" onClick={()=>navigate('/quotations')}>
+                      <div
+                        className="card-body"
+                        onClick={() => navigate("/quotations")}
+                      >
                         {!countObj.isQuotCountReady && (
                           <ShimmerTitle line={2} gap={10} variant="primary" />
                         )}
@@ -204,7 +257,10 @@ const Homepage = () => {
                     </div>
                   </div>
                   <div className="col-md-6 mb-4 stretch-card transparent">
-                    <div className="card card-dark-blue" onClick={()=>navigate('/hotels')}>
+                    <div
+                      className="card card-dark-blue"
+                      onClick={() => navigate("/hotels")}
+                    >
                       <div className="card-body">
                         {!countObj.isHotelCountReady && (
                           <ShimmerTitle line={2} gap={10} variant="primary" />
@@ -221,7 +277,10 @@ const Homepage = () => {
                 </div>
                 <div className="row">
                   <div className="col-md-6 mb-4 mb-lg-0 stretch-card transparent">
-                    <div className="card card-light-blue" onClick={()=>navigate('/tours')}>
+                    <div
+                      className="card card-light-blue"
+                      onClick={() => navigate("/tours")}
+                    >
                       <div className="card-body">
                         {!countObj.isTourCountReady && (
                           <ShimmerTitle line={2} gap={10} variant="primary" />
@@ -236,7 +295,10 @@ const Homepage = () => {
                     </div>
                   </div>
                   <div className="col-md-6 stretch-card transparent">
-                    <div className="card card-light-danger" onClick={()=>navigate('/leads')}>
+                    <div
+                      className="card card-light-danger"
+                      onClick={() => navigate("/leads")}
+                    >
                       <div className="card-body">
                         {!countObj.isLeadCountReady && (
                           <ShimmerTitle line={2} gap={10} variant="primary" />

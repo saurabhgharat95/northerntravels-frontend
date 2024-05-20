@@ -87,6 +87,10 @@ const MarkupForm = ({ onValidationStatusChange }) => {
             itineraryPPAmt: amtObj.itineraryPPAmt,
             addOnPPAMt: amtObj.addOnPPAMt,
           }));
+          dispatch(
+            setQuotationFormData("itineraryPPAmt", amtObj.itineraryPPAmt)
+          );
+          dispatch(setQuotationFormData("addOnPPAMt", amtObj.addOnPPAMt));
         }
       }
     } catch (e) {}
@@ -274,57 +278,8 @@ const MarkupForm = ({ onValidationStatusChange }) => {
               value={ppAmtObj.addOnPPAMt}
             />
           </div>
-          <div className="col-sm-4">
-            <label>Markup (Rs.)</label>
-            <input
-              type="text"
-              pattern="[0-9]+"
-              className="form-control"
-              placeholder="Enter Markup (Rs.)"
-              value={markupObject.quotMarkup}
-              onChange={(event) => {
-                const newValue = event.target.value.trim();
-                if (/^\d*$/.test(newValue)) {
-                  setMarkupObject((prevState) => ({
-                    ...prevState,
-                    quotMarkup: event.target.value,
-                  }));
-                  dispatch(
-                    setQuotationFormData("quotMarkup", event.target.value)
-                  );
-                  setPPAmtObj((prevState) => ({
-                    ...prevState,
-                    markupPPAmt:
-                      newValue && newValue != 0
-                        ? (
-                            Number(newValue) /
-                            (quotFormData.quotTotalPeoples
-                              ? quotFormData.quotTotalPeoples
-                              : 1)
-                          ).toFixed(0)
-                        : 0,
-                  }));
-                }
-              }}
-              onBlur={() => {
-                simpleValidator.current.showMessageFor("quotMarkup");
-              }}
-            />
-            <>
-              {simpleValidator.current.message(
-                "quotMarkup",
-                markupObject.quotMarkup,
-                ["required"],
-                {
-                  messages: {
-                    required: "Please enter markup amount",
-                  },
-                }
-              )}
-            </>
-          </div>
         </div>
-        {!markupAmtObject  && (
+        {!markupAmtObject && (
           <>
             <div className="package-div mb-4">
               <div className="form-group row">
@@ -413,8 +368,6 @@ const MarkupForm = ({ onValidationStatusChange }) => {
                 </div>
               </div>
 
-          
-
               <div className="form-group row">
                 <div class="col-md-8"></div>
                 <div className="col-sm-4 ">
@@ -441,11 +394,6 @@ const MarkupForm = ({ onValidationStatusChange }) => {
                     >
                       {toTitleCase(pckg.packageName)}
                     </p>
-                    {/* <span
-                      className={`badge border border-${colorIndex[index]} text-${colorIndex[index]} mr-2`}
-                    >
-                      {toTitleCase(pckg.packageName)}
-                    </span> */}
                   </div>
                   <div className="col-sm-4">
                     <label>Before Markup (Rs.) </label>
@@ -518,9 +466,37 @@ const MarkupForm = ({ onValidationStatusChange }) => {
                       pattern="[0-9]+"
                       className="form-control"
                       placeholder="Enter Markup (Rs.)"
-                      readOnly
-                      value={ppAmtObj.markupPPAmt}
+                      value={pckg.hotelRoomMarkupAmt}
+                      onChange={(event) => {
+                        const newValue = event.target.value.trim();
+                        if (/^\d*$/.test(newValue)) {
+                          const newFormValues = [...markupAmtObject];
+                          newFormValues[index].hotelRoomMarkupAmt = newValue
+                            ? newValue
+                            : "";
+                          dispatch(
+                            setQuotationFormData("quotAccData", newFormValues)
+                          );
+                        }
+                      }}
+                      onBlur={() => {
+                        simpleValidator.current.showMessageFor(
+                          "hotelRoomMarkupAmt"
+                        );
+                      }}
                     />
+                    <>
+                      {simpleValidator.current.message(
+                        "hotelRoomMarkupAmt",
+                        pckg.hotelRoomMarkupAmt,
+                        ["required"],
+                        {
+                          messages: {
+                            required: "Please enter markup",
+                          },
+                        }
+                      )}
+                    </>
                   </div>
                   <div className="col-sm-4">
                     <label>Amount Per Person (Rs.)</label>
@@ -532,7 +508,9 @@ const MarkupForm = ({ onValidationStatusChange }) => {
                       readOnly
                       value={
                         Number(pckg.hotelRoomPPAmt) +
-                        Number(ppAmtObj.markupPPAmt)
+                        Number(
+                          pckg.hotelRoomMarkupAmt ? pckg.hotelRoomMarkupAmt : 0
+                        )
                       }
                     />
                   </div>
@@ -556,9 +534,37 @@ const MarkupForm = ({ onValidationStatusChange }) => {
                       pattern="[0-9]+"
                       className="form-control"
                       placeholder="Enter Markup (Rs.)"
-                      readOnly
-                      value={ppAmtObj.markupPPAmt}
+                      value={pckg.singleOccupyMarkupAmt}
+                      onChange={(event) => {
+                        const newValue = event.target.value.trim();
+                        if (/^\d*$/.test(newValue)) {
+                          const newFormValues = [...markupAmtObject];
+                          newFormValues[index].singleOccupyMarkupAmt = newValue
+                            ? newValue
+                            : "";
+                          dispatch(
+                            setQuotationFormData("quotAccData", newFormValues)
+                          );
+                        }
+                      }}
+                      onBlur={() => {
+                        simpleValidator.current.showMessageFor(
+                          "singleOccupyMarkupAmt"
+                        );
+                      }}
                     />
+                    <>
+                      {simpleValidator.current.message(
+                        "singleOccupyMarkupAmt",
+                        pckg.singleOccupyMarkupAmt,
+                        ["required"],
+                        {
+                          messages: {
+                            required: "Please enter markup",
+                          },
+                        }
+                      )}
+                    </>
                   </div>
                   <div className="col-sm-4">
                     <label>Amount Per Person (Rs.)</label>
@@ -570,7 +576,11 @@ const MarkupForm = ({ onValidationStatusChange }) => {
                       readOnly
                       value={
                         Number(pckg.singleOccupyPPAmt) +
-                        Number(ppAmtObj.markupPPAmt)
+                        Number(
+                          pckg.singleOccupyMarkupAmt
+                            ? pckg.singleOccupyMarkupAmt
+                            : 0
+                        )
                       }
                     />
                   </div>
@@ -594,9 +604,37 @@ const MarkupForm = ({ onValidationStatusChange }) => {
                       pattern="[0-9]+"
                       className="form-control"
                       placeholder="Enter Markup (Rs.)"
-                      readOnly
-                      value={ppAmtObj.markupPPAmt}
+                      value={pckg.extraBedMarkupAmt}
+                      onChange={(event) => {
+                        const newValue = event.target.value.trim();
+                        if (/^\d*$/.test(newValue)) {
+                          const newFormValues = [...markupAmtObject];
+                          newFormValues[index].extraBedMarkupAmt = newValue
+                            ? newValue
+                            : "";
+                          dispatch(
+                            setQuotationFormData("quotAccData", newFormValues)
+                          );
+                        }
+                      }}
+                      onBlur={() => {
+                        simpleValidator.current.showMessageFor(
+                          "extraBedMarkupAmt"
+                        );
+                      }}
                     />
+                    <>
+                      {simpleValidator.current.message(
+                        "extraBedMarkupAmt",
+                        pckg.extraBedMarkupAmt,
+                        ["required"],
+                        {
+                          messages: {
+                            required: "Please enter markup",
+                          },
+                        }
+                      )}
+                    </>
                   </div>
                   <div className="col-sm-4">
                     <label>Amount Per Person (Rs.)</label>
@@ -608,7 +646,9 @@ const MarkupForm = ({ onValidationStatusChange }) => {
                       readOnly
                       value={
                         Number(pckg.extraBedPPAmt) +
-                        Number(ppAmtObj.markupPPAmt)
+                        Number(
+                          pckg.extraBedMarkupAmt ? pckg.extraBedMarkupAmt : 0
+                        )
                       }
                     />
                   </div>
@@ -632,9 +672,35 @@ const MarkupForm = ({ onValidationStatusChange }) => {
                       pattern="[0-9]+"
                       className="form-control"
                       placeholder="Enter Markup (Rs.)"
-                      readOnly
-                      value={ppAmtObj.markupPPAmt}
+                      value={pckg.cnbMarkupAmt}
+                      onChange={(event) => {
+                        const newValue = event.target.value.trim();
+                        if (/^\d*$/.test(newValue)) {
+                          const newFormValues = [...markupAmtObject];
+                          newFormValues[index].cnbMarkupAmt = newValue
+                            ? newValue
+                            : "";
+                          dispatch(
+                            setQuotationFormData("quotAccData", newFormValues)
+                          );
+                        }
+                      }}
+                      onBlur={() => {
+                        simpleValidator.current.showMessageFor("cnbMarkupAmt");
+                      }}
                     />
+                    <>
+                      {simpleValidator.current.message(
+                        "cnbMarkupAmt",
+                        pckg.cnbMarkupAmt,
+                        ["required"],
+                        {
+                          messages: {
+                            required: "Please enter markup",
+                          },
+                        }
+                      )}
+                    </>
                   </div>
                   <div className="col-sm-4">
                     <label>Amount Per Person (Rs.)</label>
@@ -645,7 +711,8 @@ const MarkupForm = ({ onValidationStatusChange }) => {
                       placeholder="Enter Markup (Rs.)"
                       readOnly
                       value={
-                        Number(pckg.cnbPPAmt) + Number(ppAmtObj.markupPPAmt)
+                        Number(pckg.cnbPPAmt) +
+                        Number(pckg.cnbMarkupAmt ? pckg.cnbMarkupAmt : 0)
                       }
                     />
                   </div>
@@ -669,9 +736,35 @@ const MarkupForm = ({ onValidationStatusChange }) => {
                       pattern="[0-9]+"
                       className="form-control"
                       placeholder="Enter Markup (Rs.)"
-                      readOnly
-                      value={ppAmtObj.markupPPAmt}
+                      value={pckg.cmpMarkupAmt}
+                      onChange={(event) => {
+                        const newValue = event.target.value.trim();
+                        if (/^\d*$/.test(newValue)) {
+                          const newFormValues = [...markupAmtObject];
+                          newFormValues[index].cmpMarkupAmt = newValue
+                            ? newValue
+                            : "";
+                          dispatch(
+                            setQuotationFormData("quotAccData", newFormValues)
+                          );
+                        }
+                      }}
+                      onBlur={() => {
+                        simpleValidator.current.showMessageFor("cmpMarkupAmt");
+                      }}
                     />
+                    <>
+                      {simpleValidator.current.message(
+                        "cmpMarkupAmt",
+                        pckg.cmpMarkupAmt,
+                        ["required"],
+                        {
+                          messages: {
+                            required: "Please enter markup",
+                          },
+                        }
+                      )}
+                    </>
                   </div>
                   <div className="col-sm-4">
                     <label>Amount Per Person (Rs.)</label>
@@ -682,12 +775,13 @@ const MarkupForm = ({ onValidationStatusChange }) => {
                       placeholder="Enter Markup (Rs.)"
                       readOnly
                       value={
-                        Number(pckg.cmpPPAmt) + Number(ppAmtObj.markupPPAmt)
+                        Number(pckg.cmpPPAmt) +
+                        Number(pckg.cmpMarkupAmt ? pckg.cmpMarkupAmt : 0)
                       }
                     />
                   </div>
                 </div>
-                <div className="form-group row">
+                {/* <div className="form-group row">
                   <div class="col-md-8"></div>
                   <div className="col-sm-4 ">
                     <label>Total Package Amount (Rs.)</label>
@@ -700,11 +794,13 @@ const MarkupForm = ({ onValidationStatusChange }) => {
                       value={
                         Number(pckg.charges) +
                         itineraryQuotAmt +
-                        Number(markupObject.quotMarkup)
+                        Number(
+                          markupObject.quotMarkup ? markupObject.quotMarkup : 0
+                        )
                       }
                     />
                   </div>
-                </div>
+                </div> */}
               </div>
             </>
           ))}

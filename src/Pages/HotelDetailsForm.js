@@ -3,6 +3,8 @@ import {
   axios,
   SimpleReactValidator,
   Select,
+  toast,
+  ToastContainer,
 } from "../components/CommonImport";
 import {
   FETCH_HALTING_POINTS_API,
@@ -12,6 +14,7 @@ import {
   FETCH_MEAL_TYPES_API,
 } from "../utils/constants";
 import NoData from "../components/NoData";
+import "react-toastify/dist/ReactToastify.css";
 
 // redux
 import { useDispatch, useSelector } from "react-redux";
@@ -20,7 +23,7 @@ import { setQuotationFormData } from "../utils/store";
 import { toTitleCase } from "../utils/helpers";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 
-const HotelDetailsForm = ({onValidationStatusChange}) => {
+const HotelDetailsForm = ({ onValidationStatusChange }) => {
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [acionObj, setActionObj] = useState({ deleteId: null, updateId: null });
   const [, setForceUpdate] = useState(0);
@@ -38,6 +41,7 @@ const HotelDetailsForm = ({onValidationStatusChange}) => {
 
   const colorIndex = ["secondary", "success", "warning", "info", "danger"];
   const [isPackageReadOnly, setPackageReadOnly] = useState(false);
+  const [isNewPackage, setIsNewPackage] = useState(false);
   const [packageData, setPackageData] = useState([]);
   const [packageNameArray, setPackageNameArray] = useState([]);
   const [originalPackageData, setOriginalPackageData] = useState([]);
@@ -61,46 +65,97 @@ const HotelDetailsForm = ({onValidationStatusChange}) => {
 
   const addPackage = () => {
     if (simpleValidator.current.allValid()) {
-      setPackageData((prevState) => [...prevState, packageObject]);
-      setOriginalPackageData((prevState) => [...prevState, packageObject]);
-      setPackageObject((prevState) => ({
-        ...prevState,
-        quotHotelId: null,
-        haltingDest: null,
-        hotelType: null,
-        hotelName: null,
-        fromDate: "",
-        toDate: "",
-        noOfNights: "",
-        roomType: null,
-        mealType: null,
-        haltingDestId: "",
-        hotelTypeId: "",
-        hotelId: "",
-        roomTypeId: "",
-        mealTypeId: "",
-      }));
+      if (isNewPackage) {
+        if (!packageNameArray.includes(packageObject.packageName)) {
+          setPackageData((prevState) => [...prevState, packageObject]);
+          setOriginalPackageData((prevState) => [...prevState, packageObject]);
+          setPackageObject((prevState) => ({
+            ...prevState,
+            quotHotelId: null,
+            haltingDest: null,
+            hotelType: null,
+            hotelName: null,
+            fromDate: "",
+            toDate: "",
+            noOfNights: "",
+            roomType: null,
+            mealType: null,
+            haltingDestId: "",
+            hotelTypeId: "",
+            hotelId: "",
+            roomTypeId: "",
+            mealTypeId: "",
+          }));
 
-      if (!packageNameArray.includes(packageObject.packageName)) {
-        setPackageNameArray((prevArray) => [
-          ...prevArray,
-          packageObject.packageName,
-        ]);
+          if (!packageNameArray.includes(packageObject.packageName)) {
+            setPackageNameArray((prevArray) => [
+              ...prevArray,
+              packageObject.packageName,
+            ]);
 
-        dispatch(
-          setQuotationFormData("quotPackageNameArray", [
-            ...quotFormData.quotPackageNameArray,
+            dispatch(
+              setQuotationFormData("quotPackageNameArray", [
+                ...quotFormData.quotPackageNameArray,
+                packageObject.packageName,
+              ])
+            );
+            dispatch(
+              setQuotationFormData("quotPackageData", [
+                ...quotFormData.quotPackageData,
+                packageObject,
+              ])
+            );
+            setPackageReadOnly(true);
+            setIsNewPackage(false);
+          }
+        } else {
+          toast.error("Package name already exists", {
+            position: "top-right",
+          });
+        }
+      } else {
+        setPackageData((prevState) => [...prevState, packageObject]);
+        setOriginalPackageData((prevState) => [...prevState, packageObject]);
+        setPackageObject((prevState) => ({
+          ...prevState,
+          quotHotelId: null,
+          haltingDest: null,
+          hotelType: null,
+          hotelName: null,
+          fromDate: "",
+          toDate: "",
+          noOfNights: "",
+          roomType: null,
+          mealType: null,
+          haltingDestId: "",
+          hotelTypeId: "",
+          hotelId: "",
+          roomTypeId: "",
+          mealTypeId: "",
+        }));
+
+        if (!packageNameArray.includes(packageObject.packageName)) {
+          setPackageNameArray((prevArray) => [
+            ...prevArray,
             packageObject.packageName,
+          ]);
+
+          dispatch(
+            setQuotationFormData("quotPackageNameArray", [
+              ...quotFormData.quotPackageNameArray,
+              packageObject.packageName,
+            ])
+          );
+        }
+        dispatch(
+          setQuotationFormData("quotPackageData", [
+            ...quotFormData.quotPackageData,
+            packageObject,
           ])
         );
+        setPackageReadOnly(true);
+        setIsNewPackage(false);
       }
-      dispatch(
-        setQuotationFormData("quotPackageData", [
-          ...quotFormData.quotPackageData,
-          packageObject,
-        ])
-      );
-      setPackageReadOnly(true);
     } else {
       setForceUpdate((v) => ++v);
       simpleValidator.current.showMessages();
@@ -108,46 +163,97 @@ const HotelDetailsForm = ({onValidationStatusChange}) => {
   };
   const editPackage = () => {
     if (simpleValidator.current.allValid()) {
-      const updatedPackageData = [...packageData];
-      updatedPackageData[acionObj.updateId] = packageObject;
+      if (isNewPackage) {
+        if (!packageNameArray.includes(packageObject.packageName)) {
+          const updatedPackageData = [...packageData];
+          updatedPackageData[acionObj.updateId] = packageObject;
 
-      setPackageData(updatedPackageData);
-      setOriginalPackageData(updatedPackageData);
-      dispatch(setQuotationFormData("quotPackageData", updatedPackageData));
+          setPackageData(updatedPackageData);
+          setOriginalPackageData(updatedPackageData);
+          dispatch(setQuotationFormData("quotPackageData", updatedPackageData));
 
-      if (!packageNameArray.includes(packageObject.packageName)) {
-        setPackageNameArray((prevArray) => [
-          ...prevArray,
-          packageObject.packageName,
-        ]);
-        dispatch(
-          setQuotationFormData("quotPackageNameArray", [
-            ...quotFormData.quotPackageNameArray,
+          if (!packageNameArray.includes(packageObject.packageName)) {
+            setPackageNameArray((prevArray) => [
+              ...prevArray,
+              packageObject.packageName,
+            ]);
+            dispatch(
+              setQuotationFormData("quotPackageNameArray", [
+                ...quotFormData.quotPackageNameArray,
+                packageObject.packageName,
+              ])
+            );
+          }
+
+          setPackageObject((prevState) => ({
+            ...prevState,
+            quotHotelId: null,
+            haltingDest: null,
+            hotelType: null,
+            hotelName: null,
+            fromDate: "",
+            toDate: "",
+            noOfNights: "",
+            roomType: null,
+            mealType: null,
+            haltingDestId: "",
+            hotelTypeId: "",
+            hotelId: "",
+            roomTypeId: "",
+            mealTypeId: "",
+          }));
+
+          setPackageReadOnly(true);
+          setActionObj((prevState) => ({ ...prevState, updateId: null }));
+          setIsNewPackage(false);
+        } else {
+          toast.error("Package name already exists", {
+            position: "top-right",
+          });
+        }
+      } else {
+        const updatedPackageData = [...packageData];
+        updatedPackageData[acionObj.updateId] = packageObject;
+
+        setPackageData(updatedPackageData);
+        setOriginalPackageData(updatedPackageData);
+        dispatch(setQuotationFormData("quotPackageData", updatedPackageData));
+
+        if (!packageNameArray.includes(packageObject.packageName)) {
+          setPackageNameArray((prevArray) => [
+            ...prevArray,
             packageObject.packageName,
-          ])
-        );
+          ]);
+          dispatch(
+            setQuotationFormData("quotPackageNameArray", [
+              ...quotFormData.quotPackageNameArray,
+              packageObject.packageName,
+            ])
+          );
+        }
+
+        setPackageObject((prevState) => ({
+          ...prevState,
+          quotHotelId: null,
+          haltingDest: null,
+          hotelType: null,
+          hotelName: null,
+          fromDate: "",
+          toDate: "",
+          noOfNights: "",
+          roomType: null,
+          mealType: null,
+          haltingDestId: "",
+          hotelTypeId: "",
+          hotelId: "",
+          roomTypeId: "",
+          mealTypeId: "",
+        }));
+
+        setPackageReadOnly(true);
+        setActionObj((prevState) => ({ ...prevState, updateId: null }));
+        setIsNewPackage(false);
       }
-
-      setPackageObject((prevState) => ({
-        ...prevState,
-        quotHotelId: null,
-        haltingDest: null,
-        hotelType: null,
-        hotelName: null,
-        fromDate: "",
-        toDate: "",
-        noOfNights: "",
-        roomType: null,
-        mealType: null,
-        haltingDestId: "",
-        hotelTypeId: "",
-        hotelId: "",
-        roomTypeId: "",
-        mealTypeId: "",
-      }));
-
-      setPackageReadOnly(true);
-      setActionObj((prevState) => ({ ...prevState, updateId: null }));
     } else {
       setForceUpdate((v) => ++v);
       simpleValidator.current.showMessages();
@@ -156,7 +262,7 @@ const HotelDetailsForm = ({onValidationStatusChange}) => {
   const addNewPackage = () => {
     setPackageReadOnly(false);
     setActionObj((prevState) => ({ ...prevState, updateId: null }));
-
+    setIsNewPackage(true);
     setPackageObject((prevState) => ({
       ...prevState,
       quotHotelId: null,
@@ -268,7 +374,9 @@ const HotelDetailsForm = ({onValidationStatusChange}) => {
             ) {
               hotelOptionsArray.push({
                 value: hotel.id,
-                label: `${hotel.hotelName}${hotel.isSpecialRate==1?" ⭐":""}`,
+                label: `${hotel.hotelName}${
+                  hotel.isSpecialRate == 1 ? " ⭐" : ""
+                }`,
               });
             }
           });
@@ -352,19 +460,15 @@ const HotelDetailsForm = ({onValidationStatusChange}) => {
   const validateForm = () => {
     const isValid = simpleValidator.current.allValid();
     if (isValid) {
-      onValidationStatusChange(isValid,3); 
-    }
-    else{
+      onValidationStatusChange(isValid, 3);
+    } else {
       simpleValidator.current.showMessages();
-      setForceUpdate(v=>++v)
+      setForceUpdate((v) => ++v);
     }
     return isValid;
   };
   useEffect(() => {
-    if (
-      packageObject.fromDate &&
-      packageObject.toDate
-    ) {
+    if (packageObject.fromDate && packageObject.toDate) {
       const fromDate = new Date(packageObject.fromDate);
       const toDate = new Date(packageObject.toDate);
       if (toDate >= fromDate) {
@@ -378,14 +482,10 @@ const HotelDetailsForm = ({onValidationStatusChange}) => {
           ...prevState,
           noOfNights: nights,
         }));
-        
       }
     }
     setForceUpdate((v) => ++v);
-  }, [
-    packageObject.fromDate,
-    packageObject.toDate,
-  ]);
+  }, [packageObject.fromDate, packageObject.toDate]);
   useEffect(() => {
     fetchHaltingPoints();
     fetchHotelType();
@@ -396,12 +496,12 @@ const HotelDetailsForm = ({onValidationStatusChange}) => {
   useEffect(() => {
     if (quotFormData) {
       let quotPackage = quotFormData.quotPackageData;
-      if (quotFormData.quotArrivalDate && quotFormData.quotArrivalDate!=''){
-        setPackageObject(prevState=>({
+      if (quotFormData.quotArrivalDate && quotFormData.quotArrivalDate != "") {
+        setPackageObject((prevState) => ({
           ...prevState,
-          fromDate:quotFormData.quotArrivalDate,
-          toDate:quotFormData.quotArrivalDate
-        }))
+          fromDate: quotFormData.quotArrivalDate,
+          toDate: quotFormData.quotArrivalDate,
+        }));
       }
       let quotPackageArray = [];
       for (let index = 0; index < quotPackage.length; index++) {
@@ -430,8 +530,6 @@ const HotelDetailsForm = ({onValidationStatusChange}) => {
       setForceUpdate((v) => ++v);
     }
   }, [quotFormData]);
-
-
 
   useEffect(() => {
     fetchHotels();
@@ -567,7 +665,9 @@ const HotelDetailsForm = ({onValidationStatusChange}) => {
                 value={
                   packageObject.hotelName
                     ? optionsObj.hotelOptions.find(
-                        (option) => option.label === packageObject.hotelName || option.label === packageObject.hotelName+" ⭐"
+                        (option) =>
+                          option.label === packageObject.hotelName ||
+                          option.label === packageObject.hotelName + " ⭐"
                       )
                     : null
                 }
@@ -780,7 +880,7 @@ const HotelDetailsForm = ({onValidationStatusChange}) => {
           <button
             className="btn btn-success mr-2"
             onClick={() => {
-              validateForm()
+              validateForm();
               {
                 acionObj.updateId != null ? editPackage() : addPackage();
               }
@@ -913,6 +1013,18 @@ const HotelDetailsForm = ({onValidationStatusChange}) => {
               onConfirm={handleConfirm}
               onCancel={handleCancel}
               show={showConfirmation}
+            />
+            <ToastContainer
+              position="top-right"
+              autoClose={2000}
+              hideProgressBar
+              newestOnTop
+              closeOnClick
+              rtl={false}
+              pauseOnFocusLoss={false}
+              draggable
+              pauseOnHover={false}
+              theme="colored"
             />
           </>
         )}

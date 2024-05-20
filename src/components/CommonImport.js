@@ -11,6 +11,9 @@ import { ColorRing } from "react-loader-spinner";
 import { ShimmerTable,ShimmerTitle,ShimmerButton,ShimmerBadge } from "react-shimmer-effects";
 import ReactQuill from 'react-quill';
 import { SlideDown } from "react-slidedown";
+import Marquee from "react-fast-marquee";
+
+
 export {
   Footer,
   Navbar,
@@ -28,5 +31,6 @@ export {
   ShimmerTitle,
   SlideDown,
   ShimmerButton,
-  ShimmerBadge
+  ShimmerBadge,
+  Marquee
 };

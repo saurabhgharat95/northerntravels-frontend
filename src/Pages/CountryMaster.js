@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import {
   Footer,
   Navbar,
@@ -17,232 +17,222 @@ import {
   DELETE_COUNTRY_API,
   UPDATE_COUNTRY_API,
 } from "../utils/constants";
-import { getDateFormatted,toTitleCase } from "../utils/helpers";
+import { getDateFormatted, toTitleCase } from "../utils/helpers";
 import "react-toastify/dist/ReactToastify.css";
 import NoData from "../components/NoData";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import RenderPageNumbers from "./RenderPageNumbers";
 import Loader from "../components/Loader";
-
+import debounce from "lodash.debounce";
 const CountryMaster = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
-  const [countryName, setCountryName] = useState("");
-  const [countries, setCountries] = useState([]);
-  const [originalCountriesList, setOriginalCountriesList] = useState([]);
-  const [isUpdate, setUpdate] = useState(false);
-  const [deleteId, setDeleteId] = useState(false);
-  const [updateId, setUpdateId] = useState("");
-  const [searchValue, setSearchValue] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(10);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const [showConfirmation, setShowConfirmation] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isDataReady, setDataReady] = useState(false);
+
+  const [state, setState] = useState({
+    countryName: "",
+    countryData: {
+      countries: [],
+      originalCountriesList: [],
+      isDataReady: false,
+    },
+    isUpdate: false,
+    deleteId: null,
+    updateId: "",
+    searchValue: "",
+    currentPage: 1,
+    itemsPerPage: 10,
+    showConfirmation: false,
+    isLoading: false,
+  });
+
+  const startIndex = (state.currentPage - 1) * state.itemsPerPage;
+  const endIndex = startIndex + state.itemsPerPage;
 
   const simpleValidator = useRef(
     new SimpleReactValidator({ autoForceUpdate: this })
   );
   const handleCloseModal = () => {
-    var modal = document.getElementById('countryModal');
+    var modal = document.getElementById("countryModal");
 
-    // Use the Bootstrap Modal class to hide the modal
     if (modal) {
       var modalInstance = bootstrap.Modal.getInstance(modal);
       if (modalInstance) {
         modalInstance.hide();
       }
     }
-    
   };
 
-  const fetchCountries = async () => {
+  const fetchCountries = useCallback(async () => {
     try {
-      let url = FETCH_COUNTRIES_API;
-
-      let response = await axios.post(url);
-      console.log("response", response.data.data);
-      if (response) {
-        if (response.status == 200) {
-          setDataReady(true);
-          setCountries(response.data.data);
-          setOriginalCountriesList(response.data.data);
-        }
+      const response = await axios.post(FETCH_COUNTRIES_API);
+      if (response.status === 200) {
+        setState((prevState) => ({
+          ...prevState,
+          countryData: {
+            countries: response.data.data,
+            originalCountriesList: response.data.data,
+            isDataReady: true,
+          },
+        }));
       }
     } catch (e) {
-      setCountries([]);
-      setDataReady(true);
+      setState((prevState) => ({
+        ...prevState,
+        countryData: {
+          countries: [],
+          originalCountriesList: [],
+          isDataReady: true,
+        },
+      }));
     }
-  };
+  }, []);
 
   const addCountry = async () => {
     try {
-      let url = ADD_COUNTRY_API;
-      let body = {
-        countryName: countryName,
-      };
-      setIsLoading(true);
+      const body = { countryName: state.countryName };
+      setState((prevState) => ({ ...prevState, isLoading: true }));
       if (simpleValidator.current.allValid()) {
-        let response = await axios.post(url, body);
-        console.log("response", response);
-        if (response) {
-          setIsLoading(false);
-
-          if (response.status == 200) {
-            if(response.data.data.status==false){
-              toast.error(response.data.message, {
-                position: "top-right",
-              });
-            }
-            else{
-              toast.success(response.data.message, {
-                position: "top-right",
-              });
-              handleCloseModal();
-              setCountryName("");
-              fetchCountries();
-              simpleValidator.current.hideMessages();
-            }
-            
-          }
-        }
-      } else {
-        setIsLoading(false);
-
-        simpleValidator.current.showMessages();
-      }
-    } catch (e) {
-      setIsLoading(false);
-
-      console.log("ee", e);
-      toast.error("Something Went Wrong :(", {
-        position: "top-right",
-      });
-    }
-  };
-  const updateCountry = async () => {
-    try {
-      let url = UPDATE_COUNTRY_API;
-      let body = {
-        countryName: countryName,
-        id: updateId,
-      };
-      setIsLoading(true);
-
-      if (simpleValidator.current.allValid()) {
-        let response = await axios.post(url, body);
-        if (response) {
-          if (response.status == 200) {
-            setIsLoading(false);
-
-            if(response.data.data.status==false){
-              toast.error(response.data.message, {
-                position: "top-right",
-              });
-            }
-            else{
-            toast.success(response.data.message, {
-              position: "top-right",
-            });
-            setIsLoading(false);
+        const response = await axios.post(ADD_COUNTRY_API, body);
+        setState((prevState) => ({ ...prevState, isLoading: false }));
+        if (response.status === 200) {
+          const { status, message } = response.data.data;
+          if (status === false) {
+            toast.error(message, { position: "top-right" });
+          } else {
+            toast.success(message, { position: "top-right" });
             handleCloseModal();
-            setCountryName("");
+            setState((prevState) => ({ ...prevState, countryName: "" }));
             fetchCountries();
             simpleValidator.current.hideMessages();
           }
-          }
         }
       } else {
-        setIsLoading(false);
-
+        setState((prevState) => ({ ...prevState, isLoading: false }));
         simpleValidator.current.showMessages();
       }
     } catch (e) {
-      setIsLoading(false);
-
-      toast.error("Something Went Wrong :(", {
-        position: "top-right",
-      });
+      setState((prevState) => ({ ...prevState, isLoading: false }));
+      toast.error("Something Went Wrong :(", { position: "top-right" });
     }
   };
-  const deleteCountry = async (id) => {
-    try {
-      let url = DELETE_COUNTRY_API;
-      let body = {
-        id: id,
-      };
-      setIsLoading(true);
-      let response = await axios.post(url, body);
-      console.log("response", response);
-      if (response) {
-        setIsLoading(false);
-        if (response.status == 200) {
-          toast.success(response.data.message, {
-            position: "top-right",
-          });
 
-          setCountryName("");
-          fetchCountries();
+  const updateCountry = async () => {
+    try {
+      const body = { countryName: state.countryName, id: state.updateId };
+      setState((prevState) => ({ ...prevState, isLoading: true }));
+      if (simpleValidator.current.allValid()) {
+        const response = await axios.post(UPDATE_COUNTRY_API, body);
+        setState((prevState) => ({ ...prevState, isLoading: false }));
+        if (response.status === 200) {
+          const { status, message } = response.data.data;
+          if (status === false) {
+            toast.error(message, { position: "top-right" });
+          } else {
+            toast.success(message, { position: "top-right" });
+            handleCloseModal();
+            setState((prevState) => ({ ...prevState, countryName: "" }));
+            fetchCountries();
+            simpleValidator.current.hideMessages();
+          }
         }
+      } else {
+        setState((prevState) => ({ ...prevState, isLoading: false }));
+        simpleValidator.current.showMessages();
       }
     } catch (e) {
-      setIsLoading(false);
-      toast.error("Something Went Wrong :(", {
-        position: "top-right",
-      });
+      setState((prevState) => ({ ...prevState, isLoading: false }));
+      toast.error("Something Went Wrong :(", { position: "top-right" });
+    }
+  };
+
+  const deleteCountry = async (id) => {
+    try {
+      setState((prevState) => ({ ...prevState, isLoading: true }));
+      const response = await axios.post(DELETE_COUNTRY_API, { id });
+      setState((prevState) => ({ ...prevState, isLoading: false }));
+      if (response.status === 200) {
+        toast.success(response.data.message, { position: "top-right" });
+        fetchCountries();
+      }
+    } catch (e) {
+      setState((prevState) => ({ ...prevState, isLoading: false }));
+      toast.error("Something Went Wrong :(", { position: "top-right" });
     }
   };
 
   const openModal = (countryName, updateId) => {
-    setCountryName(countryName);
-    setUpdate(true);
-    setUpdateId(updateId);
+    setState((prevState) => ({
+      ...prevState,
+      countryName,
+      isUpdate: true,
+      updateId,
+    }));
   };
 
   const handleConfirm = () => {
-    deleteCountry(deleteId);
-    setShowConfirmation(false);
+    deleteCountry(state.deleteId);
+    setState((prevState) => ({ ...prevState, showConfirmation: false }));
   };
 
   const handleCancel = () => {
-    console.log("Cancelled");
-    setShowConfirmation(false);
+    setState((prevState) => ({ ...prevState, showConfirmation: false }));
   };
 
   const handlePagination = (number) => {
-    setCurrentPage(Number(number));
+    setState((prevState) => ({ ...prevState, currentPage: Number(number) }));
   };
 
-  const totalPages = Math.ceil(countries ? countries.length / itemsPerPage : 1);
+  const totalPages = Math.ceil(
+    state.countryData.countries.length / state.itemsPerPage
+  );
+
   const handleNextPage = () => {
-    setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages));
+    setState((prevState) => ({
+      ...prevState,
+      currentPage: Math.min(prevState.currentPage + 1, totalPages),
+    }));
   };
 
   const handlePrevPage = () => {
-    setCurrentPage((prevPage) => Math.max(prevPage - 1, 1));
-  };
-  const escapeRegExp = (string) => {
-    return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // Escaping special characters
-  };
-  const filterData = (searchValue) => {
-    setSearchValue(searchValue);
-    if (searchValue && searchValue.trim() !== "") {
-      var escapedSearchValue = escapeRegExp(searchValue); // Escaping searchValue
-      var filteredCountries = countries?.filter((row) =>
-        row?.countryName
-          ?.toLowerCase()
-          .includes(escapedSearchValue.toLowerCase())
-      );
-      setCountries(filteredCountries);
-    } else {
-      setCountries(originalCountriesList);
-    }
+    setState((prevState) => ({
+      ...prevState,
+      currentPage: Math.max(prevState.currentPage - 1, 1),
+    }));
   };
 
+  const filterData = useCallback(
+    debounce((searchValue) => {
+      if (searchValue.trim() !== "") {
+        const filteredCountries =
+          state.countryData.originalCountriesList.filter((row) =>
+            row.countryName.toLowerCase().includes(searchValue.toLowerCase())
+          );
+        setState((prevState) => ({
+          ...prevState,
+          countryData: {
+            ...prevState.countryData,
+            countries: filteredCountries,
+          },
+        }));
+      } else {
+        setState((prevState) => ({
+          ...prevState,
+          countryData: {
+            ...prevState.countryData,
+            countries: prevState.countryData.originalCountriesList,
+          },
+        }));
+      }
+    }, 300),
+    [state.countryData.originalCountriesList]
+  );
   useEffect(() => {
     fetchCountries();
-  }, []);
+  }, [fetchCountries]);
+
+  useEffect(() => {
+    filterData(state.searchValue);
+  }, [state.searchValue, filterData]);
+
   return (
     <div className="container-scroller">
       <Navbar setSidebarOpen={setSidebarOpen}></Navbar>
@@ -263,8 +253,11 @@ const CountryMaster = () => {
                     data-bs-toggle="modal"
                     data-bs-target="#countryModal"
                     onClick={() => {
-                      setCountryName("");
-                      setUpdate(false);
+                      setState((prevState) => ({
+                        ...prevState,
+                        countryName: "",
+                        isUpdate: false,
+                      }));
                     }}
                   >
                     Add Country
@@ -293,7 +286,10 @@ const CountryMaster = () => {
                                   aria-controls="order-listing"
                                   className="form-select form-select-sm"
                                   onChange={(e) => {
-                                    setItemsPerPage(e.target.value);
+                                    setState((prevState) => ({
+                                      ...prevState,
+                                      itemsPerPage: Number(e.target.value),
+                                    }));
                                   }}
                                 >
                                   <option value="5">5</option>
@@ -316,18 +312,25 @@ const CountryMaster = () => {
                                   className="form-control"
                                   placeholder="Search"
                                   aria-controls="order-listing"
-                                  value={searchValue}
-                                  onChange={(e) => filterData(e.target.value)}
+                                  value={state.searchValue}
+                                  onChange={(e) =>
+                                    setState((prevState) => ({
+                                      ...prevState,
+                                      searchValue: e.target.value,
+                                    }))
+                                  }
                                 />
                               </label>
                             </div>
                           </div>
                         </div>
 
-                        {isDataReady == false && <ShimmerTable row={10} />}
+                        {!state.countryData.isDataReady && (
+                          <ShimmerTable row={10} />
+                        )}
                         <div className="row dt-row">
                           <div className="col-sm-12">
-                            {countries && countries.length > 0 && (
+                            {state.countryData.countries.length > 0 ? (
                               <table
                                 id="order-listing"
                                 className="table dataTable no-footer dataTables_paginate"
@@ -353,71 +356,76 @@ const CountryMaster = () => {
                                   </tr>
                                 </thead>
                                 <tbody>
-                                  {countries &&
-                                    countries.length > 0 &&
-                                    countries
-                                      .slice(startIndex, endIndex)
-                                      .map((country, index) => (
-                                        <CSSTransition
-                                          key={country.id}
-                                          timeout={500}
-                                          classNames="item elementdiv"
-                                        >
-                                          <tr className="odd" key={index}>
-                                            <td className="sorting_1">
-                                              {startIndex + index + 1}
-                                            </td>
-                                            <td>{toTitleCase(country.countryName)}</td>
-                                            <td>
-                                              {getDateFormatted(
-                                                country.createdAt
-                                              )}
-                                            </td>
-                                            <td>
-                                              <label
-                                                className={`badge ${
-                                                  country.status == "1"
-                                                    ? "badge-outline-success"
-                                                    : "badge-outline-danger"
-                                                }`}
-                                              >
-                                                {country.status == "1"
-                                                  ? "Active"
-                                                  : "Inactive"}
-                                              </label>
-                                            </td>
+                                  {state.countryData.countries
+                                    .slice(
+                                      startIndex,
+                                      endIndex
+                                    )
+                                    .map((country, index) => (
+                                      <CSSTransition
+                                        key={country.id}
+                                        timeout={500}
+                                        classNames="item elementdiv"
+                                      >
+                                        <tr className="odd" key={index}>
+                                          <td className="sorting_1">
+                                          {startIndex+  index + 1}
+                                          </td>
+                                          <td>
+                                            {toTitleCase(country.countryName)}
+                                          </td>
+                                          <td>
+                                            {getDateFormatted(
+                                              country.createdAt
+                                            )}
+                                          </td>
+                                          <td>
+                                            <label
+                                              className={`badge ${
+                                                country.status == "1"
+                                                  ? "badge-outline-success"
+                                                  : "badge-outline-danger"
+                                              }`}
+                                            >
+                                              {country.status == "1"
+                                                ? "Active"
+                                                : "Inactive"}
+                                            </label>
+                                          </td>
 
-                                            <td>
-                                              <ion-icon
-                                                onClick={() =>
-                                                  openModal(
-                                                    country.countryName,
-                                                    country.id
-                                                  )
-                                                }
-                                                name="create-outline"
-                                                color="primary"
-                                                data-bs-toggle="modal"
-                                                data-bs-target="#countryModal"
-                                              ></ion-icon>
-                                              <ion-icon
-                                                name="trash-outline"
-                                                color="danger"
-                                                style={{ marginRight: "10px" }}
-                                                onClick={() => {
-                                                  setShowConfirmation(true);
-                                                  setDeleteId(country.id);
-                                                }}
-                                              ></ion-icon>
-                                            </td>
-                                          </tr>
-                                        </CSSTransition>
-                                      ))}
+                                          <td>
+                                            <ion-icon
+                                              onClick={() =>
+                                                openModal(
+                                                  country.countryName,
+                                                  country.id
+                                                )
+                                              }
+                                              name="create-outline"
+                                              color="primary"
+                                              data-bs-toggle="modal"
+                                              data-bs-target="#countryModal"
+                                            ></ion-icon>
+                                            <ion-icon
+                                              name="trash-outline"
+                                              color="danger"
+                                              style={{ marginRight: "10px" }}
+                                              onClick={() => {
+                                                setState((prevState) => ({
+                                                  ...prevState,
+                                                  showConfirmation: true,
+                                                  deleteId: country.id,
+                                                }));
+                                              }}
+                                            ></ion-icon>
+                                          </td>
+                                        </tr>
+                                      </CSSTransition>
+                                    ))}
                                 </tbody>
                               </table>
-                            )}
-                            {countries && countries.length == 0 && (
-                              <NoData></NoData>
+                            ) : (
+                              <NoData />
                             )}
 
                             <div
@@ -435,7 +443,7 @@ const CountryMaster = () => {
                                       className="modal-title"
                                       id="exampleModalLabel"
                                     >
-                                      {isUpdate ? "Edit" : "Add"} Country
+                                      {state.isUpdate ? "Edit" : "Add"} Country
                                     </h5>
                                     <button
                                       type="button"
@@ -456,10 +464,13 @@ const CountryMaster = () => {
                                           className="form-control form-control-sm"
                                           placeholder="Enter Country Name"
                                           aria-label="Username"
-                                          value={countryName}
-                                          onChange={(e) => {
-                                            setCountryName(e.target.value);
-                                          }}
+                                          value={state.countryName}
+                                          onChange={(e) =>
+                                            setState((prevState) => ({
+                                              ...prevState,
+                                              countryName: e.target.value,
+                                            }))
+                                          }
                                           onBlur={() => {
                                             simpleValidator.current.showMessageFor(
                                               "country_name"
@@ -472,7 +483,7 @@ const CountryMaster = () => {
                                             .length > 0 &&
                                             simpleValidator.current.message(
                                               "country_name",
-                                              countryName,
+                                              state.countryName,
                                               "required|alpha_space",
                                               {
                                                 messages: {
@@ -491,11 +502,9 @@ const CountryMaster = () => {
                                         type="button"
                                         className="btn btn-success"
                                         onClick={() => {
-                                          {
-                                            isUpdate
-                                              ? updateCountry()
-                                              : addCountry();
-                                          }
+                                          state.isUpdate
+                                            ? updateCountry()
+                                            : addCountry();
                                         }}
                                       >
                                         Submit
@@ -522,8 +531,8 @@ const CountryMaster = () => {
                               id="order-listing_paginate"
                             >
                               <RenderPageNumbers
-                                data={countries}
-                                currentPage={currentPage}
+                                data={state.countryData.countries}
+                                currentPage={state.currentPage}
                                 handlePagination={handlePagination}
                                 handlePrevPage={handlePrevPage}
                                 handleNextPage={handleNextPage}
@@ -557,9 +566,9 @@ const CountryMaster = () => {
             message="Are you sure you want to delete?"
             onConfirm={handleConfirm}
             onCancel={handleCancel}
-            show={showConfirmation}
+            show={state.showConfirmation}
           />
-          <Loader isLoading={isLoading}></Loader>
+          <Loader isLoading={state.isLoading}></Loader>
         </div>
       </div>
     </div>

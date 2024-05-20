@@ -584,6 +584,9 @@ const AddQuotation = () => {
       formData.append("quotCompanyHotline", quotFormData.quotCompanyHotline);
       formData.append("quotCompanyEmail", quotFormData.quotCompanyEmail);
       formData.append("quotCompanyWebsite", quotFormData.quotCompanyWebsite);
+      formData.append("quotAccData", JSON.stringify(quotFormData.quotAccData));
+      formData.append("itineraryPPAmt", quotFormData.itineraryPPAmt);
+      formData.append("addOnPPAMt", quotFormData.addOnPPAMt);
       // formData.append(
       //   "quotLogo",
       //   base64ToFile(quotFormData.quotLogo, createFilename("logo", "jpeg"))
@@ -801,7 +804,10 @@ const AddQuotation = () => {
             quotCompanyEmail: quotationDetails.quotCompanyEmail,
             quotCompanyWebsite: quotationDetails.quotCompanyWebsite,
             quotLogo: quotationDetails.quotLogo,
-            quotCompanyLogo: quotationDetails.quotCompanyLogo,
+            // itineraryPPAmt: quotationDetails.itineraryPPAmt,
+            // addOnPPAMt: quotationDetails.addOnPPAMt,
+            // quotCompanyLogo: quotationDetails.quotCompanyLogo,
+            // quotCompanyLogo: quotationDetails.quotCompanyLogo,
           };
           Object.entries(formData).forEach(([field, value]) => {
             dispatch(setQuotationFormData(field, value));
