@@ -157,6 +157,9 @@ const AccommodationDetailsForm = ({ onValidationStatusChange }) => {
     );
     dispatch(setQuotationFormData("quotChildBtwn8And9", noOfCNB));
     dispatch(setQuotationFormData("quotBlw5", noOfCMP));
+    setForceUpdate((v) => ++v);
+
+ 
   };
   useEffect(() => {
     validateForm();
@@ -188,14 +191,18 @@ const AccommodationDetailsForm = ({ onValidationStatusChange }) => {
             extraBeds: element.extraBeds,
           });
         });
-
+       
         if (roomArray.length > 0) {
           setRoomObject(roomArray);
-          countTotal()
         }
       }
     }
   }, []);
+  useEffect(() => {
+    if (roomObject.length > 0) {
+      countTotal();
+    }
+  }, [roomObject]);
 
   // useEffect(() => {
   //   if (quotFormData) {
