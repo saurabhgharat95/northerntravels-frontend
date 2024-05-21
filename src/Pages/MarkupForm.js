@@ -78,6 +78,7 @@ const MarkupForm = ({ onValidationStatusChange }) => {
       if (response) {
         if (response.status == 200) {
           let quotPackageArr = response.data.data.mergedPackagesArr;
+
           let amtObj = response.data.data;
           let itineraryQuotAmt = amtObj.itineraryQuotAmt;
           setMarkupAmtObject(quotPackageArr);
@@ -87,10 +88,14 @@ const MarkupForm = ({ onValidationStatusChange }) => {
             itineraryPPAmt: amtObj.itineraryPPAmt,
             addOnPPAMt: amtObj.addOnPPAMt,
           }));
+          quotPackageArr.forEach((pckg) => {
+            calculatePackageAmt(pckg, amtObj.itineraryPPAmt, amtObj.addOnPPAMt);
+          });
           dispatch(
             setQuotationFormData("itineraryPPAmt", amtObj.itineraryPPAmt)
           );
           dispatch(setQuotationFormData("addOnPPAMt", amtObj.addOnPPAMt));
+          dispatch(setQuotationFormData("quotAccData", quotPackageArr));
         }
       }
     } catch (e) {}
@@ -171,6 +176,77 @@ const MarkupForm = ({ onValidationStatusChange }) => {
       return "";
     }
   };
+  const calculatePackageAmt = (pckg, itineraryPPAmt, addOnPPAMt) => {
+    console.log("pckg", pckg);
+    let roomsReqd =
+      Number(quotFormData.quotRoomsReqd) -
+      (quotFormData.quotSingleOccupy ? quotFormData.quotSingleOccupy : 0);
+
+    let hotelRoomPPFinalAmt =
+      Number(pckg.hotelRoomPPAmt) +
+      Number(itineraryPPAmt) * Number(pckg.noOfHotels) +
+      Number(addOnPPAMt) * Number(pckg.noOfHotels) +
+      (pckg.hotelRoomMarkupAmt ? Number(pckg.hotelRoomMarkupAmt) : 0);
+
+    let hotelRoomFinalAmt = hotelRoomPPFinalAmt * 2 * roomsReqd;
+
+    console.log(
+      "h1",
+      pckg.hotelRoomPPAmt,
+      hotelRoomPPFinalAmt,
+      hotelRoomFinalAmt
+    );
+
+    let extraBedPPFinalAmt =
+      Number(pckg.extraBedPPAmt) +
+      Number(itineraryPPAmt) * Number(pckg.noOfHotels) +
+      Number(addOnPPAMt) * Number(pckg.noOfHotels) +
+      (pckg.extraBedMarkupAmt ? Number(pckg.extraBedMarkupAmt) : 0);
+    let extraBedFinalAmt = extraBedPPFinalAmt * quotFormData.quotTotalExtraBeds;
+
+    let cnbPPFinalAmt =
+      Number(pckg.cnbPPAmt) +
+      Number(itineraryPPAmt) * Number(pckg.noOfHotels) +
+      Number(addOnPPAMt) * Number(pckg.noOfHotels) +
+      (pckg.cnbMarkupAmt ? Number(pckg.cnbMarkupAmt) : 0);
+
+    let cnbFinalAmt = cnbPPFinalAmt * quotFormData.quotChildBtwn8And9;
+
+    let cmpPPFinalAmt =
+      Number(pckg.cmpPPAmt) +
+      Number(itineraryPPAmt) * Number(pckg.noOfHotels) +
+      Number(addOnPPAMt) * Number(pckg.noOfHotels) +
+      (pckg.cmpMarkupAmt ? Number(pckg.cmpMarkupAmt) : 0);
+
+    let cmpFinalAmt = cmpPPFinalAmt * quotFormData.quotBlw5;
+
+    let singleOccupyPPFinalAmt =
+      Number(pckg.singleOccupyPPAmt) +
+      Number(itineraryPPAmt) * Number(pckg.noOfHotels) +
+      Number(addOnPPAMt) * Number(pckg.noOfHotels) +
+      (pckg.singleOccupyMarkupAmt ? Number(pckg.singleOccupyMarkupAmt) : 0);
+
+    let singleOccupyFinalAmt =
+      singleOccupyPPFinalAmt * quotFormData.quotSingleOccupy;
+
+    let totalPckgAmt =
+      hotelRoomFinalAmt +
+      extraBedFinalAmt +
+      cnbFinalAmt +
+      cmpFinalAmt +
+      singleOccupyFinalAmt;
+
+    console.log("hotelRoomFinalAmt", hotelRoomPPFinalAmt, hotelRoomFinalAmt);
+    console.log("extraBedFinalAmt", extraBedPPFinalAmt, extraBedFinalAmt);
+    console.log("cnbFinalAmt", cnbPPFinalAmt, cnbFinalAmt);
+    console.log("cmpFinalAmt", cmpPPFinalAmt, cmpFinalAmt);
+    console.log(
+      "singleOccupyFinalAmt",
+      singleOccupyPPFinalAmt,
+      singleOccupyFinalAmt
+    );
+    pckg.totalPckgAmt = totalPckgAmt.toFixed(2);
+  };
   const validateForm = () => {
     const isValid = simpleValidator.current.allValid();
     if (isValid) {
@@ -249,6 +325,72 @@ const MarkupForm = ({ onValidationStatusChange }) => {
                     <p className="card-text">
                       CMP : <b> Complementary</b>
                     </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="col-md-5 grid-margin stretch-card">
+            <div className="card border border-primary">
+              <div className="card-body ">
+                <div className="row">
+                  <div className="col-md-1 pr-0">
+                    <ion-icon
+                      style={{ marginTop: "5px" }}
+                      color="primary"
+                      name="information-circle"
+                      size="large"
+                    ></ion-icon>
+                  </div>
+                  <div className="col-md-11 ">
+                    <div className="row">
+                      <p
+                        className="col-md-7 card-text "
+                        style={{ marginBottom: 0 }}
+                      >
+                        Total No. of Single Occupancy :{" "}
+                        <b>
+                          {" "}
+                          {quotFormData.quotSingleOccupy
+                            ? quotFormData.quotSingleOccupy
+                            : 0}
+                        </b>
+                      </p>
+                      <p
+                        className="col-md-5 card-text "
+                        style={{ marginBottom: 0 }}
+                      >
+                        Total Extra Beds :{" "}
+                        <b>
+                          {" "}
+                          {quotFormData.quotTotalExtraBeds
+                            ? quotFormData.quotTotalExtraBeds
+                            : 0}
+                        </b>
+                      </p>
+                      <p
+                        className="col-md-7 card-text "
+                        style={{ marginBottom: 0 }}
+                      >
+                        Total No. of CNB :{" "}
+                        <b>
+                          {" "}
+                          {quotFormData.quotChildBtwn8And9
+                            ? quotFormData.quotChildBtwn8And9
+                            : 0}
+                        </b>
+                      </p>
+                      <p
+                        className="col-md-5 card-text "
+                        style={{ marginBottom: 0 }}
+                      >
+                        Total No. of CMP :{" "}
+                        <b>
+                          {" "}
+                          {quotFormData.quotBlw5 ? quotFormData.quotBlw5 : 0}
+                        </b>
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -427,6 +569,7 @@ const MarkupForm = ({ onValidationStatusChange }) => {
                     />
                   </div>
                 </div>
+
                 <div className="form-group row">
                   <div className="col-sm-4">
                     <label>Double Sharing per person (Rs.) </label>
@@ -437,26 +580,6 @@ const MarkupForm = ({ onValidationStatusChange }) => {
                       placeholder="Enter Before Markup (Rs.)"
                       value={pckg.hotelRoomPPAmt}
                       disabled
-                      onChange={(event) => {
-                        const newValue = event.target.value.trim();
-                        if (/^\d*$/.test(newValue)) {
-                          setMarkupObject((prevState) => ({
-                            ...prevState,
-                            quotBeforeMarkup: event.target.value,
-                          }));
-                          dispatch(
-                            setQuotationFormData(
-                              "quotBeforeMarkup",
-                              event.target.value
-                            )
-                          );
-                        }
-                      }}
-                      onBlur={() => {
-                        simpleValidator.current.showMessageFor(
-                          "quotBeforeMarkup"
-                        );
-                      }}
                     />
                   </div>
                   <div className="col-sm-4">
@@ -476,6 +599,11 @@ const MarkupForm = ({ onValidationStatusChange }) => {
                             : "";
                           dispatch(
                             setQuotationFormData("quotAccData", newFormValues)
+                          );
+                          calculatePackageAmt(
+                            pckg,
+                            ppAmtObj.itineraryPPAmt,
+                            ppAmtObj.addOnPPAMt
                           );
                         }
                       }}
@@ -506,12 +634,15 @@ const MarkupForm = ({ onValidationStatusChange }) => {
                       className="form-control"
                       placeholder="Enter Amount Per Person (Rs.)"
                       readOnly
-                      value={
+                      value={(
                         Number(pckg.hotelRoomPPAmt) +
                         Number(
                           pckg.hotelRoomMarkupAmt ? pckg.hotelRoomMarkupAmt : 0
-                        )
-                      }
+                        ) +
+                        Number(ppAmtObj.itineraryPPAmt) *
+                          Number(pckg.noOfHotels) +
+                        Number(ppAmtObj.addOnPPAMt) * Number(pckg.noOfHotels)
+                      ).toFixed(2)}
                     />
                   </div>
                 </div>
@@ -545,6 +676,11 @@ const MarkupForm = ({ onValidationStatusChange }) => {
                           dispatch(
                             setQuotationFormData("quotAccData", newFormValues)
                           );
+                          calculatePackageAmt(
+                            pckg,
+                            ppAmtObj.itineraryPPAmt,
+                            ppAmtObj.addOnPPAMt
+                          );
                         }
                       }}
                       onBlur={() => {
@@ -574,14 +710,17 @@ const MarkupForm = ({ onValidationStatusChange }) => {
                       className="form-control"
                       placeholder="Enter Markup (Rs.)"
                       readOnly
-                      value={
+                      value={(
                         Number(pckg.singleOccupyPPAmt) +
                         Number(
                           pckg.singleOccupyMarkupAmt
                             ? pckg.singleOccupyMarkupAmt
                             : 0
-                        )
-                      }
+                        ) +
+                        Number(ppAmtObj.itineraryPPAmt) *
+                          Number(pckg.noOfHotels) +
+                        Number(ppAmtObj.addOnPPAMt) * Number(pckg.noOfHotels)
+                      ).toFixed(2)}
                     />
                   </div>
                 </div>
@@ -615,6 +754,11 @@ const MarkupForm = ({ onValidationStatusChange }) => {
                           dispatch(
                             setQuotationFormData("quotAccData", newFormValues)
                           );
+                          calculatePackageAmt(
+                            pckg,
+                            ppAmtObj.itineraryPPAmt,
+                            ppAmtObj.addOnPPAMt
+                          );
                         }
                       }}
                       onBlur={() => {
@@ -644,12 +788,15 @@ const MarkupForm = ({ onValidationStatusChange }) => {
                       className="form-control"
                       placeholder="Enter Markup (Rs.)"
                       readOnly
-                      value={
+                      value={(
                         Number(pckg.extraBedPPAmt) +
                         Number(
                           pckg.extraBedMarkupAmt ? pckg.extraBedMarkupAmt : 0
-                        )
-                      }
+                        ) +
+                        Number(ppAmtObj.itineraryPPAmt) *
+                          Number(pckg.noOfHotels) +
+                        Number(ppAmtObj.addOnPPAMt) * Number(pckg.noOfHotels)
+                      ).toFixed(2)}
                     />
                   </div>
                 </div>
@@ -683,6 +830,11 @@ const MarkupForm = ({ onValidationStatusChange }) => {
                           dispatch(
                             setQuotationFormData("quotAccData", newFormValues)
                           );
+                          calculatePackageAmt(
+                            pckg,
+                            ppAmtObj.itineraryPPAmt,
+                            ppAmtObj.addOnPPAMt
+                          );
                         }
                       }}
                       onBlur={() => {
@@ -710,10 +862,13 @@ const MarkupForm = ({ onValidationStatusChange }) => {
                       className="form-control"
                       placeholder="Enter Markup (Rs.)"
                       readOnly
-                      value={
+                      value={(
                         Number(pckg.cnbPPAmt) +
-                        Number(pckg.cnbMarkupAmt ? pckg.cnbMarkupAmt : 0)
-                      }
+                        Number(pckg.cnbMarkupAmt ? pckg.cnbMarkupAmt : 0) +
+                        Number(ppAmtObj.itineraryPPAmt) *
+                          Number(pckg.noOfHotels) +
+                        Number(ppAmtObj.addOnPPAMt) * Number(pckg.noOfHotels)
+                      ).toFixed(2)}
                     />
                   </div>
                 </div>
@@ -747,6 +902,11 @@ const MarkupForm = ({ onValidationStatusChange }) => {
                           dispatch(
                             setQuotationFormData("quotAccData", newFormValues)
                           );
+                          calculatePackageAmt(
+                            pckg,
+                            ppAmtObj.itineraryPPAmt,
+                            ppAmtObj.addOnPPAMt
+                          );
                         }
                       }}
                       onBlur={() => {
@@ -774,14 +934,17 @@ const MarkupForm = ({ onValidationStatusChange }) => {
                       className="form-control"
                       placeholder="Enter Markup (Rs.)"
                       readOnly
-                      value={
+                      value={(
                         Number(pckg.cmpPPAmt) +
-                        Number(pckg.cmpMarkupAmt ? pckg.cmpMarkupAmt : 0)
-                      }
+                        Number(pckg.cmpMarkupAmt ? pckg.cmpMarkupAmt : 0) +
+                        Number(ppAmtObj.itineraryPPAmt) *
+                          Number(pckg.noOfHotels) +
+                        Number(ppAmtObj.addOnPPAMt) * Number(pckg.noOfHotels)
+                      ).toFixed(2)}
                     />
                   </div>
                 </div>
-                {/* <div className="form-group row">
+                <div className="form-group row">
                   <div class="col-md-8"></div>
                   <div className="col-sm-4 ">
                     <label>Total Package Amount (Rs.)</label>
@@ -791,16 +954,10 @@ const MarkupForm = ({ onValidationStatusChange }) => {
                       className="form-control"
                       placeholder="Enter Markup (Rs.)"
                       readOnly
-                      value={
-                        Number(pckg.charges) +
-                        itineraryQuotAmt +
-                        Number(
-                          markupObject.quotMarkup ? markupObject.quotMarkup : 0
-                        )
-                      }
+                      value={Number(pckg.totalPckgAmt)}
                     />
                   </div>
-                </div> */}
+                </div>
               </div>
             </>
           ))}
