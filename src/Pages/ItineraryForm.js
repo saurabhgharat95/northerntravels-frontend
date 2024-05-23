@@ -19,6 +19,7 @@ import { setQuotationFormData } from "../utils/store";
 import { getMultipleFilteredDropdownOptions } from "../utils/helpers";
 const ItineraryForm = ({ onValidationStatusChange }) => {
   const [locations, setLocations] = useState([]);
+  const [transitPts, setTransitPtList] = useState([]);
   const [acionObj, setActionObj] = useState({ deleteId: null, updateId: null });
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [, setForceUpdate] = useState(0);
@@ -301,10 +302,11 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
       if (response) {
         if (response.status == 200) {
           let trasitPts = response.data.data;
+          setTransitPtList(trasitPts);
           let pickupPtsOptionsArray = [];
           let dropPtsOptionsArray = [];
-          const startPointIds = tourPoints.map((obj) => obj.startPointId);
-          const endPointIds = tourPoints.map((obj) => obj.endPointId);
+          const startPointIds = tourPoints &&  tourPoints.map((obj) => obj.startPointId);
+          const endPointIds =  tourPoints && tourPoints.map((obj) => obj.endPointId);
 
           trasitPts.forEach((trasitPt) => {
             if (startPointIds.includes(trasitPt.id)) {
@@ -361,17 +363,21 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
         });
       }
     }
-    if (type == "vehicle" ) {
+    if (type == "vehicle") {
       if (resultType == "total") {
-        return "Rs."+itineraryAmt.toFixed(2);
+        return "Rs." + itineraryAmt.toFixed(2);
       } else {
-        return "Rs."+(itineraryAmt / quotFormData.quotTotalPeoples).toFixed(2);
+        return (
+          "Rs." + (itineraryAmt / quotFormData.quotTotalPeoples).toFixed(2)
+        );
       }
     } else if (type == "addon") {
       if (resultType == "total") {
-        return "Rs."+addOnTotalAmt.toFixed(2);
+        return "Rs." + addOnTotalAmt.toFixed(2);
       } else {
-        return "Rs."+(addOnTotalAmt / quotFormData.quotTotalPeoples).toFixed(2);
+        return (
+          "Rs." + (addOnTotalAmt / quotFormData.quotTotalPeoples).toFixed(2)
+        );
       }
     }
   };
@@ -496,7 +502,7 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
     let tourDetails = quotFormData.tourData;
     
     let vehicles = tourDetails.transportations;
-    let transitPoints = tourDetails.transitPoints;
+    let transitPoints = transitPts;
     const filteredEntries = vehicles.filter(
       (item) => item.startPointId === itineraryObject.quotItiPickupPtId
     );
@@ -507,25 +513,21 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
 
     const uniqueEndPoints = Array.from(uniqueEndPointsSet);
     const filteredTransitPoints = transitPoints.filter((item) =>
-      uniqueEndPoints.includes(item.fkTransitPointId)
+      uniqueEndPoints.includes(item.id)
     );
 
     const uniqueTransitPointsSet = new Set(
-      filteredTransitPoints.map((item) => item.fkTransitPointId)
+      filteredTransitPoints.map((item) => item.id)
     );
 
-    const dropPointOptions = Array.from(uniqueTransitPointsSet).map(
-      (fkTransitPointId) => {
-        const transitPoint = filteredTransitPoints.find(
-          (item) => item.fkTransitPointId === fkTransitPointId
-        );
+    const dropPointOptions = Array.from(uniqueTransitPointsSet).map((id) => {
+      const transitPoint = filteredTransitPoints.find((item) => item.id === id);
 
-        return {
-          value: fkTransitPointId,
-          label: transitPoint.transitPoint.transitPointName,
-        };
-      }
-    );
+      return {
+        value: id,
+        label: transitPoint.transitPointName,
+      };
+    });
     setOptionsObj((prevState) => ({
       ...prevState,
       dropPtOptions: dropPointOptions,
@@ -1111,7 +1113,7 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
 
               <div className="col-sm-2 mb-3">
                 <ion-icon
-                  style={{ marginTop: "20%" }}
+                  style={{ marginTop: "17%" }}
                   name="add-circle-outline"
                   color="success"
                   size="large"
@@ -1121,7 +1123,7 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
 
                 {index ? (
                   <ion-icon
-                    style={{ marginTop: "20%" }}
+                    style={{ marginTop: "17%" }}
                     name="close-circle-outline"
                     color="danger"
                     size="large"
@@ -1172,12 +1174,12 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
               >
                 <div className="row">
                   <div className="col-md-4 grid-margin stretch-card">
-                    <div className="card border border-primary">
+                    <div className="card border border-success">
                       <div className="card-body">
                         <div className="media">
                           <ion-icon
                             style={{ marginTop: "5px" }}
-                            color="primary"
+                            color="success"
                             name="cash-outline"
                             size="large"
                           ></ion-icon>
@@ -1199,12 +1201,12 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
                     </div>
                   </div>
                   <div className="col-md-4 grid-margin stretch-card">
-                    <div className="card border border-primary">
+                    <div className="card border border-success">
                       <div className="card-body">
                         <div className="media">
                           <ion-icon
                             style={{ marginTop: "5px" }}
-                            color="primary"
+                            color="success"
                             name="cash-outline"
                             size="large"
                           ></ion-icon>
@@ -1260,7 +1262,6 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
                             itineraryData?.length > 0 &&
                             itineraryData.map((itineraryObj, index) => (
                               <tr className="odd" key={index}>
-                              
                                 <td>{itineraryObj.quotItiDay}</td>
                                 <td>
                                   {itineraryObj.quotItiDate

@@ -172,8 +172,10 @@ const AddQuotation = () => {
 
       let body = {
         quotId: quotFormData.quotId,
-        quotPackage: quotFormData.quotPackage,
-        quotSeason: quotFormData.quotSeason,
+        quotPackage:
+          quotFormData.quotPackage != "" ? quotFormData.quotPackage : "1",
+        quotSeason:
+          quotFormData.quotSeason != "" ? quotFormData.quotSeason : "1",
         fkTourId: quotFormData.fkTourId,
         quotClientName: quotFormData.quotClientName,
         fkLeadId: quotFormData.fkLeadId,
@@ -220,7 +222,7 @@ const AddQuotation = () => {
       let roomData = quotFormData.roomData;
       if (roomData.length > 0) {
         roomData.forEach((element) => {
-          if(element.isSingleOccupancy){
+          if (element.isSingleOccupancy) {
             quotRoomData.push({
               id: element.id,
               isSingleOccupancy: element.isSingleOccupancy ? "1" : "0",
@@ -230,8 +232,7 @@ const AddQuotation = () => {
               noExtraBeds: 0,
               freeBeds: 0,
             });
-          }
-          else{
+          } else {
             quotRoomData.push({
               id: element.id,
               isSingleOccupancy: element.isSingleOccupancy ? "1" : "0",
@@ -242,7 +243,6 @@ const AddQuotation = () => {
               freeBeds: element.freeBeds,
             });
           }
-         
         });
       }
       let body = {
@@ -252,6 +252,7 @@ const AddQuotation = () => {
         quotChildAbove9: quotFormData.quotTotalExtraBeds,
         quotChildBtwn8And9: quotFormData.quotChildBtwn8And9,
         quotBlw5: quotFormData.quotBlw5,
+        quotSingleOccupy: quotFormData.quotSingleOccupy,
         roomData: quotRoomData,
       };
       
@@ -298,7 +299,7 @@ const AddQuotation = () => {
               hotelName: element.hotel.hotelName,
               fromDate: getDateFormattedForDB(element.quotHotelFromDate),
               toDate: getDateFormattedForDB(element.quotHotelToDate),
-              noOfNights: element.quotHotelToDate,
+              noOfNights: element.quotHotelNoOfNights,
               roomType: element.room_type.roomTypeName,
               mealType: element.meal_type.mealTypeName,
               haltingDestId: element.fkHaltingDestId,
@@ -318,7 +319,7 @@ const AddQuotation = () => {
               hotelName: hotelDetails.hotel.hotelName,
               fromDate: getDateFormattedForDB(element.quotHotelFromDate),
               toDate: getDateFormattedForDB(element.quotHotelToDate),
-              noOfNights: hotelDetails.quotHotelToDate,
+              noOfNights: hotelDetails.quotHotelNoOfNights,
               roomType: hotelDetails.room_type.roomTypeName,
               mealType: hotelDetails.meal_type.mealTypeName,
               haltingDestId: hotelDetails.fkHaltingDestId,
@@ -583,19 +584,22 @@ const AddQuotation = () => {
       formData.append("quotCompanyHotline", quotFormData.quotCompanyHotline);
       formData.append("quotCompanyEmail", quotFormData.quotCompanyEmail);
       formData.append("quotCompanyWebsite", quotFormData.quotCompanyWebsite);
-      // formData.append(
-      //   "quotLogo",
-      //   base64ToFile(quotFormData.quotLogo, createFilename("logo", "jpeg"))
-      // );
-      // formData.append(
-      //   "quotCompanyLogo",
-      //   base64ToFile(
-      //     quotFormData.quotCompanyLogo,
-      //     createFilename("companylogo", "jpeg")
-      //   )
-      // );
-      formData.append("quotLogo", "");
-      formData.append("quotCompanyLogo", "");
+      formData.append("quotAccData", JSON.stringify(quotFormData.quotAccData));
+      formData.append("itineraryPPAmt", quotFormData.itineraryPPAmt);
+      formData.append("addOnPPAMt", quotFormData.addOnPPAMt);
+      formData.append(
+        "quotLogo",
+        base64ToFile(quotFormData.quotLogo, createFilename("logo", "jpeg"))
+      );
+      formData.append(
+        "quotCompanyLogo",
+        base64ToFile(
+          quotFormData.quotCompanyLogo,
+          createFilename("companylogo", "jpeg")
+        )
+      );
+      // formData.append("quotLogo", "");
+      // formData.append("quotCompanyLogo", "");
 
       // 
       const isFormValid = componentSelectorRef.current.isMarkupFormValid();
@@ -784,6 +788,7 @@ const AddQuotation = () => {
             quotChildAbove9: quotationDetails.quotChildAbove9,
             quotChildBtwn8And9: quotationDetails.quotChildBtwn8And9,
             quotBlw5: quotationDetails.quotBlw5,
+            quotSingleOccupy: quotationDetails.quotSingleOccupy,
             quotTotalExtraBeds: quotationDetails.quotChildAbove9,
             roomData: quotationDetails.rooms,
             quotPackageNameArray: uniquePackageNamesArray,
@@ -799,7 +804,10 @@ const AddQuotation = () => {
             quotCompanyEmail: quotationDetails.quotCompanyEmail,
             quotCompanyWebsite: quotationDetails.quotCompanyWebsite,
             quotLogo: quotationDetails.quotLogo,
-            quotCompanyLogo: quotationDetails.quotCompanyLogo,
+            // itineraryPPAmt: quotationDetails.itineraryPPAmt,
+            // addOnPPAMt: quotationDetails.addOnPPAMt,
+            // quotCompanyLogo: quotationDetails.quotCompanyLogo,
+            // quotCompanyLogo: quotationDetails.quotCompanyLogo,
           };
           Object.entries(formData).forEach(([field, value]) => {
             dispatch(setQuotationFormData(field, value));

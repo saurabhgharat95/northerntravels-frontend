@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from "react";
-import { SimpleReactValidator } from "../components/CommonImport";
+import { toast,SimpleReactValidator } from "../components/CommonImport";
+import "react-toastify/dist/ReactToastify.css";
 //redux
 import { useDispatch, useSelector } from "react-redux";
 import { setQuotationFormData } from "../utils/store";
@@ -16,6 +17,9 @@ const AccommodationDetailsForm = ({ onValidationStatusChange }) => {
     quotTotalPeoples: "",
     quotRoomsReqd: "",
     quotTotalExtraBeds: 0,
+    quotSingleOccupy: 0,
+    quotChildBtwn8And9: 0,
+    quotBlw5: 0,
   });
   const [roomObject, setRoomObject] = useState([
     {
@@ -49,18 +53,24 @@ const AccommodationDetailsForm = ({ onValidationStatusChange }) => {
     return isValid;
   };
   let addRoom = () => {
-    setRoomObject([
-      ...roomObject,
-      {
-        id: null,
-        isSingleOccupancy: false,
-        childAbove9: "",
-        totalPersonsRoom: 0,
-        noExtraBeds: "",
-        freeBeds: "",
-        extraBeds: "",
-      },
-    ]);
+    if (roomObject.length < accommodationObject.quotRoomsReqd) {
+      setRoomObject([
+        ...roomObject,
+        {
+          id: null,
+          isSingleOccupancy: false,
+          childAbove9: "",
+          totalPersonsRoom: 0,
+          noExtraBeds: "",
+          freeBeds: "",
+          extraBeds: "",
+        },
+      ]);
+    } else {
+      toast.error("Rooms cannot exceed required room", {
+        position: "top-right",
+      });
+    }
   };
 
   let removeRoom = (i) => {
@@ -118,22 +128,38 @@ const AccommodationDetailsForm = ({ onValidationStatusChange }) => {
     newFormValues[index].noExtraBeds = "";
     newFormValues[index].freeBeds = "";
     newFormValues[index].extraBeds = "";
-    countTotalExtraBeds();
+    countTotal();
     setRoomObject(newFormValues);
     dispatch(setQuotationFormData("roomData", newFormValues));
     setForceUpdate((v) => ++v);
   };
-  const countTotalExtraBeds = () => {
+  const countTotal = () => {
     let noOfExtraBeds = 0;
+    let noOfSingleOccupancy = 0;
+    let noOfCNB = 0;
+    let noOfCMP = 0;
     roomObject.forEach((room) => {
       noOfExtraBeds += room.extraBeds ? Number(room.extraBeds) : 0;
+      noOfSingleOccupancy += room.isSingleOccupancy ? 1 : 0;
+      noOfCNB += room.noExtraBeds ? Number(room.noExtraBeds) : 0;
+      noOfCMP += room.freeBeds ? Number(room.freeBeds) : 0;
     });
-    // 
     setAccommodationObject((prevState) => ({
       ...prevState,
       quotTotalExtraBeds: noOfExtraBeds,
+      quotSingleOccupy: noOfSingleOccupancy,
+      quotChildBtwn8And9: noOfCNB,
+      quotBlw5: noOfCMP,
     }));
     dispatch(setQuotationFormData("quotTotalExtraBeds", noOfExtraBeds));
+    dispatch(
+      setQuotationFormData("quotSingleOccupy", noOfSingleOccupancy)
+    );
+    dispatch(setQuotationFormData("quotChildBtwn8And9", noOfCNB));
+    dispatch(setQuotationFormData("quotBlw5", noOfCMP));
+    setForceUpdate((v) => ++v);
+
+ 
   };
   useEffect(() => {
     validateForm();
@@ -145,6 +171,9 @@ const AccommodationDetailsForm = ({ onValidationStatusChange }) => {
         quotTotalPeoples: quotFormData.quotTotalPeoples,
         quotRoomsReqd: quotFormData.quotRoomsReqd,
         quotTotalExtraBeds: quotFormData.quotTotalExtraBeds,
+        quotSingleOccupy: quotFormData.quotSingleOccupy,
+        quotChildBtwn8And9: quotFormData.quotChildBtwn8And9,
+        quotBlw5: quotFormData.quotBlw5,
       }));
 
       let roomData = quotFormData.roomData;
@@ -162,13 +191,18 @@ const AccommodationDetailsForm = ({ onValidationStatusChange }) => {
             extraBeds: element.extraBeds,
           });
         });
-
+       
         if (roomArray.length > 0) {
           setRoomObject(roomArray);
         }
       }
     }
   }, []);
+  useEffect(() => {
+    if (roomObject.length > 0) {
+      countTotal();
+    }
+  }, [roomObject]);
 
   // useEffect(() => {
   //   if (quotFormData) {
@@ -253,8 +287,6 @@ const AccommodationDetailsForm = ({ onValidationStatusChange }) => {
               )}
             </>
           </div>
-        </div>
-        <div className="form-group row">
           <div className="col-sm-6">
             <label>Room(s) Required</label>
             <input
@@ -294,6 +326,7 @@ const AccommodationDetailsForm = ({ onValidationStatusChange }) => {
             </>
           </div>
         </div>
+
         <button
           className="btn btn-sm btn-primary"
           onClick={() => {
@@ -344,7 +377,7 @@ const AccommodationDetailsForm = ({ onValidationStatusChange }) => {
                       </div>
                       <div className="form-group row">
                         <div className="col-sm-12">
-                          <label>Total No. of People in Room</label>
+                          <label>PAX</label>
                           <input
                             type="text"
                             pattern="[0-9]+"
@@ -415,6 +448,7 @@ const AccommodationDetailsForm = ({ onValidationStatusChange }) => {
                                     newFormValues
                                   )
                                 );
+                                countTotal();
                               }
                             }}
                             onBlur={() => {
@@ -466,6 +500,7 @@ const AccommodationDetailsForm = ({ onValidationStatusChange }) => {
                                     newFormValues
                                   )
                                 );
+                                countTotal();
                               }
                             }}
                             onBlur={() => {
@@ -515,6 +550,7 @@ const AccommodationDetailsForm = ({ onValidationStatusChange }) => {
                                     newFormValues
                                   )
                                 );
+                                countTotal();
                               }
                             }}
                             onBlur={() => {
@@ -563,7 +599,7 @@ const AccommodationDetailsForm = ({ onValidationStatusChange }) => {
                                     newFormValues
                                   )
                                 );
-                                countTotalExtraBeds();
+                                countTotal();
                               }
                             }}
                             onBlur={() => {
@@ -602,7 +638,7 @@ const AccommodationDetailsForm = ({ onValidationStatusChange }) => {
               type="text"
               pattern="[0-9]+"
               className="form-control"
-              placeholder="Enter No. of Rooms Required"
+              placeholder="Enter Total Extra Beds"
               value={accommodationObject.quotTotalExtraBeds}
               readOnly
               onBlur={() => {
@@ -610,9 +646,60 @@ const AccommodationDetailsForm = ({ onValidationStatusChange }) => {
               }}
             />
           </div>
+          <div className="col-sm-6">
+            <label>Total No. of Single Occupancy</label>
+            <input
+              type="text"
+              pattern="[0-9]+"
+              className="form-control"
+              placeholder="Enter No. of Single Occupancy"
+              value={accommodationObject.quotSingleOccupy}
+              readOnly
+              onBlur={() => {
+                simpleValidator.current.showMessageFor(
+                  "quotSingleOccupy"
+                );
+              }}
+            />
+          </div>
         </div>
+        <div className="form-group row">
+          <div className="col-sm-6">
+            <label>Total No. of CNB</label>
+            <input
+              type="text"
+              pattern="[0-9]+"
+              className="form-control"
+              placeholder="Enter Total No. of CNB"
+              value={accommodationObject.quotChildBtwn8And9}
+              readOnly
+              onBlur={() => {
+                simpleValidator.current.showMessageFor("quotChildBtwn8And9");
+              }}
+            />
+          </div>
+          <div className="col-sm-6">
+            <label>Total No. of CMP</label>
+            <input
+              type="text"
+              pattern="[0-9]+"
+              className="form-control"
+              placeholder="Enter Total No. of CMP"
+              value={accommodationObject.quotBlw5}
+              readOnly
+              onBlur={() => {
+                simpleValidator.current.showMessageFor(
+                  "quotBlw5"
+                );
+              }}
+            />
+          </div>
+        </div>
+       
         <br></br>
+       
       </section>
+     
     </>
   );
 };

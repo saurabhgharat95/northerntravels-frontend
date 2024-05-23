@@ -122,7 +122,11 @@ const QuotationManagement = () => {
   };
 
   useEffect(() => {
-    fetchQuotations();
+    const timer = setTimeout(() => {
+      fetchQuotations();
+    }, 1000); 
+  
+    return () => clearTimeout(timer);
   }, []);
   return (
     <div className="container-scroller">

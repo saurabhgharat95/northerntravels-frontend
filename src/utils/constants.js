@@ -92,3 +92,5 @@ export const FETCH_LEAD_STATUSES_API = BASE_API_URL + "/get-lead-statuses";
 export const ADD_LEAD_API = BASE_API_URL + "/add-lead";
 export const UPDATE_LEAD_API = BASE_API_URL + "/update-lead";
 export const DELETE_LEAD_API = BASE_API_URL + "/delete-lead";
+
+export const FETCH_UPDATED_ROOM_RATES_API = BASE_API_URL + "/get-updated-room-rates";
