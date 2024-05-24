@@ -499,6 +499,9 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
     }
   }, [quotFormData]);
   useEffect(() => {
+    if (!quotFormData || !quotFormData.tourData || !transitPts || !itineraryObject || !itineraryObject.quotItiPickupPtId) {
+      return;
+    }
     let tourDetails = quotFormData.tourData;
     console.log("tourDetails", tourDetails);
     let vehicles = tourDetails.transportations;
@@ -535,6 +538,9 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
   }, [itineraryObject.quotItiPickupPtId]);
 
   useEffect(() => {
+    if (!quotFormData || !quotFormData.tourData || !itineraryObject || !itineraryObject.quotItiPickupPtId || !itineraryObject.quotItiDropPtId) {
+      return;
+    }
     let tourDetails = quotFormData.tourData;
 
     let vehicles = tourDetails.transportations;
