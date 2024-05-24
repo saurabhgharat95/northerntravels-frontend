@@ -1298,7 +1298,7 @@ const MarkupForm = ({ onValidationStatusChange }) => {
         <div className="form-group row"></div>
 
         <div className="form-group row"></div>
-        <ToastContainer
+        {/* <ToastContainer
           position="top-right"
           autoClose={2000}
           hideProgressBar
@@ -1309,7 +1309,7 @@ const MarkupForm = ({ onValidationStatusChange }) => {
           draggable
           pauseOnHover={false}
           theme="colored"
-        />
+        /> */}
         <div
           className="modal fade"
           id="imageModal"

@@ -1014,7 +1014,7 @@ const HotelDetailsForm = ({ onValidationStatusChange }) => {
               onCancel={handleCancel}
               show={showConfirmation}
             />
-            <ToastContainer
+            {/* <ToastContainer
               position="top-right"
               autoClose={2000}
               hideProgressBar
@@ -1025,7 +1025,7 @@ const HotelDetailsForm = ({ onValidationStatusChange }) => {
               draggable
               pauseOnHover={false}
               theme="colored"
-            />
+            /> */}
           </>
         )}
         {packageData && packageData.length == 0 && <NoData></NoData>}
