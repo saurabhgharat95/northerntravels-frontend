@@ -1,56 +1,62 @@
+import { BASE_URL } from "./constants";
+
 // Get date in format month date,year hour:minute am/pm e.g. Mar 25, 2024, 10:35 PM
+
 const getDateFormatted = (dateString) => {
-  if (dateString) {
-    if (dateString.includes(".000Z")) {
-      dateString = dateString.replace(".000Z", "");
+  if (BASE_URL == "http://localhost:4000") {
+    if (dateString) {
+      if (dateString.includes(".000Z")) {
+        dateString = dateString.replace(".000Z", "");
+      }
+      const date = new Date(dateString);
+
+      const options = {
+        year: "numeric",
+        month: "long", // 'long' for full month name
+        day: "2-digit",
+        hour: "numeric",
+        minute: "numeric",
+        hour12: true, // To get AM/PM
+      };
+
+      const formattedDate = date.toLocaleString("en-US", options);
+      return formattedDate;
     }
-    const date = new Date(dateString);
+    return "N.A.";
+  } else {
+    if (dateString) {
+      const givenTime = new Date(dateString);
 
-    const options = {
-      year: "numeric",
-      month: "long", // 'long' for full month name
-      day: "2-digit",
-      hour: "numeric",
-      minute: "numeric",
-      hour12: true, // To get AM/PM
-    };
+      // Define hours and minutes to add
+      const hoursToAdd = 5; // 5 hours
+      const minutesToAdd = 30; // 30 minutes
 
-    const formattedDate = date.toLocaleString("en-US", options);
-    return formattedDate;
+      // Create a new Date object to avoid modifying the original
+      const newTime = new Date(givenTime);
+
+      // Add hours and minutes
+      givenTime.setHours(newTime.getHours() + hoursToAdd);
+      givenTime.setMinutes(newTime.getMinutes() + minutesToAdd);
+      const options = { year: "numeric", month: "short", day: "2-digit" };
+      const date = newTime;
+
+      // const istOffset = 5.5 * 60 * 60 * 1000;
+      // date.setTime(date.getTime() + istOffset);
+
+      const formattedDate = date.toLocaleDateString("en-US", options);
+
+      const hours = date.getHours();
+      const minutes = date.getMinutes();
+      const period = hours >= 12 ? "PM" : "AM";
+      const formattedTime = `${hours % 12 || 12}:${minutes
+        .toString()
+        .padStart(2, "0")} ${period}`;
+
+      return `${formattedDate}, ${formattedTime}`;
+    } else {
+      return "N.A.";
+    }
   }
-  return "N.A.";
-  // if (dateString) {
-  //   const givenTime = new Date(dateString);
-
-  //   // Define hours and minutes to add
-  //   const hoursToAdd = 5; // 5 hours
-  //   const minutesToAdd = 30; // 30 minutes
-
-  //   // Create a new Date object to avoid modifying the original
-  //   const newTime = new Date(givenTime);
-
-  //   // Add hours and minutes
-  //   givenTime.setHours(newTime.getHours() + hoursToAdd);
-  //   givenTime.setMinutes(newTime.getMinutes() + minutesToAdd);
-  //   const options = { year: "numeric", month: "short", day: "2-digit" };
-  //   const date = newTime;
-  //   console.log("data", date);
-  //   // const istOffset = 5.5 * 60 * 60 * 1000;
-  //   // date.setTime(date.getTime() + istOffset);
-
-  //   const formattedDate = date.toLocaleDateString("en-US", options);
-
-  //   const hours = date.getHours();
-  //   const minutes = date.getMinutes();
-  //   const period = hours >= 12 ? "PM" : "AM";
-  //   const formattedTime = `${hours % 12 || 12}:${minutes
-  //     .toString()
-  //     .padStart(2, "0")} ${period}`;
-
-  //   return `${formattedDate}, ${formattedTime}`;
-  // } else {
-  //   return "N.A.";
-  // }
 };
 
 // Get dependent dropdown
