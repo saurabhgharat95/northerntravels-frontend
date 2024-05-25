@@ -612,7 +612,7 @@ const AddQuotation = () => {
             toast.success(response.data.message, {
               position: "top-right",
             });
-            generateQuotationPDF(quotFormData.quotId);
+            // generateQuotationPDF(quotFormData.quotId);
             dispatch(resetFormData());
             setIsLoading(false);
             setTimeout(() => {
