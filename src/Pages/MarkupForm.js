@@ -181,6 +181,7 @@ const MarkupForm = ({ onValidationStatusChange }) => {
     let roomsReqd =
       Number(quotFormData.quotRoomsReqd) -
       (quotFormData.quotSingleOccupy ? quotFormData.quotSingleOccupy : 0);
+    let totalDoubleRoomPeople = Number(quotFormData.quotTotalPeoples)-Number(quotFormData.quotTotalExtraBeds)-Number(quotFormData.quotChildBtwn8And9)-Number(quotFormData.quotBlw5)-Number(quotFormData.quotSingleOccupy)
 
     let hotelRoomPPFinalAmt =
       Number(pckg.hotelRoomPPAmt) +
@@ -188,7 +189,7 @@ const MarkupForm = ({ onValidationStatusChange }) => {
       Number(addOnPPAMt)  +
       (pckg.hotelRoomMarkupAmt ? Number(pckg.hotelRoomMarkupAmt) : 0);
 
-    let hotelRoomFinalAmt = hotelRoomPPFinalAmt * (Number(quotFormData.quotTotalPeoples)-Number(quotFormData.quotTotalExtraBeds)-Number(quotFormData.quotChildBtwn8And9)-Number(quotFormData.quotBlw5)-Number(quotFormData.quotSingleOccupy)) ;
+    let hotelRoomFinalAmt = hotelRoomPPFinalAmt * (totalDoubleRoomPeople) ;
 
     // console.log(
     //   "h1",
@@ -655,7 +656,7 @@ const MarkupForm = ({ onValidationStatusChange }) => {
                     />
                   </div>
                   <div className="col-sm-4">
-                    <label>Markup (Rs.)</label>
+                    <label>Markup per person(Rs.)</label>
                     <input
                       type="text"
                       pattern="[0-9]+"
@@ -731,7 +732,7 @@ const MarkupForm = ({ onValidationStatusChange }) => {
                     />
                   </div>
                   <div className="col-sm-4">
-                    <label>Markup (Rs.)</label>
+                    <label>Markup per person(Rs.)</label>
                     <input
                       type="text"
                       pattern="[0-9]+"
@@ -809,7 +810,7 @@ const MarkupForm = ({ onValidationStatusChange }) => {
                     />
                   </div>
                   <div className="col-sm-4">
-                    <label>Markup (Rs.)</label>
+                    <label>Markup per person(Rs.)</label>
                     <input
                       type="text"
                       pattern="[0-9]+"
@@ -885,7 +886,7 @@ const MarkupForm = ({ onValidationStatusChange }) => {
                     />
                   </div>
                   <div className="col-sm-4">
-                    <label>Markup (Rs.)</label>
+                    <label>Markup per person(Rs.)</label>
                     <input
                       type="text"
                       pattern="[0-9]+"
@@ -958,7 +959,7 @@ const MarkupForm = ({ onValidationStatusChange }) => {
                     />
                   </div>
                   <div className="col-sm-4">
-                    <label>Markup (Rs.)</label>
+                    <label>Markup per person(Rs.)</label>
                     <input
                       type="text"
                       pattern="[0-9]+"
