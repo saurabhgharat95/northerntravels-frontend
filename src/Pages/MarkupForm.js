@@ -177,53 +177,53 @@ const MarkupForm = ({ onValidationStatusChange }) => {
     }
   };
   const calculatePackageAmt = (pckg, itineraryPPAmt, addOnPPAMt) => {
-    console.log("pckg", pckg);
+    // console.log("pckg", pckg);
     let roomsReqd =
       Number(quotFormData.quotRoomsReqd) -
       (quotFormData.quotSingleOccupy ? quotFormData.quotSingleOccupy : 0);
 
     let hotelRoomPPFinalAmt =
       Number(pckg.hotelRoomPPAmt) +
-      Number(itineraryPPAmt) * Number(pckg.noOfHotels) +
-      Number(addOnPPAMt) * Number(pckg.noOfHotels) +
+      Number(itineraryPPAmt)  +
+      Number(addOnPPAMt)  +
       (pckg.hotelRoomMarkupAmt ? Number(pckg.hotelRoomMarkupAmt) : 0);
 
-    let hotelRoomFinalAmt = hotelRoomPPFinalAmt * 2 * roomsReqd;
+    let hotelRoomFinalAmt = hotelRoomPPFinalAmt * (Number(quotFormData.quotTotalPeoples)-Number(quotFormData.quotTotalExtraBeds)-Number(quotFormData.quotChildBtwn8And9)-Number(quotFormData.quotBlw5)-Number(quotFormData.quotSingleOccupy)) ;
 
-    console.log(
-      "h1",
-      pckg.hotelRoomPPAmt,
-      hotelRoomPPFinalAmt,
-      hotelRoomFinalAmt
-    );
+    // console.log(
+    //   "h1",
+    //   pckg.hotelRoomPPAmt,
+    //   hotelRoomPPFinalAmt,
+    //   hotelRoomFinalAmt
+    // );
 
     let extraBedPPFinalAmt =
       Number(pckg.extraBedPPAmt) +
-      Number(itineraryPPAmt) * Number(pckg.noOfHotels) +
-      Number(addOnPPAMt) * Number(pckg.noOfHotels) +
+      Number(itineraryPPAmt)  +
+      Number(addOnPPAMt)  +
       (pckg.extraBedMarkupAmt ? Number(pckg.extraBedMarkupAmt) : 0);
     let extraBedFinalAmt = extraBedPPFinalAmt * quotFormData.quotTotalExtraBeds;
 
     let cnbPPFinalAmt =
       Number(pckg.cnbPPAmt) +
-      Number(itineraryPPAmt) * Number(pckg.noOfHotels) +
-      Number(addOnPPAMt) * Number(pckg.noOfHotels) +
+      Number(itineraryPPAmt)  +
+      Number(addOnPPAMt)  +
       (pckg.cnbMarkupAmt ? Number(pckg.cnbMarkupAmt) : 0);
 
     let cnbFinalAmt = cnbPPFinalAmt * quotFormData.quotChildBtwn8And9;
 
     let cmpPPFinalAmt =
       Number(pckg.cmpPPAmt) +
-      Number(itineraryPPAmt) * Number(pckg.noOfHotels) +
-      Number(addOnPPAMt) * Number(pckg.noOfHotels) +
+      Number(itineraryPPAmt)  +
+      Number(addOnPPAMt) *  +
       (pckg.cmpMarkupAmt ? Number(pckg.cmpMarkupAmt) : 0);
 
     let cmpFinalAmt = cmpPPFinalAmt * quotFormData.quotBlw5;
 
     let singleOccupyPPFinalAmt =
       Number(pckg.singleOccupyPPAmt) +
-      Number(itineraryPPAmt) * Number(pckg.noOfHotels) +
-      Number(addOnPPAMt) * Number(pckg.noOfHotels) +
+      Number(itineraryPPAmt)  +
+      Number(addOnPPAMt)  +
       (pckg.singleOccupyMarkupAmt ? Number(pckg.singleOccupyMarkupAmt) : 0);
 
     let singleOccupyFinalAmt =
@@ -236,17 +236,88 @@ const MarkupForm = ({ onValidationStatusChange }) => {
       cmpFinalAmt +
       singleOccupyFinalAmt;
 
-    console.log("hotelRoomFinalAmt", hotelRoomPPFinalAmt, hotelRoomFinalAmt);
-    console.log("extraBedFinalAmt", extraBedPPFinalAmt, extraBedFinalAmt);
-    console.log("cnbFinalAmt", cnbPPFinalAmt, cnbFinalAmt);
-    console.log("cmpFinalAmt", cmpPPFinalAmt, cmpFinalAmt);
-    console.log(
-      "singleOccupyFinalAmt",
-      singleOccupyPPFinalAmt,
-      singleOccupyFinalAmt
-    );
+    // console.log("hotelRoomFinalAmt", hotelRoomPPFinalAmt, hotelRoomFinalAmt);
+    // console.log("extraBedFinalAmt", extraBedPPFinalAmt, extraBedFinalAmt);
+    // console.log("cnbFinalAmt", cnbPPFinalAmt, cnbFinalAmt);
+    // console.log("cmpFinalAmt", cmpPPFinalAmt, cmpFinalAmt);
+    // console.log(
+    //   "singleOccupyFinalAmt",
+    //   singleOccupyPPFinalAmt,
+    //   singleOccupyFinalAmt
+    // );
     pckg.totalPckgAmt = totalPckgAmt.toFixed(2);
   };
+  // const calculatePackageAmt = (pckg, itineraryPPAmt, addOnPPAMt) => {
+  //   console.log("pckg", pckg);
+  //   let roomsReqd =
+  //     Number(quotFormData.quotRoomsReqd) -
+  //     (quotFormData.quotSingleOccupy ? quotFormData.quotSingleOccupy : 0);
+
+  //   let hotelRoomPPFinalAmt =
+  //     Number(pckg.hotelRoomPPAmt) +
+  //     Number(itineraryPPAmt) * Number(pckg.noOfHotels) +
+  //     Number(addOnPPAMt) * Number(pckg.noOfHotels) +
+  //     (pckg.hotelRoomMarkupAmt ? Number(pckg.hotelRoomMarkupAmt) : 0);
+
+  //   let hotelRoomFinalAmt = hotelRoomPPFinalAmt * 2 * roomsReqd;
+
+  //   console.log(
+  //     "h1",
+  //     pckg.hotelRoomPPAmt,
+  //     hotelRoomPPFinalAmt,
+  //     hotelRoomFinalAmt
+  //   );
+
+  //   let extraBedPPFinalAmt =
+  //     Number(pckg.extraBedPPAmt) +
+  //     Number(itineraryPPAmt) * Number(pckg.noOfHotels) +
+  //     Number(addOnPPAMt) * Number(pckg.noOfHotels) +
+  //     (pckg.extraBedMarkupAmt ? Number(pckg.extraBedMarkupAmt) : 0);
+  //   let extraBedFinalAmt = extraBedPPFinalAmt * quotFormData.quotTotalExtraBeds;
+
+  //   let cnbPPFinalAmt =
+  //     Number(pckg.cnbPPAmt) +
+  //     Number(itineraryPPAmt) * Number(pckg.noOfHotels) +
+  //     Number(addOnPPAMt) * Number(pckg.noOfHotels) +
+  //     (pckg.cnbMarkupAmt ? Number(pckg.cnbMarkupAmt) : 0);
+
+  //   let cnbFinalAmt = cnbPPFinalAmt * quotFormData.quotChildBtwn8And9;
+
+  //   let cmpPPFinalAmt =
+  //     Number(pckg.cmpPPAmt) +
+  //     Number(itineraryPPAmt) * Number(pckg.noOfHotels) +
+  //     Number(addOnPPAMt) * Number(pckg.noOfHotels) +
+  //     (pckg.cmpMarkupAmt ? Number(pckg.cmpMarkupAmt) : 0);
+
+  //   let cmpFinalAmt = cmpPPFinalAmt * quotFormData.quotBlw5;
+
+  //   let singleOccupyPPFinalAmt =
+  //     Number(pckg.singleOccupyPPAmt) +
+  //     Number(itineraryPPAmt) * Number(pckg.noOfHotels) +
+  //     Number(addOnPPAMt) * Number(pckg.noOfHotels) +
+  //     (pckg.singleOccupyMarkupAmt ? Number(pckg.singleOccupyMarkupAmt) : 0);
+
+  //   let singleOccupyFinalAmt =
+  //     singleOccupyPPFinalAmt * quotFormData.quotSingleOccupy;
+
+  //   let totalPckgAmt =
+  //     hotelRoomFinalAmt +
+  //     extraBedFinalAmt +
+  //     cnbFinalAmt +
+  //     cmpFinalAmt +
+  //     singleOccupyFinalAmt;
+
+  //   console.log("hotelRoomFinalAmt", hotelRoomPPFinalAmt, hotelRoomFinalAmt);
+  //   console.log("extraBedFinalAmt", extraBedPPFinalAmt, extraBedFinalAmt);
+  //   console.log("cnbFinalAmt", cnbPPFinalAmt, cnbFinalAmt);
+  //   console.log("cmpFinalAmt", cmpPPFinalAmt, cmpFinalAmt);
+  //   console.log(
+  //     "singleOccupyFinalAmt",
+  //     singleOccupyPPFinalAmt,
+  //     singleOccupyFinalAmt
+  //   );
+  //   pckg.totalPckgAmt = totalPckgAmt.toFixed(2);
+  // };
   const validateForm = () => {
     const isValid = simpleValidator.current.allValid();
     if (isValid) {
@@ -578,7 +649,8 @@ const MarkupForm = ({ onValidationStatusChange }) => {
                       pattern="[0-9]+"
                       className="form-control"
                       placeholder="Enter Before Markup (Rs.)"
-                      value={pckg.hotelRoomPPAmt}
+                      value={pckg.hotelRoomPPAmt+Number(ppAmtObj.itineraryPPAmt) +
+                      Number(ppAmtObj.addOnPPAMt)}
                       disabled
                     />
                   </div>
@@ -634,15 +706,14 @@ const MarkupForm = ({ onValidationStatusChange }) => {
                       className="form-control"
                       placeholder="Enter Amount Per Person (Rs.)"
                       readOnly
-                      value={(
+                      value={Number(pckg.hotelRoomPPAmt) !=0 ?(
                         Number(pckg.hotelRoomPPAmt) +
                         Number(
                           pckg.hotelRoomMarkupAmt ? pckg.hotelRoomMarkupAmt : 0
-                        ) +
-                        Number(ppAmtObj.itineraryPPAmt) *
-                          Number(pckg.noOfHotels) +
-                        Number(ppAmtObj.addOnPPAMt) * Number(pckg.noOfHotels)
-                      ).toFixed(2)}
+                        ) +Number(ppAmtObj.itineraryPPAmt) +
+                        Number(ppAmtObj.addOnPPAMt)
+                        
+                      ).toFixed(2):0}
                     />
                   </div>
                 </div>
@@ -654,7 +725,8 @@ const MarkupForm = ({ onValidationStatusChange }) => {
                       pattern="[0-9]+"
                       className="form-control"
                       placeholder="Enter Single occupancy (Rs.)"
-                      value={pckg.singleOccupyPPAmt}
+                      value={pckg.singleOccupyPPAmt !=0 ? pckg.singleOccupyPPAmt+Number(ppAmtObj.itineraryPPAmt) +
+                        Number(ppAmtObj.addOnPPAMt):0 }
                       disabled
                     />
                   </div>
@@ -710,17 +782,16 @@ const MarkupForm = ({ onValidationStatusChange }) => {
                       className="form-control"
                       placeholder="Enter Markup (Rs.)"
                       readOnly
-                      value={(
+                      value={Number(pckg.singleOccupyPPAmt)!=0 ?(
                         Number(pckg.singleOccupyPPAmt) +
                         Number(
                           pckg.singleOccupyMarkupAmt
                             ? pckg.singleOccupyMarkupAmt
                             : 0
-                        ) +
-                        Number(ppAmtObj.itineraryPPAmt) *
-                          Number(pckg.noOfHotels) +
-                        Number(ppAmtObj.addOnPPAMt) * Number(pckg.noOfHotels)
-                      ).toFixed(2)}
+                        ) +Number(ppAmtObj.itineraryPPAmt) +
+                        Number(ppAmtObj.addOnPPAMt)
+                        
+                      ).toFixed(2):0}
                     />
                   </div>
                 </div>
@@ -732,7 +803,8 @@ const MarkupForm = ({ onValidationStatusChange }) => {
                       pattern="[0-9]+"
                       className="form-control"
                       placeholder="Enter Extra bed per person Amount (Rs.)"
-                      value={pckg.extraBedPPAmt}
+                      value={pckg.extraBedPPAmt!=0 ? pckg.extraBedPPAmt+Number(ppAmtObj.itineraryPPAmt) +
+                        Number(ppAmtObj.addOnPPAMt):0}
                       disabled
                     />
                   </div>
@@ -788,15 +860,13 @@ const MarkupForm = ({ onValidationStatusChange }) => {
                       className="form-control"
                       placeholder="Enter Markup (Rs.)"
                       readOnly
-                      value={(
+                      value={Number(pckg.extraBedPPAmt)!=0 ?(
                         Number(pckg.extraBedPPAmt) +
                         Number(
                           pckg.extraBedMarkupAmt ? pckg.extraBedMarkupAmt : 0
-                        ) +
-                        Number(ppAmtObj.itineraryPPAmt) *
-                          Number(pckg.noOfHotels) +
-                        Number(ppAmtObj.addOnPPAMt) * Number(pckg.noOfHotels)
-                      ).toFixed(2)}
+                        ) +Number(ppAmtObj.itineraryPPAmt) +
+                        Number(ppAmtObj.addOnPPAMt)
+                      ).toFixed(2):0}
                     />
                   </div>
                 </div>
@@ -808,7 +878,9 @@ const MarkupForm = ({ onValidationStatusChange }) => {
                       pattern="[0-9]+"
                       className="form-control"
                       placeholder="Enter Before Markup (Rs.)"
-                      value={pckg.cnbPPAmt}
+                      value={pckg.cnbPPAmt!=0  ?pckg.cnbPPAmt+
+                        Number(ppAmtObj.itineraryPPAmt)  +
+                        Number(ppAmtObj.addOnPPAMt) :0}
                       disabled
                     />
                   </div>
@@ -862,13 +934,12 @@ const MarkupForm = ({ onValidationStatusChange }) => {
                       className="form-control"
                       placeholder="Enter Markup (Rs.)"
                       readOnly
-                      value={(
+                      value={Number(pckg.cnbPPAmt) !=0 ?(
                         Number(pckg.cnbPPAmt) +
                         Number(pckg.cnbMarkupAmt ? pckg.cnbMarkupAmt : 0) +
-                        Number(ppAmtObj.itineraryPPAmt) *
-                          Number(pckg.noOfHotels) +
-                        Number(ppAmtObj.addOnPPAMt) * Number(pckg.noOfHotels)
-                      ).toFixed(2)}
+                        Number(ppAmtObj.itineraryPPAmt) +
+                        Number(ppAmtObj.addOnPPAMt) 
+                      ).toFixed(2):0}
                     />
                   </div>
                 </div>
@@ -880,7 +951,9 @@ const MarkupForm = ({ onValidationStatusChange }) => {
                       pattern="[0-9]+"
                       className="form-control"
                       placeholder="Enter CMP per person Amount (Rs.)"
-                      value={pckg.cmpPPAmt}
+                      value={pckg.cmpPPAmt!=0 ? pckg.cmpPPAmt+
+                        Number(ppAmtObj.itineraryPPAmt)  +
+                        Number(ppAmtObj.addOnPPAMt):0 }
                       disabled
                     />
                   </div>
@@ -934,13 +1007,12 @@ const MarkupForm = ({ onValidationStatusChange }) => {
                       className="form-control"
                       placeholder="Enter Markup (Rs.)"
                       readOnly
-                      value={(
+                      value={Number(pckg.cmpPPAmt) !=0?(
                         Number(pckg.cmpPPAmt) +
                         Number(pckg.cmpMarkupAmt ? pckg.cmpMarkupAmt : 0) +
-                        Number(ppAmtObj.itineraryPPAmt) *
-                          Number(pckg.noOfHotels) +
-                        Number(ppAmtObj.addOnPPAMt) * Number(pckg.noOfHotels)
-                      ).toFixed(2)}
+                        Number(ppAmtObj.itineraryPPAmt) +
+                        Number(ppAmtObj.addOnPPAMt) 
+                      ).toFixed(2):0}
                     />
                   </div>
                 </div>
@@ -1033,7 +1105,8 @@ const MarkupForm = ({ onValidationStatusChange }) => {
                       src={
                         BASE_URL +
                         "/uploads/company_logos/" +
-                        markupObject.quotCompanyLogo +
+                        markupObject.quotCompanyLogo 
+                        +
                         ".jpeg"
                       }
                     />
@@ -1045,7 +1118,8 @@ const MarkupForm = ({ onValidationStatusChange }) => {
                         openImageModal(
                           BASE_URL +
                             "/uploads/company_logos/" +
-                            markupObject.quotCompanyLogo +
+                            markupObject.quotCompanyLogo 
+                            +
                             ".jpeg"
                         )
                       }
@@ -1054,6 +1128,7 @@ const MarkupForm = ({ onValidationStatusChange }) => {
                     </span>
                   </>
                 )}
+              
                 {markupObject.quotCompanyLogo.includes("base64") && (
                   <>
                     <br></br>

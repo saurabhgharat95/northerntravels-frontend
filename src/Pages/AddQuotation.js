@@ -804,9 +804,10 @@ const AddQuotation = () => {
             quotCompanyEmail: quotationDetails.quotCompanyEmail,
             quotCompanyWebsite: quotationDetails.quotCompanyWebsite,
             quotLogo: quotationDetails.quotLogo,
+            quotCompanyLogo: quotationDetails.quotCompanyLogo,
+
             // itineraryPPAmt: quotationDetails.itineraryPPAmt,
             // addOnPPAMt: quotationDetails.addOnPPAMt,
-            // quotCompanyLogo: quotationDetails.quotCompanyLogo,
             // quotCompanyLogo: quotationDetails.quotCompanyLogo,
           };
           Object.entries(formData).forEach(([field, value]) => {
