@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { toast,SimpleReactValidator } from "../components/CommonImport";
+import { toast, SimpleReactValidator } from "../components/CommonImport";
 import "react-toastify/dist/ReactToastify.css";
 //redux
 import { useDispatch, useSelector } from "react-redux";
@@ -152,14 +152,10 @@ const AccommodationDetailsForm = ({ onValidationStatusChange }) => {
       quotBlw5: noOfCMP,
     }));
     dispatch(setQuotationFormData("quotTotalExtraBeds", noOfExtraBeds));
-    dispatch(
-      setQuotationFormData("quotSingleOccupy", noOfSingleOccupancy)
-    );
+    dispatch(setQuotationFormData("quotSingleOccupy", noOfSingleOccupancy));
     dispatch(setQuotationFormData("quotChildBtwn8And9", noOfCNB));
     dispatch(setQuotationFormData("quotBlw5", noOfCMP));
     setForceUpdate((v) => ++v);
-
- 
   };
   useEffect(() => {
     validateForm();
@@ -183,15 +179,17 @@ const AccommodationDetailsForm = ({ onValidationStatusChange }) => {
         roomData.forEach((element) => {
           roomArray.push({
             id: element.id,
-            isSingleOccupancy: element.isSingleOccupancy === 1,
-            childAbove9: element.extraBeds,
-            totalPersonsRoom: element.totalPersonsRoom,
-            noExtraBeds: element.noExtraBeds,
-            freeBeds: element.freeBeds,
-            extraBeds: element.extraBeds,
+            isSingleOccupancy: element.isSingleOccupancy == 1,
+            childAbove9: element.isSingleOccupancy != 1 ? element.extraBeds : 0,
+            totalPersonsRoom:
+              element.isSingleOccupancy != 1 ? element.totalPersonsRoom : 0,
+            noExtraBeds:
+              element.isSingleOccupancy != 1 ? element.noExtraBeds : 0,
+            freeBeds: element.isSingleOccupancy != 1 ? element.freeBeds : 0,
+            extraBeds: element.isSingleOccupancy != 1 ? element.extraBeds : 0,
           });
         });
-       
+
         if (roomArray.length > 0) {
           setRoomObject(roomArray);
         }
@@ -214,7 +212,7 @@ const AccommodationDetailsForm = ({ onValidationStatusChange }) => {
   //       quotTotalExtraBeds: quotFormData.quotTotalExtraBeds,
   //     }));
   //     let roomData = quotFormData.roomData;
-  //     // 
+  //     //
   //     let roomArray = [];
   //     if (roomData) {
   //       if (roomData && roomData.length > 0 && ( roomData[0].fkQuotId || roomData[0].extraBeds)) {
@@ -228,7 +226,7 @@ const AccommodationDetailsForm = ({ onValidationStatusChange }) => {
   //             extraBeds: element.extraBeds,
   //           });
   //         });
-  //         
+  //
   //         if (roomArray.length > 0 && roomArray[0].extraBeds) {
   //           setRoomObject(roomArray);
   //         }
@@ -656,9 +654,7 @@ const AccommodationDetailsForm = ({ onValidationStatusChange }) => {
               value={accommodationObject.quotSingleOccupy}
               readOnly
               onBlur={() => {
-                simpleValidator.current.showMessageFor(
-                  "quotSingleOccupy"
-                );
+                simpleValidator.current.showMessageFor("quotSingleOccupy");
               }}
             />
           </div>
@@ -688,18 +684,14 @@ const AccommodationDetailsForm = ({ onValidationStatusChange }) => {
               value={accommodationObject.quotBlw5}
               readOnly
               onBlur={() => {
-                simpleValidator.current.showMessageFor(
-                  "quotBlw5"
-                );
+                simpleValidator.current.showMessageFor("quotBlw5");
               }}
             />
           </div>
         </div>
-       
+
         <br></br>
-       
       </section>
-     
     </>
   );
 };

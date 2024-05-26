@@ -16,7 +16,7 @@ import {
   FETCH_HOTEL_ROOMS_API,
   DELETE_HOTEL_ROOM_API,
   FETCH_HOTEL_ROOM_DETAILS_API,
-  FETCH_MEAL_TYPES_API
+  FETCH_MEAL_TYPES_API,
 } from "../utils/constants";
 import { getDateFormatted } from "../utils/helpers";
 import "react-toastify/dist/ReactToastify.css";
@@ -54,6 +54,7 @@ const HotelRoomManagement = () => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [isDataReady, setDataReady] = useState(false);
+  const [isRoomDataReady, setRoomDataReady] = useState(false);
 
   const [formType, setFormType] = useState("add");
 
@@ -65,7 +66,7 @@ const HotelRoomManagement = () => {
     2: "Extra Bed",
     3: "Child Without Bed Charge",
     4: "Extra Child Below 5 Yrs Charge",
-    5: "Single Occupancy"
+    5: "Single Occupancy",
   };
   const simpleValidator = useRef(
     new SimpleReactValidator({
@@ -128,14 +129,14 @@ const HotelRoomManagement = () => {
       let body = {
         id: id,
       };
+      setRoomDataReady(false);
       let response = await axios.post(url, body);
       if (response) {
         if (response.status == 200) {
           if (response.data.data) {
             if (response.data.data.roomChargesData.length > 0) {
-              
-
               let roomDetails = groupedData(response.data.data.roomChargesData);
+              setRoomDataReady(true);
 
               setHotelRoomDetails(roomDetails);
             }
@@ -144,6 +145,7 @@ const HotelRoomManagement = () => {
       }
     } catch (e) {
       setHotelRooms([]);
+      setRoomDataReady(true);
     }
   };
   const deleteHotelRoom = async (id) => {
@@ -253,32 +255,29 @@ const HotelRoomManagement = () => {
               label: type.mealTypeName,
             });
           });
-          let elements = []
-          for(let i=0;i<2;i++){
-            for (let j=0;j<mealTypesOptionsArray.length;j++){
+          let elements = [];
+          for (let i = 0; i < 2; i++) {
+            for (let j = 0; j < mealTypesOptionsArray.length; j++) {
               elements.push(
-              <th
-              key={`${mealTypesOptionsArray[j].value}-1`}
-              style={{ width: "107.016px" }}
-              scope="col"
-            >
-              {mealTypesOptionsArray[j].label}
-            </th>
-              )
+                <th
+                  key={`${mealTypesOptionsArray[j].value}-1`}
+                  style={{ width: "107.016px" }}
+                  scope="col"
+                >
+                  {mealTypesOptionsArray[j].label}
+                </th>
+              );
             }
           }
-          setThElements(elements)
+          setThElements(elements);
         }
       }
-    } catch (e) {
-      
-    }
+    } catch (e) {}
   };
   useEffect(() => {
     fetchHotels();
     fetchMealTypes();
   }, []);
-
 
   return (
     <div className="container-scroller">
@@ -613,7 +612,6 @@ const HotelRoomManagement = () => {
                                       </tr>
                                     </thead>
                                     <tbody>
-                                      {}
                                       {hotelRooms &&
                                         hotelRooms
                                           .slice(startIndex, endIndex)
@@ -730,34 +728,35 @@ const HotelRoomManagement = () => {
                 )}
                 {formModule == "charges" && (
                   <>
-                    <div className="row">
-                      <div className="col-md-4 grid-margin stretch-card">
-                        <div className="card border border-primary">
-                          <div className="card-body">
-                            <div className="media">
-                              <ion-icon
-                                style={{ marginTop: "5px" }}
-                                color="primary"
-                                name="business-outline"
-                                size="large"
-                              ></ion-icon>
-                              <div className="media-body ml-2">
-                                <p
-                                  className="card-text"
-                                  style={{ marginBottom: 0 }}
-                                >
-                                  Hotel : <b>{selectedHotel.name}</b>
-                                </p>
-                                <p className="card-text">
-                                  Room Type : <b>{selectedHotel.roomType}</b>
-                                </p>
+                    {isRoomDataReady && (
+                      <div className="row">
+                        <div className="col-md-4 grid-margin stretch-card">
+                          <div className="card border border-primary">
+                            <div className="card-body">
+                              <div className="media">
+                                <ion-icon
+                                  style={{ marginTop: "5px" }}
+                                  color="primary"
+                                  name="business-outline"
+                                  size="large"
+                                ></ion-icon>
+                                <div className="media-body ml-2">
+                                  <p
+                                    className="card-text"
+                                    style={{ marginBottom: 0 }}
+                                  >
+                                    Hotel : <b>{selectedHotel.name}</b>
+                                  </p>
+                                  <p className="card-text">
+                                    Room Type : <b>{selectedHotel.roomType}</b>
+                                  </p>
+                                </div>
                               </div>
                             </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-
+                    )}
                     <div className="row">
                       <div className="col-12">
                         <div className="table-responsive">
@@ -792,6 +791,7 @@ const HotelRoomManagement = () => {
                                     {thElements}
                                   </tr>
                                   {hotelRoomDetails &&
+                                    isRoomDataReady &&
                                     Object.entries(hotelRoomDetails).map(
                                       ([key, value]) => (
                                         <>
@@ -806,6 +806,9 @@ const HotelRoomManagement = () => {
                                         </>
                                       )
                                     )}
+                                  {isRoomDataReady == false && (
+                                    <ShimmerTable row={7} />
+                                  )}
                                 </table>
                               </div>
                             </div>
