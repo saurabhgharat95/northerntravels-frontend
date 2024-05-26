@@ -140,7 +140,7 @@ const AddQuotation = () => {
         quotDays: quotFormData.quotDays,
         quotNights: quotFormData.quotNights,
       };
-      
+
       const isFormValid =
         componentSelectorRef.current.isBasicDetailsFormValid();
       if (isFormValid) {
@@ -159,7 +159,6 @@ const AddQuotation = () => {
         }
       }
     } catch (e) {
-      
       setIsLoading(false);
       toast.error("Something Went Wrong :(", {
         position: "top-right",
@@ -189,7 +188,7 @@ const AddQuotation = () => {
         quotDays: quotFormData.quotDays,
         quotNights: quotFormData.quotNights,
       };
-      
+
       const isFormValid =
         componentSelectorRef.current.isBasicDetailsFormValid();
       if (isFormValid) {
@@ -207,7 +206,6 @@ const AddQuotation = () => {
         }
       }
     } catch (e) {
-      
       setIsLoading(false);
       toast.error("Something Went Wrong :(", {
         position: "top-right",
@@ -255,7 +253,7 @@ const AddQuotation = () => {
         quotSingleOccupy: quotFormData.quotSingleOccupy,
         roomData: quotRoomData,
       };
-      
+
       const isFormValid = componentSelectorRef.current.isAccomFormValid();
 
       if (isFormValid) {
@@ -273,7 +271,6 @@ const AddQuotation = () => {
         }
       }
     } catch (e) {
-      
       setIsLoading(false);
       toast.error("Something Went Wrong :(", {
         position: "top-right",
@@ -334,9 +331,7 @@ const AddQuotation = () => {
           }
         }
       }
-    } catch (e) {
-      ;
-    }
+    } catch (e) {}
   };
   const updateHotelDetails = async () => {
     try {
@@ -363,7 +358,7 @@ const AddQuotation = () => {
         quotId: quotFormData.quotId,
         quotHotelData: quotHotelData,
       };
-      
+
       const isFormValid = componentSelectorRef.current.isHotelFormValid();
       if (isFormValid) {
         setIsLoading(true);
@@ -381,7 +376,6 @@ const AddQuotation = () => {
         }
       }
     } catch (e) {
-      
       setIsLoading(false);
       toast.error("Something Went Wrong :(", {
         position: "top-right",
@@ -456,7 +450,7 @@ const AddQuotation = () => {
             //       destinationDesc: "",
             //     })),
             // }));
-            
+
             dispatch(setQuotationFormData("quotItineraryData", itineraryData));
           } else {
             itiAddonData = element.itiAddonData.map((element) => ({
@@ -498,9 +492,7 @@ const AddQuotation = () => {
           }
         }
       }
-    } catch (e) {
-      ;
-    }
+    } catch (e) {}
   };
   const updateItinerary = async () => {
     try {
@@ -509,7 +501,6 @@ const AddQuotation = () => {
       let quotItinerarydetails = quotFormData.quotItineraryData;
       let quotItiAddons = [];
       if (quotItinerarydetails.length > 0) {
-        
         quotItinerarydetails.forEach((element) => {
           if (element.quotItiAddons && element.quotItiAddons.length > 0) {
             if (
@@ -519,7 +510,7 @@ const AddQuotation = () => {
               quotItiAddons = element.quotItiAddons;
             }
           }
-          
+
           quotItineraryData.push({
             quotItiId: element.quotItiId,
             quotItiDay: element.quotItiDay,
@@ -542,7 +533,7 @@ const AddQuotation = () => {
         quotId: quotFormData.quotId,
         quotItineraryData: quotItineraryData,
       };
-      
+
       const isFormValid = componentSelectorRef.current.isItineraryFormValid();
 
       if (isFormValid) {
@@ -561,7 +552,6 @@ const AddQuotation = () => {
         }
       }
     } catch (e) {
-      
       setIsLoading(false);
       toast.error("Something Went Wrong :(", {
         position: "top-right",
@@ -601,7 +591,7 @@ const AddQuotation = () => {
       // formData.append("quotLogo", "");
       // formData.append("quotCompanyLogo", "");
 
-      // 
+      //
       const isFormValid = componentSelectorRef.current.isMarkupFormValid();
 
       if (isFormValid) {
@@ -609,20 +599,11 @@ const AddQuotation = () => {
         let response = await axios.post(url, formData);
         if (response) {
           if (response.status == 200) {
-            toast.success(response.data.message, {
-              position: "top-right",
-            });
-            // generateQuotationPDF(quotFormData.quotId);
-            dispatch(resetFormData());
-            setIsLoading(false);
-            setTimeout(() => {
-              window.location.href = "/quotations";
-            }, 1000);
+            generateQuotationPDF(quotFormData.quotId);
           }
         }
       }
     } catch (e) {
-      
       setIsLoading(false);
       toast.error("Something Went Wrong :(", {
         position: "top-right",
@@ -640,12 +621,18 @@ const AddQuotation = () => {
       let response = await axios.post(url, body);
       if (response) {
         if (response.status == 200) {
-          
+       
+          setTimeout(() => {
+            setIsLoading(false);
+            toast.success(response.data.message, {
+              position: "top-right",
+            });
+            dispatch(resetFormData());
+            window.location.href = "/quotations";
+          }, 1000);
         }
       }
-    } catch (e) {
-      
-    }
+    } catch (e) {}
   };
   const fetchTourDetails = async (tourId) => {
     try {
@@ -817,7 +804,6 @@ const AddQuotation = () => {
         }
       }
     } catch (e) {
-      
       setIsLoading(false);
     }
   };
@@ -878,8 +864,12 @@ const AddQuotation = () => {
                               className="current"
                               aria-disabled="false"
                               aria-selected="true"
-                              onClick={() => openFormTab(tab)}
-                              // style={{ opacity: tab.isDisabled ? 0.5 : 1 }}
+                              onClick={() => {
+                                openFormTab(tab);
+                                if(tab.id==5){
+                                  updateItinerary();
+                                }
+                              }}
                             >
                               <a
                                 id="steps-uid-0-t-0"
