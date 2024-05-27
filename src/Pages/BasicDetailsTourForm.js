@@ -296,7 +296,7 @@ const BasicDetailsTourForm = () => {
         aria-hidden="false"
         style={{ left: "0px" }}
       >
-        <h3>Basic Details</h3>
+        <h4>Basic Details</h4>
         <div className="form-group row">
           <div className="col-sm-6">
             <label>Tour Name</label>

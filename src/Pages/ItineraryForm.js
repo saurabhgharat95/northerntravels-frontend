@@ -568,7 +568,7 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
         aria-hidden="false"
         style={{ left: "0px" }}
       >
-        <h3>Itinerary</h3>
+        <h4>Itinerary</h4>
         <br></br>
         <div className="form-group row border p-3">
           <div className="col-sm-4 mb-3">
@@ -1179,7 +1179,7 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
                 className="dataTables_wrapper dt-bootstrap5 no-footer"
               >
                 <div className="row">
-                  <div className="col-md-4 grid-margin stretch-card">
+                  <div className="col-md-6 grid-margin stretch-card">
                     <div className="card border border-success">
                       <div className="card-body">
                         <div className="media">
@@ -1206,7 +1206,7 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
                       </div>
                     </div>
                   </div>
-                  <div className="col-md-4 grid-margin stretch-card">
+                  <div className="col-md-6 grid-margin stretch-card">
                     <div className="card border border-success">
                       <div className="card-body">
                         <div className="media">

@@ -544,7 +544,7 @@ const HotelDetailsForm = ({ onValidationStatusChange }) => {
         aria-hidden="false"
         style={{ left: "0px" }}
       >
-        <h3>Hotel Details</h3>
+        <h4>Hotel Details</h4>
         <br></br>
         <br></br>
         <br></br>
@@ -900,7 +900,7 @@ const HotelDetailsForm = ({ onValidationStatusChange }) => {
         </div>
         <br></br>
         <br></br>
-        <h3>Package Details</h3>
+        <h4>Package Details</h4>
         {packageData && packageData?.length > 0 && (
           <>
             <div className="text-center">

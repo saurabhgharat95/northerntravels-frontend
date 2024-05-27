@@ -845,9 +845,9 @@ const AddQuotation = () => {
                       {id ? "Edit" : "Add"} Quotation
                     </li>
                   </ol>
-                  <h4 className="card-title ml-1">
+                  <h3 className="card-title ml-1">
                     {id ? "Edit" : "Add"} Quotation{" "}
-                  </h4>
+                  </h3>
 
                   <div
                     role="application"

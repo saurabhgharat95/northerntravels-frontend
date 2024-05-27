@@ -346,12 +346,12 @@ const BasicDetailsForm = ({ onValidationStatusChange }) => {
         aria-hidden="false"
         style={{ left: "0px" }}
       >
-        <h3>Basic Details</h3>
+        <h4>Basic Details</h4>
         <div className="row">
           <div className="form-group col-sm-6 mb-0">
-            <label className="col-sm-2 col-form-label pl-0">Package</label>
+            <label className="col-sm-3 col-form-label pl-0">Package</label>
             <div className="form-group row">
-              <div className="col-sm-2">
+              <div className="col-sm-3">
                 <div className="form-check">
                   <label className="form-check-label">
                     <input
@@ -368,7 +368,7 @@ const BasicDetailsForm = ({ onValidationStatusChange }) => {
                   </label>
                 </div>
               </div>
-              <div className="col-sm-2">
+              <div className="col-sm-3">
                 <div className="form-check">
                   <label className="form-check-label">
                     <input
@@ -388,9 +388,9 @@ const BasicDetailsForm = ({ onValidationStatusChange }) => {
             </div>
           </div>
           <div className="form-group col-sm-6 mb-0">
-            <label className="col-sm-2 col-form-label pl-0">Season</label>
+            <label className="col-sm-3 col-form-label pl-0">Season</label>
             <div className="form-group row">
-              <div className="col-sm-3">
+              <div className="col-sm-4">
                 <div className="form-check">
                   <label className="form-check-label">
                     <input
@@ -407,7 +407,7 @@ const BasicDetailsForm = ({ onValidationStatusChange }) => {
                   </label>
                 </div>
               </div>
-              <div className="col-sm-3">
+              <div className="col-sm-4">
                 <div className="form-check">
                   <label className="form-check-label">
                     <input

@@ -244,7 +244,7 @@ const AccommodationDetailsForm = ({ onValidationStatusChange }) => {
         aria-hidden="false"
         style={{ left: "0px" }}
       >
-        <h3>Accommodation Details</h3>
+        <h4>Accommodation Details</h4>
         <br></br>
         <br></br>
         <br></br>

@@ -117,6 +117,11 @@ ion-icon {
   .wizard > .steps > ul > li {
     width: 20%; /* Adjust as needed for larger screens */
   }
+  .wizard > .steps > ul > li > a ,.wizard > .steps > ul > li > a >span,  .btn {
+    font-size: 12px !important;
+  }
+ 
+  
 }
 .sidebar .nav.sub-menu .nav-item::before {
   background: none;
@@ -322,4 +327,9 @@ ion-icon {
   padding:12px 8px;
   border-radius: 8px;
   margin-left: 12px;
+}
+h3,h4{
+  font-family: "Product_Regular";
+  font-weight: bold;
+  color: #2656ab;
 }

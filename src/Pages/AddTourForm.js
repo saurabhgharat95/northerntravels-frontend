@@ -334,9 +334,9 @@ const AddTourForm = () => {
                     </li>
                   </ol>
 
-                  <h4 className="card-title ml-1">
+                  <h3 className="card-title ml-1">
                     {id ? "Edit" : "Add"} Tour{" "}
-                  </h4>
+                  </h3>
                   <div
                     role="application"
                     className="wizard clearfix"

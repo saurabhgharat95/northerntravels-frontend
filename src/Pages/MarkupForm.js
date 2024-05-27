@@ -377,7 +377,7 @@ const MarkupForm = ({ onValidationStatusChange }) => {
         aria-hidden="false"
         style={{ left: "0px" }}
       >
-        <h3>Markup</h3>
+        <h4>Markup</h4>
         <br></br>
         <div className="row">
           <div className="col-md-4 grid-margin stretch-card">
@@ -402,7 +402,7 @@ const MarkupForm = ({ onValidationStatusChange }) => {
               </div>
             </div>
           </div>
-          <div className="col-md-5 grid-margin stretch-card">
+          <div className="col-md-8 grid-margin stretch-card">
             <div className="card border border-primary">
               <div className="card-body ">
                 <div className="row">
