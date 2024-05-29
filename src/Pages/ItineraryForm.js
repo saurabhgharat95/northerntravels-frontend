@@ -3,6 +3,7 @@ import {
   axios,
   SimpleReactValidator,
   Select,
+  toast,
 } from "../components/CommonImport";
 import NoData from "../components/NoData";
 import {
@@ -116,96 +117,162 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
       newFormValues[i].quotItiServiceRemark = "";
 
       setAddOnFormValues(newFormValues);
-    } catch (e) {
-      
-    }
+    } catch (e) {}
   };
   const addItinerary = () => {
     try {
       if (simpleValidator.current.allValid()) {
-        itineraryObject.quotItiAddons = addOnformValues;
-        itineraryObject.quotItiDestinations = destFormValues;
-        setItineraryData((prevState) => [...prevState, itineraryObject]);
-        dispatch(
-          setQuotationFormData("quotItineraryData", [
-            ...quotFormData.quotItineraryData,
-            itineraryObject,
-          ])
-        );
-        
-        setItineraryObject((prevState) => ({
-          ...prevState,
-          quotItiId: null,
-          quotItiDay: parseInt(prevState.quotItiDay) + 1,
-          quotItiDate: "",
-          vehicleName: null,
-          fkVehicleId: "",
-          pickupPt: "",
-          quotItiPickupPtId: "",
-          dropPt: "",
-          quotItiDropPtId: "",
-          quotItiNoOfVehicles: "",
-          quotItiAddons: [],
-          quotItiDestinations: [],
-          quotItiAmount: "",
-        }));
-        setDestFormValues([{ destinationName: "", destinationDesc: "" }]);
-        setAddOnFormValues([
-          {
-            quotItiAddonId: null,
-            quotItiService: "",
-            quotItiServicePayable: "1",
-            quotItiServiceAmount: "",
-            quotItiServiceRemark: "",
-          },
-        ]);
-        setActionObj((prevState) => ({ ...prevState, updateId: null }));
+        let quotArrivalDate = quotFormData.quotArrivalDate
+          ? new Date(quotFormData.quotArrivalDate)
+          : null;
+        let quotDepartureDate = quotFormData.quotDepartureDate
+          ? new Date(quotFormData.quotDepartureDate)
+          : null;
+        let quotItiDate = itineraryObject.quotItiDate
+          ? new Date(itineraryObject.quotItiDate)
+          : null;
+        let quotItiDay = itineraryObject.quotItiDay
+          ? itineraryObject.quotItiDay
+          : 0;
+        let quotDays = quotFormData.quotDays
+          ? Number(quotFormData.quotDays)
+          : 0;
+
+        if (
+          quotItiDate &&
+          quotArrivalDate &&
+          quotDepartureDate &&
+          quotItiDay &&
+          quotDays
+        ) {
+          if (
+            quotItiDate >= quotArrivalDate &&
+            quotItiDate <= quotDepartureDate &&
+            quotItiDay <= quotDays
+          ) {
+            itineraryObject.quotItiAddons = addOnformValues;
+            itineraryObject.quotItiDestinations = destFormValues;
+            setItineraryData((prevState) => [...prevState, itineraryObject]);
+            dispatch(
+              setQuotationFormData("quotItineraryData", [
+                ...quotFormData.quotItineraryData,
+                itineraryObject,
+              ])
+            );
+
+            setItineraryObject((prevState) => ({
+              ...prevState,
+              quotItiId: null,
+              quotItiDay: parseInt(prevState.quotItiDay) + 1,
+              quotItiDate: "",
+              vehicleName: null,
+              fkVehicleId: "",
+              pickupPt: "",
+              quotItiPickupPtId: "",
+              dropPt: "",
+              quotItiDropPtId: "",
+              quotItiNoOfVehicles: "",
+              quotItiAddons: [],
+              quotItiDestinations: [],
+              quotItiAmount: "",
+            }));
+            setDestFormValues([{ destinationName: "", destinationDesc: "" }]);
+            setAddOnFormValues([
+              {
+                quotItiAddonId: null,
+                quotItiService: "",
+                quotItiServicePayable: "1",
+                quotItiServiceAmount: "",
+                quotItiServiceRemark: "",
+              },
+            ]);
+            setActionObj((prevState) => ({ ...prevState, updateId: null }));
+          } else {
+            toast.error(
+              "Itinerary date is outside the arrival and departure date range.",
+              {
+                position: "top-right",
+              }
+            );
+          }
+        }
       } else {
         setForceUpdate((v) => ++v);
         simpleValidator.current.showMessages();
       }
-    } catch (e) {
-      
-    }
+    } catch (e) {}
   };
   const editItinerary = () => {
     if (simpleValidator.current.allValid()) {
-      
-      itineraryObject.quotItiAddons = addOnformValues;
-      itineraryObject.quotItiDestinations = destFormValues;
-      const updatedItineraryData = [...itineraryData];
-      updatedItineraryData[acionObj.updateId] = itineraryObject;
-      
-      setItineraryData(updatedItineraryData);
-      setOriginalItineraryData(updatedItineraryData);
-      dispatch(setQuotationFormData("quotItineraryData", updatedItineraryData));
-      setItineraryObject((prevState) => ({
-        ...prevState,
-        quotItiId: null,
-        quotItiDay: parseInt(prevState.quotItiDay) + 1,
-        quotItiDate: "",
-        vehicleName: null,
-        fkVehicleId: "",
-        pickupPt: "",
-        quotItiPickupPtId: "",
-        dropPt: "",
-        quotItiDropPtId: "",
-        quotItiNoOfVehicles: "",
-        quotItiAddons: [],
-        quotItiDestinations: [],
-        quotItiAmount: "",
-      }));
-      setDestFormValues([{ destinationName: "", destinationDesc: "" }]);
-      setAddOnFormValues([
-        {
-          quotItiAddonId: null,
-          quotItiService: "",
-          quotItiServicePayable: "1",
-          quotItiServiceAmount: "",
-          quotItiServiceRemark: "",
-        },
-      ]);
-      setActionObj((prevState) => ({ ...prevState, updateId: null }));
+      let quotArrivalDate = quotFormData.quotArrivalDate
+        ? new Date(quotFormData.quotArrivalDate)
+        : null;
+      let quotDepartureDate = quotFormData.quotDepartureDate
+        ? new Date(quotFormData.quotDepartureDate)
+        : null;
+      let quotItiDate = itineraryObject.quotItiDate
+        ? new Date(itineraryObject.quotItiDate)
+        : null;
+        let quotItiDay = itineraryObject.quotItiDay
+        ? itineraryObject.quotItiDay
+        : 0;
+      let quotDays = quotFormData.quotDays
+        ? Number(quotFormData.quotDays)
+        : 0;
+      if (quotItiDate && quotArrivalDate && quotDepartureDate &&
+        quotItiDay &&
+        quotDays) {
+        if (
+          quotItiDate >= quotArrivalDate &&
+          quotItiDate <= quotDepartureDate &&
+          quotItiDay <= quotDays
+        ) {
+          itineraryObject.quotItiAddons = addOnformValues;
+          itineraryObject.quotItiDestinations = destFormValues;
+          const updatedItineraryData = [...itineraryData];
+          updatedItineraryData[acionObj.updateId] = itineraryObject;
+
+          setItineraryData(updatedItineraryData);
+          setOriginalItineraryData(updatedItineraryData);
+          dispatch(
+            setQuotationFormData("quotItineraryData", updatedItineraryData)
+          );
+          setItineraryObject((prevState) => ({
+            ...prevState,
+            quotItiId: null,
+            quotItiDay: parseInt(prevState.quotItiDay) + 1,
+            quotItiDate: "",
+            vehicleName: null,
+            fkVehicleId: "",
+            pickupPt: "",
+            quotItiPickupPtId: "",
+            dropPt: "",
+            quotItiDropPtId: "",
+            quotItiNoOfVehicles: "",
+            quotItiAddons: [],
+            quotItiDestinations: [],
+            quotItiAmount: "",
+          }));
+          setDestFormValues([{ destinationName: "", destinationDesc: "" }]);
+          setAddOnFormValues([
+            {
+              quotItiAddonId: null,
+              quotItiService: "",
+              quotItiServicePayable: "1",
+              quotItiServiceAmount: "",
+              quotItiServiceRemark: "",
+            },
+          ]);
+          setActionObj((prevState) => ({ ...prevState, updateId: null }));
+        } else {
+          toast.error(
+            "Itinerary date is outside the arrival and departure date range.",
+            {
+              position: "top-right",
+            }
+          );
+        }
+      }
     } else {
       setForceUpdate((v) => ++v);
       simpleValidator.current.showMessages();
@@ -238,7 +305,7 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
 
     const newFormValues = [...addOnformValues];
     newFormValues[index].quotItiServicePayable = value ? value : "";
-    
+
     setAddOnFormValues(newFormValues);
     setForceUpdate((v) => ++v);
   };
@@ -262,7 +329,7 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
   };
   const validateForm = () => {
     const isValid = simpleValidator.current.allValid();
-    
+
     if (isValid) {
       onValidationStatusChange(isValid, 4);
     } else {
@@ -305,8 +372,10 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
           setTransitPtList(trasitPts);
           let pickupPtsOptionsArray = [];
           let dropPtsOptionsArray = [];
-          const startPointIds = tourPoints &&  tourPoints.map((obj) => obj.startPointId);
-          const endPointIds =  tourPoints && tourPoints.map((obj) => obj.endPointId);
+          const startPointIds =
+            tourPoints && tourPoints.map((obj) => obj.startPointId);
+          const endPointIds =
+            tourPoints && tourPoints.map((obj) => obj.endPointId);
 
           trasitPts.forEach((trasitPt) => {
             if (startPointIds.includes(trasitPt.id)) {
@@ -329,9 +398,7 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
           }));
         }
       }
-    } catch (e) {
-      
-    }
+    } catch (e) {}
   };
   const getAddonAmount = (addOns) => {
     let addOnTotalAmt = 0;
@@ -499,11 +566,17 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
     }
   }, [quotFormData]);
   useEffect(() => {
-    if (!quotFormData || !quotFormData.tourData || !transitPts || !itineraryObject || !itineraryObject.quotItiPickupPtId) {
+    if (
+      !quotFormData ||
+      !quotFormData.tourData ||
+      !transitPts ||
+      !itineraryObject ||
+      !itineraryObject.quotItiPickupPtId
+    ) {
       return;
     }
     let tourDetails = quotFormData.tourData;
-    
+
     let vehicles = tourDetails.transportations;
     let transitPoints = transitPts;
     const filteredEntries = vehicles.filter(
@@ -538,7 +611,13 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
   }, [itineraryObject.quotItiPickupPtId]);
 
   useEffect(() => {
-    if (!quotFormData || !quotFormData.tourData || !itineraryObject || !itineraryObject.quotItiPickupPtId || !itineraryObject.quotItiDropPtId) {
+    if (
+      !quotFormData ||
+      !quotFormData.tourData ||
+      !itineraryObject ||
+      !itineraryObject.quotItiPickupPtId ||
+      !itineraryObject.quotItiDropPtId
+    ) {
       return;
     }
     let tourDetails = quotFormData.tourData;

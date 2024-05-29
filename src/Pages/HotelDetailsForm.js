@@ -65,8 +65,67 @@ const HotelDetailsForm = ({ onValidationStatusChange }) => {
 
   const addPackage = () => {
     if (simpleValidator.current.allValid()) {
-      if (isNewPackage) {
-        if (!packageNameArray.includes(packageObject.packageName)) {
+      let quotDays = quotFormData.quotDays ? Number(quotFormData.quotDays) : 0;
+      let packageNoOfNights = packageObject.noOfNights
+        ? Number(packageObject.noOfNights)
+        : 0;
+      if (packageNoOfNights > quotDays) {
+        toast.error("No of nights cannot exceed tour days", {
+          position: "top-right",
+        });
+      } else {
+        if (isNewPackage) {
+          if (!packageNameArray.includes(packageObject.packageName)) {
+            setPackageData((prevState) => [...prevState, packageObject]);
+            setOriginalPackageData((prevState) => [
+              ...prevState,
+              packageObject,
+            ]);
+            setPackageObject((prevState) => ({
+              ...prevState,
+              quotHotelId: null,
+              haltingDest: null,
+              hotelType: null,
+              hotelName: null,
+              fromDate: "",
+              toDate: "",
+              noOfNights: "",
+              roomType: null,
+              mealType: null,
+              haltingDestId: "",
+              hotelTypeId: "",
+              hotelId: "",
+              roomTypeId: "",
+              mealTypeId: "",
+            }));
+
+            if (!packageNameArray.includes(packageObject.packageName)) {
+              setPackageNameArray((prevArray) => [
+                ...prevArray,
+                packageObject.packageName,
+              ]);
+
+              dispatch(
+                setQuotationFormData("quotPackageNameArray", [
+                  ...quotFormData.quotPackageNameArray,
+                  packageObject.packageName,
+                ])
+              );
+              dispatch(
+                setQuotationFormData("quotPackageData", [
+                  ...quotFormData.quotPackageData,
+                  packageObject,
+                ])
+              );
+              setPackageReadOnly(true);
+              setIsNewPackage(false);
+            }
+          } else {
+            toast.error("Package name already exists", {
+              position: "top-right",
+            });
+          }
+        } else {
           setPackageData((prevState) => [...prevState, packageObject]);
           setOriginalPackageData((prevState) => [...prevState, packageObject]);
           setPackageObject((prevState) => ({
@@ -99,62 +158,16 @@ const HotelDetailsForm = ({ onValidationStatusChange }) => {
                 packageObject.packageName,
               ])
             );
-            dispatch(
-              setQuotationFormData("quotPackageData", [
-                ...quotFormData.quotPackageData,
-                packageObject,
-              ])
-            );
-            setPackageReadOnly(true);
-            setIsNewPackage(false);
           }
-        } else {
-          toast.error("Package name already exists", {
-            position: "top-right",
-          });
-        }
-      } else {
-        setPackageData((prevState) => [...prevState, packageObject]);
-        setOriginalPackageData((prevState) => [...prevState, packageObject]);
-        setPackageObject((prevState) => ({
-          ...prevState,
-          quotHotelId: null,
-          haltingDest: null,
-          hotelType: null,
-          hotelName: null,
-          fromDate: "",
-          toDate: "",
-          noOfNights: "",
-          roomType: null,
-          mealType: null,
-          haltingDestId: "",
-          hotelTypeId: "",
-          hotelId: "",
-          roomTypeId: "",
-          mealTypeId: "",
-        }));
-
-        if (!packageNameArray.includes(packageObject.packageName)) {
-          setPackageNameArray((prevArray) => [
-            ...prevArray,
-            packageObject.packageName,
-          ]);
-
           dispatch(
-            setQuotationFormData("quotPackageNameArray", [
-              ...quotFormData.quotPackageNameArray,
-              packageObject.packageName,
+            setQuotationFormData("quotPackageData", [
+              ...quotFormData.quotPackageData,
+              packageObject,
             ])
           );
+          setPackageReadOnly(true);
+          setIsNewPackage(false);
         }
-        dispatch(
-          setQuotationFormData("quotPackageData", [
-            ...quotFormData.quotPackageData,
-            packageObject,
-          ])
-        );
-        setPackageReadOnly(true);
-        setIsNewPackage(false);
       }
     } else {
       setForceUpdate((v) => ++v);
@@ -163,8 +176,66 @@ const HotelDetailsForm = ({ onValidationStatusChange }) => {
   };
   const editPackage = () => {
     if (simpleValidator.current.allValid()) {
-      if (isNewPackage) {
-        if (!packageNameArray.includes(packageObject.packageName)) {
+      let quotDays = quotFormData.quotDays ? Number(quotFormData.quotDays) : 0;
+      let packageNoOfNights = packageObject.noOfNights
+        ? Number(packageObject.noOfNights)
+        : 0;
+      if (packageNoOfNights > quotDays) {
+        toast.error("No of nights cannot exceed tour days", {
+          position: "top-right",
+        });
+      } else {
+        if (isNewPackage) {
+          if (!packageNameArray.includes(packageObject.packageName)) {
+            const updatedPackageData = [...packageData];
+            updatedPackageData[acionObj.updateId] = packageObject;
+
+            setPackageData(updatedPackageData);
+            setOriginalPackageData(updatedPackageData);
+            dispatch(
+              setQuotationFormData("quotPackageData", updatedPackageData)
+            );
+
+            if (!packageNameArray.includes(packageObject.packageName)) {
+              setPackageNameArray((prevArray) => [
+                ...prevArray,
+                packageObject.packageName,
+              ]);
+              dispatch(
+                setQuotationFormData("quotPackageNameArray", [
+                  ...quotFormData.quotPackageNameArray,
+                  packageObject.packageName,
+                ])
+              );
+            }
+
+            setPackageObject((prevState) => ({
+              ...prevState,
+              quotHotelId: null,
+              haltingDest: null,
+              hotelType: null,
+              hotelName: null,
+              fromDate: "",
+              toDate: "",
+              noOfNights: "",
+              roomType: null,
+              mealType: null,
+              haltingDestId: "",
+              hotelTypeId: "",
+              hotelId: "",
+              roomTypeId: "",
+              mealTypeId: "",
+            }));
+
+            setPackageReadOnly(true);
+            setActionObj((prevState) => ({ ...prevState, updateId: null }));
+            setIsNewPackage(false);
+          } else {
+            toast.error("Package name already exists", {
+              position: "top-right",
+            });
+          }
+        } else {
           const updatedPackageData = [...packageData];
           updatedPackageData[acionObj.updateId] = packageObject;
 
@@ -206,53 +277,7 @@ const HotelDetailsForm = ({ onValidationStatusChange }) => {
           setPackageReadOnly(true);
           setActionObj((prevState) => ({ ...prevState, updateId: null }));
           setIsNewPackage(false);
-        } else {
-          toast.error("Package name already exists", {
-            position: "top-right",
-          });
         }
-      } else {
-        const updatedPackageData = [...packageData];
-        updatedPackageData[acionObj.updateId] = packageObject;
-
-        setPackageData(updatedPackageData);
-        setOriginalPackageData(updatedPackageData);
-        dispatch(setQuotationFormData("quotPackageData", updatedPackageData));
-
-        if (!packageNameArray.includes(packageObject.packageName)) {
-          setPackageNameArray((prevArray) => [
-            ...prevArray,
-            packageObject.packageName,
-          ]);
-          dispatch(
-            setQuotationFormData("quotPackageNameArray", [
-              ...quotFormData.quotPackageNameArray,
-              packageObject.packageName,
-            ])
-          );
-        }
-
-        setPackageObject((prevState) => ({
-          ...prevState,
-          quotHotelId: null,
-          haltingDest: null,
-          hotelType: null,
-          hotelName: null,
-          fromDate: "",
-          toDate: "",
-          noOfNights: "",
-          roomType: null,
-          mealType: null,
-          haltingDestId: "",
-          hotelTypeId: "",
-          hotelId: "",
-          roomTypeId: "",
-          mealTypeId: "",
-        }));
-
-        setPackageReadOnly(true);
-        setActionObj((prevState) => ({ ...prevState, updateId: null }));
-        setIsNewPackage(false);
       }
     } else {
       setForceUpdate((v) => ++v);
