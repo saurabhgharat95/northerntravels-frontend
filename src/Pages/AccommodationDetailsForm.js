@@ -244,10 +244,8 @@ const AccommodationDetailsForm = ({ onValidationStatusChange }) => {
         aria-hidden="false"
         style={{ left: "0px" }}
       >
-        <h4>Accommodation Details</h4>
-        <br></br>
-        <br></br>
-        <br></br>
+        <h4 className="form-heading">Accommodation Details</h4>
+        
         <div className="form-group row">
           <div className="col-sm-6">
             <label>Total Number of People</label>

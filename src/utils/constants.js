@@ -94,3 +94,6 @@ export const UPDATE_LEAD_API = BASE_API_URL + "/update-lead";
 export const DELETE_LEAD_API = BASE_API_URL + "/delete-lead";
 
 export const FETCH_UPDATED_ROOM_RATES_API = BASE_API_URL + "/get-updated-room-rates";
+export const FETCH_DASHBOARD_COUNT_API = BASE_API_URL + "/get-dashboard-count";
+export const FETCH_TOP_DESTINATIONS_API = BASE_API_URL + "/get-top-destinations";
+export const FETCH_QUOTATION_MONTHLY_COUNT_API = BASE_API_URL + "/get-quotation-monthly-count";

@@ -8,11 +8,26 @@ import SimpleReactValidator from "simple-react-validator";
 import Select from "react-select";
 
 import { ColorRing } from "react-loader-spinner";
-import { ShimmerTable,ShimmerTitle,ShimmerButton,ShimmerBadge } from "react-shimmer-effects";
-import ReactQuill from 'react-quill';
+import {
+  ShimmerTable,
+  ShimmerTitle,
+  ShimmerButton,
+  ShimmerBadge,
+} from "react-shimmer-effects";
+import ReactQuill from "react-quill";
 import { SlideDown } from "react-slidedown";
 import Marquee from "react-fast-marquee";
-
+import {
+  Chart as ChartJS,
+  ArcElement,
+  Tooltip,
+  Legend,
+  LinearScale,
+  PointElement,
+  LineElement,
+  CategoryScale
+} from "chart.js";
+import { Pie,Line } from "react-chartjs-2";
 
 export {
   Footer,
@@ -32,5 +47,15 @@ export {
   SlideDown,
   ShimmerButton,
   ShimmerBadge,
-  Marquee
+  Marquee,
+  ChartJS,
+  ArcElement,
+  Tooltip,
+  Legend,
+  Pie,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Line,
+  CategoryScale
 };

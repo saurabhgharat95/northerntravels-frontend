@@ -213,15 +213,17 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
       let quotItiDate = itineraryObject.quotItiDate
         ? new Date(itineraryObject.quotItiDate)
         : null;
-        let quotItiDay = itineraryObject.quotItiDay
+      let quotItiDay = itineraryObject.quotItiDay
         ? itineraryObject.quotItiDay
         : 0;
-      let quotDays = quotFormData.quotDays
-        ? Number(quotFormData.quotDays)
-        : 0;
-      if (quotItiDate && quotArrivalDate && quotDepartureDate &&
+      let quotDays = quotFormData.quotDays ? Number(quotFormData.quotDays) : 0;
+      if (
+        quotItiDate &&
+        quotArrivalDate &&
+        quotDepartureDate &&
         quotItiDay &&
-        quotDays) {
+        quotDays
+      ) {
         if (
           quotItiDate >= quotArrivalDate &&
           quotItiDate <= quotDepartureDate &&
@@ -647,8 +649,8 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
         aria-hidden="false"
         style={{ left: "0px" }}
       >
-        <h4>Itinerary</h4>
-        <br></br>
+        <h4 className="form-heading itinerary-form-heading">Itinerary</h4>
+
         <div className="form-group row border p-3">
           <div className="col-sm-4 mb-3">
             <label>Day</label>
@@ -916,11 +918,10 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
             </>
           ))}
         </div> */}
-        <div className="col-sm-12 mb-3">
-          <br></br>
 
-          <h4>Add On Services</h4>
-        </div>
+        <h4 className=" form-heading itinerary-form-heading">
+          Add On Services
+        </h4>
         <div className="form-group row border p-3">
           {/* {addOnformValues && addOnformValues.length == 0 && 
           (
@@ -1235,7 +1236,7 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
             </>
           ))}
         </div>
-        <div className="col-sm-12">
+        {/* <div className="col-sm-12"> */}
           <button
             className="btn btn-success mr-3"
             onClick={() => {
@@ -1247,7 +1248,7 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
           >
             {acionObj.updateId != null ? "Update" : "Add"}
           </button>
-        </div>
+        {/* </div> */}
         <br></br>
         <br></br>
         <div className="row">
@@ -1259,7 +1260,7 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
               >
                 <div className="row">
                   <div className="col-md-6 grid-margin stretch-card">
-                    <div className="card border border-success">
+                    <div className="card info-card  border border-success">
                       <div className="card-body">
                         <div className="media">
                           <ion-icon
@@ -1286,7 +1287,7 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
                     </div>
                   </div>
                   <div className="col-md-6 grid-margin stretch-card">
-                    <div className="card border border-success">
+                    <div className="card info-card border border-success">
                       <div className="card-body">
                         <div className="media">
                           <ion-icon

@@ -117,11 +117,11 @@ ion-icon {
   .wizard > .steps > ul > li {
     width: 20%; /* Adjust as needed for larger screens */
   }
-  .wizard > .steps > ul > li > a ,.wizard > .steps > ul > li > a >span,  .btn {
+  .wizard > .steps > ul > li > a,
+  .wizard > .steps > ul > li > a > span,
+  .btn {
     font-size: 12px !important;
   }
- 
-  
 }
 .sidebar .nav.sub-menu .nav-item::before {
   background: none;
@@ -267,7 +267,9 @@ ion-icon {
 }
 .card {
   /* box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px; */
-  box-shadow: rgba(0, 0, 0, 0.07) 0px 1px 1px, rgba(0, 0, 0, 0.07) 0px 2px 2px, rgba(0, 0, 0, 0.07) 0px 4px 4px, rgba(0, 0, 0, 0.07) 0px 8px 8px, rgba(0, 0, 0, 0.07) 0px 16px 16px;
+  box-shadow: rgba(0, 0, 0, 0.07) 0px 1px 1px, rgba(0, 0, 0, 0.07) 0px 2px 2px,
+    rgba(0, 0, 0, 0.07) 0px 4px 4px, rgba(0, 0, 0, 0.07) 0px 8px 8px,
+    rgba(0, 0, 0, 0.07) 0px 16px 16px;
 }
 /* table{
   border: 1px solid;
@@ -279,22 +281,25 @@ ion-icon {
 } */
 .form-div {
   padding: 16px;
-  box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+  box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px,
+    rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
 }
-.an-simple-select__control{
+.an-simple-select__control {
   height: auto !important;
 }
-.an-simple-select__multi-value__label  {
+.an-simple-select__multi-value__label {
   background: #cddfff;
   color: #fff;
 }
-.an-simple-select__multi-value__remove{
+.an-simple-select__multi-value__remove {
   background: #cddfff;
   color: #000;
 }
 .hotel-form-div {
   border-radius: 8px;
-  box-shadow: rgba(0, 0, 0, 0.25) 0px 0.0625em 0.0625em, rgba(0, 0, 0, 0.25) 0px 0.125em 0.5em, rgba(255, 255, 255, 0.1) 0px 0px 0px 1px inset;
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 0.0625em 0.0625em,
+    rgba(0, 0, 0, 0.25) 0px 0.125em 0.5em,
+    rgba(255, 255, 255, 0.1) 0px 0px 0px 1px inset;
 }
 .room-heading {
   text-align: center;
@@ -306,30 +311,49 @@ ion-icon {
   border-top-right-radius: 9px;
 }
 .room-card {
-  box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+  box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px,
+    rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
   border-bottom-left-radius: 9px;
   border-bottom-right-radius: 9px;
- 
 }
 .package-div {
   padding: 16px;
   border: 1px solid lightgrey;
   border-radius: 8px;
-  box-shadow: rgba(67, 71, 85, 0.27) 0px 0px 0.25em, rgba(90, 125, 188, 0.05) 0px 0.25em 1em;
+  box-shadow: rgba(67, 71, 85, 0.27) 0px 0px 0.25em,
+    rgba(90, 125, 188, 0.05) 0px 0.25em 1em;
   .pckg-name {
     font-family: "BebasNeue-Regular";
     font-size: 30px;
   }
 }
-.marquee-homepage{
-  background: #00A191;
+.marquee-homepage {
+  background: #00a191;
   color: #fff;
-  padding:12px 8px;
+  padding: 12px 8px;
   border-radius: 8px;
   margin-left: 12px;
 }
-h3,h4{
-  font-family: "Product_Regular";
-  font-weight: bold;
-  color: #2656ab;
+h3,
+h4 {
+  font-family: "Poppins";
+  font-weight: 600;
+  color: #121224;
+}
+.form-heading {
+  margin-bottom: 30px;
+}
+.card .card-title {
+  font-size: 20px;
+}
+input {
+  color: #121224 !important;
+}
+.itinerary-form-heading {
+  margin-left: -16px;
+}
+.info-card {
+  p > b {
+    color: #57B657;
+  }
 }

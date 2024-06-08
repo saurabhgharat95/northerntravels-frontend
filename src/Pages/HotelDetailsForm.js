@@ -569,10 +569,8 @@ const HotelDetailsForm = ({ onValidationStatusChange }) => {
         aria-hidden="false"
         style={{ left: "0px" }}
       >
-        <h4>Hotel Details</h4>
-        <br></br>
-        <br></br>
-        <br></br>
+        <h4 className="form-heading">Hotel Details</h4>
+       
         <form>
           <div className="form-group row">
             <div className="col-sm-6">

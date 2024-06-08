@@ -346,11 +346,11 @@ const BasicDetailsForm = ({ onValidationStatusChange }) => {
         aria-hidden="false"
         style={{ left: "0px" }}
       >
-        <h4>Basic Details</h4>
-        <div className="row">
-          <div className="form-group col-sm-6 mb-0">
-            <label className="col-sm-3 col-form-label pl-0">Package</label>
-            <div className="form-group row">
+        <h4 className="form-heading">Basic Details</h4>
+        <div className="form-group row">
+          <div className=" col-sm-6 mb-0">
+            <label className="col-sm-3 col-form-label pl-0 pb-0">Package</label>
+            <div className=" row">
               <div className="col-sm-3">
                 <div className="form-check">
                   <label className="form-check-label">
@@ -387,9 +387,9 @@ const BasicDetailsForm = ({ onValidationStatusChange }) => {
               </div>
             </div>
           </div>
-          <div className="form-group col-sm-6 mb-0">
-            <label className="col-sm-3 col-form-label pl-0">Season</label>
-            <div className="form-group row">
+          <div className="col-sm-6 mb-0">
+            <label className="col-sm-3 col-form-label pl-0 pb-0">Season</label>
+            <div className=" row">
               <div className="col-sm-4">
                 <div className="form-check">
                   <label className="form-check-label">
