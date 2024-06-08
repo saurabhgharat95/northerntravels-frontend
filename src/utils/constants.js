@@ -1,5 +1,5 @@
 export const API_URL = "/api";
-export const BASE_URL = "http://localhost:4000";
+export const BASE_URL = "http://35.154.42.3:4000";
 export const BASE_API_URL = BASE_URL + API_URL;
 
 export const FETCH_COUNTRIES_API = BASE_API_URL + "/get-countries";
