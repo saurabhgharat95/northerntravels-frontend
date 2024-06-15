@@ -123,9 +123,11 @@ const Homepage = () => {
       if (response) {
         if (response.status == 200) {
           let topDest = response.data.data;
-          if(topDest.length>0){
-            const labels = topDest.slice(0,10).map((item) => item.stateName);
-            const data = topDest.slice(0,10).map((item) => item.quotation_count);
+          if (topDest.length > 0) {
+            const labels = topDest.slice(0, 10).map((item) => item.stateName);
+            const data = topDest
+              .slice(0, 10)
+              .map((item) => item.quotation_count);
             const backgroundColor = [
               "rgba(255, 99, 132, 0.2)",
               "rgba(54, 162, 235, 0.2)",
@@ -136,9 +138,9 @@ const Homepage = () => {
               "rgba(201, 203, 207, 0.2)",
               "rgba(255, 99, 71, 0.2)",
               "rgba(144, 238, 144, 0.2)",
-              "rgba(255, 182, 193, 0.2)"
+              "rgba(255, 182, 193, 0.2)",
             ];
-            
+
             const borderColor = [
               "rgba(255, 99, 132, 1)",
               "rgba(54, 162, 235, 1)",
@@ -149,9 +151,9 @@ const Homepage = () => {
               "rgba(201, 203, 207, 1)",
               "rgba(255, 99, 71, 1)",
               "rgba(144, 238, 144, 1)",
-              "rgba(255, 182, 193, 1)"
+              "rgba(255, 182, 193, 1)",
             ];
-            
+
             while (backgroundColor.length < data.length) {
               backgroundColor.push("rgba(255, 159, 64, 0.2)");
               borderColor.push("rgba(255, 159, 64, 1)");
@@ -168,14 +170,13 @@ const Homepage = () => {
                 },
               ],
             };
-  
+
             setTopDestObj((prevState) => ({
               ...prevState,
               data: topDest,
               chart: pieData,
             }));
           }
-          
         }
       }
     } catch (e) {}
@@ -183,7 +184,7 @@ const Homepage = () => {
   const fetchQuotationMonthlyCount = async () => {
     try {
       let url = FETCH_QUOTATION_MONTHLY_COUNT_API;
-  
+
       let response = await axios.post(url);
       if (response) {
         if (response.status == 200) {
@@ -203,37 +204,37 @@ const Homepage = () => {
             "Nov",
             "Dec",
           ];
-  
+
           monthCount.forEach((item) => {
             // Ensure month is two digits
             const month = String(item.month).padStart(2, "0");
             monthDataMap[month] = item.quotation_count;
           });
-  
+
           // Map month names to their respective numeric values
           const monthMap = {
-            "Jan": "01",
-            "Feb": "02",
-            "Mar": "03",
-            "Apr": "04",
-            "May": "05",
-            "Jun": "06",
-            "Jul": "07",
-            "Aug": "08",
-            "Sept": "09",
-            "Oct": "10",
-            "Nov": "11",
-            "Dec": "12",
+            Jan: "01",
+            Feb: "02",
+            Mar: "03",
+            Apr: "04",
+            May: "05",
+            Jun: "06",
+            Jul: "07",
+            Aug: "08",
+            Sept: "09",
+            Oct: "10",
+            Nov: "11",
+            Dec: "12",
           };
-  
+
           // Prepare the data array ensuring all months are included
           const data = labels.map((label) => {
             const month = monthMap[label]; // Get the month number from the label
             return monthDataMap[month] || 0;
           });
-  
+
           console.log(data);
-  
+
           let lineData = {
             labels,
             datasets: [
@@ -245,7 +246,7 @@ const Homepage = () => {
               },
             ],
           };
-  
+
           setTopDestObj((prevState) => ({
             ...prevState,
             lineChart: lineData,
@@ -256,7 +257,6 @@ const Homepage = () => {
       console.error("Error fetching monthly quotation count:", e);
     }
   };
-  
 
   useEffect(() => {
     fetchDashboardCount();
@@ -362,12 +362,13 @@ const Homepage = () => {
               </div>
               <div className="col-md-6 grid-margin transparent dashboard-count-div">
                 <div className="row">
-                  <div className="col-md-6 mb-4 stretch-card transparent">
-                    <div className="card card-tale">
+                  <div className="col-md-6 mb-4 stretch-card transparent dashboard-card">
+                    <div className="card card-tale ">
                       <div
                         className="card-body"
                         onClick={() => navigate("/quotations")}
                       >
+                                 <img className="circle" src="../../images/circle.svg" alt="image" />
                         {!countObj.isCountReady && (
                           <ShimmerTitle line={2} gap={10} variant="primary" />
                         )}
@@ -380,12 +381,13 @@ const Homepage = () => {
                       </div>
                     </div>
                   </div>
-                  <div className="col-md-6 mb-4 stretch-card transparent">
+                  <div className="col-md-6 mb-4 stretch-card transparent dashboard-card">
                     <div
                       className="card card-dark-blue"
                       onClick={() => navigate("/hotels")}
                     >
                       <div className="card-body">
+                      <img className="circle" src="../../images/circle.svg" alt="image" />
                         {!countObj.isCountReady && (
                           <ShimmerTitle line={2} gap={10} variant="primary" />
                         )}
@@ -400,12 +402,13 @@ const Homepage = () => {
                   </div>
                 </div>
                 <div className="row">
-                  <div className="col-md-6 mb-4 mb-lg-0 stretch-card transparent">
+                  <div className="col-md-6 mb-4 mb-lg-0 stretch-card transparent dashboard-card">
                     <div
                       className="card card-light-blue"
                       onClick={() => navigate("/tours")}
                     >
                       <div className="card-body">
+                      <img className="circle" src="../../images/circle.svg" alt="image" />
                         {!countObj.isCountReady && (
                           <ShimmerTitle line={2} gap={10} variant="primary" />
                         )}
@@ -418,12 +421,13 @@ const Homepage = () => {
                       </div>
                     </div>
                   </div>
-                  <div className="col-md-6 stretch-card transparent">
+                  <div className="col-md-6 stretch-card transparent dashboard-card">
                     <div
                       className="card card-light-danger"
                       onClick={() => navigate("/leads")}
                     >
                       <div className="card-body">
+                      <img className="circle" src="../../images/circle.svg" alt="image" />
                         {!countObj.isCountReady && (
                           <ShimmerTitle line={2} gap={10} variant="primary" />
                         )}
@@ -440,9 +444,8 @@ const Homepage = () => {
               </div>
             </div>
             <div className="row">
-
-            {topDestObj.data.length > 1 && (
-                <div className="col-md-6 mb-4 stretch-card transparent">
+              {topDestObj.data.length > 1 && (
+                <div className="col-md-6 mb-4 stretch-card transparent dashboard-card">
                   <div className="card ">
                     <div className="card-body">
                       <div className="row">
@@ -459,7 +462,7 @@ const Homepage = () => {
                         <div className="col-md-12">
                           {topDestObj.chart && (
                             <Pie
-                            style={{margin:"0 auto"}}
+                              style={{ margin: "0 auto" }}
                               data={topDestObj?.chart}
                               options={{
                                 responsive: false,
@@ -473,8 +476,8 @@ const Homepage = () => {
                     </div>
                   </div>
                 </div>
-            )}
-            {topDestObj.lineChart && (
+              )}
+              {topDestObj.lineChart && (
                 <div className="col-md-6 mb-4 stretch-card transparent">
                   <div className="card ">
                     <div className="card-body">
@@ -483,7 +486,10 @@ const Homepage = () => {
                           <div class="ml-xl-4 mt-3">
                             <p class="card-title">Monthly Travel Quotation</p>
                             <p class="mb-2 mb-xl-0">
-                            The chart illustrates the monthly count of travel quotations  for the current year. Months with no quotations are shown with a count of zero, ensuring a comprehensive view of the entire year.
+                              The chart illustrates the monthly count of travel
+                              quotations for the current year. Months with no
+                              quotations are shown with a count of zero,
+                              ensuring a comprehensive view of the entire year.
                             </p>
                           </div>
                         </div>
@@ -494,8 +500,8 @@ const Homepage = () => {
                     </div>
                   </div>
                 </div>
-            )}
-          </div>
+              )}
+            </div>
           </div>
 
           <footer className="footer">

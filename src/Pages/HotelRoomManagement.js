@@ -138,6 +138,7 @@ const HotelRoomManagement = () => {
               let roomDetails = groupedData(response.data.data.roomChargesData);
               setRoomDataReady(true);
 
+              // console.log("roomDetails", truncatedData);
               setHotelRoomDetails(roomDetails);
             }
           }
@@ -256,12 +257,12 @@ const HotelRoomManagement = () => {
             });
           });
           let elements = [];
-          for (let i = 0; i < 2; i++) {
+          for (let i = 0; i < 1; i++) {
             for (let j = 0; j < mealTypesOptionsArray.length; j++) {
               elements.push(
                 <th
                   key={`${mealTypesOptionsArray[j].value}-1`}
-                  style={{ width: "107.016px" }}
+                  style={{ width: "25%" }}
                   scope="col"
                 >
                   {mealTypesOptionsArray[j].label}
@@ -415,6 +416,15 @@ const HotelRoomManagement = () => {
                                         <th style={{ width: "127.391px" }}>
                                           Rooms
                                         </th>
+                                        <th style={{ width: "127.375px" }}>
+                                          Halting Dest
+                                        </th>
+                                        <th style={{ width: "127.375px" }}>
+                                          State
+                                        </th>
+                                        <th style={{ width: "127.375px" }}>
+                                          Country
+                                        </th>
                                         <th style={{ width: "127.391px" }}>
                                           Created
                                         </th>
@@ -444,11 +454,16 @@ const HotelRoomManagement = () => {
                                                         hotel.hotelName
                                                       )
                                                     }
-                                                    className="badge badge-outline-info"
+                                                    className="badge badge-info"
                                                   >
                                                     View Rooms
                                                   </span>
                                                 </td>
+                                                <td>
+                                                  {hotel.haltingPointName}
+                                                </td>
+                                                <td>{hotel.stateName}</td>
+                                                <td>{hotel.countryName}</td>
                                                 <td>
                                                   {getDateFormatted(
                                                     hotel.createdAt
@@ -502,19 +517,22 @@ const HotelRoomManagement = () => {
                       </button>
                     </div>
                     <div className="row">
-                      <div className="col-md-4 grid-margin stretch-card">
-                        <div className="card border border-primary">
+                      <div className="pl-0 col-md-4 grid-margin stretch-card">
+                        <div className="card border border-primary box-shadow-none info-card-primary">
                           <div className="card-body">
+                            
                             <div className="media">
-                              <ion-icon
+                            <img src="../../images/building.png" alt="image" />{" "}
+                              {/* <ion-icon
                                 color="primary"
                                 name="business-outline"
                                 size="large"
-                              ></ion-icon>
+                              ></ion-icon> */}
                               <div className="media-body ml-2 mt-1">
                                 <p className="card-text">
-                                  Hotel : <b>{selectedHotel.name}</b>
+                                  Hotel : 
                                 </p>
+                                <h5><b>{selectedHotel.name}</b></h5>
                               </div>
                             </div>
                           </div>
@@ -640,7 +658,7 @@ const HotelRoomManagement = () => {
                                                 </td>
                                                 <td>
                                                   <span
-                                                    className="badge badge-outline-success"
+                                                    className="badge badge-secondary text-light"
                                                     onClick={() =>
                                                       viewCharges(
                                                         hotelRoom.id,
@@ -731,16 +749,20 @@ const HotelRoomManagement = () => {
                     {isRoomDataReady && (
                       <div className="row">
                         <div className="col-md-4 grid-margin stretch-card">
-                          <div className="card border border-primary">
+                          <div className="card border border-primary box-shadow-none info-card-primary">
                             <div className="card-body">
                               <div className="media">
-                                <ion-icon
+                                <img
+                                  src="../../images/building.png"
+                                  alt="image"
+                                />
+                                {/* <ion-icon
                                   style={{ marginTop: "5px" }}
                                   color="primary"
                                   name="business-outline"
                                   size="large"
-                                ></ion-icon>
-                                <div className="media-body ml-2">
+                                ></ion-icon> */}
+                                <div className="media-body ml-3">
                                   <p
                                     className="card-text"
                                     style={{ marginBottom: 0 }}
@@ -757,6 +779,27 @@ const HotelRoomManagement = () => {
                         </div>
                       </div>
                     )}
+                    <div>
+                      <p>
+                        <b>Filter Year :</b>{" "}
+                      </p>
+                      <span
+                        className={`badge border border-primary text-primary mr-2`}
+                      >
+                        2023
+                      </span>
+                      <span
+                        className={`badge  badge-secondary text-light mr-2`}
+                      >
+                        2024
+                      </span>
+                      <span
+                        className={`badge border border-info text-info mr-2`}
+                      >
+                        2025
+                      </span>
+                    </div>
+                    <br></br>
                     <div className="row">
                       <div className="col-12">
                         <div className="table-responsive">
@@ -775,15 +818,46 @@ const HotelRoomManagement = () => {
                                     <td></td>
                                     <td
                                       className="text-center border-left border-right"
-                                      colSpan={4}
+                                      colSpan={8}
                                     >
-                                      On Season
-                                    </td>
-                                    <td
-                                      className="text-center border-right"
-                                      colSpan={4}
-                                    >
-                                      Off Season
+                                      <div className="row">
+                                        <div className="col-sm-6">
+                                          <div className="media">
+                                            <ion-icon
+                                              style={{ marginTop: "8px" }}
+                                              color="secondary"
+                                              name="calendar-outline"
+                                              size="large"
+                                            ></ion-icon>
+                                            <div className="media-body ml-2">
+                                              <p className="card-text text-left">
+                                                From Date :
+                                              </p>
+                                              <p className="text-left">
+                                                <b>01-01-2024</b>
+                                              </p>
+                                            </div>
+                                          </div>
+                                        </div>
+                                        <div className="col-sm-6">
+                                          <div className="media">
+                                            <ion-icon
+                                              style={{ marginTop: "8px" }}
+                                              color="secondary"
+                                              name="calendar-outline"
+                                              size="large"
+                                            ></ion-icon>
+                                            <div className="media-body ml-2">
+                                              <p className="card-text text-left">
+                                                To Date :
+                                              </p>
+                                              <p className="text-left">
+                                                <b>30-04-2024</b>
+                                              </p>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
                                     </td>
                                   </tr>
                                   <tr>
@@ -797,11 +871,170 @@ const HotelRoomManagement = () => {
                                         <>
                                           <tr>
                                             <th>{accomodationObj[key]}</th>
-                                            {value.map((item, index) => (
-                                              <td key={index}>
-                                                {item["charges"]}
-                                              </td>
-                                            ))}
+                                            {value
+                                              ?.slice(0, 4)
+                                              .map((item, index) => (
+                                                <td key={index}>
+                                                  {item["charges"]}
+                                                </td>
+                                              ))}
+                                          </tr>
+                                        </>
+                                      )
+                                    )}
+                                  {isRoomDataReady == false && (
+                                    <ShimmerTable row={7} />
+                                  )}
+                                </table>
+                                <br></br>
+
+                                <table
+                                  id="order-listing"
+                                  className="table table-bordered dataTable no-footer table-responsive"
+                                  aria-describedby="order-listing_info"
+                                >
+                                  <tr>
+                                    <td></td>
+                                    <td
+                                      className="text-center border-left border-right"
+                                      colSpan={8}
+                                    >
+                                      <div className="row">
+                                        <div className="col-sm-6">
+                                          <div className="media">
+                                            <ion-icon
+                                              style={{ marginTop: "8px" }}
+                                              color="tertiary"
+                                              name="calendar-outline"
+                                              size="large"
+                                            ></ion-icon>
+                                            <div className="media-body ml-2">
+                                              <p className="card-text text-left">
+                                                From Date :
+                                              </p>
+                                              <p className="text-left">
+                                                <b>01-05-2024</b>
+                                              </p>
+                                            </div>
+                                          </div>
+                                        </div>
+                                        <div className="col-sm-6">
+                                          <div className="media">
+                                            <ion-icon
+                                              style={{ marginTop: "8px" }}
+                                              color="tertiary"
+                                              name="calendar-outline"
+                                              size="large"
+                                            ></ion-icon>
+                                            <div className="media-body ml-2">
+                                              <p className="card-text text-left">
+                                                To Date :
+                                              </p>
+                                              <p className="text-left">
+                                                <b>30-09-2024</b>
+                                              </p>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <th></th>
+                                    {thElements}
+                                  </tr>
+                                  {hotelRoomDetails &&
+                                    isRoomDataReady &&
+                                    Object.entries(hotelRoomDetails).map(
+                                      ([key, value]) => (
+                                        <>
+                                          <tr>
+                                            <th>{accomodationObj[key]}</th>
+                                            {value
+                                              ?.slice(0, 4)
+                                              .map((item, index) => (
+                                                <td key={index}>
+                                                  {item["charges"]}
+                                                </td>
+                                              ))}
+                                          </tr>
+                                        </>
+                                      )
+                                    )}
+                                  {isRoomDataReady == false && (
+                                    <ShimmerTable row={7} />
+                                  )}
+                                </table>
+                                <br></br>
+                                <table
+                                  id="order-listing"
+                                  className="table table-bordered dataTable no-footer table-responsive"
+                                  aria-describedby="order-listing_info"
+                                >
+                                  <tr>
+                                    <td></td>
+                                    <td
+                                      className="text-center border-left border-right"
+                                      colSpan={8}
+                                    >
+                                      <div className="row">
+                                        <div className="col-sm-6">
+                                          <div className="media">
+                                            <ion-icon
+                                              style={{ marginTop: "8px" }}
+                                              color="primary"
+                                              name="calendar-outline"
+                                              size="large"
+                                            ></ion-icon>
+                                            <div className="media-body ml-2">
+                                              <p className="card-text text-left">
+                                                From Date :
+                                              </p>
+                                              <p className="text-left">
+                                                <b>01-10-2024</b>
+                                              </p>
+                                            </div>
+                                          </div>
+                                        </div>
+                                        <div className="col-sm-6">
+                                          <div className="media">
+                                            <ion-icon
+                                              style={{ marginTop: "8px" }}
+                                              color="primary"
+                                              name="calendar-outline"
+                                              size="large"
+                                            ></ion-icon>
+                                            <div className="media-body ml-2">
+                                              <p className="card-text text-left">
+                                                To Date :
+                                              </p>
+                                              <p className="text-left">
+                                                <b>31-12-2024</b>
+                                              </p>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <th></th>
+                                    {thElements}
+                                  </tr>
+                                  {hotelRoomDetails &&
+                                    isRoomDataReady &&
+                                    Object.entries(hotelRoomDetails).map(
+                                      ([key, value]) => (
+                                        <>
+                                          <tr>
+                                            <th>{accomodationObj[key]}</th>
+                                            {value
+                                              ?.slice(0, 4)
+                                              .map((item, index) => (
+                                                <td key={index}>
+                                                  {item["charges"]}
+                                                </td>
+                                              ))}
                                           </tr>
                                         </>
                                       )

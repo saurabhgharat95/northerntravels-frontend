@@ -381,7 +381,7 @@ const MarkupForm = ({ onValidationStatusChange }) => {
 
         <div className="row">
           <div className="col-md-4 grid-margin stretch-card">
-            <div className="card border border-secondary">
+            <div className="card border border-secondary box-shadow-none info-card-warning">
               <div className="card-body">
                 <div className="media">
                   <ion-icon
@@ -403,7 +403,7 @@ const MarkupForm = ({ onValidationStatusChange }) => {
             </div>
           </div>
           <div className="col-md-8 grid-margin stretch-card">
-            <div className="card border border-primary">
+            <div className="card border border-primary box-shadow-none info-card-primary">
               <div className="card-body ">
                 <div className="row">
                   <div className="col-md-1 pr-0">

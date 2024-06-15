@@ -1260,15 +1260,16 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
               >
                 <div className="row">
                   <div className="col-md-6 grid-margin stretch-card">
-                    <div className="card info-card  border border-success">
+                    <div className="card info-card  border border-success box-shadow-none info-card-success">
                       <div className="card-body">
                         <div className="media">
-                          <ion-icon
+                        <img src="../../images/money.png" alt="image" />{" "}
+                          {/* <ion-icon
                             style={{ marginTop: "5px" }}
                             color="success"
                             name="cash-outline"
                             size="large"
-                          ></ion-icon>
+                          ></ion-icon> */}
                           <div className="media-body ml-2">
                             <p
                               className="card-text"
@@ -1287,15 +1288,16 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
                     </div>
                   </div>
                   <div className="col-md-6 grid-margin stretch-card">
-                    <div className="card info-card border border-success">
+                    <div className="card info-card border border-success box-shadow-none info-card-success">
                       <div className="card-body">
                         <div className="media">
-                          <ion-icon
+                        <img src="../../images/money.png" alt="image" />{" "}
+                          {/* <ion-icon
                             style={{ marginTop: "5px" }}
                             color="success"
                             name="cash-outline"
                             size="large"
-                          ></ion-icon>
+                          ></ion-icon> */}
                           <div className="media-body ml-2">
                             <p
                               className="card-text"

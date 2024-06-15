@@ -229,6 +229,31 @@ ion-icon {
 .sidebar .nav.sub-menu .nav-item .nav-link {
   color: #abadb1;
 }
+.info-card-primary {
+  border-left: 8px solid #2656ab !important;
+  border-radius: 8px;
+  img {
+    width: 50px;
+  }
+ 
+}
+.info-card-success {
+  border-left: 8px solid #2dd55b !important;
+  border-radius: 8px;
+  img {
+    width: 50px;
+  }
+}
+.info-card-warning {
+  border-left: 8px solid #ffc409 !important;
+  border-radius: 8px;
+  img {
+    width: 40px;
+  }
+}
+.box-shadow-none {
+  box-shadow: none !important;
+}
 .badge.hot {
   background-color: #fddad9;
   color: #c3515b;
@@ -354,6 +379,12 @@ input {
 }
 .info-card {
   p > b {
-    color: #57B657;
+    color: #57b657;
   }
+}
+.dashboard-card .card-body .circle {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
 }
