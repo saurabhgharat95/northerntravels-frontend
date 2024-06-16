@@ -15,6 +15,8 @@ import {
   PointElement,
   LineElement,
   CategoryScale,
+  BarElement,
+  Bar,
 } from "../components/CommonImport";
 import {
   FETCH_UPDATED_ROOM_RATES_API,
@@ -47,7 +49,8 @@ const Homepage = () => {
     LinearScale,
     PointElement,
     LineElement,
-    CategoryScale
+    CategoryScale,
+    BarElement
   );
 
   const getTodaysDate = () => {
@@ -351,16 +354,112 @@ const Homepage = () => {
                 </div>
               </div>
             </div>
-            <div className="row">
-              <div className="col-md-6 grid-margin stretch-card">
-                <div className="card tale-bg">
-                  <div className="card-people mt-auto">
-                    <img src="images/dashboard/people.svg" alt="people" />
-                    <div className="weather-info"></div>
+            <div className=" grid-margin transparent dashboard-count-div">
+              <div className="row">
+                <div className="col-md-3  stretch-card transparent dashboard-card ">
+                  <div className="card ">
+                    <div
+                      className="card-body"
+                      onClick={() => navigate("/quotations")}
+                    >
+                      {!countObj.isCountReady && (
+                        <ShimmerTitle line={2} gap={10} variant="primary" />
+                      )}
+                      <div className="row ml-2">
+                        <div className="circle-div-1 mt-1">
+                          <ion-icon name="document-text"></ion-icon>
+                        </div>
+                        <div className="text-container ml-2">
+                          <p className="mb-2">Quotations</p>
+                          <p className="mb-2 value-txt count-color-1">
+                            {countObj.quotCount}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-md-3  stretch-card transparent dashboard-card">
+                  <div className="card " onClick={() => navigate("/hotels")}>
+                    <div className="card-body">
+                      <img
+                        className="circle"
+                        src="../../images/circle.svg"
+                        alt="image"
+                      />
+                      {!countObj.isCountReady && (
+                        <ShimmerTitle line={2} gap={10} variant="primary" />
+                      )}
+                      <div className="row ml-2">
+                        <div className="circle-div-2 mt-1">
+                          <ion-icon name="business"></ion-icon>
+                        </div>
+                        <div className="text-container ml-2">
+                          <p className="mb-2">Hotels</p>
+                          <p className="mb-2 value-txt count-color-2">
+                            {countObj.hotelsCount}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-md-3  stretch-card transparent dashboard-card">
+                  <div className="card " onClick={() => navigate("/tours")}>
+                    <div className="card-body">
+                      <img
+                        className="circle"
+                        src="../../images/circle.svg"
+                        alt="image"
+                      />
+                      {!countObj.isCountReady && (
+                        <ShimmerTitle line={2} gap={10} variant="primary" />
+                      )}
+
+                      <div className="row ml-2">
+                        <div className="circle-div-3 mt-1">
+                          <ion-icon name="map"></ion-icon>
+                        </div>
+                        <div className="text-container ml-2">
+                          <p className="mb-2">Tours</p>
+                          <p className="mb-2 value-txt count-color-3">
+                            {countObj.tourCount}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-md-3  stretch-card transparent dashboard-card">
+                  <div className="card " onClick={() => navigate("/leads")}>
+                    <div className="card-body">
+                      <img
+                        className="circle"
+                        src="../../images/circle.svg"
+                        alt="image"
+                      />
+                      {!countObj.isCountReady && (
+                        <ShimmerTitle line={2} gap={10} variant="primary" />
+                      )}
+                      <div className="row ml-2">
+                        <div className="circle-div-4 mt-1">
+                          <ion-icon name="people"></ion-icon>
+                        </div>
+                        <div className="text-container ml-2">
+                          <p className="mb-2">Leads</p>
+                          <p className="mb-2 value-txt count-color-4">
+                            {countObj.leadsCount}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-              <div className="col-md-6 grid-margin transparent dashboard-count-div">
+            </div>
+            {/* <div className="row"> */}
+
+            {/* <div className="col-md-6 grid-margin transparent dashboard-count-div">
                 <div className="row">
                   <div className="col-md-6 mb-4 stretch-card transparent dashboard-card">
                     <div className="card card-tale ">
@@ -441,12 +540,20 @@ const Homepage = () => {
                     </div>
                   </div>
                 </div>
-              </div>
-            </div>
+              </div> */}
+            {/* </div> */}
             <div className="row">
+              <div className="col-md-6 mb-4 grid-margin stretch-card">
+                <div className="card tale-bg dashboard-card-shadow">
+                  <div className="card-people mt-auto">
+                    <img src="images/dashboard/people.svg" alt="people" />
+                    <div className="weather-info"></div>
+                  </div>
+                </div>
+              </div>
               {topDestObj.data.length > 1 && (
-                <div className="col-md-6 mb-4 stretch-card transparent dashboard-card">
-                  <div className="card ">
+                <div className="col-md-6 mb-4 stretch-card transparent ">
+                  <div className="card dashboard-card-shadow">
                     <div className="card-body">
                       <div className="row">
                         <div className="col-md-12 pl-0">
@@ -479,7 +586,7 @@ const Homepage = () => {
               )}
               {topDestObj.lineChart && (
                 <div className="col-md-6 mb-4 stretch-card transparent">
-                  <div className="card ">
+                  <div className="card dashboard-card-shadow">
                     <div className="card-body">
                       <div className="row">
                         <div className="col-md-12 pl-0">
@@ -494,7 +601,7 @@ const Homepage = () => {
                           </div>
                         </div>
                         <div className="col-md-12">
-                          <Line data={topDestObj.lineChart} />
+                          <Bar data={topDestObj.lineChart} />
                         </div>
                       </div>
                     </div>

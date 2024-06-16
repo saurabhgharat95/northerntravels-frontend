@@ -18,13 +18,14 @@ import {
   FETCH_HOTEL_ROOM_DETAILS_API,
   FETCH_MEAL_TYPES_API,
 } from "../utils/constants";
-import { getDateFormatted } from "../utils/helpers";
+import { getDateFormatted, getDateFormattedForDB } from "../utils/helpers";
 import "react-toastify/dist/ReactToastify.css";
 import NoData from "../components/NoData";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import RenderPageNumbers from "./RenderPageNumbers";
 import Loader from "../components/Loader";
 import AddRoomForm from "./AddRoomForm";
+import { color } from "chart.js/helpers";
 const HotelRoomManagement = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
   const [formModule, setFormModule] = useState("hotel");
@@ -62,12 +63,24 @@ const HotelRoomManagement = () => {
   const endIndex = startIndex + itemsPerPage;
 
   const accomodationObj = {
-    1: "Room Charges/Double Room",
-    2: "Extra Bed",
-    3: "Child Without Bed Charge",
-    4: "Extra Child Below 5 Yrs Charge",
-    5: "Single Occupancy",
+    0: "Room Charges/Double Room",
+    1: "Extra Bed",
+    2: "Child Without Bed Charge",
+    3: "Extra Child Below 5 Yrs Charge",
+    4: "Single Occupancy",
   };
+  const hexCodes = [
+    "#FF5733",
+    "#2E86AB",
+    "#FFC300",
+    "#D32F2F",
+    "#7D3C98",
+    "#2ECC71",
+    "#E74C3C",
+    "#3498DB",
+    "#F39C12",
+    "#8E44AD",
+  ];
   const simpleValidator = useRef(
     new SimpleReactValidator({
       autoForceUpdate: this,
@@ -123,6 +136,62 @@ const HotelRoomManagement = () => {
       return acc;
     }, {});
   };
+  const transformData = (inputData) => {
+    // Map to hold the transformed data
+    let transformedData = [];
+
+    // Grouping data by fkHotelRoomPeriodMapId first
+    let groupedData = inputData.reduce((acc, item) => {
+      const { fkHotelRoomPeriodMapId, fkRoomAccommodationId, fkMealPlanId } =
+        item;
+
+      if (!acc[fkHotelRoomPeriodMapId]) {
+        acc[fkHotelRoomPeriodMapId] = {
+          items: [],
+        };
+      }
+
+      if (!acc[fkHotelRoomPeriodMapId][fkRoomAccommodationId]) {
+        acc[fkHotelRoomPeriodMapId][fkRoomAccommodationId] = [];
+      }
+
+      acc[fkHotelRoomPeriodMapId][fkRoomAccommodationId].push({
+        fkMealPlanId,
+        ...item,
+      });
+
+      return acc;
+    }, {});
+
+    // Converting grouped data into the desired format
+    for (let fkHotelRoomPeriodMapId in groupedData) {
+      if (groupedData.hasOwnProperty(fkHotelRoomPeriodMapId)) {
+        let itemsByFkRoomAccommodationId = [];
+
+        for (let fkRoomAccommodationId in groupedData[fkHotelRoomPeriodMapId]) {
+          if (
+            fkRoomAccommodationId !== "items" &&
+            groupedData[fkHotelRoomPeriodMapId].hasOwnProperty(
+              fkRoomAccommodationId
+            )
+          ) {
+            itemsByFkRoomAccommodationId.push({
+              fkRoomAccommodationId: parseInt(fkRoomAccommodationId),
+              items: groupedData[fkHotelRoomPeriodMapId][fkRoomAccommodationId],
+            });
+          }
+        }
+
+        transformedData.push({
+          fkHotelRoomPeriodMapId: parseInt(fkHotelRoomPeriodMapId),
+          items: groupedData[fkHotelRoomPeriodMapId].items,
+          itemsByFkRoomAccommodationId: itemsByFkRoomAccommodationId,
+        });
+      }
+    }
+
+    return transformedData;
+  };
   const fetchHotelRoomDetails = async (id) => {
     try {
       let url = FETCH_HOTEL_ROOM_DETAILS_API;
@@ -135,16 +204,20 @@ const HotelRoomManagement = () => {
         if (response.status == 200) {
           if (response.data.data) {
             if (response.data.data.roomChargesData.length > 0) {
-              let roomDetails = groupedData(response.data.data.roomChargesData);
+              let roomDetails = response.data.data.roomChargesData;
+
+              const result = transformData(roomDetails);
+
               setRoomDataReady(true);
 
-              // console.log("roomDetails", truncatedData);
-              setHotelRoomDetails(roomDetails);
+              console.log("roomDetails", result);
+              setHotelRoomDetails(result);
             }
           }
         }
       }
     } catch (e) {
+      console.log("ee", e);
       setHotelRooms([]);
       setRoomDataReady(true);
     }
@@ -520,19 +593,21 @@ const HotelRoomManagement = () => {
                       <div className="pl-0 col-md-4 grid-margin stretch-card">
                         <div className="card border border-primary box-shadow-none info-card-primary">
                           <div className="card-body">
-                            
                             <div className="media">
-                            <img src="../../images/building.png" alt="image" />{" "}
+                              <img
+                                src="../../images/building.png"
+                                alt="image"
+                              />{" "}
                               {/* <ion-icon
                                 color="primary"
                                 name="business-outline"
                                 size="large"
                               ></ion-icon> */}
                               <div className="media-body ml-2 mt-1">
-                                <p className="card-text">
-                                  Hotel : 
-                                </p>
-                                <h5><b>{selectedHotel.name}</b></h5>
+                                <p className="card-text">Hotel :</p>
+                                <h5>
+                                  <b>{selectedHotel.name}</b>
+                                </h5>
                               </div>
                             </div>
                           </div>
@@ -779,7 +854,7 @@ const HotelRoomManagement = () => {
                         </div>
                       </div>
                     )}
-                    <div>
+                    {/* <div>
                       <p>
                         <b>Filter Year :</b>{" "}
                       </p>
@@ -798,7 +873,7 @@ const HotelRoomManagement = () => {
                       >
                         2025
                       </span>
-                    </div>
+                    </div> */}
                     <br></br>
                     <div className="row">
                       <div className="col-12">
@@ -809,240 +884,126 @@ const HotelRoomManagement = () => {
                           >
                             <div className="row dt-row">
                               <div className="col-sm-12">
-                                <table
-                                  id="order-listing"
-                                  className="table table-bordered dataTable no-footer table-responsive"
-                                  aria-describedby="order-listing_info"
-                                >
-                                  <tr>
-                                    <td></td>
-                                    <td
-                                      className="text-center border-left border-right"
-                                      colSpan={8}
-                                    >
-                                      <div className="row">
-                                        <div className="col-sm-6">
-                                          <div className="media">
-                                            <ion-icon
-                                              style={{ marginTop: "8px" }}
-                                              color="secondary"
-                                              name="calendar-outline"
-                                              size="large"
-                                            ></ion-icon>
-                                            <div className="media-body ml-2">
-                                              <p className="card-text text-left">
-                                                From Date :
-                                              </p>
-                                              <p className="text-left">
-                                                <b>01-01-2024</b>
-                                              </p>
-                                            </div>
-                                          </div>
-                                        </div>
-                                        <div className="col-sm-6">
-                                          <div className="media">
-                                            <ion-icon
-                                              style={{ marginTop: "8px" }}
-                                              color="secondary"
-                                              name="calendar-outline"
-                                              size="large"
-                                            ></ion-icon>
-                                            <div className="media-body ml-2">
-                                              <p className="card-text text-left">
-                                                To Date :
-                                              </p>
-                                              <p className="text-left">
-                                                <b>30-04-2024</b>
-                                              </p>
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </div>
-                                    </td>
-                                  </tr>
-                                  <tr>
-                                    <th></th>
-                                    {thElements}
-                                  </tr>
-                                  {hotelRoomDetails &&
-                                    isRoomDataReady &&
-                                    Object.entries(hotelRoomDetails).map(
-                                      ([key, value]) => (
-                                        <>
+                                {hotelRoomDetails &&
+                                  isRoomDataReady &&
+                                  hotelRoomDetails.map((period, index) => (
+                                    <>
+                                      {
+                                        period.itemsByFkRoomAccommodationId[0][
+                                          "items"
+                                        ][0]["hotelroomperiod"]
+                                       && (
+                                        <table
+                                          id="order-listing"
+                                          className="table table-bordered dataTable no-footer table-responsive"
+                                          aria-describedby="order-listing_info"
+                                        >
                                           <tr>
-                                            <th>{accomodationObj[key]}</th>
-                                            {value
-                                              ?.slice(0, 4)
-                                              .map((item, index) => (
-                                                <td key={index}>
-                                                  {item["charges"]}
-                                                </td>
-                                              ))}
+                                            <td></td>
+                                            <td
+                                              className="text-center border-left border-right"
+                                              colSpan={8}
+                                            >
+                                              <div className="row">
+                                                <div className="col-sm-6">
+                                                  <div className="media calender-icon-div">
+                                                    <ion-icon
+                                                      style={{
+                                                        marginTop: "8px",
+                                                        color:
+                                                          hexCodes[
+                                                            index %
+                                                              hexCodes.length
+                                                          ],
+                                                      }}
+                                                      name="calendar-outline"
+                                                      size="large"
+                                                    ></ion-icon>
+                                                    <div className="media-body ml-2">
+                                                      <p className="card-text text-left">
+                                                        From Date :
+                                                      </p>
+                                                      <p className="text-left">
+                                                        <b>
+                                                          {getDateFormattedForDB(
+                                                            period
+                                                              .itemsByFkRoomAccommodationId[0][
+                                                              "items"
+                                                            ][0][
+                                                              "hotelroomperiod"
+                                                            ]["fromDate"]
+                                                          )}
+                                                        </b>
+                                                      </p>
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                                <div className="col-sm-6">
+                                                  <div className="media calender-icon-div">
+                                                    <ion-icon
+                                                      style={{
+                                                        marginTop: "8px",
+                                                        color:
+                                                          hexCodes[
+                                                            index %
+                                                              hexCodes.length
+                                                          ],
+                                                      }}
+                                                      name="calendar-outline"
+                                                      size="large"
+                                                    ></ion-icon>
+                                                    <div className="media-body ml-2">
+                                                      <p className="card-text text-left">
+                                                        To Date :
+                                                      </p>
+                                                      <p className="text-left">
+                                                        <b>
+                                                          {getDateFormattedForDB(
+                                                            period
+                                                              .itemsByFkRoomAccommodationId[0][
+                                                              "items"
+                                                            ][0][
+                                                              "hotelroomperiod"
+                                                            ]["toDate"]
+                                                          )}
+                                                        </b>
+                                                      </p>
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            </td>
                                           </tr>
-                                        </>
-                                      )
-                                    )}
-                                  {isRoomDataReady == false && (
-                                    <ShimmerTable row={7} />
-                                  )}
-                                </table>
-                                <br></br>
-
-                                <table
-                                  id="order-listing"
-                                  className="table table-bordered dataTable no-footer table-responsive"
-                                  aria-describedby="order-listing_info"
-                                >
-                                  <tr>
-                                    <td></td>
-                                    <td
-                                      className="text-center border-left border-right"
-                                      colSpan={8}
-                                    >
-                                      <div className="row">
-                                        <div className="col-sm-6">
-                                          <div className="media">
-                                            <ion-icon
-                                              style={{ marginTop: "8px" }}
-                                              color="tertiary"
-                                              name="calendar-outline"
-                                              size="large"
-                                            ></ion-icon>
-                                            <div className="media-body ml-2">
-                                              <p className="card-text text-left">
-                                                From Date :
-                                              </p>
-                                              <p className="text-left">
-                                                <b>01-05-2024</b>
-                                              </p>
-                                            </div>
-                                          </div>
-                                        </div>
-                                        <div className="col-sm-6">
-                                          <div className="media">
-                                            <ion-icon
-                                              style={{ marginTop: "8px" }}
-                                              color="tertiary"
-                                              name="calendar-outline"
-                                              size="large"
-                                            ></ion-icon>
-                                            <div className="media-body ml-2">
-                                              <p className="card-text text-left">
-                                                To Date :
-                                              </p>
-                                              <p className="text-left">
-                                                <b>30-09-2024</b>
-                                              </p>
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </div>
-                                    </td>
-                                  </tr>
-                                  <tr>
-                                    <th></th>
-                                    {thElements}
-                                  </tr>
-                                  {hotelRoomDetails &&
-                                    isRoomDataReady &&
-                                    Object.entries(hotelRoomDetails).map(
-                                      ([key, value]) => (
-                                        <>
                                           <tr>
-                                            <th>{accomodationObj[key]}</th>
-                                            {value
-                                              ?.slice(0, 4)
-                                              .map((item, index) => (
-                                                <td key={index}>
-                                                  {item["charges"]}
-                                                </td>
-                                              ))}
+                                            <th></th>
+                                            {thElements}
                                           </tr>
-                                        </>
-                                      )
-                                    )}
-                                  {isRoomDataReady == false && (
-                                    <ShimmerTable row={7} />
-                                  )}
-                                </table>
-                                <br></br>
-                                <table
-                                  id="order-listing"
-                                  className="table table-bordered dataTable no-footer table-responsive"
-                                  aria-describedby="order-listing_info"
-                                >
-                                  <tr>
-                                    <td></td>
-                                    <td
-                                      className="text-center border-left border-right"
-                                      colSpan={8}
-                                    >
-                                      <div className="row">
-                                        <div className="col-sm-6">
-                                          <div className="media">
-                                            <ion-icon
-                                              style={{ marginTop: "8px" }}
-                                              color="primary"
-                                              name="calendar-outline"
-                                              size="large"
-                                            ></ion-icon>
-                                            <div className="media-body ml-2">
-                                              <p className="card-text text-left">
-                                                From Date :
-                                              </p>
-                                              <p className="text-left">
-                                                <b>01-10-2024</b>
-                                              </p>
-                                            </div>
-                                          </div>
-                                        </div>
-                                        <div className="col-sm-6">
-                                          <div className="media">
-                                            <ion-icon
-                                              style={{ marginTop: "8px" }}
-                                              color="primary"
-                                              name="calendar-outline"
-                                              size="large"
-                                            ></ion-icon>
-                                            <div className="media-body ml-2">
-                                              <p className="card-text text-left">
-                                                To Date :
-                                              </p>
-                                              <p className="text-left">
-                                                <b>31-12-2024</b>
-                                              </p>
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </div>
-                                    </td>
-                                  </tr>
-                                  <tr>
-                                    <th></th>
-                                    {thElements}
-                                  </tr>
-                                  {hotelRoomDetails &&
-                                    isRoomDataReady &&
-                                    Object.entries(hotelRoomDetails).map(
-                                      ([key, value]) => (
-                                        <>
-                                          <tr>
-                                            <th>{accomodationObj[key]}</th>
-                                            {value
-                                              ?.slice(0, 4)
-                                              .map((item, index) => (
-                                                <td key={index}>
-                                                  {item["charges"]}
-                                                </td>
-                                              ))}
-                                          </tr>
-                                        </>
-                                      )
-                                    )}
-                                  {isRoomDataReady == false && (
-                                    <ShimmerTable row={7} />
-                                  )}
-                                </table>
+                                          {Object.entries(
+                                            period.itemsByFkRoomAccommodationId
+                                          ).map((key, value) => (
+                                            <>
+                                              <tr>
+                                                <th>
+                                                  {accomodationObj[key[0]]}
+                                                </th>
+                                                {key[1]["items"].map(
+                                                  (item, index) => (
+                                                    <td key={index}>
+                                                      {item["charges"]}
+                                                    </td>
+                                                  )
+                                                )}
+                                              </tr>
+                                            </>
+                                          ))}
+                                          {isRoomDataReady == false && (
+                                            <ShimmerTable row={7} />
+                                          )}
+                                        </table>
+                                      )}
+                                      <br></br>
+                                    </>
+                                  ))}
                               </div>
                             </div>
                           </div>

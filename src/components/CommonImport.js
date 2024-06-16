@@ -25,9 +25,10 @@ import {
   LinearScale,
   PointElement,
   LineElement,
-  CategoryScale
+  CategoryScale,
+  BarElement
 } from "chart.js";
-import { Pie,Line } from "react-chartjs-2";
+import { Pie,Line,Bar } from "react-chartjs-2";
 
 export {
   Footer,
@@ -57,5 +58,7 @@ export {
   PointElement,
   LineElement,
   Line,
-  CategoryScale
+  CategoryScale,
+  BarElement,
+  Bar
 };
