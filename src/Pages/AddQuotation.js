@@ -895,7 +895,7 @@ const AddQuotation = () => {
                       <ul role="menu" aria-label="Pagination">
                         <li>
                           <button
-                            className="btn btn-danger"
+                            className="btn cancel-btn"
                             onClick={() => {
                               navigate("/quotations");
                             }}
@@ -905,7 +905,7 @@ const AddQuotation = () => {
                         </li>
                         <li aria-disabled="true">
                           <button
-                            className="btn text-light btn-secondary"
+                            className="btn  previous-btn"
                             onClick={() => {
                               selectForm("prev", selectedTab);
                               scrollToTop();
@@ -952,7 +952,7 @@ const AddQuotation = () => {
                       <ul role="menu" aria-label="Pagination">
                         <li>
                           <button
-                            className="btn btn-danger"
+                            className="btn cancel-btn"
                             onClick={() => {
                               navigate("/quotations");
                             }}
@@ -962,7 +962,7 @@ const AddQuotation = () => {
                         </li>
                         <li aria-disabled="true">
                           <button
-                            className="btn text-light btn-secondary"
+                             className="btn  previous-btn"
                             onClick={() => {
                               selectForm("prev", selectedTab);
                             }}

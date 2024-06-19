@@ -18,6 +18,8 @@ import ConfirmationDialog from "../components/ConfirmationDialog";
 import { useDispatch, useSelector } from "react-redux";
 import { setQuotationFormData } from "../utils/store";
 import { getMultipleFilteredDropdownOptions } from "../utils/helpers";
+import SwapModal from "../components/SwapModel";
+
 const ItineraryForm = ({ onValidationStatusChange }) => {
   const [locations, setLocations] = useState([]);
   const [transitPts, setTransitPtList] = useState([]);
@@ -450,6 +452,21 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
       }
     }
   };
+  const [showSwapModal, setShowSwapModal] = useState(false);
+  const [preselectedDay, setPreselectedDay] = useState(null);
+
+  const handleClose = () => setShowSwapModal(false);
+  const handleShow = (index) => {
+    setPreselectedDay(index);
+    setShowSwapModal(true);
+  };
+
+  const handleSwap = (index1, index2) => {
+    let newItineraryData = [...itineraryData];
+    [newItineraryData[index1], newItineraryData[index2]] = [newItineraryData[index2], newItineraryData[index1]];
+    // Update your state management logic here
+    setItineraryData(newItineraryData);
+  };  
   useEffect(() => {
     fetchVehicles();
   }, []);
@@ -1392,6 +1409,7 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
                                     color="tertiary"
                                     style={{ marginRight: "10px" }}
                                     title="Swap"
+                                    onClick={() => handleShow(index)}
                                   ></ion-icon> */}
                                   <ion-icon
                                     name="trash-outline"
@@ -1471,6 +1489,7 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
             </div>
           </div>
         </div>
+        <SwapModal show={showSwapModal} handleClose={handleClose} handleSwap={handleSwap} preselectedDay={preselectedDay} />
       </section>
     </>
   );

@@ -23,8 +23,10 @@ import {
   FETCH_DASHBOARD_COUNT_API,
   FETCH_TOP_DESTINATIONS_API,
   FETCH_QUOTATION_MONTHLY_COUNT_API,
+  FETCH_QUOTATIONS_API,
 } from "../utils/constants";
 import { useNavigate } from "react-router-dom";
+import { getDateFormattedForDB } from "../utils/helpers";
 
 const Homepage = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
@@ -39,6 +41,7 @@ const Homepage = () => {
     data: [],
     chart: null,
     lineChart: null,
+    upcomingQuotations: [],
   });
   const [roomRateData, setRoomRateData] = useState({});
   const navigate = useNavigate();
@@ -84,7 +87,26 @@ const Homepage = () => {
     var formattedDate = day + " " + monthName + ", " + year;
     return formattedDate;
   };
+  const getDateTwoWeeksFromToday = () => {
+    // Get today's date
+    let today = new Date();
 
+    // Add 14 days to today's date (two weeks)
+    today.setDate(today.getDate() + 14);
+
+    // Format the date as dd-mm-yyyy
+    let day = today.getDate();
+    let month = today.getMonth() + 1; // getMonth() returns 0-based index
+    let year = today.getFullYear();
+
+    // Pad day and month with leading zeros if necessary
+    day = day < 10 ? "0" + day : day;
+    month = month < 10 ? "0" + month : month;
+
+    // Return the formatted date string
+    return `${day}-${month}-${year}`;
+  };
+  const twoWeeksFromToday = getDateTwoWeeksFromToday();
   const fetchDashboardCount = async () => {
     try {
       let url = FETCH_DASHBOARD_COUNT_API;
@@ -260,12 +282,43 @@ const Homepage = () => {
       console.error("Error fetching monthly quotation count:", e);
     }
   };
+  const fetchQuotations = async () => {
+    try {
+      let url = FETCH_QUOTATIONS_API;
+
+      let response = await axios.post(url);
+      if (response) {
+        if (response.status == 200) {
+          let quotationsObjects = response.data.data;
+          const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const twoWeeksLater = new Date(today);
+        twoWeeksLater.setDate(twoWeeksLater.getDate() + 14);
+
+        // Filter quotations where quotArrivalDate is within the next two weeks
+        const filteredQuotations = quotationsObjects.filter(quot => {
+          const arrivalDate = new Date(quot.quotArrivalDate);
+          arrivalDate.setHours(0, 0, 0, 0);
+          return arrivalDate >= today && arrivalDate <= twoWeeksLater;
+        });
+          setTopDestObj((prevState) => ({
+            ...prevState,
+            upcomingQuotations: filteredQuotations,
+          }));
+        }
+      }
+    } catch (e) {
+      console.error("Error fetching monthly quotation count:", e);
+    }
+  };
 
   useEffect(() => {
     fetchDashboardCount();
     fetchUpdatedRoomRates();
     fetchTopDestinations();
     fetchQuotationMonthlyCount();
+    fetchQuotations();
+    fetchQuotations();
   }, []);
   return (
     <div className="container-scroller">
@@ -357,7 +410,7 @@ const Homepage = () => {
             <div className=" grid-margin transparent dashboard-count-div">
               <div className="row">
                 <div className="col-md-3  stretch-card transparent dashboard-card ">
-                  <div className="card ">
+                  <div className="card dashboard-card-1">
                     <div
                       className="card-body"
                       onClick={() => navigate("/quotations")}
@@ -380,13 +433,11 @@ const Homepage = () => {
                   </div>
                 </div>
                 <div className="col-md-3  stretch-card transparent dashboard-card">
-                  <div className="card " onClick={() => navigate("/hotels")}>
+                  <div
+                    className="card dashboard-card-2"
+                    onClick={() => navigate("/hotels")}
+                  >
                     <div className="card-body">
-                      <img
-                        className="circle"
-                        src="../../images/circle.svg"
-                        alt="image"
-                      />
                       {!countObj.isCountReady && (
                         <ShimmerTitle line={2} gap={10} variant="primary" />
                       )}
@@ -405,13 +456,11 @@ const Homepage = () => {
                   </div>
                 </div>
                 <div className="col-md-3  stretch-card transparent dashboard-card">
-                  <div className="card " onClick={() => navigate("/tours")}>
+                  <div
+                    className="card dashboard-card-3"
+                    onClick={() => navigate("/tours")}
+                  >
                     <div className="card-body">
-                      <img
-                        className="circle"
-                        src="../../images/circle.svg"
-                        alt="image"
-                      />
                       {!countObj.isCountReady && (
                         <ShimmerTitle line={2} gap={10} variant="primary" />
                       )}
@@ -431,13 +480,11 @@ const Homepage = () => {
                   </div>
                 </div>
                 <div className="col-md-3  stretch-card transparent dashboard-card">
-                  <div className="card " onClick={() => navigate("/leads")}>
+                  <div
+                    className="card dashboard-card-4"
+                    onClick={() => navigate("/leads")}
+                  >
                     <div className="card-body">
-                      <img
-                        className="circle"
-                        src="../../images/circle.svg"
-                        alt="image"
-                      />
                       {!countObj.isCountReady && (
                         <ShimmerTitle line={2} gap={10} variant="primary" />
                       )}
@@ -608,6 +655,51 @@ const Homepage = () => {
                   </div>
                 </div>
               )}
+              {topDestObj.upcomingQuotations.length>0 && 
+              <div className="col-md-6 mb-4 stretch-card transparent ">
+                <div className="card dashboard-card-shadow">
+                  <div className="card-body">
+                    <div className="row">
+                      <div className="col-md-12 pl-0">
+                        <div class="ml-xl-4 mt-3 mb-4">
+                          <p class="card-title">Upcoming Arrivals</p>
+                          <p class="mb-3 mb-xl-0">
+                            See quotations with arrival dates scheduled between
+                            today and {twoWeeksFromToday}
+                          </p>
+                        </div>
+                        <table class="table table">
+                          <thead>
+                            <tr>
+                              <th class="pt-1 ps-0">Quotation No.</th>
+                              <th class="pt-1 ps-0">Customer Name</th>
+                              <th class="pt-1">Arrival Date</th>
+                              <th class="pt-1">Departure Date</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            { topDestObj.upcomingQuotations.map((quot)=>(
+                              <tr>
+                              <td class="py-1 ps-0">
+                                <div class="d-flex align-items-center">
+                                  <div class="ms-3">
+                                    <p class="mb-0  text-small">{quot.quotNo}</p>
+                                  </div>
+                                </div>
+                              </td>
+                              <td>{quot.quotClientName}</td>
+                              <td>{getDateFormattedForDB(quot.quotArrivalDate)}</td>
+                              <td>{getDateFormattedForDB(quot.quotDepartureDate)}</td>
+                            </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+}
             </div>
           </div>
 

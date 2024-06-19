@@ -14,7 +14,7 @@ import {
   DELETE_QUOTATION_API,
 } from "../utils/constants";
 import { useNavigate } from "react-router-dom";
-import { getDateFormatted,toTitleCase } from "../utils/helpers";
+import { getDateFormatted,getDateFormattedForDB,toTitleCase } from "../utils/helpers";
 
 import "react-toastify/dist/ReactToastify.css";
 import NoData from "../components/NoData";
@@ -227,6 +227,12 @@ const QuotationManagement = () => {
                                     <th style={{ width: "127.391px" }}>
                                       Quotation Date
                                     </th>
+                                    <th style={{ width: "127.391px" }}>
+                                      Arrival Date
+                                    </th>
+                                    <th style={{ width: "127.391px" }}>
+                                      Departure Date
+                                    </th>
                                     <th style={{ width: "116.672px" }}>
                                       Customer Name
                                     </th>
@@ -257,6 +263,16 @@ const QuotationManagement = () => {
                                             <td>
                                               {getDateFormatted(
                                                 quotation.quotDate
+                                              )}
+                                            </td>
+                                            <td>
+                                              {getDateFormattedForDB(
+                                                quotation.quotArrivalDate
+                                              )}
+                                            </td>
+                                            <td>
+                                              {getDateFormattedForDB(
+                                                quotation.quotDepartureDate
                                               )}
                                             </td>
                                             <td>{toTitleCase(quotation.quotClientName)}</td>

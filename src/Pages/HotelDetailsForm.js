@@ -117,6 +117,7 @@ const HotelDetailsForm = ({ onValidationStatusChange }) => {
                   packageObject,
                 ])
               );
+              dispatch(setQuotationFormData("quotPackageReadOnly", true));
               setPackageReadOnly(true);
               setIsNewPackage(false);
             }
@@ -165,6 +166,7 @@ const HotelDetailsForm = ({ onValidationStatusChange }) => {
               packageObject,
             ])
           );
+          dispatch(setQuotationFormData("quotPackageReadOnly", true));
           setPackageReadOnly(true);
           setIsNewPackage(false);
         }
@@ -226,7 +228,7 @@ const HotelDetailsForm = ({ onValidationStatusChange }) => {
               roomTypeId: "",
               mealTypeId: "",
             }));
-
+            dispatch(setQuotationFormData("quotPackageReadOnly", true));
             setPackageReadOnly(true);
             setActionObj((prevState) => ({ ...prevState, updateId: null }));
             setIsNewPackage(false);
@@ -273,7 +275,7 @@ const HotelDetailsForm = ({ onValidationStatusChange }) => {
             roomTypeId: "",
             mealTypeId: "",
           }));
-
+          dispatch(setQuotationFormData("quotPackageReadOnly", true));
           setPackageReadOnly(true);
           setActionObj((prevState) => ({ ...prevState, updateId: null }));
           setIsNewPackage(false);
@@ -285,6 +287,7 @@ const HotelDetailsForm = ({ onValidationStatusChange }) => {
     }
   };
   const addNewPackage = () => {
+    dispatch(setQuotationFormData("quotPackageReadOnly", false));
     setPackageReadOnly(false);
     setActionObj((prevState) => ({ ...prevState, updateId: null }));
     setIsNewPackage(true);
@@ -548,11 +551,21 @@ const HotelDetailsForm = ({ onValidationStatusChange }) => {
           quotHotelId: quotPackage[index].quotHotelId,
         });
       }
+     
       setPackageData(quotPackageArray);
       setOriginalPackageData(quotPackageArray);
       setPackageNameArray(quotFormData.quotPackageNameArray);
-
+      setPackageReadOnly(quotFormData.quotPackageReadOnly)
       setForceUpdate((v) => ++v);
+      if (quotFormData.quotPackageReadOnly){
+        let lastElement = quotPackageArray[quotPackageArray.length - 1];
+        setPackageObject((prevState) => ({
+          ...prevState,
+          packageName: lastElement.packageName,
+        }))
+      }
+     
+
     }
   }, [quotFormData]);
 
@@ -570,7 +583,7 @@ const HotelDetailsForm = ({ onValidationStatusChange }) => {
         style={{ left: "0px" }}
       >
         <h4 className="form-heading">Hotel Details</h4>
-       
+
         <form>
           <div className="form-group row">
             <div className="col-sm-6">
