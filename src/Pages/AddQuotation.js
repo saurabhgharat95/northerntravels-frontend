@@ -499,18 +499,20 @@ const AddQuotation = () => {
       let url = UPDATE_QUOTATION_ITINERARY_API;
       let quotItineraryData = [];
       let quotItinerarydetails = quotFormData.quotItineraryData;
-      let quotItiAddons = [];
       if (quotItinerarydetails.length > 0) {
         quotItinerarydetails.forEach((element) => {
+          let quotItiAddons = []; 
           if (element.quotItiAddons && element.quotItiAddons.length > 0) {
             if (
               element.quotItiAddons[0].quotItiService != "" ||
               element.quotItiAddons[0].quotItiAddonId
             ) {
-              quotItiAddons = element.quotItiAddons;
+              
+              quotItiAddons = JSON.parse(JSON.stringify(element.quotItiAddons));
             }
+            
           }
-
+          
           quotItineraryData.push({
             quotItiId: element.quotItiId,
             quotItiDay: element.quotItiDay,
@@ -895,7 +897,7 @@ const AddQuotation = () => {
                       <ul role="menu" aria-label="Pagination">
                         <li>
                           <button
-                            className="btn btn-danger"
+                            className="btn cancel-btn"
                             onClick={() => {
                               navigate("/quotations");
                             }}
@@ -905,7 +907,7 @@ const AddQuotation = () => {
                         </li>
                         <li aria-disabled="true">
                           <button
-                            className="btn text-light btn-secondary"
+                            className="btn  previous-btn"
                             onClick={() => {
                               selectForm("prev", selectedTab);
                               scrollToTop();
@@ -952,7 +954,7 @@ const AddQuotation = () => {
                       <ul role="menu" aria-label="Pagination">
                         <li>
                           <button
-                            className="btn btn-danger"
+                            className="btn cancel-btn"
                             onClick={() => {
                               navigate("/quotations");
                             }}
@@ -962,7 +964,7 @@ const AddQuotation = () => {
                         </li>
                         <li aria-disabled="true">
                           <button
-                            className="btn text-light btn-secondary"
+                             className="btn  previous-btn"
                             onClick={() => {
                               selectForm("prev", selectedTab);
                             }}

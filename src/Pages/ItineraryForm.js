@@ -18,6 +18,8 @@ import ConfirmationDialog from "../components/ConfirmationDialog";
 import { useDispatch, useSelector } from "react-redux";
 import { setQuotationFormData } from "../utils/store";
 import { getMultipleFilteredDropdownOptions } from "../utils/helpers";
+import SwapModal from "../components/SwapModel";
+
 const ItineraryForm = ({ onValidationStatusChange }) => {
   const [locations, setLocations] = useState([]);
   const [transitPts, setTransitPtList] = useState([]);
@@ -150,6 +152,7 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
             quotItiDate <= quotDepartureDate &&
             quotItiDay <= quotDays
           ) {
+            
             itineraryObject.quotItiAddons = addOnformValues;
             itineraryObject.quotItiDestinations = destFormValues;
             setItineraryData((prevState) => [...prevState, itineraryObject]);
@@ -449,6 +452,24 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
         );
       }
     }
+  };
+  const [showSwapModal, setShowSwapModal] = useState(false);
+  const [preselectedDay, setPreselectedDay] = useState(null);
+
+  const handleClose = () => setShowSwapModal(false);
+  const handleShow = (index) => {
+    setPreselectedDay(index);
+    setShowSwapModal(true);
+  };
+
+  const handleSwap = (index1, index2) => {
+    let newItineraryData = [...itineraryData];
+    [newItineraryData[index1], newItineraryData[index2]] = [
+      newItineraryData[index2],
+      newItineraryData[index1],
+    ];
+    // Update your state management logic here
+    setItineraryData(newItineraryData);
   };
   useEffect(() => {
     fetchVehicles();
@@ -1237,17 +1258,17 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
           ))}
         </div>
         {/* <div className="col-sm-12"> */}
-          <button
-            className="btn btn-success mr-3"
-            onClick={() => {
-              validateForm();
-              {
-                acionObj.updateId != null ? editItinerary() : addItinerary();
-              }
-            }}
-          >
-            {acionObj.updateId != null ? "Update" : "Add"}
-          </button>
+        <button
+          className="btn btn-success mr-3"
+          onClick={() => {
+            validateForm();
+            {
+              acionObj.updateId != null ? editItinerary() : addItinerary();
+            }
+          }}
+        >
+          {acionObj.updateId != null ? "Update" : "Add"}
+        </button>
         {/* </div> */}
         <br></br>
         <br></br>
@@ -1260,15 +1281,16 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
               >
                 <div className="row">
                   <div className="col-md-6 grid-margin stretch-card">
-                    <div className="card info-card  border border-success">
+                    <div className="card info-card  border border-success box-shadow-none info-card-success">
                       <div className="card-body">
                         <div className="media">
-                          <ion-icon
+                          <img src="../../images/money.png" alt="image" />{" "}
+                          {/* <ion-icon
                             style={{ marginTop: "5px" }}
                             color="success"
                             name="cash-outline"
                             size="large"
-                          ></ion-icon>
+                          ></ion-icon> */}
                           <div className="media-body ml-2">
                             <p
                               className="card-text"
@@ -1287,15 +1309,16 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
                     </div>
                   </div>
                   <div className="col-md-6 grid-margin stretch-card">
-                    <div className="card info-card border border-success">
+                    <div className="card info-card border border-success box-shadow-none info-card-success">
                       <div className="card-body">
                         <div className="media">
-                          <ion-icon
+                          <img src="../../images/money.png" alt="image" />{" "}
+                          {/* <ion-icon
                             style={{ marginTop: "5px" }}
                             color="success"
                             name="cash-outline"
                             size="large"
-                          ></ion-icon>
+                          ></ion-icon> */}
                           <div className="media-body ml-2">
                             <p
                               className="card-text"
@@ -1371,9 +1394,19 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
                                     title="Edit"
                                     onClick={() => {
                                       setItineraryObject(itineraryObj);
-                                      setAddOnFormValues(
-                                        itineraryObj.quotItiAddons
-                                      );
+                                      itineraryObj.quotItiAddons.length == 0
+                                        ? setAddOnFormValues([
+                                            {
+                                              quotItiAddonId: null,
+                                              quotItiService: "",
+                                              quotItiServicePayable: "1",
+                                              quotItiServiceAmount: "",
+                                              quotItiServiceRemark: "",
+                                            },
+                                          ])
+                                        : setAddOnFormValues(
+                                            itineraryObj.quotItiAddons
+                                          );
 
                                       setDestFormValues(
                                         itineraryObj.quotItiDestinations
@@ -1390,6 +1423,7 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
                                     color="tertiary"
                                     style={{ marginRight: "10px" }}
                                     title="Swap"
+                                    onClick={() => handleShow(index)}
                                   ></ion-icon> */}
                                   <ion-icon
                                     name="trash-outline"
@@ -1469,6 +1503,12 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
             </div>
           </div>
         </div>
+        <SwapModal
+          show={showSwapModal}
+          handleClose={handleClose}
+          handleSwap={handleSwap}
+          preselectedDay={preselectedDay}
+        />
       </section>
     </>
   );

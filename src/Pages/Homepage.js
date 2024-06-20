@@ -15,14 +15,18 @@ import {
   PointElement,
   LineElement,
   CategoryScale,
+  BarElement,
+  Bar,
 } from "../components/CommonImport";
 import {
   FETCH_UPDATED_ROOM_RATES_API,
   FETCH_DASHBOARD_COUNT_API,
   FETCH_TOP_DESTINATIONS_API,
   FETCH_QUOTATION_MONTHLY_COUNT_API,
+  FETCH_QUOTATIONS_API,
 } from "../utils/constants";
 import { useNavigate } from "react-router-dom";
+import { getDateFormattedForDB } from "../utils/helpers";
 
 const Homepage = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
@@ -37,6 +41,7 @@ const Homepage = () => {
     data: [],
     chart: null,
     lineChart: null,
+    upcomingQuotations: [],
   });
   const [roomRateData, setRoomRateData] = useState({});
   const navigate = useNavigate();
@@ -47,7 +52,8 @@ const Homepage = () => {
     LinearScale,
     PointElement,
     LineElement,
-    CategoryScale
+    CategoryScale,
+    BarElement
   );
 
   const getTodaysDate = () => {
@@ -81,7 +87,26 @@ const Homepage = () => {
     var formattedDate = day + " " + monthName + ", " + year;
     return formattedDate;
   };
+  const getDateTwoWeeksFromToday = () => {
+    // Get today's date
+    let today = new Date();
 
+    // Add 14 days to today's date (two weeks)
+    today.setDate(today.getDate() + 14);
+
+    // Format the date as dd-mm-yyyy
+    let day = today.getDate();
+    let month = today.getMonth() + 1; // getMonth() returns 0-based index
+    let year = today.getFullYear();
+
+    // Pad day and month with leading zeros if necessary
+    day = day < 10 ? "0" + day : day;
+    month = month < 10 ? "0" + month : month;
+
+    // Return the formatted date string
+    return `${day}-${month}-${year}`;
+  };
+  const twoWeeksFromToday = getDateTwoWeeksFromToday();
   const fetchDashboardCount = async () => {
     try {
       let url = FETCH_DASHBOARD_COUNT_API;
@@ -123,9 +148,11 @@ const Homepage = () => {
       if (response) {
         if (response.status == 200) {
           let topDest = response.data.data;
-          if(topDest.length>0){
-            const labels = topDest.slice(0,10).map((item) => item.stateName);
-            const data = topDest.slice(0,10).map((item) => item.quotation_count);
+          if (topDest.length > 0) {
+            const labels = topDest.slice(0, 10).map((item) => item.stateName);
+            const data = topDest
+              .slice(0, 10)
+              .map((item) => item.quotation_count);
             const backgroundColor = [
               "rgba(255, 99, 132, 0.2)",
               "rgba(54, 162, 235, 0.2)",
@@ -136,9 +163,9 @@ const Homepage = () => {
               "rgba(201, 203, 207, 0.2)",
               "rgba(255, 99, 71, 0.2)",
               "rgba(144, 238, 144, 0.2)",
-              "rgba(255, 182, 193, 0.2)"
+              "rgba(255, 182, 193, 0.2)",
             ];
-            
+
             const borderColor = [
               "rgba(255, 99, 132, 1)",
               "rgba(54, 162, 235, 1)",
@@ -149,9 +176,9 @@ const Homepage = () => {
               "rgba(201, 203, 207, 1)",
               "rgba(255, 99, 71, 1)",
               "rgba(144, 238, 144, 1)",
-              "rgba(255, 182, 193, 1)"
+              "rgba(255, 182, 193, 1)",
             ];
-            
+
             while (backgroundColor.length < data.length) {
               backgroundColor.push("rgba(255, 159, 64, 0.2)");
               borderColor.push("rgba(255, 159, 64, 1)");
@@ -168,14 +195,13 @@ const Homepage = () => {
                 },
               ],
             };
-  
+
             setTopDestObj((prevState) => ({
               ...prevState,
               data: topDest,
               chart: pieData,
             }));
           }
-          
         }
       }
     } catch (e) {}
@@ -183,7 +209,7 @@ const Homepage = () => {
   const fetchQuotationMonthlyCount = async () => {
     try {
       let url = FETCH_QUOTATION_MONTHLY_COUNT_API;
-  
+
       let response = await axios.post(url);
       if (response) {
         if (response.status == 200) {
@@ -203,37 +229,37 @@ const Homepage = () => {
             "Nov",
             "Dec",
           ];
-  
+
           monthCount.forEach((item) => {
             // Ensure month is two digits
             const month = String(item.month).padStart(2, "0");
             monthDataMap[month] = item.quotation_count;
           });
-  
+
           // Map month names to their respective numeric values
           const monthMap = {
-            "Jan": "01",
-            "Feb": "02",
-            "Mar": "03",
-            "Apr": "04",
-            "May": "05",
-            "Jun": "06",
-            "Jul": "07",
-            "Aug": "08",
-            "Sept": "09",
-            "Oct": "10",
-            "Nov": "11",
-            "Dec": "12",
+            Jan: "01",
+            Feb: "02",
+            Mar: "03",
+            Apr: "04",
+            May: "05",
+            Jun: "06",
+            Jul: "07",
+            Aug: "08",
+            Sept: "09",
+            Oct: "10",
+            Nov: "11",
+            Dec: "12",
           };
-  
+
           // Prepare the data array ensuring all months are included
           const data = labels.map((label) => {
             const month = monthMap[label]; // Get the month number from the label
             return monthDataMap[month] || 0;
           });
-  
+
           console.log(data);
-  
+
           let lineData = {
             labels,
             datasets: [
@@ -245,7 +271,7 @@ const Homepage = () => {
               },
             ],
           };
-  
+
           setTopDestObj((prevState) => ({
             ...prevState,
             lineChart: lineData,
@@ -256,13 +282,43 @@ const Homepage = () => {
       console.error("Error fetching monthly quotation count:", e);
     }
   };
-  
+  const fetchQuotations = async () => {
+    try {
+      let url = FETCH_QUOTATIONS_API;
+
+      let response = await axios.post(url);
+      if (response) {
+        if (response.status == 200) {
+          let quotationsObjects = response.data.data;
+          const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const twoWeeksLater = new Date(today);
+        twoWeeksLater.setDate(twoWeeksLater.getDate() + 14);
+
+        // Filter quotations where quotArrivalDate is within the next two weeks
+        const filteredQuotations = quotationsObjects.filter(quot => {
+          const arrivalDate = new Date(quot.quotArrivalDate);
+          arrivalDate.setHours(0, 0, 0, 0);
+          return arrivalDate >= today && arrivalDate <= twoWeeksLater;
+        });
+          setTopDestObj((prevState) => ({
+            ...prevState,
+            upcomingQuotations: filteredQuotations,
+          }));
+        }
+      }
+    } catch (e) {
+      console.error("Error fetching monthly quotation count:", e);
+    }
+  };
 
   useEffect(() => {
     fetchDashboardCount();
     fetchUpdatedRoomRates();
     fetchTopDestinations();
     fetchQuotationMonthlyCount();
+    fetchQuotations();
+    fetchQuotations();
   }, []);
   return (
     <div className="container-scroller">
@@ -351,23 +407,114 @@ const Homepage = () => {
                 </div>
               </div>
             </div>
-            <div className="row">
-              <div className="col-md-6 grid-margin stretch-card">
-                <div className="card tale-bg">
-                  <div className="card-people mt-auto">
-                    <img src="images/dashboard/people.svg" alt="people" />
-                    <div className="weather-info"></div>
+            <div className=" grid-margin transparent dashboard-count-div">
+              <div className="row">
+                <div className="col-md-3  stretch-card transparent dashboard-card ">
+                  <div className="card dashboard-card-1">
+                    <div
+                      className="card-body"
+                      onClick={() => navigate("/quotations")}
+                    >
+                      {!countObj.isCountReady && (
+                        <ShimmerTitle line={2} gap={10} variant="primary" />
+                      )}
+                      <div className="row ml-2">
+                        <div className="circle-div-1 mt-1">
+                          <ion-icon name="document-text"></ion-icon>
+                        </div>
+                        <div className="text-container ml-2">
+                          <p className="mb-2">Quotations</p>
+                          <p className="mb-2 value-txt count-color-1">
+                            {countObj.quotCount}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-md-3  stretch-card transparent dashboard-card">
+                  <div
+                    className="card dashboard-card-2"
+                    onClick={() => navigate("/hotels")}
+                  >
+                    <div className="card-body">
+                      {!countObj.isCountReady && (
+                        <ShimmerTitle line={2} gap={10} variant="primary" />
+                      )}
+                      <div className="row ml-2">
+                        <div className="circle-div-2 mt-1">
+                          <ion-icon name="business"></ion-icon>
+                        </div>
+                        <div className="text-container ml-2">
+                          <p className="mb-2">Hotels</p>
+                          <p className="mb-2 value-txt count-color-2">
+                            {countObj.hotelsCount}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-md-3  stretch-card transparent dashboard-card">
+                  <div
+                    className="card dashboard-card-3"
+                    onClick={() => navigate("/tours")}
+                  >
+                    <div className="card-body">
+                      {!countObj.isCountReady && (
+                        <ShimmerTitle line={2} gap={10} variant="primary" />
+                      )}
+
+                      <div className="row ml-2">
+                        <div className="circle-div-3 mt-1">
+                          <ion-icon name="map"></ion-icon>
+                        </div>
+                        <div className="text-container ml-2">
+                          <p className="mb-2">Tours</p>
+                          <p className="mb-2 value-txt count-color-3">
+                            {countObj.tourCount}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-md-3  stretch-card transparent dashboard-card">
+                  <div
+                    className="card dashboard-card-4"
+                    onClick={() => navigate("/leads")}
+                  >
+                    <div className="card-body">
+                      {!countObj.isCountReady && (
+                        <ShimmerTitle line={2} gap={10} variant="primary" />
+                      )}
+                      <div className="row ml-2">
+                        <div className="circle-div-4 mt-1">
+                          <ion-icon name="people"></ion-icon>
+                        </div>
+                        <div className="text-container ml-2">
+                          <p className="mb-2">Leads</p>
+                          <p className="mb-2 value-txt count-color-4">
+                            {countObj.leadsCount}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-              <div className="col-md-6 grid-margin transparent dashboard-count-div">
+            </div>
+            {/* <div className="row"> */}
+
+            {/* <div className="col-md-6 grid-margin transparent dashboard-count-div">
                 <div className="row">
-                  <div className="col-md-6 mb-4 stretch-card transparent">
-                    <div className="card card-tale">
+                  <div className="col-md-6 mb-4 stretch-card transparent dashboard-card">
+                    <div className="card card-tale ">
                       <div
                         className="card-body"
                         onClick={() => navigate("/quotations")}
                       >
+                                 <img className="circle" src="../../images/circle.svg" alt="image" />
                         {!countObj.isCountReady && (
                           <ShimmerTitle line={2} gap={10} variant="primary" />
                         )}
@@ -380,12 +527,13 @@ const Homepage = () => {
                       </div>
                     </div>
                   </div>
-                  <div className="col-md-6 mb-4 stretch-card transparent">
+                  <div className="col-md-6 mb-4 stretch-card transparent dashboard-card">
                     <div
                       className="card card-dark-blue"
                       onClick={() => navigate("/hotels")}
                     >
                       <div className="card-body">
+                      <img className="circle" src="../../images/circle.svg" alt="image" />
                         {!countObj.isCountReady && (
                           <ShimmerTitle line={2} gap={10} variant="primary" />
                         )}
@@ -400,12 +548,13 @@ const Homepage = () => {
                   </div>
                 </div>
                 <div className="row">
-                  <div className="col-md-6 mb-4 mb-lg-0 stretch-card transparent">
+                  <div className="col-md-6 mb-4 mb-lg-0 stretch-card transparent dashboard-card">
                     <div
                       className="card card-light-blue"
                       onClick={() => navigate("/tours")}
                     >
                       <div className="card-body">
+                      <img className="circle" src="../../images/circle.svg" alt="image" />
                         {!countObj.isCountReady && (
                           <ShimmerTitle line={2} gap={10} variant="primary" />
                         )}
@@ -418,12 +567,13 @@ const Homepage = () => {
                       </div>
                     </div>
                   </div>
-                  <div className="col-md-6 stretch-card transparent">
+                  <div className="col-md-6 stretch-card transparent dashboard-card">
                     <div
                       className="card card-light-danger"
                       onClick={() => navigate("/leads")}
                     >
                       <div className="card-body">
+                      <img className="circle" src="../../images/circle.svg" alt="image" />
                         {!countObj.isCountReady && (
                           <ShimmerTitle line={2} gap={10} variant="primary" />
                         )}
@@ -437,13 +587,20 @@ const Homepage = () => {
                     </div>
                   </div>
                 </div>
-              </div>
-            </div>
+              </div> */}
+            {/* </div> */}
             <div className="row">
-
-            {topDestObj.data.length > 1 && (
-                <div className="col-md-6 mb-4 stretch-card transparent">
-                  <div className="card ">
+              <div className="col-md-6 mb-4 grid-margin stretch-card">
+                <div className="card tale-bg dashboard-card-shadow">
+                  <div className="card-people mt-auto">
+                    <img src="images/dashboard/people.svg" alt="people" />
+                    <div className="weather-info"></div>
+                  </div>
+                </div>
+              </div>
+              {topDestObj.data.length > 1 && (
+                <div className="col-md-6 mb-4 stretch-card transparent ">
+                  <div className="card dashboard-card-shadow">
                     <div className="card-body">
                       <div className="row">
                         <div className="col-md-12 pl-0">
@@ -459,7 +616,7 @@ const Homepage = () => {
                         <div className="col-md-12">
                           {topDestObj.chart && (
                             <Pie
-                            style={{margin:"0 auto"}}
+                              style={{ margin: "0 auto" }}
                               data={topDestObj?.chart}
                               options={{
                                 responsive: false,
@@ -473,29 +630,77 @@ const Homepage = () => {
                     </div>
                   </div>
                 </div>
-            )}
-            {topDestObj.lineChart && (
+              )}
+              {topDestObj.lineChart && (
                 <div className="col-md-6 mb-4 stretch-card transparent">
-                  <div className="card ">
+                  <div className="card dashboard-card-shadow">
                     <div className="card-body">
                       <div className="row">
                         <div className="col-md-12 pl-0">
                           <div class="ml-xl-4 mt-3">
                             <p class="card-title">Monthly Travel Quotation</p>
                             <p class="mb-2 mb-xl-0">
-                            The chart illustrates the monthly count of travel quotations  for the current year. Months with no quotations are shown with a count of zero, ensuring a comprehensive view of the entire year.
+                              The chart illustrates the monthly count of travel
+                              quotations for the current year. Months with no
+                              quotations are shown with a count of zero,
+                              ensuring a comprehensive view of the entire year.
                             </p>
                           </div>
                         </div>
                         <div className="col-md-12">
-                          <Line data={topDestObj.lineChart} />
+                          <Bar data={topDestObj.lineChart} />
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
-            )}
-          </div>
+              )}
+              {topDestObj.upcomingQuotations.length>0 && 
+              <div className="col-md-6 mb-4 stretch-card transparent ">
+                <div className="card dashboard-card-shadow">
+                  <div className="card-body">
+                    <div className="row">
+                      <div className="col-md-12 pl-0">
+                        <div class="ml-xl-4 mt-3 mb-4">
+                          <p class="card-title">Upcoming Arrivals</p>
+                          <p class="mb-3 mb-xl-0">
+                            See quotations with arrival dates scheduled between
+                            today and {twoWeeksFromToday}
+                          </p>
+                        </div>
+                        <table class="table table">
+                          <thead>
+                            <tr>
+                              <th class="pt-1 ps-0">Quotation No.</th>
+                              <th class="pt-1 ps-0">Customer Name</th>
+                              <th class="pt-1">Arrival Date</th>
+                              <th class="pt-1">Departure Date</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            { topDestObj.upcomingQuotations.map((quot)=>(
+                              <tr>
+                              <td class="py-1 ps-0">
+                                <div class="d-flex align-items-center">
+                                  <div class="ms-3">
+                                    <p class="mb-0  text-small">{quot.quotNo}</p>
+                                  </div>
+                                </div>
+                              </td>
+                              <td>{quot.quotClientName}</td>
+                              <td>{getDateFormattedForDB(quot.quotArrivalDate)}</td>
+                              <td>{getDateFormattedForDB(quot.quotDepartureDate)}</td>
+                            </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+}
+            </div>
           </div>
 
           <footer className="footer">

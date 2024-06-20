@@ -54,9 +54,16 @@ export const DELETE_ROOM_TYPE_API = BASE_API_URL + "/delete-room-type";
 
 export const FETCH_HOTEL_ROOMS_API = BASE_API_URL + "/get-hotel-room-types";
 export const FETCH_HOTEL_ROOM_DETAILS_API = BASE_API_URL + "/get-hotel-room-type-details";
+export const FETCH_HOTEL_ROOM_TYPE_API = BASE_API_URL + "/get-hotel-room-types";
+export const FETCH_HOTEL_ROOM_PERIOD_LIST_API = BASE_API_URL + "/get-hotel-room-period-list";
+export const FETCH_HOTEL_ROOM_PERIOD_DETAILS_API = BASE_API_URL + "/get-hotel-room-period-details";
+
 export const ADD_HOTEL_ROOM_API = BASE_API_URL + "/add-hotel-room-type";
+export const ADD_HOTEL_ROOM_PERIOD_API = BASE_API_URL + "/add-hotel-room-period";
 export const UPDATE_HOTEL_ROOM_API = BASE_API_URL + "/update-hotel-room-type";
+export const UPDATE_HOTEL_ROOM_PERIOD_API = BASE_API_URL + "/update-hotel-room-period";
 export const DELETE_HOTEL_ROOM_API = BASE_API_URL + "/delete-hotel-room-type";
+export const DELETE_HOTEL_ROOM_PERIOD_API = BASE_API_URL + "/delete-hotel-room-period";
 
 export const FETCH_TOURS_API = BASE_API_URL + "/get-tours";
 export const FETCH_TOUR_DETAILS_API = BASE_API_URL + "/get-tour-details";
