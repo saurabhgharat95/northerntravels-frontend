@@ -152,6 +152,7 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
             quotItiDate <= quotDepartureDate &&
             quotItiDay <= quotDays
           ) {
+            
             itineraryObject.quotItiAddons = addOnformValues;
             itineraryObject.quotItiDestinations = destFormValues;
             setItineraryData((prevState) => [...prevState, itineraryObject]);
@@ -463,10 +464,13 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
 
   const handleSwap = (index1, index2) => {
     let newItineraryData = [...itineraryData];
-    [newItineraryData[index1], newItineraryData[index2]] = [newItineraryData[index2], newItineraryData[index1]];
+    [newItineraryData[index1], newItineraryData[index2]] = [
+      newItineraryData[index2],
+      newItineraryData[index1],
+    ];
     // Update your state management logic here
     setItineraryData(newItineraryData);
-  };  
+  };
   useEffect(() => {
     fetchVehicles();
   }, []);
@@ -1254,17 +1258,17 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
           ))}
         </div>
         {/* <div className="col-sm-12"> */}
-          <button
-            className="btn btn-success mr-3"
-            onClick={() => {
-              validateForm();
-              {
-                acionObj.updateId != null ? editItinerary() : addItinerary();
-              }
-            }}
-          >
-            {acionObj.updateId != null ? "Update" : "Add"}
-          </button>
+        <button
+          className="btn btn-success mr-3"
+          onClick={() => {
+            validateForm();
+            {
+              acionObj.updateId != null ? editItinerary() : addItinerary();
+            }
+          }}
+        >
+          {acionObj.updateId != null ? "Update" : "Add"}
+        </button>
         {/* </div> */}
         <br></br>
         <br></br>
@@ -1280,7 +1284,7 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
                     <div className="card info-card  border border-success box-shadow-none info-card-success">
                       <div className="card-body">
                         <div className="media">
-                        <img src="../../images/money.png" alt="image" />{" "}
+                          <img src="../../images/money.png" alt="image" />{" "}
                           {/* <ion-icon
                             style={{ marginTop: "5px" }}
                             color="success"
@@ -1308,7 +1312,7 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
                     <div className="card info-card border border-success box-shadow-none info-card-success">
                       <div className="card-body">
                         <div className="media">
-                        <img src="../../images/money.png" alt="image" />{" "}
+                          <img src="../../images/money.png" alt="image" />{" "}
                           {/* <ion-icon
                             style={{ marginTop: "5px" }}
                             color="success"
@@ -1390,9 +1394,19 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
                                     title="Edit"
                                     onClick={() => {
                                       setItineraryObject(itineraryObj);
-                                      setAddOnFormValues(
-                                        itineraryObj.quotItiAddons
-                                      );
+                                      itineraryObj.quotItiAddons.length == 0
+                                        ? setAddOnFormValues([
+                                            {
+                                              quotItiAddonId: null,
+                                              quotItiService: "",
+                                              quotItiServicePayable: "1",
+                                              quotItiServiceAmount: "",
+                                              quotItiServiceRemark: "",
+                                            },
+                                          ])
+                                        : setAddOnFormValues(
+                                            itineraryObj.quotItiAddons
+                                          );
 
                                       setDestFormValues(
                                         itineraryObj.quotItiDestinations
@@ -1489,7 +1503,12 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
             </div>
           </div>
         </div>
-        <SwapModal show={showSwapModal} handleClose={handleClose} handleSwap={handleSwap} preselectedDay={preselectedDay} />
+        <SwapModal
+          show={showSwapModal}
+          handleClose={handleClose}
+          handleSwap={handleSwap}
+          preselectedDay={preselectedDay}
+        />
       </section>
     </>
   );

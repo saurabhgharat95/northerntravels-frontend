@@ -191,12 +191,12 @@ const MarkupForm = ({ onValidationStatusChange }) => {
 
     let hotelRoomFinalAmt = hotelRoomPPFinalAmt * (totalDoubleRoomPeople) ;
 
-    // console.log(
-    //   "h1",
-    //   pckg.hotelRoomPPAmt,
-    //   hotelRoomPPFinalAmt,
-    //   hotelRoomFinalAmt
-    // );
+    console.log(
+      "h1",
+      pckg.hotelRoomPPAmt,
+      hotelRoomPPFinalAmt,
+      hotelRoomFinalAmt
+    );
 
     let extraBedPPFinalAmt =
       Number(pckg.extraBedPPAmt) +

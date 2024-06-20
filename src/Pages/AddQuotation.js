@@ -499,18 +499,20 @@ const AddQuotation = () => {
       let url = UPDATE_QUOTATION_ITINERARY_API;
       let quotItineraryData = [];
       let quotItinerarydetails = quotFormData.quotItineraryData;
-      let quotItiAddons = [];
       if (quotItinerarydetails.length > 0) {
         quotItinerarydetails.forEach((element) => {
+          let quotItiAddons = []; 
           if (element.quotItiAddons && element.quotItiAddons.length > 0) {
             if (
               element.quotItiAddons[0].quotItiService != "" ||
               element.quotItiAddons[0].quotItiAddonId
             ) {
-              quotItiAddons = element.quotItiAddons;
+              
+              quotItiAddons = JSON.parse(JSON.stringify(element.quotItiAddons));
             }
+            
           }
-
+          
           quotItineraryData.push({
             quotItiId: element.quotItiId,
             quotItiDay: element.quotItiDay,

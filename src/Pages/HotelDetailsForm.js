@@ -405,6 +405,7 @@ const HotelDetailsForm = ({ onValidationStatusChange }) => {
                 label: `${hotel.hotelName}${
                   hotel.isSpecialRate == 1 ? " ⭐" : ""
                 }`,
+                isDisabled: hotel.hasCharges == false ? true : false,
               });
             }
           });
@@ -551,21 +552,19 @@ const HotelDetailsForm = ({ onValidationStatusChange }) => {
           quotHotelId: quotPackage[index].quotHotelId,
         });
       }
-     
+
       setPackageData(quotPackageArray);
       setOriginalPackageData(quotPackageArray);
       setPackageNameArray(quotFormData.quotPackageNameArray);
-      setPackageReadOnly(quotFormData.quotPackageReadOnly)
+      setPackageReadOnly(quotFormData.quotPackageReadOnly);
       setForceUpdate((v) => ++v);
-      if (quotFormData.quotPackageReadOnly){
+      if (quotFormData.quotPackageReadOnly) {
         let lastElement = quotPackageArray[quotPackageArray.length - 1];
         setPackageObject((prevState) => ({
           ...prevState,
           packageName: lastElement.packageName,
-        }))
+        }));
       }
-     
-
     }
   }, [quotFormData]);
 
