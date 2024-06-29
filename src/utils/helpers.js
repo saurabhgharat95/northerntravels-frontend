@@ -114,7 +114,7 @@ const getDateFormattedForDB = (dateString) => {
 
   // Format into yyyy-mm-dd
   const formattedDate = `${year}-${month}-${day}`;
-  
+
   return formattedDate;
 };
 
@@ -148,7 +148,7 @@ const base64ToBlob = (
     /^data:image\/[a-zA-Z]+;base64,/,
     ""
   );
-  
+
   const byteCharacters = atob(base64WithoutPrefix); // Decode Base64
   const byteArrays = [];
 
@@ -169,13 +169,39 @@ const base64ToBlob = (
 
 // Convert base64 string to file
 const base64ToFile = (base64, filename, contentType = "image/jpeg") => {
-  
   if (!base64.includes(".jpeg")) {
     const blob = base64ToBlob(base64, contentType);
     return new File([blob], filename, { type: contentType });
   }
 };
 
+// Function to set a cookie value by name
+function setCookie(name, value, days) {
+  var expires = "";
+  if (days) {
+    var date = new Date();
+    date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+    expires = "; expires=" + date.toUTCString();
+  }
+  document.cookie = name + "=" + (value || "") + expires + "; path=/";
+}
+
+// Function to get a cookie value by name
+function getCookie(name) {
+  var nameEQ = name + "=";
+  var ca = document.cookie.split(";");
+  for (var i = 0; i < ca.length; i++) {
+    var c = ca[i];
+    while (c.charAt(0) == " ") c = c.substring(1, c.length);
+    if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+  }
+  return null;
+}
+
+// Function to delete a cookie by name
+function deleteCookie(name) {
+  document.cookie = name + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+}
 export {
   getDateFormatted,
   getFilteredDropdownOptions,
@@ -184,4 +210,7 @@ export {
   getDateFormattedForDB,
   base64ToFile,
   createFilename,
+  setCookie,
+  getCookie,
+  deleteCookie,
 };

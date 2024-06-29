@@ -106,18 +106,7 @@ const MarkupForm = ({ onValidationStatusChange }) => {
     try {
       if (file) {
         
-        // if (file.size > MAX_FILE_SIZE) {
-        //   toast.error(
-        //     "File size exceeds 1 MB limit. Please choose a smaller file.",
-        //     {
-        //       position: "top-right",
-        //     }
-        //   );
-
-        //   dispatch(setQuotationFormData("quotLogo", ""));
-
-        //   return;
-        // } else {
+        
         const reader = new FileReader();
 
         reader.onload = (e) => {

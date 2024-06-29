@@ -30,6 +30,7 @@ import {
   getDateFormattedForDB,
   base64ToFile,
   createFilename,
+  getCookie,
 } from "../utils/helpers";
 
 const AddQuotation = () => {
@@ -139,6 +140,7 @@ const AddQuotation = () => {
         quotDepartureDate: quotFormData.quotDepartureDate,
         quotDays: quotFormData.quotDays,
         quotNights: quotFormData.quotNights,
+        fkUserId :getCookie('ntId')
       };
 
       const isFormValid =

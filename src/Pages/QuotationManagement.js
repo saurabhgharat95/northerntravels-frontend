@@ -7,20 +7,31 @@ import {
   axios,
   toast,
   ShimmerTable,
+  SlideDown,
+  Select,
 } from "../components/CommonImport";
 import {
   BASE_URL,
   FETCH_QUOTATIONS_API,
   DELETE_QUOTATION_API,
+  FETCH_USERS_API,
 } from "../utils/constants";
-import { useNavigate } from "react-router-dom";
-import { getDateFormatted,getDateFormattedForDB,toTitleCase } from "../utils/helpers";
-
+import { useNavigate, useLocation } from "react-router-dom";
+import {
+  getCookie,
+  getDateFormatted,
+  getDateFormattedForDB,
+  toTitleCase,
+} from "../utils/helpers";
+import "react-slidedown/lib/slidedown.css";
 import "react-toastify/dist/ReactToastify.css";
 import NoData from "../components/NoData";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import RenderPageNumbers from "./RenderPageNumbers";
 import Loader from "../components/Loader";
+const useQuery = () => {
+  return new URLSearchParams(useLocation().search);
+};
 const QuotationManagement = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
   const [quotations, setQuotations] = useState([]);
@@ -33,20 +44,93 @@ const QuotationManagement = () => {
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [isLoading, setIsLoading] = useState(false);
   const [isDataReady, setDataReady] = useState(false);
+  const [filterObj, setFilterObj] = useState({
+    selUser: "",
+    fromDate: "",
+    toDate: "",
+  });
+
+  const [userOptions, setUserOptions] = useState("");
+  const [isFilterOpen, setFilterOpen] = useState(false);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const navigate = useNavigate();
 
+  const userRole = getCookie("userRole");
+  const query = useQuery();
+  const filterValue = query.get("filter");
+  const currentDate = new Date();
+  const todaysDate= new Date(currentDate.getTime() - currentDate.getTimezoneOffset() * 60000).toISOString().split("T")[0];
+
   const fetchQuotations = async () => {
     try {
-      let url = FETCH_QUOTATIONS_API;
+      let userId = getCookie("ntId");
+      let url;
+      if (filterValue=="today") {
+        url =
+          FETCH_QUOTATIONS_API +
+          "?selUser=" +
+          (filterObj.selUser != ""
+            ? filterObj.selUser
+            : encodeURIComponent(userId)) +
+          "&fromDate=" +
+          todaysDate +
+          "&toDate=" +
+          todaysDate;
+      } 
+      else if (filterValue=="all") {
+        url =
+          FETCH_QUOTATIONS_API +
+          "?selUser=" +
+          (filterObj.selUser != ""
+            ? filterObj.selUser
+            : encodeURIComponent(userId)) +
+          "&fromDate=&toDate=" 
+      } 
+      else {
+        url =
+          FETCH_QUOTATIONS_API +
+          "?selUser=" +
+          (filterObj.selUser != ""
+            ? filterObj.selUser
+            : encodeURIComponent(userId)) +
+          "&fromDate=" +
+          (filterObj.fromDate != "" ? filterObj.fromDate : "") +
+          "&toDate=" +
+          (filterObj.toDate != "" ? filterObj.toDate : "");
+      }
 
-      let response = await axios.post(url);
+      let body = {
+        userId: userId,
+      };
+
+      let response = await axios.post(url, body);
       if (response) {
         if (response.status == 200) {
           setDataReady(true);
           setQuotations(response.data.data);
           setOriginalQuotationsList(response.data.data);
+        }
+      }
+    } catch (e) {
+      setDataReady(true);
+      setQuotations([]);
+    }
+  };
+
+  const fetchUsers = async () => {
+    try {
+      let url = FETCH_USERS_API;
+
+      let response = await axios.post(url);
+      if (response) {
+        if (response.status == 200) {
+          let userData = response.data.data;
+          let userOptions = [];
+          userData.forEach((element) => {
+            userOptions.push({ label: element.userName, value: element.id });
+          });
+          setUserOptions(userOptions);
         }
       }
     } catch (e) {
@@ -120,14 +204,65 @@ const QuotationManagement = () => {
       setQuotations(originalQuotationsList);
     }
   };
+  const toggleFilterInputs = () => {
+    setFilterOpen((prevState) => !prevState);
+  };
+  const applyFilter = () => {
+    fetchQuotations();
+  };
+  const clearFilter = async () => {
+    try {
+      let userId = getCookie("ntId");
+      let url =
+        FETCH_QUOTATIONS_API +
+        "?selUser=" +
+        encodeURIComponent(userId) +
+        "&fromDate=&toDate=";
+
+      let body = {
+        userId: userId,
+      };
+
+      let response = await axios.post(url, body);
+      if (response) {
+        if (response.status == 200) {
+          setDataReady(true);
+          setQuotations(response.data.data);
+          setOriginalQuotationsList(response.data.data);
+        }
+      }
+    } catch (e) {
+      setDataReady(true);
+      setQuotations([]);
+    }
+    setFilterObj((prevState) => ({
+      ...prevState,
+      selUser: "",
+      fromDate: "",
+      toDate: "",
+    }));
+  };
 
   useEffect(() => {
     const timer = setTimeout(() => {
       fetchQuotations();
-    }, 1000); 
-  
+      fetchUsers();
+    }, 1000);
+
     return () => clearTimeout(timer);
   }, []);
+  useEffect(() => {
+    if(filterValue=="today"){
+      setFilterOpen(true);
+      setFilterObj(prevState=>({
+        ...prevState,
+        fromDate:todaysDate,
+        toDate:todaysDate
+      }))
+    }
+   
+  }, []);
+
   return (
     <div className="container-scroller">
       <Navbar setSidebarOpen={setSidebarOpen}></Navbar>
@@ -147,6 +282,14 @@ const QuotationManagement = () => {
                     Quotation Management{" "}
                   </h4>
                 </div>
+                <div className="float-left">
+                  <button
+                    className="btn btn-secondary btn-sm text-white"
+                    onClick={() => toggleFilterInputs()}
+                  >
+                    Filter
+                  </button>
+                </div>
                 <div className="float-right">
                   <button
                     className="btn btn-primary btn-sm"
@@ -158,6 +301,106 @@ const QuotationManagement = () => {
                 <br></br>
                 <br></br>
                 <br></br>
+                {isFilterOpen && (
+                  <SlideDown className={"my-dropdown-slidedown"}>
+                    <div
+                      className={`filter-card form-div show-box hotel-form-div mb-4 ${
+                        isFilterOpen ? "visible" : "hidden"
+                      }`}
+                    >
+                      <div>
+                        <h4>
+                          <b>Filter Quotations</b>
+                        </h4>
+                      </div>
+                      <br></br>
+                      <br></br>
+                      <form className="form-sample">
+                        <div className="form-group row">
+                          {(userRole == "1" || userRole == "2") && (
+                            <div className="col-sm-3">
+                              <label>User</label>
+                              <Select
+                                options={userOptions}
+                                placeholder="Select User"
+                                name="selUser"
+                                value={
+                                  filterObj.selUser
+                                    ? userOptions.find(
+                                        (option) =>
+                                          option.value === filterObj.selUser
+                                      )
+                                    : null
+                                }
+                                onChange={(selectedOption) => {
+                                  setFilterObj((prevState) => ({
+                                    ...prevState,
+                                    selUser: selectedOption
+                                      ? selectedOption.value
+                                      : "",
+                                  }));
+                                }}
+                              />
+                            </div>
+                          )}
+                          <div className="col-sm-3">
+                            <label>From Date</label>
+                            <input
+                              type="date"
+                              className="form-control"
+                              placeholder="Select From Date"
+                              value={filterObj.fromDate}
+                              onChange={(event) =>
+                                setFilterObj((prevState) => ({
+                                  ...prevState,
+                                  fromDate: event.target.value,
+                                }))
+                              }
+                            />
+                          </div>
+                          <div className="col-sm-3">
+                            <label>To Date</label>
+                            <input
+                              type="date"
+                              className="form-control"
+                              placeholder="Select To Date"
+                              value={filterObj.toDate}
+                              onChange={(event) =>
+                                setFilterObj((prevState) => ({
+                                  ...prevState,
+                                  toDate: event.target.value,
+                                }))
+                              }
+                            />
+                          </div>
+                          <div className="col-sm-3">
+                            <button
+                              type="button"
+                              style={{ marginTop: "30px" }}
+                              className="btn  btn-success mr-2"
+                              onClick={() => {
+                                applyFilter();
+                              }}
+                            >
+                              Apply Filter
+                            </button>
+                            <button
+                              type="button"
+                              style={{ marginTop: "30px" }}
+                              className="btn  cancel-btn mr-2"
+                              onClick={() => {
+                                clearFilter();
+                              }}
+                            >
+                              Clear Filter
+                            </button>
+                          </div>
+                        </div>
+                      </form>
+                    </div>
+                  </SlideDown>
+                )}
+
                 <div className="row">
                   <div className="col-12">
                     <div className="table-responsive">
@@ -237,6 +480,9 @@ const QuotationManagement = () => {
                                       Customer Name
                                     </th>
                                     <th style={{ width: "116.672px" }}>
+                                      Created By
+                                    </th>
+                                    <th style={{ width: "116.672px" }}>
                                       Status
                                     </th>
                                     <th style={{ width: "116.672px" }}>
@@ -275,7 +521,16 @@ const QuotationManagement = () => {
                                                 quotation.quotDepartureDate
                                               )}
                                             </td>
-                                            <td>{toTitleCase(quotation.quotClientName)}</td>
+                                            <td>
+                                              {toTitleCase(
+                                                quotation.quotClientName
+                                              )}
+                                            </td>
+                                            <td>
+                                              {toTitleCase(
+                                                quotation.user?.userName
+                                              )}
+                                            </td>
                                             <td>
                                               <label
                                                 className={`badge ${

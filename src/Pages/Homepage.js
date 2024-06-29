@@ -26,7 +26,7 @@ import {
   FETCH_QUOTATIONS_API,
 } from "../utils/constants";
 import { useNavigate } from "react-router-dom";
-import { getDateFormattedForDB } from "../utils/helpers";
+import { getDateFormattedForDB, getCookie } from "../utils/helpers";
 
 const Homepage = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
@@ -42,6 +42,21 @@ const Homepage = () => {
     chart: null,
     lineChart: null,
     upcomingQuotations: [],
+  });
+  const currentDate = new Date();
+  const todaysDate = new Date(
+    currentDate.getTime() - currentDate.getTimezoneOffset() * 60000
+  )
+    .toISOString()
+    .split("T")[0];
+
+  const [filterObj, setFilterObj] = useState({
+    selUser: "",
+    fromDate: todaysDate,
+    toDate: todaysDate,
+  });
+  const [dateFilterObj, setDateFilterObj] = useState({
+    filterName: "1",
   });
   const [roomRateData, setRoomRateData] = useState({});
   const navigate = useNavigate();
@@ -107,11 +122,23 @@ const Homepage = () => {
     return `${day}-${month}-${year}`;
   };
   const twoWeeksFromToday = getDateTwoWeeksFromToday();
-  const fetchDashboardCount = async () => {
+  const getNavUrl = () => {
+    return (
+      "/quotations?filter=" +
+      (dateFilterObj.filterName == "1" ? "today" : "all" + "")
+    );
+  };
+  const fetchDashboardCount = async (fromDate, toDate) => {
     try {
+      let userId = getCookie("ntId");
       let url = FETCH_DASHBOARD_COUNT_API;
+      let body = {
+        userId: userId,
+        fromDate: fromDate,
+        toDate: toDate,
+      };
 
-      let response = await axios.post(url);
+      let response = await axios.post(url, body);
       if (response) {
         if (response.status == 200) {
           let data = response.data.data;
@@ -208,9 +235,13 @@ const Homepage = () => {
   };
   const fetchQuotationMonthlyCount = async () => {
     try {
+      let userId = getCookie("ntId");
+      let body = {
+        userId: userId,
+      };
       let url = FETCH_QUOTATION_MONTHLY_COUNT_API;
 
-      let response = await axios.post(url);
+      let response = await axios.post(url, body);
       if (response) {
         if (response.status == 200) {
           const monthDataMap = {};
@@ -258,8 +289,6 @@ const Homepage = () => {
             return monthDataMap[month] || 0;
           });
 
-          console.log(data);
-
           let lineData = {
             labels,
             datasets: [
@@ -284,23 +313,36 @@ const Homepage = () => {
   };
   const fetchQuotations = async () => {
     try {
-      let url = FETCH_QUOTATIONS_API;
+      let userId = getCookie("ntId");
+      let url =
+        FETCH_QUOTATIONS_API +
+        "?selUser=" +
+        (filterObj.selUser != ""
+          ? filterObj.selUser
+          : encodeURIComponent(userId)) +
+        "&fromDate=" +
+        (filterObj.fromDate != "" ? filterObj.fromDate : "") +
+        "&toDate=" +
+        (filterObj.toDate != "" ? filterObj.toDate : "");
+      let body = {
+        userId: userId,
+      };
 
-      let response = await axios.post(url);
+      let response = await axios.post(url, body);
       if (response) {
         if (response.status == 200) {
           let quotationsObjects = response.data.data;
           const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        const twoWeeksLater = new Date(today);
-        twoWeeksLater.setDate(twoWeeksLater.getDate() + 14);
+          today.setHours(0, 0, 0, 0);
+          const twoWeeksLater = new Date(today);
+          twoWeeksLater.setDate(twoWeeksLater.getDate() + 14);
 
-        // Filter quotations where quotArrivalDate is within the next two weeks
-        const filteredQuotations = quotationsObjects.filter(quot => {
-          const arrivalDate = new Date(quot.quotArrivalDate);
-          arrivalDate.setHours(0, 0, 0, 0);
-          return arrivalDate >= today && arrivalDate <= twoWeeksLater;
-        });
+          // Filter quotations where quotArrivalDate is within the next two weeks
+          const filteredQuotations = quotationsObjects.filter((quot) => {
+            const arrivalDate = new Date(quot.quotArrivalDate);
+            arrivalDate.setHours(0, 0, 0, 0);
+            return arrivalDate >= today && arrivalDate <= twoWeeksLater;
+          });
           setTopDestObj((prevState) => ({
             ...prevState,
             upcomingQuotations: filteredQuotations,
@@ -313,11 +355,10 @@ const Homepage = () => {
   };
 
   useEffect(() => {
-    fetchDashboardCount();
+    fetchDashboardCount(filterObj.fromDate, filterObj.toDate);
     fetchUpdatedRoomRates();
     fetchTopDestinations();
     fetchQuotationMonthlyCount();
-    fetchQuotations();
     fetchQuotations();
   }, []);
   return (
@@ -370,7 +411,7 @@ const Homepage = () => {
                       ))}
                     </Marquee>
                   )}
-                  {/* <div className="col-12 col-xl-4">
+                  <div className="col-12 col-xl-4">
                     <div className="justify-content-end d-flex">
                       <div className="dropdown flex-md-grow-1 flex-xl-grow-0">
                         <button
@@ -381,29 +422,44 @@ const Homepage = () => {
                           aria-haspopup="true"
                           aria-expanded="true"
                         >
-                          <i className="mdi mdi-calendar"></i> Today (
-                          {getTodaysDate()})
+                          {dateFilterObj.filterName == "1"
+                            ? "Today (" + getTodaysDate() + ")"
+                            : "All Time"}
                         </button>
                         <div
                           className="dropdown-menu dropdown-menu-right"
                           aria-labelledby="dropdownMenuDate2"
                         >
-                          <a className="dropdown-item" href="#">
-                            January - March
+                          <a
+                            className="dropdown-item"
+                            href="#"
+                            onClick={() => {
+                              fetchDashboardCount("", "");
+                              setDateFilterObj((prevState) => ({
+                                ...prevState,
+                                filterName: "2",
+                              }));
+                            }}
+                          >
+                            All Time
                           </a>
-                          <a className="dropdown-item" href="#">
-                            March - June
-                          </a>
-                          <a className="dropdown-item" href="#">
-                            June - August
-                          </a>
-                          <a className="dropdown-item" href="#">
-                            August - November
+                          <a
+                            className="dropdown-item"
+                            href="#"
+                            onClick={() => {
+                              setDateFilterObj((prevState) => ({
+                                ...prevState,
+                                filterName: "1",
+                              }));
+                              fetchDashboardCount(todaysDate, todaysDate);
+                            }}
+                          >
+                            Today ({getTodaysDate()})
                           </a>
                         </div>
                       </div>
                     </div>
-                  </div> */}
+                  </div>
                 </div>
               </div>
             </div>
@@ -413,7 +469,7 @@ const Homepage = () => {
                   <div className="card dashboard-card-1">
                     <div
                       className="card-body"
-                      onClick={() => navigate("/quotations")}
+                      onClick={() => navigate(getNavUrl())}
                     >
                       {!countObj.isCountReady && (
                         <ShimmerTitle line={2} gap={10} variant="primary" />
@@ -655,51 +711,61 @@ const Homepage = () => {
                   </div>
                 </div>
               )}
-              {topDestObj.upcomingQuotations.length>0 && 
-              <div className="col-md-6 mb-4 stretch-card transparent ">
-                <div className="card dashboard-card-shadow">
-                  <div className="card-body">
-                    <div className="row">
-                      <div className="col-md-12 pl-0">
-                        <div class="ml-xl-4 mt-3 mb-4">
-                          <p class="card-title">Upcoming Arrivals</p>
-                          <p class="mb-3 mb-xl-0">
-                            See quotations with arrival dates scheduled between
-                            today and {twoWeeksFromToday}
-                          </p>
-                        </div>
-                        <table class="table table">
-                          <thead>
-                            <tr>
-                              <th class="pt-1 ps-0">Quotation No.</th>
-                              <th class="pt-1 ps-0">Customer Name</th>
-                              <th class="pt-1">Arrival Date</th>
-                              <th class="pt-1">Departure Date</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            { topDestObj.upcomingQuotations.map((quot)=>(
+              {topDestObj.upcomingQuotations.length > 0 && (
+                <div className="col-md-6 mb-4 stretch-card transparent ">
+                  <div className="card dashboard-card-shadow">
+                    <div className="card-body">
+                      <div className="row">
+                        <div className="col-md-12 pl-0">
+                          <div class="ml-xl-4 mt-3 mb-4">
+                            <p class="card-title">Upcoming Arrivals</p>
+                            <p class="mb-3 mb-xl-0">
+                              See quotations with arrival dates scheduled
+                              between today and {twoWeeksFromToday}
+                            </p>
+                          </div>
+                          <table class="table table">
+                            <thead>
                               <tr>
-                              <td class="py-1 ps-0">
-                                <div class="d-flex align-items-center">
-                                  <div class="ms-3">
-                                    <p class="mb-0  text-small">{quot.quotNo}</p>
-                                  </div>
-                                </div>
-                              </td>
-                              <td>{quot.quotClientName}</td>
-                              <td>{getDateFormattedForDB(quot.quotArrivalDate)}</td>
-                              <td>{getDateFormattedForDB(quot.quotDepartureDate)}</td>
-                            </tr>
-                            ))}
-                          </tbody>
-                        </table>
+                                <th class="pt-1 ps-0">Quotation No.</th>
+                                <th class="pt-1 ps-0">Customer Name</th>
+                                <th class="pt-1">Arrival Date</th>
+                                <th class="pt-1">Departure Date</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {topDestObj.upcomingQuotations.map((quot) => (
+                                <tr>
+                                  <td class="py-1 ps-0">
+                                    <div class="d-flex align-items-center">
+                                      <div class="ms-3">
+                                        <p class="mb-0  text-small">
+                                          {quot.quotNo}
+                                        </p>
+                                      </div>
+                                    </div>
+                                  </td>
+                                  <td>{quot.quotClientName}</td>
+                                  <td>
+                                    {getDateFormattedForDB(
+                                      quot.quotArrivalDate
+                                    )}
+                                  </td>
+                                  <td>
+                                    {getDateFormattedForDB(
+                                      quot.quotDepartureDate
+                                    )}
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
-}
+              )}
             </div>
           </div>
 

@@ -104,3 +104,13 @@ export const FETCH_UPDATED_ROOM_RATES_API = BASE_API_URL + "/get-updated-room-ra
 export const FETCH_DASHBOARD_COUNT_API = BASE_API_URL + "/get-dashboard-count";
 export const FETCH_TOP_DESTINATIONS_API = BASE_API_URL + "/get-top-destinations";
 export const FETCH_QUOTATION_MONTHLY_COUNT_API = BASE_API_URL + "/get-quotation-monthly-count";
+
+
+export const FETCH_USERS_API = BASE_API_URL + "/get-users";
+export const FETCH_USER_DETAILS_API = BASE_API_URL + "/get-user-details";
+export const ADD_USER_API = BASE_API_URL + "/add-user";
+export const UPDATE_USER_API = BASE_API_URL + "/update-user";
+export const ACTIVATE_USER_API = BASE_API_URL + "/activate-user";
+export const DEACTIVATE_USER_API = BASE_API_URL + "/deactivate-user";
+export const RESET_USER_PASSWORD_API = BASE_API_URL + "/reset-user-password";
+export const LOGIN_USER_API = BASE_API_URL + "/login-user";

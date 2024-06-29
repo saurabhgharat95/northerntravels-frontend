@@ -1,15 +1,25 @@
 import { useState } from "react";
-import Sidebar from "./Sidebar";
-
+import { deleteCookie } from "../utils/helpers";
+import ConfirmationDialog from "./ConfirmationDialog";
 const Navbar = (props) => {
-  const [isDropdownOpen, setIsDropdown] = useState(false);
   const [sidebarOpen,setSidebarOpen] = useState(false)
-  const openDropdown = () => {
-    setIsDropdown(!isDropdownOpen);
-  };
+  const [showConfirmation, setShowConfirmation] = useState(false);
+ 
   const handleSidebar = () =>{
     props.setSidebarOpen(sidebarOpen)
   }
+  const logoutUser = () =>{
+    deleteCookie("userRole")
+    deleteCookie("ntId")
+    window.location.href="/login"
+  }
+  const handleConfirm = () => {
+    logoutUser()
+  };
+
+  const handleCancel = () => {
+    setShowConfirmation(false);
+  };
   return (
     <div>
       <nav className="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
@@ -35,7 +45,7 @@ const Navbar = (props) => {
             <span className="icon-menu"></span>
           </button>
           <ul className="navbar-nav mr-lg-2">
-            <li className="nav-item nav-search d-none d-lg-block">
+            {/* <li className="nav-item nav-search d-none d-lg-block">
               <div className="input-group">
                 <div
                   className="input-group-prepend hover-cursor"
@@ -54,10 +64,10 @@ const Navbar = (props) => {
                   aria-describedby="search"
                 />
               </div>
-            </li>
+            </li> */}
           </ul>
           <ul className="navbar-nav navbar-nav-right">
-            <li className="nav-item dropdown">
+            {/* <li className="nav-item dropdown">
               <a
                 className="nav-link count-indicator dropdown-toggle"
                 id="notificationDropdown"
@@ -120,42 +130,32 @@ const Navbar = (props) => {
                   </div>
                 </a>
               </div>
-            </li>
+            </li> */}
             <li
-              className={`nav-item nav-profile dropdown ${
-                isDropdownOpen ? "show" : ""
-              }`}
+              className={`nav-item nav-profile dropdown `}
+              
             >
               <a
                 className="nav-link dropdown-toggle"
-                href="#"
                 data-toggle="dropdown"
                 id="profileDropdown"
-                onClick={() => openDropdown()}
+                
               >
-                <img src="images/faces/face28.jpg" alt="profile" />
+                {/* <img src="images/faces/face28.jpg" alt="profile" /> */}
+                <i className="icon-ellipsis"></i>
               </a>
               <div
-                className={`dropdown-menu dropdown-menu-right navbar-dropdown ${
-                  isDropdownOpen ? "show" : ""
-                }`}
+               className="dropdown-menu dropdown-menu-right navbar-dropdown preview-list"
                 aria-labelledby="profileDropdown"
               >
-                <a className="dropdown-item">
-                  <i className="ti-settings text-primary"></i>
-                  Settings
-                </a>
-                <a className="dropdown-item">
+             
+                <a className="dropdown-item" onClick={()=>setShowConfirmation(true)}>
                   <i className="ti-power-off text-primary"></i>
                   Logout
                 </a>
               </div>
             </li>
-            <li className="nav-item nav-settings d-none d-lg-flex">
-              <a className="nav-link" href="#">
-                <i className="icon-ellipsis"></i>
-              </a>
-            </li>
+          
           </ul>
           <button
             className="navbar-toggler navbar-toggler-right d-lg-none align-self-center"
@@ -164,6 +164,12 @@ const Navbar = (props) => {
           >
             <span className="icon-menu"></span>
           </button>
+          <ConfirmationDialog
+            message="Are you sure you want to logout?"
+            onConfirm={handleConfirm}
+            onCancel={handleCancel}
+            show={showConfirmation}
+          />
         </div>
       </nav>
     </div>

@@ -1,10 +1,12 @@
 import { useLocation, useNavigate, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-
+import { getCookie } from "../utils/helpers";
 const Sidebar = (props) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [activeItem, setActiveItem] = useState("");
+
+  const userRole = getCookie("userRole");
 
   const navItems = [
     { path: "/", label: "Dashboard", icon: "home-outline" },
@@ -20,6 +22,9 @@ const Sidebar = (props) => {
     },
     { path: "/tours", label: "Tour Management", icon: "map-outline" },
     { path: "/leads", label: "Lead Management", icon: "people-outline" },
+    ...(userRole === '1' || userRole === '2'
+      ? [{ path: "/users", label: "User Management", icon: "people-outline" }]
+      : []),
     {
       label: "Masters",
       icon: "list-outline",
@@ -208,6 +213,7 @@ const Sidebar = (props) => {
                   </div>
                 </>
               ) : (
+                
                 <Link
                   className={`nav-link ${
                     activeItem === item.path ? "active" : ""
