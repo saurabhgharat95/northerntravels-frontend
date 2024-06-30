@@ -166,7 +166,7 @@ const MarkupForm = ({ onValidationStatusChange }) => {
     }
   };
   const calculatePackageAmt = (pckg, itineraryPPAmt, addOnPPAMt) => {
-    // console.log("pckg", pckg);
+    // 
     let roomsReqd =
       Number(quotFormData.quotRoomsReqd) -
       (quotFormData.quotSingleOccupy ? quotFormData.quotSingleOccupy : 0);
@@ -226,10 +226,10 @@ const MarkupForm = ({ onValidationStatusChange }) => {
       cmpFinalAmt +
       singleOccupyFinalAmt;
 
-    // console.log("hotelRoomFinalAmt", hotelRoomPPFinalAmt, hotelRoomFinalAmt);
-    // console.log("extraBedFinalAmt", extraBedPPFinalAmt, extraBedFinalAmt);
-    // console.log("cnbFinalAmt", cnbPPFinalAmt, cnbFinalAmt);
-    // console.log("cmpFinalAmt", cmpPPFinalAmt, cmpFinalAmt);
+    // 
+    // 
+    // 
+    // 
     // console.log(
     //   "singleOccupyFinalAmt",
     //   singleOccupyPPFinalAmt,
@@ -238,7 +238,7 @@ const MarkupForm = ({ onValidationStatusChange }) => {
     pckg.totalPckgAmt = totalPckgAmt.toFixed(2);
   };
   // const calculatePackageAmt = (pckg, itineraryPPAmt, addOnPPAMt) => {
-  //   console.log("pckg", pckg);
+  //   
   //   let roomsReqd =
   //     Number(quotFormData.quotRoomsReqd) -
   //     (quotFormData.quotSingleOccupy ? quotFormData.quotSingleOccupy : 0);
@@ -297,10 +297,10 @@ const MarkupForm = ({ onValidationStatusChange }) => {
   //     cmpFinalAmt +
   //     singleOccupyFinalAmt;
 
-  //   console.log("hotelRoomFinalAmt", hotelRoomPPFinalAmt, hotelRoomFinalAmt);
-  //   console.log("extraBedFinalAmt", extraBedPPFinalAmt, extraBedFinalAmt);
-  //   console.log("cnbFinalAmt", cnbPPFinalAmt, cnbFinalAmt);
-  //   console.log("cmpFinalAmt", cmpPPFinalAmt, cmpFinalAmt);
+  //   
+  //   
+  //   
+  //   
   //   console.log(
   //     "singleOccupyFinalAmt",
   //     singleOccupyPPFinalAmt,

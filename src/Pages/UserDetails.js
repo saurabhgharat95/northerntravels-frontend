@@ -99,7 +99,7 @@ const UserDetails = () => {
     } catch (e) {}
   };
   const updateUser = async () => {
-    console.log("up");
+    
     try {
       let url = UPDATE_USER_API;
 
@@ -123,7 +123,7 @@ const UserDetails = () => {
         userRegionalOffice: "",
         userCompanyHotline: "",
       };
-      console.log("body", body);
+      
       let formData = new FormData();
 
       for (let key in body) {
@@ -169,7 +169,7 @@ const UserDetails = () => {
           }
         }
       } else {
-        console.log("error");
+        
         setForceUpdate((v) => ++v);
         console.log(
           "11",
@@ -182,7 +182,7 @@ const UserDetails = () => {
         setIsLoading(false);
       }
     } catch (e) {
-      console.log("er");
+      
       toast.error("Something Went Wrong :(" + e.stack, {
         position: "top-right",
       });

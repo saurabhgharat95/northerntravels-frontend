@@ -210,14 +210,14 @@ const HotelRoomManagement = () => {
 
               setRoomDataReady(true);
 
-              console.log("roomDetails", result);
+              
               setHotelRoomDetails(result);
             }
           }
         }
       }
     } catch (e) {
-      console.log("ee", e);
+      
       setHotelRooms([]);
       setRoomDataReady(true);
     }

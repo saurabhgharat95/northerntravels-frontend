@@ -83,7 +83,7 @@ const UserManagement = () => {
       let body = {
         id: id,
       };
-      console.log("hii");
+      
 
       setIsLoading(true);
       let response = await axios.post(url, body);

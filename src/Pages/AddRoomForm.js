@@ -610,7 +610,7 @@ const AddRoomForm = ({ cancelForm, hotelId, formType, updateId }) => {
         toDate: roomObject.toDate,
         chargesData: roomObject.chargesData,
       };
-      console.log(body);
+      
       setIsLoading(true);
       if (simpleValidator.current.allValid()) {
         let response = await axios.post(url, body);
@@ -642,7 +642,7 @@ const AddRoomForm = ({ cancelForm, hotelId, formType, updateId }) => {
         setIsLoading(false);
       }
     } catch (e) {
-      console.log("eee", e);
+      
       toast.error("Something Went Wrong :(", {
         position: "top-right",
       });
@@ -699,7 +699,7 @@ const AddRoomForm = ({ cancelForm, hotelId, formType, updateId }) => {
     }
   };
   const updateRoomRate = () => {
-    console.log("hii");
+    
     updateHotelRoomPeriod();
   };
   const deleteHotelRoomPeriod = async (id) => {
