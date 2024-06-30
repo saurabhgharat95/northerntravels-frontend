@@ -15,7 +15,7 @@ import {
   FETCH_USER_DETAILS_API,
   UPDATE_USER_API,
 } from "../utils/constants";
-import { getDateFormatted, toTitleCase } from "../utils/helpers";
+import { getDateFormatted, toTitleCase,base64ToFile,createFilename } from "../utils/helpers";
 import { useParams, useNavigate } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
 import NoData from "../components/NoData";
@@ -26,6 +26,7 @@ const UserDetails = () => {
   const [isEdit, setEditForm] = useState(false);
   const [userDetails, setUserDetails] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [logoImage, setLogoImage] = useState("");
 
   const [userObj, setUserObj] = useState({
     userRole: "",
@@ -48,6 +49,19 @@ const UserDetails = () => {
     userCompanyWebsite: "",
     userCompanyLogo: "",
   });
+  const handleCloseModal = () => {
+    var modal = document.getElementById("imageModal");
+
+    if (modal) {
+      var modalInstance = bootstrap.Modal.getInstance(modal);
+      if (modalInstance) {
+        modalInstance.hide();
+      }
+    }
+  };
+  const openImageModal = (imageURL) => {
+    setLogoImage(imageURL);
+  };
   const simpleValidator1 = useRef(
     new SimpleReactValidator({
       autoForceUpdate: this,
@@ -60,7 +74,25 @@ const UserDetails = () => {
   );
   const navigate = useNavigate();
   const { id } = useParams();
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    try {
+      if (file) {
+        const reader = new FileReader();
 
+        reader.onload = (e) => {
+          if (e.target.result) {
+            setUserObj((prevState) => ({
+              ...prevState,
+              userCompanyLogo: e.target.result,
+            }));
+          }
+        };
+
+        reader.readAsDataURL(file);
+      }
+    } catch (e) {}
+  };
   const fetchUserDetails = async (id) => {
     try {
       let url = FETCH_USER_DETAILS_API;
@@ -218,128 +250,143 @@ const UserDetails = () => {
                     <br></br>
                     <br></br>
                     <div className="row">
-                      <div className="col-sm-6">
-                        <div className="media">
-                          {!isEdit &&  <ion-icon name="mail-outline"></ion-icon>}
-                         
-                          <div className="media-body ml-2">
-                            <p
-                              className="card-text"
-                              style={{ marginBottom: 0 }}
-                            >
-                              Email :
-                            </p>
-                            {!isEdit && (
-                              <span className="value">
-                                {userDetails.userEmail}
-                              </span>
-                            )}
-                          </div>
-                        </div>
+                      {userDetails.userRole != "4" && (
+                        <>
+                          <div className="col-sm-6">
+                            <div className="media">
+                              {!isEdit && (
+                                <ion-icon name="mail-outline"></ion-icon>
+                              )}
 
-                        <p>
-                          {isEdit && (
-                            <>
-                              <input
-                                type="text"
-                                className="form-control"
-                                placeholder="Enter Email"
-                                value={userObj.userEmail}
-                                onChange={(e) => {
-                                  setUserObj((prevState) => ({
-                                    ...prevState,
-                                    userEmail: e.target.value,
-                                  }));
-                                }}
-                                onBlur={() => {
-                                  simpleValidator1.current.showMessageFor(
-                                    "userEmail"
-                                  );
-                                }}
-                              />
-                              <>
-                                {userDetails.userRole != "4" &&
-                                  simpleValidator1.current.element.length > 0 &&
-                                  simpleValidator1.current.message(
-                                    "userEmail",
-                                    userObj.userEmail,
-                                    ["required", "email"],
-                                    {
-                                      messages: {
-                                        required: "Please enter email",
-                                        email: "Enter valid email",
-                                      },
-                                    }
-                                  )}
-                              </>
-                            </>
-                          )}
-                        </p>
-                      </div>
-                      <div className="col-sm-6">
-                        <div className="media">
-                        {!isEdit &&  <ion-icon name="phone-portrait-sharp"></ion-icon>}
-                       
-                          <div className="media-body ml-2">
-                            <p
-                              className="card-text"
-                              style={{ marginBottom: 0 }}
-                            >
-                              Mobile :
+                              <div className="media-body ml-2">
+                                <p
+                                  className="card-text"
+                                  style={{ marginBottom: 0 }}
+                                >
+                                  Email :
+                                </p>
+                                {!isEdit && (
+                                  <span className="value">
+                                    {userDetails.userEmail}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+
+                            <p>
+                              {isEdit && (
+                                <>
+                                  <input
+                                    type="text"
+                                    className="form-control"
+                                    placeholder="Enter Email"
+                                    value={userObj.userEmail}
+                                    onChange={(e) => {
+                                      setUserObj((prevState) => ({
+                                        ...prevState,
+                                        userEmail: e.target.value,
+                                      }));
+                                    }}
+                                    onBlur={() => {
+                                      simpleValidator1.current.showMessageFor(
+                                        "userEmail"
+                                      );
+                                    }}
+                                  />
+                                  <>
+                                    {userDetails.userRole != "4" &&
+                                      simpleValidator1.current.element.length >
+                                        0 &&
+                                      simpleValidator1.current.message(
+                                        "userEmail",
+                                        userObj.userEmail,
+                                        ["required", "email"],
+                                        {
+                                          messages: {
+                                            required: "Please enter email",
+                                            email: "Enter valid email",
+                                          },
+                                        }
+                                      )}
+                                  </>
+                                </>
+                              )}
                             </p>
-                            {!isEdit && (
-                              <span className="value">
-                                {userDetails.userMobile}
-                              </span>
-                            )}
                           </div>
-                        </div>
-                        <p>
-                          {isEdit && (
-                            <>
-                              <input
-                                type="text"
-                                pattern="[0-9]{10}"
-                                maxLength={10}
-                                className="form-control"
-                                placeholder="Enter Mobile No"
-                                value={userObj.userMobile}
-                                onChange={(event) => {
-                                  const newValue = event.target.value.trim();
-                                  if (/^\d*$/.test(newValue)) {
-                                    setUserObj((prevState) => ({
-                                      ...prevState,
-                                      userMobile: event.target.value,
-                                    }));
-                                  }
-                                }}
-                                onBlur={() => {
-                                  simpleValidator1.current.showMessageFor(
-                                    "userMobile"
-                                  );
-                                }}
-                              />
-                              <>
-                                {userDetails.userRole != "4" &&
-                                  simpleValidator1.current.message(
-                                    "userMobile",
-                                    userObj.userMobile,
-                                    ["required"],
-                                    {
-                                      messages: {
-                                        required: "Please enter mobile number",
-                                      },
-                                    }
-                                  )}
-                              </>
-                            </>
-                          )}
-                        </p>
-                      </div>
+
+                          <div className="col-sm-6">
+                            <div className="media">
+                              {!isEdit && (
+                                <ion-icon name="phone-portrait-sharp"></ion-icon>
+                              )}
+
+                              <div className="media-body ml-2">
+                                <p
+                                  className="card-text"
+                                  style={{ marginBottom: 0 }}
+                                >
+                                  Mobile :
+                                </p>
+                                {!isEdit && (
+                                  <span className="value">
+                                    {userDetails.userMobile}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                            <p>
+                              {isEdit && (
+                                <>
+                                  <input
+                                    type="text"
+                                    pattern="[0-9]{10}"
+                                    maxLength={10}
+                                    className="form-control"
+                                    placeholder="Enter Mobile No"
+                                    value={userObj.userMobile}
+                                    onChange={(event) => {
+                                      const newValue =
+                                        event.target.value.trim();
+                                      if (/^\d*$/.test(newValue)) {
+                                        setUserObj((prevState) => ({
+                                          ...prevState,
+                                          userMobile: event.target.value,
+                                        }));
+                                      }
+                                    }}
+                                    onBlur={() => {
+                                      simpleValidator1.current.showMessageFor(
+                                        "userMobile"
+                                      );
+                                    }}
+                                  />
+                                  <>
+                                    {userDetails.userRole != "4" &&
+                                      simpleValidator1.current.message(
+                                        "userMobile",
+                                        userObj.userMobile,
+                                        ["required"],
+                                        {
+                                          messages: {
+                                            required:
+                                              "Please enter mobile number",
+                                          },
+                                        }
+                                      )}
+                                  </>
+                                </>
+                              )}
+                            </p>
+                          </div>
+                        </>
+                      )}
+
                       <div className="col-sm-6">
                         <div className="media">
-                        {!isEdit &&   <ion-icon name="phone-portrait-sharp"></ion-icon>}
-                       
+                          {!isEdit && (
+                            <ion-icon name="phone-portrait-sharp"></ion-icon>
+                          )}
+
                           <div className="media-body ml-2">
                             <p
                               className="card-text"
@@ -396,74 +443,80 @@ const UserDetails = () => {
                           )}
                         </p>
                       </div>
-                      <div className="col-sm-6">
-                        <div className="media">
-                        {!isEdit &&   <ion-icon name="reader-outline"></ion-icon>}
-                      
-                          <div className="media-body ml-2">
-                            <p
-                              className="card-text"
-                              style={{ marginBottom: 0 }}
-                            >
-                              AADHAAR Number :{" "}
-                            </p>
+                      {userDetails.userRole != "4" && (
+                        <div className="col-sm-6">
+                          <div className="media">
                             {!isEdit && (
-                              <span className="value">
-                                {userDetails.userAadhaar}
-                              </span>
+                              <ion-icon name="reader-outline"></ion-icon>
                             )}
+
+                            <div className="media-body ml-2">
+                              <p
+                                className="card-text"
+                                style={{ marginBottom: 0 }}
+                              >
+                                AADHAAR Number :{" "}
+                              </p>
+                              {!isEdit && (
+                                <span className="value">
+                                  {userDetails.userAadhaar}
+                                </span>
+                              )}
+                            </div>
                           </div>
-                        </div>
-                        <p>
-                          {isEdit && (
-                            <>
-                              <input
-                                type="text"
-                                pattern="[0-9]{12}"
-                                maxLength={12}
-                                className="form-control"
-                                placeholder="Enter Aadhaar No"
-                                value={userObj.userAadhaar}
-                                onChange={(e) => {
-                                  const newValue = e.target.value.trim();
-                                  if (/^\d*$/.test(newValue)) {
-                                    setUserObj((prevState) => ({
-                                      ...prevState,
-                                      userAadhaar: e.target.value,
-                                    }));
-                                  }
-                                }}
-                                onBlur={() => {
-                                  simpleValidator1.current.showMessageFor(
-                                    "userAadhaar"
-                                  );
-                                }}
-                              />
+                          <p>
+                            {isEdit && (
                               <>
-                                {userDetails.userRole != "4" &&
-                                  simpleValidator1.current.message(
-                                    "userAadhaar",
-                                    userObj.userAadhaar,
-                                    [
-                                      "required",
-                                      { regex: /^\d{4}\s?\d{4}\s?\d{4}$/ },
-                                    ],
-                                    {
-                                      messages: {
-                                        required: "Please enter Aadhaar No.",
-                                        regex: "Enter valid Aadhaar No.",
-                                      },
+                                <input
+                                  type="text"
+                                  pattern="[0-9]{12}"
+                                  maxLength={12}
+                                  className="form-control"
+                                  placeholder="Enter Aadhaar No"
+                                  value={userObj.userAadhaar}
+                                  onChange={(e) => {
+                                    const newValue = e.target.value.trim();
+                                    if (/^\d*$/.test(newValue)) {
+                                      setUserObj((prevState) => ({
+                                        ...prevState,
+                                        userAadhaar: e.target.value,
+                                      }));
                                     }
-                                  )}
+                                  }}
+                                  onBlur={() => {
+                                    simpleValidator1.current.showMessageFor(
+                                      "userAadhaar"
+                                    );
+                                  }}
+                                />
+                                <>
+                                  {userDetails.userRole != "4" &&
+                                    simpleValidator1.current.message(
+                                      "userAadhaar",
+                                      userObj.userAadhaar,
+                                      [
+                                        "required",
+                                        { regex: /^\d{4}\s?\d{4}\s?\d{4}$/ },
+                                      ],
+                                      {
+                                        messages: {
+                                          required: "Please enter Aadhaar No.",
+                                          regex: "Enter valid Aadhaar No.",
+                                        },
+                                      }
+                                    )}
+                                </>
                               </>
-                            </>
-                          )}
-                        </p>
-                      </div>
+                            )}
+                          </p>
+                        </div>
+                      )}
                       <div className="col-sm-6">
                         <div className="media">
-                        {!isEdit &&    <ion-icon name="reader-outline"></ion-icon>}
-                      
+                          {!isEdit && (
+                            <ion-icon name="reader-outline"></ion-icon>
+                          )}
+
                           <div className="media-body ml-2">
                             <p
                               className="card-text"
@@ -517,8 +570,10 @@ const UserDetails = () => {
                       </div>
                       <div className="col-sm-6">
                         <div className="media">
-                        {!isEdit &&   <ion-icon name="reader-outline"></ion-icon>}
-                       
+                          {!isEdit && (
+                            <ion-icon name="reader-outline"></ion-icon>
+                          )}
+
                           <div className="media-body ml-2">
                             <p
                               className="card-text"
@@ -575,67 +630,73 @@ const UserDetails = () => {
                           )}
                         </p>
                       </div>
-                      <div className="col-sm-12">
-                        <div className="media">
-                        {!isEdit &&    <ion-icon name="location-outline"></ion-icon>}
-                      
-                          <div className="media-body ml-2">
-                            <p
-                              className="card-text"
-                              style={{ marginBottom: 0 }}
-                            >
-                              Address :{" "}
-                            </p>
+                      {userDetails.userRole != "4" && (
+                        <div className="col-sm-12">
+                          <div className="media">
                             {!isEdit && (
-                              <span className="value">
-                                {userDetails.userAddress}
-                              </span>
+                              <ion-icon name="location-outline"></ion-icon>
                             )}
+
+                            <div className="media-body ml-2">
+                              <p
+                                className="card-text"
+                                style={{ marginBottom: 0 }}
+                              >
+                                Address :{" "}
+                              </p>
+                              {!isEdit && (
+                                <span className="value">
+                                  {userDetails.userAddress}
+                                </span>
+                              )}
+                            </div>
                           </div>
-                        </div>
-                        <p>
-                          {isEdit && (
-                            <>
-                              <input
-                                type="text"
-                                className="form-control"
-                                placeholder="Enter Address"
-                                value={userObj.userAddress}
-                                onChange={(e) => {
-                                  setUserObj((prevState) => ({
-                                    ...prevState,
-                                    userAddress: e.target.value,
-                                  }));
-                                }}
-                                onBlur={() => {
-                                  simpleValidator1.current.showMessageFor(
-                                    "userAddress"
-                                  );
-                                }}
-                              />
+                          <p>
+                            {isEdit && (
                               <>
-                                {userDetails.userRole != "4" &&
-                                  simpleValidator1.current.message(
-                                    "userAddress",
-                                    userObj.userAddress,
-                                    ["required"],
-                                    {
-                                      messages: {
-                                        required: "Please enter address",
-                                      },
-                                    }
-                                  )}
+                                <input
+                                  type="text"
+                                  className="form-control"
+                                  placeholder="Enter Address"
+                                  value={userObj.userAddress}
+                                  onChange={(e) => {
+                                    setUserObj((prevState) => ({
+                                      ...prevState,
+                                      userAddress: e.target.value,
+                                    }));
+                                  }}
+                                  onBlur={() => {
+                                    simpleValidator1.current.showMessageFor(
+                                      "userAddress"
+                                    );
+                                  }}
+                                />
+                                <>
+                                  {userDetails.userRole != "4" &&
+                                    simpleValidator1.current.message(
+                                      "userAddress",
+                                      userObj.userAddress,
+                                      ["required"],
+                                      {
+                                        messages: {
+                                          required: "Please enter address",
+                                        },
+                                      }
+                                    )}
+                                </>
                               </>
-                            </>
-                          )}
-                        </p>
-                      </div>
+                            )}
+                          </p>
+                        </div>
+                      )}
                       {userDetails.userRole == "4" && (
                         <>
                           <div className="col-sm-6">
                             <div className="media">
-                            {!isEdit &&  <ion-icon name="image-outline"></ion-icon>}
-                           
+                              {!isEdit && (
+                                <ion-icon name="image-outline"></ion-icon>
+                              )}
+
                               <div className="media-body ml-2">
                                 <p
                                   className="card-text"
@@ -646,21 +707,69 @@ const UserDetails = () => {
                               </div>
                             </div>
                             <p>
-                              <img
-                                style={{ width: "100px" }}
-                                src={
-                                  BASE_URL +
-                                  "/uploads/company_logos/" +
-                                  userDetails.userCompanyLogo +
-                                  ".jpeg"
-                                }
-                              />
+                            {isEdit && (
+                            <input
+                                  type="file"
+                                  className="form-control"
+                                  placeholder="Enter Name"
+                                  accept="image/*"
+                                  onChange={handleFileChange}
+                                />
+                            )}
+                                {userObj.userCompanyLogo && (
+                                  <>
+                                    {!userObj.userCompanyLogo.includes(
+                                      "base64"
+                                    ) && (
+                                      <>
+                                        <br></br>
+                                        <img
+                                          style={{ width: "100px" }}
+                                          src={
+                                            BASE_URL +
+                                            "/uploads/company_logos/" +
+                                            userObj.userCompanyLogo +
+                                            ".jpeg"
+                                          }
+                                        />
+                                        <span
+                                          className="badge  badge-outline-primary"
+                                          data-bs-toggle="modal"
+                                          data-bs-target="#imageModal"
+                                          onClick={() =>
+                                            openImageModal(
+                                              BASE_URL +
+                                                "/uploads/company_logos/" +
+                                                userObj.userCompanyLogo +
+                                                ".jpeg"
+                                            )
+                                          }
+                                        >
+                                          View Image
+                                        </span>
+                                      </>
+                                    )}
+                                    {userObj.userCompanyLogo.includes(
+                                      "base64"
+                                    ) && (
+                                      <>
+                                        <br></br>
+                                        <img
+                                          style={{ width: "100px" }}
+                                          src={userObj.userCompanyLogo}
+                                        />
+                                      </>
+                                    )}
+                                  </>
+                                )}
                             </p>
                           </div>
                           <div className="col-sm-6">
                             <div className="media">
-                            {!isEdit &&       <ion-icon name="business-outline"></ion-icon>}
-                        
+                              {!isEdit && (
+                                <ion-icon name="business-outline"></ion-icon>
+                              )}
+
                               <div className="media-body ml-2">
                                 <p
                                   className="card-text"
@@ -714,8 +823,10 @@ const UserDetails = () => {
                           </div>
                           <div className="col-sm-6">
                             <div className="media">
-                            {!isEdit &&   <ion-icon name="mail-outline"></ion-icon>}
-                           
+                              {!isEdit && (
+                                <ion-icon name="mail-outline"></ion-icon>
+                              )}
+
                               <div className="media-body ml-2">
                                 <p
                                   className="card-text"
@@ -772,8 +883,10 @@ const UserDetails = () => {
                           </div>
                           <div className="col-sm-6">
                             <div className="media">
-                            {!isEdit &&  <ion-icon name="globe-outline" ></ion-icon>}
-                           
+                              {!isEdit && (
+                                <ion-icon name="globe-outline"></ion-icon>
+                              )}
+
                               <div className="media-body ml-2">
                                 <p
                                   className="card-text"
@@ -865,6 +978,35 @@ const UserDetails = () => {
                 </div>
               )}
             </div>
+            <div
+          className="modal fade"
+          id="imageModal"
+          tabIndex="-1"
+          style={{ display: "none" }}
+          aria-hidden="true"
+        >
+          <div className="modal-dialog modal-md" role="document">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title" id="exampleModalLabel">
+                  Image
+                </h5>
+                <button
+                  type="button"
+                  className="close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                  onClick={handleCloseModal}
+                >
+                  <span aria-hidden="true">×</span>
+                </button>
+              </div>
+              <div className="modal-body">
+                <img src={logoImage} style={{ width: "200px" }} />
+              </div>
+            </div>
+          </div>
+        </div>
             <ToastContainer
               position="top-right"
               autoClose={2000}
