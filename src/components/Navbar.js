@@ -1,10 +1,14 @@
 import { useState } from "react";
-import { deleteCookie } from "../utils/helpers";
+import { deleteCookie,getCookie } from "../utils/helpers";
 import ConfirmationDialog from "./ConfirmationDialog";
+import { useNavigate } from "react-router-dom";
+
 const Navbar = (props) => {
   const [sidebarOpen,setSidebarOpen] = useState(false)
   const [showConfirmation, setShowConfirmation] = useState(false);
- 
+  const navigate = useNavigate()
+  const userId = getCookie('ntId')
+
   const handleSidebar = () =>{
     props.setSidebarOpen(sidebarOpen)
   }
@@ -131,6 +135,7 @@ const Navbar = (props) => {
                 </a>
               </div>
             </li> */}
+           
             <li
               className={`nav-item nav-profile dropdown `}
               
@@ -141,7 +146,6 @@ const Navbar = (props) => {
                 id="profileDropdown"
                 
               >
-                {/* <img src="images/faces/face28.jpg" alt="profile" /> */}
                 <i className="icon-ellipsis"></i>
               </a>
               <div
@@ -149,6 +153,10 @@ const Navbar = (props) => {
                 aria-labelledby="profileDropdown"
               >
              
+                <a className="dropdown-item" onClick={()=>navigate('/user/'+userId)}>
+                  <i className="ti-user text-primary"></i>
+                  View Profile
+                </a>
                 <a className="dropdown-item" onClick={()=>setShowConfirmation(true)}>
                   <i className="ti-power-off text-primary"></i>
                   Logout

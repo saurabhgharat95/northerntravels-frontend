@@ -581,17 +581,20 @@ const AddQuotation = () => {
       formData.append("quotAccData", JSON.stringify(quotFormData.quotAccData));
       formData.append("itineraryPPAmt", quotFormData.itineraryPPAmt);
       formData.append("addOnPPAMt", quotFormData.addOnPPAMt);
-      formData.append(
-        "quotLogo",
-        base64ToFile(quotFormData.quotLogo, createFilename("logo", "jpeg"))
-      );
-      formData.append(
-        "quotCompanyLogo",
-        base64ToFile(
-          quotFormData.quotCompanyLogo,
-          createFilename("companylogo", "jpeg")
-        )
-      );
+      if(quotFormData.quotLogo){
+        formData.append(
+          "quotLogo",
+          base64ToFile(quotFormData.quotLogo, createFilename("logo", "jpeg"))
+        );
+        formData.append(
+          "quotCompanyLogo",
+          base64ToFile(
+            quotFormData.quotCompanyLogo,
+            createFilename("companylogo", "jpeg")
+          )
+        );
+      }
+      
       // formData.append("quotLogo", "");
       // formData.append("quotCompanyLogo", "");
 

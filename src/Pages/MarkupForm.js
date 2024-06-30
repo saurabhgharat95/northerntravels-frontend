@@ -1023,7 +1023,7 @@ const MarkupForm = ({ onValidationStatusChange }) => {
               </div>
             </>
           ))}
-        <div className="form-group row">
+        {/* <div className="form-group row">
           <div className="col-sm-6">
             <label>Logo</label>
             <input
@@ -1075,7 +1075,7 @@ const MarkupForm = ({ onValidationStatusChange }) => {
               </>
             )}
 
-            {/* <p className="text-primary">Upload a logo (max 1 MB)</p> */}
+        
           </div>
           <div className="col-sm-6">
             <label>Company Logo </label>
@@ -1131,10 +1131,10 @@ const MarkupForm = ({ onValidationStatusChange }) => {
               </>
             )}
 
-            {/* <p className="text-primary">Upload company logo (max 1 MB)</p> */}
+          
           </div>
-        </div>
-        <div className="form-group row">
+        </div> */}
+        {/* <div className="form-group row">
           <div className="col-sm-6 mb-3">
             <label>Company Name </label>
             <input
@@ -1356,7 +1356,7 @@ const MarkupForm = ({ onValidationStatusChange }) => {
                 )}
             </>
           </div>
-        </div>
+        </div> */}
 
         <div className="form-group row"></div>
 

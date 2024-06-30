@@ -23,6 +23,7 @@ import TourDetails from "./Pages/TourDetails";
 import UserManagement from "./Pages/UserManagement";
 import UserForm from "./Pages/UserForm";
 import PrivateRoute from "./components/PrivateRoute";
+import UserDetails from "./Pages/UserDetails";
 function App() {
   return (
     <BrowserRouter>
@@ -152,6 +153,11 @@ function App() {
           exact
           path={`/edit-user/:id?`}
           element={<PrivateRoute Component={UserForm} />}
+        />
+        <Route
+          exact
+          path={`/user/:id?`}
+          element={<PrivateRoute Component={UserDetails} />}
         />
       </Routes>
     </BrowserRouter>
