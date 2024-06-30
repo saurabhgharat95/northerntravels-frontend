@@ -372,46 +372,11 @@ const Homepage = () => {
               <div className="col-md-12 grid-margin">
                 <div className="row">
                   <div className="col-12 col-xl-8 mb-4 mb-xl-0">
-                    <h3 className="font-weight-bold">Welcome Admin</h3>
+                    <h3 className="font-weight-bold">Welcome </h3>
                   </div>
                   <br></br>
                   <br></br>
-                  {roomRateData && roomRateData.length > 0 && (
-                    <Marquee pauseOnHover={true} className="marquee-homepage">
-                      {roomRateData.map((room) => (
-                        <>
-                          <div className="flex">
-                            <ion-icon
-                              size="small"
-                              name="star"
-                              color="warning"
-                              style={{ marginTop: "-2px", marginRight: "8px" }}
-                            >
-                              {" "}
-                            </ion-icon>
-                            <h5 className="mb-0">
-                              Price for <b>{room.hotelName} </b>{" "}
-                              {room.roomTypeName} room{" "}
-                              <b>{room.mealPlanName}</b> meal for{" "}
-                              <b>{room.rmAccmName}</b>{" "}
-                              {room.oldValue > room.newValue
-                                ? "decreased"
-                                : "increased"}{" "}
-                              from <b>Rs.{room.oldValue}</b> to{" "}
-                              <b>Rs.{room.newValue}</b>{" "}
-                            </h5>
-                            <ion-icon
-                              size="small"
-                              name="star"
-                              color="warning"
-                              style={{ marginTop: "-2px", marginLeft: "8px" }}
-                            ></ion-icon>
-                          </div>
-                        </>
-                      ))}
-                    </Marquee>
-                  )}
-                  <div className="col-12 col-xl-4">
+                  <div className="col-12 col-xl-4 pr-0">
                     <div className="justify-content-end d-flex">
                       <div className="dropdown flex-md-grow-1 flex-xl-grow-0">
                         <button
@@ -460,6 +425,42 @@ const Homepage = () => {
                       </div>
                     </div>
                   </div>
+                  {roomRateData && roomRateData.length > 0 && (
+                    <Marquee pauseOnHover={true} className="marquee-homepage">
+                      {roomRateData.map((room) => (
+                        <>
+                          <div className="flex">
+                            <ion-icon
+                              size="small"
+                              name="star"
+                              color="warning"
+                              style={{ marginTop: "-2px", marginRight: "8px" }}
+                            >
+                              {" "}
+                            </ion-icon>
+                            <h5 className="mb-0">
+                              Price for <b>{room.hotelName} </b>{" "}
+                              {room.roomTypeName} room{" "}
+                              <b>{room.mealPlanName}</b> meal for{" "}
+                              <b>{room.rmAccmName}</b>{" "}
+                              {room.oldValue > room.newValue
+                                ? "decreased"
+                                : "increased"}{" "}
+                              from <b>Rs.{room.oldValue}</b> to{" "}
+                              <b>Rs.{room.newValue}</b>{" "}
+                            </h5>
+                            <ion-icon
+                              size="small"
+                              name="star"
+                              color="warning"
+                              style={{ marginTop: "-2px", marginLeft: "8px" }}
+                            ></ion-icon>
+                          </div>
+                        </>
+                      ))}
+                    </Marquee>
+                  )}
+                  
                 </div>
               </div>
             </div>

@@ -240,8 +240,10 @@ const HotelMaster = () => {
         hotelAddress: hotelAddress ? hotelAddress : "",
         hotelEmail: hotelEmail,
         isSpecialRate: isSpecialRate ? 1 : 0,
-        spFromDate: specialRateDate.spFromDate,
-        spToDate: specialRateDate.spToDate,
+        // spFromDate: specialRateDate.spFromDate,
+        // spToDate: specialRateDate.spToDate,
+        spFromDate: "",
+        spToDate: "",
         hotelContactNo: hotelContact,
         fkHotelTypeId: hotelTypeId,
         fkHaltingPointId: haltDestId,
@@ -294,8 +296,8 @@ const HotelMaster = () => {
         hotelEmail: hotelEmail,
         hotelContactNo: hotelContact,
         isSpecialRate: isSpecialRate ? 1 : 0,
-        spFromDate: specialRateDate.spFromDate,
-        spToDate: specialRateDate.spToDate,
+        spFromDate: "",
+        spToDate: "",
         fkHotelTypeId: hotelTypeId,
         fkHaltingPointId: haltDestId,
         fkStateId: stateId,
@@ -378,11 +380,11 @@ const HotelMaster = () => {
       setHotelAddress(hotelObj.hotelAddress);
       setHotelContact(hotelObj.hotelContactNo);
       setIsSpecialRate(hotelObj.isSpecialRate == 1 ? true : false);
-      setSpecialRateDate((prevState) => ({
-        ...prevState,
-        spFromDate: hotelObj.spFromDate,
-        spToDate: hotelObj.spToDate,
-      }));
+      // setSpecialRateDate((prevState) => ({
+      //   ...prevState,
+      //   spFromDate: hotelObj.spFromDate,
+      //   spToDate: hotelObj.spToDate,
+      // }));
       setHotelEmail(hotelObj.hotelEmail);
       setUpdate(true);
       setUpdateId(updateId);
@@ -617,7 +619,7 @@ const HotelMaster = () => {
                         </div>
 
                         <div className="form-group row">
-                          {isSpecialRate && (
+                          {/* {isSpecialRate && (
                             <>
                               <div className="col-sm-3">
                                 <label>From Date</label>
@@ -690,7 +692,7 @@ const HotelMaster = () => {
                                 </>
                               </div>
                             </>
-                          )}
+                          )} */}
                           <div className="col-sm-3">
                             <label>Hotel Contact No.</label>
                             <input
@@ -760,7 +762,7 @@ const HotelMaster = () => {
                             </>
                           </div>
                           <div className="col-sm-3">
-                            <label className={`${isSpecialRate ? "mt-3" : ""}`}>
+                            <label >
                               Hotel Type
                             </label>
                             <Select
@@ -801,7 +803,7 @@ const HotelMaster = () => {
                           <div className="col-sm-3">
                             <div className="mt-1">
                               <label
-                                className={`${isSpecialRate ? "mt-3" : ""}`}
+                               
                               >
                                 Country
                               </label>
@@ -1264,7 +1266,8 @@ const HotelMaster = () => {
                                         </div>
                                       </div>
                                     </div>
-                                    {isSpecialRate && (
+                                    {/* <div className="form-group row"> */}
+                                    {/* {isSpecialRate && (
                                       <div className="form-group row">
                                         <div className="col-sm-6">
                                           <label>From Date</label>
@@ -1354,7 +1357,7 @@ const HotelMaster = () => {
                                           </>
                                         </div>
                                       </div>
-                                    )}
+                                    )} */}
                                     <div className="form-group row">
                                       <div className="col-sm-6">
                                         <label>Hotel Contact No.</label>
