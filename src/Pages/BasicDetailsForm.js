@@ -387,7 +387,7 @@ const BasicDetailsForm = ({ onValidationStatusChange }) => {
               </div>
             </div>
           </div>
-          <div className="col-sm-6 mb-0">
+          {/* <div className="col-sm-6 mb-0">
             <label className="col-sm-3 col-form-label pl-0 pb-0">Season</label>
             <div className=" row">
               <div className="col-sm-4">
@@ -425,7 +425,7 @@ const BasicDetailsForm = ({ onValidationStatusChange }) => {
                 </div>
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
 
         <div className="form-group row">
