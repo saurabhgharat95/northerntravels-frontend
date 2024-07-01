@@ -20,7 +20,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { useDispatch, useSelector } from "react-redux";
 import { setQuotationFormData } from "../utils/store";
 
-import { toTitleCase } from "../utils/helpers";
+import { toTitleCase,getDateFormattedForTable } from "../utils/helpers";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 
 const HotelDetailsForm = ({ onValidationStatusChange }) => {
@@ -998,8 +998,8 @@ const HotelDetailsForm = ({ onValidationStatusChange }) => {
                                   <td>{toTitleCase(packageObj.packageName)}</td>
                                   <td>{packageObj.haltingDest}</td>
                                   <td>{packageObj.hotelName}</td>
-                                  <td>{packageObj.fromDate}</td>
-                                  <td>{packageObj.toDate}</td>
+                                  <td>{getDateFormattedForTable(packageObj.fromDate)}</td>
+                                  <td>{getDateFormattedForTable(packageObj.toDate)}</td>
                                   <td>{packageObj.noOfNights}</td>
                                   <td>{packageObj.roomType}</td>
                                   <td>{packageObj.mealType}</td>
