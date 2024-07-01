@@ -151,6 +151,12 @@ const AddRoomForm = ({ cancelForm, hotelId, formType, updateId }) => {
       },
     ],
   });
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
   const simpleValidator = useRef(
     new SimpleReactValidator({
       autoForceUpdate: this,
@@ -1172,6 +1178,7 @@ const AddRoomForm = ({ cancelForm, hotelId, formType, updateId }) => {
                                 ...prevState,
                                 updateRoomPeriodId: timePeriodObj.id,
                               }));
+                              scrollToTop();
                             }}
                           ></ion-icon>
                           <ion-icon

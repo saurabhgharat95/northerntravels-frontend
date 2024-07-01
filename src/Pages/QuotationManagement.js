@@ -20,7 +20,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import {
   getCookie,
   getDateFormatted,
-  getDateFormattedForDB,
+  getDateFormattedForTable,
   toTitleCase,
 } from "../utils/helpers";
 import "react-slidedown/lib/slidedown.css";
@@ -60,44 +60,40 @@ const QuotationManagement = () => {
   const query = useQuery();
   const filterValue = query.get("filter");
   const currentDate = new Date();
-  const todaysDate= new Date(currentDate.getTime() - currentDate.getTimezoneOffset() * 60000).toISOString().split("T")[0];
+  const todaysDate = new Date(
+    currentDate.getTime() - currentDate.getTimezoneOffset() * 60000
+  )
+    .toISOString()
+    .split("T")[0];
 
   const fetchQuotations = async () => {
     try {
       let userId = getCookie("ntId");
       let url;
-      if (filterValue=="today") {
+      if (filterValue == "today") {
         url =
           FETCH_QUOTATIONS_API +
-          "?selUser=" +
-          (filterObj.selUser != ""
-            ? filterObj.selUser
-            : encodeURIComponent(userId)) +
-          "&fromDate=" +
+          "?fromDate=" +
           todaysDate +
           "&toDate=" +
           todaysDate;
-      } 
-      else if (filterValue=="all") {
-        url =
-          FETCH_QUOTATIONS_API +
-          "?selUser=" +
-          (filterObj.selUser != ""
-            ? filterObj.selUser
-            : encodeURIComponent(userId)) +
-          "&fromDate=&toDate=" 
-      } 
-      else {
-        url =
-          FETCH_QUOTATIONS_API +
-          "?selUser=" +
-          (filterObj.selUser != ""
-            ? filterObj.selUser
-            : encodeURIComponent(userId)) +
-          "&fromDate=" +
-          (filterObj.fromDate != "" ? filterObj.fromDate : "") +
-          "&toDate=" +
-          (filterObj.toDate != "" ? filterObj.toDate : "");
+      } else if (filterValue == "all") {
+        url = FETCH_QUOTATIONS_API + "?fromDate=&toDate=";
+      } else {
+        if (isFilterOpen) {
+          url =
+            FETCH_QUOTATIONS_API +
+            "?selUser=" +
+            (filterObj.selUser != ""
+              ? filterObj.selUser
+              : encodeURIComponent(userId)) +
+            "&fromDate=" +
+            (filterObj.fromDate != "" ? filterObj.fromDate : "") +
+            "&toDate=" +
+            (filterObj.toDate != "" ? filterObj.toDate : "");
+        } else {
+          url = FETCH_QUOTATIONS_API;
+        }
       }
 
       let body = {
@@ -213,11 +209,7 @@ const QuotationManagement = () => {
   const clearFilter = async () => {
     try {
       let userId = getCookie("ntId");
-      let url =
-        FETCH_QUOTATIONS_API +
-        "?selUser=" +
-        encodeURIComponent(userId) +
-        "&fromDate=&toDate=";
+      let url = FETCH_QUOTATIONS_API;
 
       let body = {
         userId: userId,
@@ -252,15 +244,14 @@ const QuotationManagement = () => {
     return () => clearTimeout(timer);
   }, []);
   useEffect(() => {
-    if(filterValue=="today"){
+    if (filterValue == "today") {
       setFilterOpen(true);
-      setFilterObj(prevState=>({
+      setFilterObj((prevState) => ({
         ...prevState,
-        fromDate:todaysDate,
-        toDate:todaysDate
-      }))
+        fromDate: todaysDate,
+        toDate: todaysDate,
+      }));
     }
-   
   }, []);
 
   return (
@@ -512,12 +503,12 @@ const QuotationManagement = () => {
                                               )}
                                             </td>
                                             <td>
-                                              {getDateFormattedForDB(
+                                              {getDateFormattedForTable(
                                                 quotation.quotArrivalDate
                                               )}
                                             </td>
                                             <td>
-                                              {getDateFormattedForDB(
+                                              {getDateFormattedForTable(
                                                 quotation.quotDepartureDate
                                               )}
                                             </td>

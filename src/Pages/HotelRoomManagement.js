@@ -18,14 +18,13 @@ import {
   FETCH_HOTEL_ROOM_DETAILS_API,
   FETCH_MEAL_TYPES_API,
 } from "../utils/constants";
-import { getDateFormatted, getDateFormattedForDB } from "../utils/helpers";
+import { getDateFormatted, getDateFormattedForDB,getDateFormattedForTable } from "../utils/helpers";
 import "react-toastify/dist/ReactToastify.css";
 import NoData from "../components/NoData";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 import RenderPageNumbers from "./RenderPageNumbers";
 import Loader from "../components/Loader";
 import AddRoomForm from "./AddRoomForm";
-import { color } from "chart.js/helpers";
 const HotelRoomManagement = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
   const [formModule, setFormModule] = useState("hotel");
@@ -925,7 +924,7 @@ const HotelRoomManagement = () => {
                                                       </p>
                                                       <p className="text-left">
                                                         <b>
-                                                          {getDateFormattedForDB(
+                                                          {getDateFormattedForTable(
                                                             period
                                                               .itemsByFkRoomAccommodationId[0][
                                                               "items"
@@ -958,7 +957,7 @@ const HotelRoomManagement = () => {
                                                       </p>
                                                       <p className="text-left">
                                                         <b>
-                                                          {getDateFormattedForDB(
+                                                          {getDateFormattedForTable(
                                                             period
                                                               .itemsByFkRoomAccommodationId[0][
                                                               "items"

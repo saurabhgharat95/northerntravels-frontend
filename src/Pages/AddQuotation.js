@@ -140,7 +140,7 @@ const AddQuotation = () => {
         quotDepartureDate: quotFormData.quotDepartureDate,
         quotDays: quotFormData.quotDays,
         quotNights: quotFormData.quotNights,
-        fkUserId :getCookie('ntId')
+        fkUserId: getCookie("ntId"),
       };
 
       const isFormValid =
@@ -503,18 +503,16 @@ const AddQuotation = () => {
       let quotItinerarydetails = quotFormData.quotItineraryData;
       if (quotItinerarydetails.length > 0) {
         quotItinerarydetails.forEach((element) => {
-          let quotItiAddons = []; 
+          let quotItiAddons = [];
           if (element.quotItiAddons && element.quotItiAddons.length > 0) {
             if (
               element.quotItiAddons[0].quotItiService != "" ||
               element.quotItiAddons[0].quotItiAddonId
             ) {
-              
               quotItiAddons = JSON.parse(JSON.stringify(element.quotItiAddons));
             }
-            
           }
-          
+
           quotItineraryData.push({
             quotItiId: element.quotItiId,
             quotItiDay: element.quotItiDay,
@@ -581,7 +579,7 @@ const AddQuotation = () => {
       formData.append("quotAccData", JSON.stringify(quotFormData.quotAccData));
       formData.append("itineraryPPAmt", quotFormData.itineraryPPAmt);
       formData.append("addOnPPAMt", quotFormData.addOnPPAMt);
-      if(quotFormData.quotLogo){
+      if (quotFormData.quotLogo) {
         formData.append(
           "quotLogo",
           base64ToFile(quotFormData.quotLogo, createFilename("logo", "jpeg"))
@@ -594,7 +592,7 @@ const AddQuotation = () => {
           )
         );
       }
-      
+
       // formData.append("quotLogo", "");
       // formData.append("quotCompanyLogo", "");
 
@@ -628,7 +626,6 @@ const AddQuotation = () => {
       let response = await axios.post(url, body);
       if (response) {
         if (response.status == 200) {
-       
           setTimeout(() => {
             setIsLoading(false);
             toast.success(response.data.message, {
@@ -873,7 +870,7 @@ const AddQuotation = () => {
                               aria-selected="true"
                               onClick={() => {
                                 openFormTab(tab);
-                                if(tab.id==5){
+                                if (tab.id == 5) {
                                   updateItinerary();
                                 }
                               }}
@@ -910,17 +907,19 @@ const AddQuotation = () => {
                             Cancel
                           </button>
                         </li>
-                        <li aria-disabled="true">
-                          <button
-                            className="btn  previous-btn"
-                            onClick={() => {
-                              selectForm("prev", selectedTab);
-                              scrollToTop();
-                            }}
-                          >
-                            Previous
-                          </button>
-                        </li>
+                        {selectedTab != 1 && (
+                          <li aria-disabled="true">
+                            <button
+                              className="btn  previous-btn"
+                              onClick={() => {
+                                selectForm("prev", selectedTab);
+                                scrollToTop();
+                              }}
+                            >
+                              Previous
+                            </button>
+                          </li>
+                        )}
                         {selectedTab != 5 && (
                           <li aria-hidden="false" aria-disabled="false">
                             <button
@@ -967,16 +966,18 @@ const AddQuotation = () => {
                             Cancel
                           </button>
                         </li>
-                        <li aria-disabled="true">
-                          <button
-                             className="btn  previous-btn"
-                            onClick={() => {
-                              selectForm("prev", selectedTab);
-                            }}
-                          >
-                            Previous
-                          </button>
-                        </li>
+                        {selectedTab != 1 && (
+                          <li aria-disabled="true">
+                            <button
+                              className="btn  previous-btn"
+                              onClick={() => {
+                                selectForm("prev", selectedTab);
+                              }}
+                            >
+                              Previous
+                            </button>
+                          </li>
+                        )}
                         {selectedTab != 5 && (
                           <li aria-hidden="false" aria-disabled="false">
                             <button

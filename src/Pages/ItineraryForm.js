@@ -17,7 +17,7 @@ import ConfirmationDialog from "../components/ConfirmationDialog";
 // redux
 import { useDispatch, useSelector } from "react-redux";
 import { setQuotationFormData } from "../utils/store";
-import { getMultipleFilteredDropdownOptions } from "../utils/helpers";
+import { getDateFormattedForTable } from "../utils/helpers";
 import SwapModal from "../components/SwapModel";
 
 const ItineraryForm = ({ onValidationStatusChange }) => {
@@ -1374,7 +1374,7 @@ const ItineraryForm = ({ onValidationStatusChange }) => {
                                 <td>{itineraryObj.quotItiDay}</td>
                                 <td>
                                   {itineraryObj.quotItiDate
-                                    ? itineraryObj.quotItiDate.split("T")[0]
+                                    ? getDateFormattedForTable(itineraryObj.quotItiDate.split("T")[0])
                                     : "N.A"}
                                 </td>
                                 <td>{itineraryObj.vehicleName}</td>
